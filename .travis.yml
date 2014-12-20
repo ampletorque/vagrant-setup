@@ -1,0 +1,22 @@
+language: python
+
+python:
+  - "2.7"
+  - "3.3"
+  - "3.4"
+
+before_install:
+  - "sudo apt-get update -qq"
+  - "sudo apt-get install -y jpegoptim optipng pngcrush graphicsmagick"
+  - "npm install -g less requirejs autoprefixer"
+
+install:
+  - "pip install webtest mock coverage nose-cover3 flake8 --use-mirrors"
+  - "pip install -e . --use-mirrors"
+
+before_script: "flake8 zaphod"
+
+script:  "nosetests"
+
+after_success:
+  - coveralls

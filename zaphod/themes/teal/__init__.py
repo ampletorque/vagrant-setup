@@ -1,5 +1,4 @@
 from pyramid_frontend.theme import Theme
-from pyramid_frontend.images import FilterChain
 from pyramid_frontend.assets.less import LessAsset
 from pyramid_frontend.assets.requirejs import RequireJSAsset
 
@@ -19,5 +18,3 @@ class TealTheme(Theme):
             require_base_url='/_teal/js/vendor/',
         ),
     }
-
-

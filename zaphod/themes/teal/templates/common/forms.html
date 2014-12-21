@@ -1,0 +1,140 @@
+<%def name="hint(s)">
+  % if s:
+    <p class="help-block no-error">${s}</p>
+  % endif
+</%def>
+
+
+<%def name="element(renderer=None, label=None, name=None, hint=None, label_cols=3, has_error=False)">
+  <div class="form-group ${'has-error' if has_error or (renderer and renderer.is_error(name)) else ''}">
+    % if label or name:
+      ${h.HTML.label(label or h.prettify(name), for_=h.make_id_component(name), class_='control-label col-sm-%d' % label_cols)}
+    % endif
+    <div class="col-sm-${12 - label_cols} ${'' if (label or name) else ('col-sm-offset-%d' % label_cols)}">
+      ${caller.body()}
+      % if renderer and name:
+        ${renderer.errorlist(name)}
+      % endif
+      ${self.hint(hint)}
+    </div>
+  </div>
+</%def>
+
+
+<%def name="addon(s)">${h.HTML.span(s, class_='input-group-addon') if s else ''}</%def>
+
+
+<%def name="lvalue(value=None, label=None, hint=None, **kwargs)">
+  <%self:element label="${label}" hint="${hint}">
+    % if value:
+      ${h.HTML.p(h.literal(value), class_='form-control-static', **kwargs)}
+    % endif
+    % if hasattr(caller, 'body'):
+      <p class="form-control-static">${caller.body()}</p>
+    % endif
+  </%self:element>
+</%def>
+
+
+<%def name="ltext(renderer, name, value=None, label=None, hint=None, prefix=None, suffix=None, label_cols=3, **kwargs)">
+  <%self:element renderer="${renderer}" label="${label}" name="${name}" hint="${hint}" label_cols="${label_cols}">
+    <div class="${'input-group' if prefix or suffix else ''}">
+      ${self.addon(prefix)}
+      % if renderer:
+        ${renderer.text(name, value, class_='form-control', **kwargs)}
+      % else:
+        ${h.text(name, value, class_='form-control', **kwargs)}
+      % endif
+      ${self.addon(suffix)}
+    </div>
+  </%self:element>
+</%def>
+
+
+<%def name="lfile(renderer, name, label=None, hint=None, label_cols=3, **kwargs)">
+  <%self:element renderer="${renderer}" label="${label}" name="${name}" hint="${hint}" label_cols="${label_cols}">
+    % if renderer:
+      ${renderer.file(name, class_='form-control', **kwargs)}
+    % else:
+      ${h.file(name, class_='form-control', **kwargs)}
+    % endif
+  </%self:element>
+</%def>
+
+
+<%def name="ltextarea(renderer, name, value=None, label=None, hint=None, label_cols=3, **kwargs)">
+  <%self:element renderer="${renderer}" label="${label}" name="${name}" hint="${hint}" label_cols="${label_cols}">
+    % if renderer:
+      ${renderer.textarea(name, value, class_='form-control', **kwargs)}
+    % else:
+      ${h.textarea(name, value, class_='form-control', **kwargs)}
+    % endif
+  </%self:element>
+</%def>
+
+
+<%def name="lpassword(renderer, name, value=None, label=None, hint=None, prefix=None, suffix=None, **kwargs)">
+  <%self:element renderer="${renderer}" label="${label}" name="${name}" hint="${hint}">
+    <div class="${'input-prepend' if prefix else ''} ${'input-append' if suffix else ''}">
+      ${self.addon(prefix)}${renderer.password(name, value, class_='form-control', **kwargs)}${self.addon(suffix)}
+    </div>
+  </%self:element>
+</%def>
+
+
+<%def name="lcheckbox(renderer, name, checked=False, label=None, hint=None, label_cols=3, **kwargs)">
+  <%self:element renderer="${renderer}" hint="${hint}" label_cols="${label_cols}">
+    <div class="checkbox">
+      <label>
+        % if renderer:
+          ${renderer.checkbox(name, checked=checked, **kwargs)}
+        % else:
+          ${h.checkbox(name, checked=checked, **kwargs)}
+        % endif
+        <span>${label or h.prettify(name)}</span>
+      </label>
+    </div>
+    % if renderer:
+      ${renderer.errorlist(name)}
+    % endif
+  </%self:element>
+</%def>
+
+
+<%def name="lcheckboxes(renderer, name, selected, options, label=None, hint=None, label_cols=3, **kwargs)">
+  <%self:element label="${label}" hint="${hint}" label_cols="${label_cols}">
+    % for value, label in options:
+      <div class="checkbox">
+        <label>
+          % if renderer:
+            ${renderer.checkbox(name, value, checked=value in selected, id='%s-%s' % (name, value), **kwargs)}
+          % else:
+            ${h.checkbox(name, checked=value in selected, id='%s-%s' % (name, value), **kwargs)}
+          % endif
+          <span>${label or h.prettify(name)}</span>
+        </label>
+      </div>
+      % if renderer:
+        ${renderer.errorlist(name)}
+      % endif
+    % endfor
+  </%self:element>
+</%def>
+
+
+<%def name="lselect(renderer, name, selected, options, label=None, hint=None, **kwargs)">
+  <%self:element renderer="${renderer}" label="${label}" name="${name}" hint="${hint}">
+    % if renderer:
+      ${renderer.select(name, selected, options, class_='form-control', **kwargs)}
+    % else:
+      ${h.select(name, selected, options, class_='form-control', **kwargs)}
+    % endif
+  </%self:element>
+</%def>
+
+
+<%def name="actions(label_cols=3)">
+  <%self:element label_cols="${label_cols}">
+    ${caller.body()}
+  </%self:element>
+</%def>

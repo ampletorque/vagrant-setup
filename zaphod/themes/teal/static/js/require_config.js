@@ -1,10 +1,10 @@
 // Common RequireJS config
 // Used only in development and for optimization
 var require = {
-  baseUrl: '/_light/js/vendor',
+  baseUrl: '/_teal/js/vendor',
 
   paths: {
-    'light': '/_light/js'
+    'teal': '/_teal/js'
   },
 
   shim: {

@@ -1,0 +1,34 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+
+
+<%def name="title()">Login</%def>
+
+
+<section class="section-login">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-6 col-sm-offset-3">
+
+        ${renderer.begin(id='login-form', class_='form-horizontal')}
+
+          ${forms.ltext(renderer, 'email', placeholder='you@example.com')}
+          ${forms.lpassword(renderer, 'password')}
+
+          ${forms.lcheckbox(renderer, 'remember_me')}
+
+          <%forms:actions>
+            <button type="submit" class="btn btn-primary">Login</button>
+          </%forms:actions>
+
+          <%forms:actions>
+            <a href="${request.route_path('forgot-password')}">Forgot your password or don't have one? Click here.</a>
+          </%forms:actions>
+
+        ${renderer.end()}
+
+      </div>
+    </div>
+  </div>
+</section>

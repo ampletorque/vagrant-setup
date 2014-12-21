@@ -1,0 +1,28 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+
+
+<%def name="title()">Reset Forgotten Password</%def>
+
+
+<section class="section-forgot-reset">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-6 col-sm-offset-3">
+
+        ${renderer.begin(request.url, class_='form-horizontal')}
+
+          ${forms.lpassword(renderer, 'password')}
+          ${forms.lpassword(renderer, 'password2', label='Confirm')}
+
+          <%forms:actions>
+            <button type="submit" class="btn btn-primary">Update</button>
+          </%forms:actions>
+
+        ${renderer.end()}
+
+      </div>
+    </div>
+  </div>
+</section>

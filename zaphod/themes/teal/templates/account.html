@@ -1,0 +1,64 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+
+
+<%def name="title()">User Settings</%def>
+
+
+<section class="section-settings">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        <h4 class="text-center">Settings for ${request.user.email}</h4>
+
+        <div class="block-form">
+          ${renderer.begin(class_='form-horizontal')}
+
+            ${forms.ltext(renderer, 'name', request.user.name)}
+            ${forms.ltext(renderer, 'email', request.user.email)}
+
+            ${forms.lpassword(renderer, 'password')}
+            ${forms.lpassword(renderer, 'password2', label='Confirm')}
+
+            ${forms.lcheckbox(renderer, 'show_hints', checked=request.user.show_hints, hint='Show these subtle-yet-helpful hints.')}
+
+            % if request.user.group_settings:
+              <h4 class="text-center">Email Notification Settings</h4>
+            % endif
+
+            % for group_settings in request.user.group_settings.values():
+              ${renderer.hidden('groups-%d.group_id' % loop.index, group_settings.group.id)}
+              <%forms:element label="${group_settings.group.name}">
+                <div class="checkbox">
+                  <label>
+                    ${renderer.checkbox('groups-%d.email_check_reminders' % loop.index, checked=group_settings.email_check_reminders)}
+                    <span>Check reminders</span>
+                  </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    ${renderer.checkbox('groups-%d.email_price_reports' % loop.index, checked=group_settings.email_price_reports)}
+                    <span>Price reports</span>
+                  </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    ${renderer.checkbox('groups-%d.email_price_alerts' % loop.index, checked=group_settings.email_price_alerts)}
+                    <span>Price alerts</span>
+                  </label>
+                </div>
+              </%forms:element>
+            % endfor
+
+            <%forms:actions>
+              <button type="submit" class="btn btn-primary">Save</button>
+            </%forms:actions>
+
+          ${renderer.end()}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>

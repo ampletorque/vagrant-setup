@@ -28,3 +28,17 @@ class Request(BaseRequest):
 
     def flash(self, msg, category='info'):
         return self.session.flash((msg, category))
+
+    def node_path(self, obj, suffix=None, **kw):
+        """
+        Generate a path for a Node instance.
+        """
+        path = obj.canonical_path(suffix=suffix)
+        return self.route_path('node', path=path, **kw)
+
+    def node_url(self, obj, suffix=None, **kw):
+        """
+        Generate a fully-qualified URL for a Node instance.
+        """
+        path = obj.canonical_path(suffix=suffix)
+        return self.route_url('node', path=path, **kw)

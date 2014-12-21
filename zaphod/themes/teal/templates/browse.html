@@ -1,0 +1,18 @@
+<%inherit file="base.html"/>
+
+
+<%def name="title()">Browse</%def>
+
+
+<section class="section-browse">
+  <div class="container">
+    <div class="row">
+      % for project in projects:
+        <div class="col-md-4">
+          <h3>${project.name}</h3>
+          <p>${project.teaser}</p>
+        </div>
+      % endfor
+    </div>
+  </div>
+</section>

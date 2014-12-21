@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>${self.title()} | Crowd Supply</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="icon" href="/_teal/images/favicon.ico">
+
+  <!--[if lt IE 9]>
+    <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  ${request.asset_tag('main-less')}
+
+  <script type="text/javascript" src="//use.typekit.net/yne8zlt.js"></script>
+  <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+
+  ${self.additional_head()}
+</head>
+<body>
+  ${self.header()}
+  ${next.body()}
+  ${self.footer()}
+  ${request.asset_tag('main-js')}
+  ${self.additional_footer()}
+</body>
+</html>
+
+
+<%def name="title()"></%def>
+<%def name="additional_head()"></%def>
+<%def name="additional_footer()"></%def>
+
+
+<%def name="header()">
+</%def>
+
+
+<%def name="footer()">
+</%def>

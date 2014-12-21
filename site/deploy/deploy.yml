@@ -1,0 +1,30 @@
+---
+- hosts: webservers
+  tasks:
+    - name: checkout zaphod source
+      git: repo="git@git.github.com:crowdsupply/zaphod.git"
+           dest=/var/sw/zaphod
+           accept_hostkey=yes
+      notify:
+        - run setup.py develop
+        - run alembic migrations
+        - reload uwsgi
+        - restart nginx
+
+  handlers:
+    - name: run setup.py develop
+      command: /var/sw/pyramid27/bin/python setup.py develop chdir=/var/sw/zaphod
+
+    - name: recompile assets
+      command: /var/sw/pyramid27/bin/pcompile /var/sw/zaphod/site/conf/production.ini
+
+    - name: run alembic migrations
+      command: /var/sw/pyramid27/bin/alembic -c /var/sw/zaphod/site/conf/alembic.ini upgrade head
+
+    - name: reload uwsgi
+      sudo: yes
+      service: name=uwsgi state=reloaded
+
+    - name: restart nginx
+      sudo: yes
+      service: name=nginx state=restarted

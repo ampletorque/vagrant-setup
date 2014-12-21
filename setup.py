@@ -59,5 +59,6 @@ setup(name='zaphod',
       main = zaphod.main:main
       [console_scripts]
       initialize_zaphod_db = zaphod.scripts.initializedb:main
+      migrate_zaphod_db = zaphod.scripts.migrate:main
       """,
       )

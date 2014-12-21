@@ -15,6 +15,8 @@ def includeme(config):
     config.add_route('browse', '/browse')
     config.add_route('search', '/search')
 
+    config.add_route('creators', '/creators')
+
     # User scaffolding routes
     config.add_route('login', '/login')
     config.add_route('logout', '/logout')

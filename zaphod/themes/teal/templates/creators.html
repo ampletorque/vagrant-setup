@@ -1,0 +1,18 @@
+<%inherit file="base.html"/>
+
+
+<%def name="title()">Creators</%def>
+
+
+<section class="section-creators">
+  <div class="container">
+    <div class="row">
+      % for creator in creators:
+        <div class="col-md-4">
+          <h3>${creator.name}</h3>
+          <p>${creator.teaser}</p>
+        </div>
+      % endfor
+    </div>
+  </div>
+</section>

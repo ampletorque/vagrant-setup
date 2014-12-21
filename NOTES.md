@@ -26,12 +26,16 @@ Platform
 - pyramid_mailer for email
 - alembic
 
+Webserver
+---------
+
+- nginx
+- uwsgi
+
 
 Deployment
 ----------
 
-- nginx
-- uwsgi
 - ansible
 
 

@@ -6,13 +6,19 @@
 
 <section class="section-browse">
   <div class="container">
-    <div class="row">
-      % for project in projects:
-        <div class="col-md-4">
-          <h3>${project.name}</h3>
-          <p>${project.teaser}</p>
-        </div>
-      % endfor
-    </div>
+    % for row in h.grouper(3, projects):
+      <div class="row">
+        % for project in row:
+          <div class="col-md-4">
+            <h3>
+              <a href="${request.node_path(project)}">
+                ${project.name}
+              </a>
+            </h3>
+            <p>${project.teaser}</p>
+          </div>
+        % endfor
+      </div>
+    % endfor
   </div>
 </section>

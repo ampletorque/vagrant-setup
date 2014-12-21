@@ -5,6 +5,7 @@ import urllib
 
 from pyramid.httpexceptions import HTTPNotFound, HTTPMovedPermanently
 from pyramid.renderers import render
+from pyramid.view import view_config
 from sqlalchemy.orm.exc import NoResultFound
 
 from .. import model
@@ -34,7 +35,7 @@ class NodeView(object):
             lookup_path = lookup_path.encode('utf8', 'replace')
             lookup_path = urllib.quote(lookup_path)
             try:
-                alias = meta.Session.query(model.Alias).\
+                alias = model.Session.query(model.Alias).\
                     filter_by(path=lookup_path).\
                     join(model.Alias.node).\
                     filter(model.Node.published == True).\
@@ -45,7 +46,8 @@ class NodeView(object):
                 return alias, suffix
         raise HTTPNotFound()
 
-    def __call__(self):
+    @view_config(route_name='node', renderer='htmlstring')
+    def view(self):
         request = self.request
         path = request.matchdict['path']
         alias, suffix = self._query_match(path)

@@ -1,0 +1,29 @@
+<%inherit file="base.html"/>
+
+
+<section class="section-projects">
+  <div class="container">
+    <div class="row">
+      <table class="table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>ID</th>
+            <th>Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          % for project in projects:
+            <tr>
+              <td>
+                <a href="#">Edit</a>
+              </td>
+              <td>${project.id}</td>
+              <td>${project.name}</td>
+            </tr>
+          % endfor
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

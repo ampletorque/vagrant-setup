@@ -1,0 +1,29 @@
+<%inherit file="base.html"/>
+
+
+<section class="section-users">
+  <div class="container">
+    <div class="row">
+      <table class="table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>ID</th>
+            <th>Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          % for user in users:
+            <tr>
+              <td>
+                <a href="#">Edit</a>
+              </td>
+              <td>${user.id}</td>
+              <td>${user.name}</td>
+            </tr>
+          % endfor
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

@@ -109,3 +109,7 @@ class User(Base):
         hsh = self.hashed_password
         manager = BCRYPTPasswordManager()
         return hsh and manager.check(hsh, password)
+
+    def has_permission(self, permission_name):
+        # XXX Implement this, obviously.
+        return True

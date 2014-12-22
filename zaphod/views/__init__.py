@@ -3,6 +3,8 @@ from __future__ import (absolute_import, division, print_function,
 
 
 def includeme(config):
+    config.include('.error')
+
     config.include('.admin', route_prefix='/admin')
 
     config.add_route('index', '/')

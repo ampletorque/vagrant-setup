@@ -65,6 +65,9 @@
               <li><a href="${request.route_path('cart')}">My Cart</a></li>
               <li><a href="${request.route_path('account')}">My Account</a></li>
               % if request.user:
+                % if request.user.has_permission('admin'):
+                  <li><a href="${request.route_path('admin')}">Admin</a></li>
+                % endif
                 <li><a href="${request.route_path('logout')}">Sign Out</a></li>
               % else:
                 <li><a href="${request.route_path('login')}">Log In</a></li>

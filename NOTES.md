@@ -12,6 +12,70 @@ Until the platform takes over running the live site, this repo should also
 serve to maintain the script(s) to migrate data from the old site.
 
 
+Workflows / Model
+-----------------
+
+### Homepage Management
+
+Should there be an admin tool for managing homepage state? This might be more
+tricky than it's worth, but it would be really convenient to be able to
+schedule changes in advance.
+
+### Browse Page(s) Management
+
+Mostly we're just talking about ordering and listing here. I think listing
+works fine with the listed/unlisted toggle. Ordering could be improved for
+sure.
+
+### Project State
+
+There are a lot of disparate states that aren't well encapsulated now.
+
+- Prelaunch
+- Project suspensions
+- Crowdfunding
+- Pre-order / In-stock (which should probably be combined, and the status made
+  per pledge level instead)
+- Should we support back-orders differently from just 'out of stock'? This gets
+  messy.
+
+Viewing and managing the content at different states could be improved too,
+perhaps:
+
+- Better UX for project creators and admins to view different states in advance
+- Separate fields for body content in different stages?
+
+I think it would be great if there was an sub navbar of some sorts on project
+pages for admin users and project creators that made it easy to view different
+states, and anticipated possible future self-serve editing interfaces.
+
+A big problem right now is the management of whether or not a project is 'live'
+prior to the launch date, and the need to specify a start/end time before
+anything works.
+
+### Order / Line Item State
+
+The Cart Logic order and cart item states are only a rough match for the
+actualities of Crowd Supply. States needed for things like:
+
+- Project failed
+- Payment failed, on hold
+- Payment failed, no response
+- Project suspended
+... (try to enumerate other states here)
+
+### Measurement of Delivery Dates
+
+We definitely want to be able to measure the on-time delivery rate of projects,
+and see a queue of stuff like 'overdue orders'.
+
+A 'project report card' could be good too.
+
+### Better Account Page (as in the 'My Account' page)
+
+The current page makes it very difficult to figure out your order status.
+
+
 Platform
 --------
 

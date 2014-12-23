@@ -4,7 +4,6 @@ from __future__ import (absolute_import, division, print_function,
 import urllib
 
 from pyramid.httpexceptions import HTTPNotFound, HTTPMovedPermanently
-from pyramid.renderers import render
 from pyramid.view import view_config
 from sqlalchemy.orm.exc import NoResultFound
 

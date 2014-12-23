@@ -36,7 +36,7 @@ def migrate_aliases(old_node, new_node):
         new_node.update_path(canonical_path)
 
 
-def migrate():
+def migrate(user_map):
     q = scrappy_meta.Session.query(cs_model.Creator)
     for old_creator in q:
         print("creator %s" % old_creator.name)
@@ -86,4 +86,4 @@ def main(argv=sys.argv):
 
     with transaction.manager:
         user_map = migrate_users()
-        migrate()
+        migrate(user_map)

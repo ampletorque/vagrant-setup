@@ -1,4 +1,4 @@
-from webhelpers2.html.tags import literal, _make_safe_id_component
+from webhelpers2.html.tags import _make_safe_id_component
 
 
 def prettify(name):

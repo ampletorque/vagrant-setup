@@ -2,6 +2,8 @@ import hashlib
 
 from six.moves.urllib.parse import urlencode
 
+from webhelpers2.html.tags import literal
+
 
 def grouper(n, iterable):
     """

@@ -36,7 +36,7 @@ class Provider(Node):
     email = Column(types.Unicode(255), nullable=False, default=u'')
     home_url = Column(types.String(255), nullable=True)
     # XXX
-    #mailing = make_address_columns('mailing')
+    # mailing = make_address_columns('mailing')
 
     lat = Column(types.Numeric(9, 6), nullable=True)
     lon = Column(types.Numeric(9, 6), nullable=True)

@@ -4,7 +4,7 @@ import logging
 
 from datetime import datetime, timedelta
 
-from formencode import Schema, NestedVariables, ForEach, validators
+from formencode import Schema, NestedVariables, validators
 
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound, HTTPBadRequest

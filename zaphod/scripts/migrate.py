@@ -8,9 +8,12 @@ import transaction
 from sqlalchemy import create_engine, engine_from_config
 from pyramid.paster import get_appsettings, setup_logging
 
-from scrappy import model as scrappy_model
-from crowdsupply import model as cs_model
-from scrappy.model import meta as scrappy_meta
+try:
+    from scrappy import model as scrappy_model
+    from crowdsupply import model as cs_model
+    from scrappy.model import meta as scrappy_meta
+except ImportError:
+    scrappy_meta = scrappy_model = cs_model = None
 
 from .. import model
 

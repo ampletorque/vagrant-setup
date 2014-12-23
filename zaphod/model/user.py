@@ -15,6 +15,7 @@ __all__ = ['User']
 
 
 class User(Base):
+    # FIXME Add user profile image.
     __tablename__ = 'users'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
@@ -25,6 +26,14 @@ class User(Base):
     password_reset_time = Column(types.DateTime, nullable=False,
                                  default=utils.utcnow)
     enabled = Column(types.Boolean, nullable=False, default=True)
+
+    url_path = Column(types.String(255), nullable=True)
+    timezone = Column(types.String(255), nullable=False,
+                      default='America/Los_Angeles')
+
+    twitter_usernmae = Column(types.String(255), nullable=True)
+
+    show_in_backers = Column(types.Boolean, nullable=False, default=True)
 
     @staticmethod
     def hash_password(password):

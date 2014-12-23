@@ -1,0 +1,28 @@
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
+
+from sqlalchemy import Table, Column, ForeignKey, orm
+
+from .base import Base
+from .node import Node
+
+
+project_tags = Table(
+    'project_tags',
+    Base.metadata,
+    Column('project_id', None, ForeignKey('projects.node_id'),
+           primary_key=True),
+    Column('tag_id', None, ForeignKey('tags.node_id'), primary_key=True),
+    mysql_engine='InnoDB')
+
+
+class Tag(Node):
+    __tablename__ = 'tags'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+    node_id = Column(None, ForeignKey('nodes.id'), primary_key=True)
+
+    __mapper_args__ = {'polymorphic_identity': 'Tag'}
+
+    projects = orm.relationship('Project',
+                                secondary=project_tags,
+                                backref='tags')

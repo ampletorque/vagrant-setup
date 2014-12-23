@@ -12,6 +12,10 @@ class Project(Node):
     creator_id = Column(None, ForeignKey('creators.node_id'), nullable=False)
     vimeo_id = Column(types.Integer, nullable=True)
 
+    # TO ADD:
+    # - homepage_url
+    # - open_source_url
+
     __mapper_args__ = {'polymorphic_identity': 'Project'}
 
     def generate_path(self):

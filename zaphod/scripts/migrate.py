@@ -64,6 +64,11 @@ def migrate():
             migrate_aliases(old_project, project)
 
 
+def migrate_users():
+    user_map = {}
+    return user_map
+
+
 def main(argv=sys.argv):
     if len(argv) < 2:
         usage(argv)
@@ -80,4 +85,5 @@ def main(argv=sys.argv):
     scrappy_model.init_model(old_engine, site_map={})
 
     with transaction.manager:
+        user_map = migrate_users()
         migrate()

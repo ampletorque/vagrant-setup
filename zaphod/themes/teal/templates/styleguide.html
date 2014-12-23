@@ -1,14 +1,435 @@
 <%inherit file="base.html"/>
 
+##<%namespace name="forms" file="common/forms.html"/>
+##<%namespace name="blocks" file="common/blocks.html"/>
 
-<%def name="title()">Style Guide</%def>
+
+<%def name="title()">Crowd Supply Style Guide</%def>
 
 
-<section class="section-styleguide">
+<section class="styleguide">
+  <h1 class="text-center">${self.title()}</h1>
+
   <div class="container">
     <div class="row">
-      <div class="col-lg-12">
-        <h1>${self.title()}</h1>
+      <div class="col-md-12"><hr></div>
+
+      <div class="col-md-3">
+        <h2>Photos</h2>
+      </div>
+
+      <div class="col-md-9">
+        <p>Homepage banners have special constraints, see <a href="/homepage-photo-tips">homepage photo tips</a> for details.</p>
+        <p>Project photos have the following requirements (especially strict for thumbnails):</p>
+        <ul>
+          <li>Text should not be included</li>
+          <li>No borders, 'chrome', or rendered decoration should be included</li>
+          <li>Use the highest resolution native file possible: it will be downscaled and/or cropped as appropriate by the site</li>
+        </ul>
+      </div>
+    </div>
+
+    ##<div class="row">
+    ##  <div class="col-md-12"><hr></div>
+
+    ##  <div class="col-md-3">
+    ##    <h2>Colors</h2>
+    ##  </div>
+
+    ##  <div class="col-md-9">
+    ##    <div class="styleguide-colors">
+    ##      <ul class="color-palettes theme">
+    ##        <li>
+    ##          <div class="sample c1"></div>
+    ##          <span>@black<br>Black 6 U<br>Hex: #1a2228</span>
+    ##        </li>
+    ##        <li>
+    ##          <div class="sample c2"></div>
+    ##          <span>@grayDarker<br>Black 6 U<br>Hex: #1c2228</span>
+    ##        </li>
+    ##        <li>
+    ##          <div class="sample c3"></div>
+    ##          <span>@white<br>Pure White<br>Hex: #ffffff</span>
+    ##        </li>
+    ##        <li>
+    ##          <div class="sample c4"></div>
+    ##          <span>@grayLightest<br>7541 U<br>Hex: #f7f9f9</span>
+    ##        </li>
+    ##        <li>
+    ##          <div class="sample c5"></div>
+    ##          <span>@grayLighter<br>Cool Gray 1 U<br>Hex: #e6eaeb</span>
+    ##        </li>
+    ##        <li>
+    ##          <div class="sample c6"></div>
+    ##          <span>@grayLight<br>Cool Gray 4 U<br>Hex: #b5b6b6</span>
+    ##        </li>
+    ##        <li>
+    ##          <div class="sample c7"></div>
+    ##          <span>@gray<br>430 U<br>Hex: #8a959c</span>
+    ##        </li>
+    ##        <li>
+    ##          <div class="sample c8"></div>
+    ##          <span>@cs-green<br>3262 U<br>Hex: #00b2ad</span>
+    ##        </li>
+    ##        <li>
+    ##          <div class="sample c9"></div>
+    ##          <span>@cs-dkgreen<br>3165 U<br>Hex: #1a5a68</span>
+    ##        </li>
+    ##        <li>
+    ##          <div class="sample c10"></div>
+    ##          <span>@cs-yellow<br>108 U<br>Hex: #ffdc3d</span>
+    ##        </li>
+    ##      </ul>
+    ##    </div>
+    ##  </div>
+    ##</div>
+
+    <div class="row">
+      <div class="col-md-12"><hr></div>
+
+      <div class="col-md-3">
+        <h2>Typography</h2>
+      </div>
+
+      <div class="col-md-9">
+        <h1>Header Styles (h1)</h1>
+        <h2>Header Styles (h2)</h2>
+        <h3>Header Styles (h3)</h3>
+        <h4>Header Styles (h4)</h4>
+        <h5>Header Styles (h5)</h5>
+        <h6>Header Styles (h6)</h6>
+
+        <p>Lorem ipsum dolor sit amet. Nunc pulvinar nibh at magna elementum faucibus. Aenean elementum imperdiet risus, eu semper massa dictum in. Ut vulputate dictum justo, a fringilla orci ullamcorper sit amet. Eget congue erat. Ut eros nulla, sagittis et laoreet id, mollis sed nulla. In nulla odio, fermentum eleifend dictum quis, hendrerit quis massa. Donec eu sapien non velit aliquam pellentesque. Fusce hendrerit velit nulla.</p>
+
+        <blockquote>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc pulvinar nibh at magna elementum faucibus. Aenean elementum imperdiet risus, eu semper massa dictum in. Ut vulputate dictum justo, a fringilla orci ullamcorper sit amet. Fusce ac mauris sem, eget congue erat. Ut eros nulla, sagittis et laoreet id, mollis sed nulla. In nulla odio, fermentum eleifend dictum quis, hendrerit quis massa. Donec eu sapien non velit aliquam pellentesque. Fusce hendrerit velit nulla.</p>
+          <small>John Smith</small>
+        </blockquote>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12"><hr></div>
+
+      <div class="col-md-3">
+        <h2>Lists</h2>
+      </div>
+
+      <div class="col-md-9">
+        <h3>Unordered Lists</h3>
+        <ul>
+          <li>This is a list item
+            <ul>
+              <li>This is a list item
+                <ul>
+                  <li>This is a list item</li> 
+                  <li>This is a list item</li>
+                </ul>
+              </li> 
+              <li>This is a list item</li>
+            </ul>
+          </li> 
+          <li>This is a list item</li>
+          <li>This is a list item</li>
+        </ul>
+
+        <h3>Ordered Lists</h3>
+        <ol>
+          <li>This is a list item
+            <ol>
+              <li>This is a list item
+                <ol>
+                  <li>This is a list item</li> 
+                  <li>This is a list item</li>
+                  <li>This is a list item</li>
+                </ol>
+              </li> 
+              <li>This is a list item</li>
+              <li>This is a list item</li>
+            </ol>
+          </li> 
+          <li>This is a list item</li>
+          <li>This is a list item</li>
+        </ol>
+
+        <h3>Definition Lists</h3>
+        <dl>
+          <dt>Definition Term</dt>
+          <dd>Definition description would go here</dd>
+          <dt>Definition Term</dt>
+          <dd>Definition description would go here</dd>
+          <dt>Definition Term</dt>
+          <dd>Definition description would go here</dd>
+        </dl>
+
+      </div>
+    </div>
+
+    ##<div class="row">
+    ##  <div class="col-md-12"><hr></div>
+
+    ##  <div class="col-md-3">
+    ##    <h2>Tiles</h2>
+    ##  </div>
+
+    ##  <div class="col-md-9">
+    ##    <div class="inner">
+    ##      <p>Swag put a bird on it leggings, tousled readymade skateboard ennui polaroid Austin chillwave yr fanny pack. You probably haven't heard of them dreamcatcher pour-over skateboard, plaid actually bicycle rights intelligentsia truffaut biodiesel. Iphone godard readymade jean shorts, bicycle rights butcher narwhal dreamcatcher cray pitchfork marfa chillwave YOLO. Fingerstache etsy ennui banjo, tofu biodiesel mustache 3 wolf moon. Craft beer locavore banjo forage. Tousled jean shorts brunch, banksy tofu hashtag wes anderson kogi lo-fi bushwick farm-to-table kale chips four loko cosby sweater. Cardigan hella photo booth, PBR meh ugh +1.</p>
+    ##    </div>
+    ##    <div class="inner">
+    ##      <img src="/_csdark/images/placeholder-749x200.gif" alt="">
+    ##      <p>Single-origin coffee gluten-free gentrify letterpress, blog retro gastropub odd future. Williamsburg pop-up farm-to-table pug fingerstache. Synth lomo blog sartorial chillwave freegan jean shorts pour-over tumblr umami trust fund truffaut. Lo-fi freegan shoreditch selfies ethical meggings. Raw denim hella meggings lo-fi aesthetic bicycle rights. Keytar pour-over vinyl bicycle rights. Semiotics cliche quinoa seitan, vegan tofu chillwave organic.</p>
+    ##    </div>
+
+    ##  </div>
+    ##</div>
+
+    ##<div class="row">
+    ##  <div class="col-md-12"><hr></div>
+
+    ##  <div class="col-md-3">
+    ##    <h2>Forms</h2>
+    ##  </div><!-- /fourcol -->
+
+    ##  <div class="col-md-9">
+
+    ##    <form class="form-horizontal form-wrapped">
+    ##      ${forms.ltext(renderer, 'email', label='Email Address')}
+    ##      ${forms.lpassword(renderer, 'password1', label='Password')}
+    ##      ${forms.lcheckbox(renderer, 'remember_me', label='Remember me')}
+    ##      <div class="form-actions">
+    ##        <button type="submit" class="btn btn-primary">Sign in</button>
+    ##        <button type="submit" class="btn">Reset Password</button>
+    ##      </div>
+    ##    </form>
+
+    ##    <form class="form-vertical form-wrapped">
+    ##      ${forms.ltext(renderer, 'small', size='input-small', placeholder='Small')}
+    ##      ${forms.ltext(renderer, 'default', placeholder='Default')}
+    ##      ${forms.ltext(renderer, 'xxlarge', size='input-xxlarge', placeholder='XXLarge')}
+    ##    </form>
+
+    ##    <form class="form-horizontal form-wrapped">
+    ##      <fieldset>
+    ##        <div class="control-legend">An Amazing Form</div>
+    ##        ${forms.ltext(renderer, 'input01', label='Text Input', hint='This is some short text under the group.')}
+    ##        ${forms.lcheckbox_list(renderer, [('check01', 'Checkbox Option One', False), ('check02', 'Checkbox Option Two', True), ('check03', 'Checkbox Option Three', False)], hint='This is some short text under the group.', label='Checkbox Input')}
+
+    ##        <div class="control-group error">
+    ##          <label class="control-label" for="phone">Phone</label>
+    ##          <div class="controls">
+    ##            <input type="text" name="phone" id="phone" value="555-55-1212">
+    ##            <ul class="error">
+    ##              <li>Phone Number is in incorrect format</li>
+    ##            </ul>
+    ##          </div>
+    ##        </div>
+
+    ##        ${forms.ltext(renderer, 'prefixed', 450, label='Prefixed', prefix='$', size='input-small')}
+
+    ##        ${forms.lselect(renderer, 'select01', None, range(5), prompt='Options', label='Select Input', hint='This is some short test under the group.', required=True)}
+
+    ##        ${forms.lfile(renderer, 'file01', label='File Input')}
+
+    ##        ${forms.ltextarea(renderer, 'textarea01', label='Textarea', size='input-block-level')}
+
+    ##        <div class="form-actions">
+    ##          <button type="submit" class="btn btn-primary">Save Changes</button>
+    ##          <button class="btn">Cancel</button>
+    ##          <span>This is some form advice about submissions.</span>
+    ##        </div>
+
+    ##      </fieldset>
+    ##    </form>
+    ##  </div>
+
+    ##</div>
+
+    ##<div class="row">
+    ##  <div class="col-md-12"><hr></div>
+
+    ##  <div class="col-md-3">
+    ##    <h2>Alerts</h2>
+    ##  </div>
+
+    ##  <div class="col-md-9">
+    ##    <p>Alerts will normally appear only at the top of the page, just below the header, with no whitespace.</p>
+    ##    <p>User-initiated changes to data should almost always trigger a flash of the appropriate severity.</p>
+    ##    <p>Use <code>'success'</code> to indicate a successful data change or <code>'error'</code> to indicate a failure.</p>
+    ##    <br>
+    ##    <br>
+    ##  </div>
+    ##</div>
+  </div>
+
+  ##${blocks.flash('This is a sample alert for something that was successful.', category='success')}
+  ##${blocks.flash('This is a sample alert for something that went ok.', category='info')}
+  ##${blocks.flash('This is a sample alert for something that might have been a little off.', category='warning')}
+  ##${blocks.flash('This is a sample alert for something that is really broken.', category='error')}
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12"><hr></div>
+
+      <div class="col-md-3">
+        <h2>Buttons</h2>
+      </div>
+
+      <div class="col-md-9">
+
+        <p>Button styles can be applied to anything with the .btn class applied. However, typically you'll want to apply these to only <code>&lt;a&gt;</code> and <code>&lt;button&gt;</code> elements for the best rendering.</p>
+
+        <h3>Button Colors</h3>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Button</th>
+              <th>Class</th>
+            </tr>
+          </thead>
+          <tbody>
+            % for cls in (None, 'primary', 'yellow', 'danger', 'inverse'):
+              <tr>
+                <td>
+                  <button class="btn ${'btn-%s' % cls if cls else ''}">
+                    % if cls:
+                      ${cls.capitalize()}
+                    % else:
+                      Default
+                    % endif
+                  </button>
+                </td>
+                <td>
+                  <code>btn ${'btn-%s' % cls if cls else ''}</code>
+                </td>
+              </tr>
+            % endfor
+          </tbody>
+        </table>
+
+        <h3>Button Types</h3>
+
+        <a class="btn" href="">Link</a>
+        <button class="btn" type="submit">Button</button>
+        <input class="btn" type="button" value="Input">
+        <input class="btn" type="submit" value="Submit">
+
+        <h3>Button Sizes</h3>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Button</th>
+              <th>Class</th>
+            </tr>
+          </thead>
+          <tbody>
+            % for cls in ('large', None, 'small', 'mini'):
+              <tr>
+                <td>
+                  <button class="btn btn-primary ${'btn-%s' % cls if cls else ''}">
+                    % if cls:
+                      ${cls.capitalize()} Button
+                    % else:
+                      Default Button
+                    % endif
+                  </button>
+                  <button class="btn ${'btn-%s' % cls if cls else ''}">
+                    % if cls:
+                      ${cls.capitalize()} Button
+                    % else:
+                      Default Button
+                    % endif
+                  </button>
+                </td>
+                <td>
+                  <code>btn ${'btn-%s' % cls if cls else ''}</code>
+                </td>
+              </tr>
+            % endfor
+          </tbody>
+        </table>
+
+        <h3>Disabled Buttons</h3>
+
+        <a class="btn btn-primary disabled" href="#">Link</a>
+        <button class="btn disabled" type="submit" disabled>Button</button>
+        <input class="btn btn-primary disabled" type="button" value="Input" disabled="disabled">
+        <input class="btn disabled" type="submit" value="Submit" disabled="disabled">
+
+      </div>
+
+    </div>
+
+    ##<div class="row">
+    ##  <div class="col-md-12"><hr></div>
+
+    ##  <div class="col-md-3">
+    ##    <h2>Widgets</h2>
+    ##  </div>
+
+    ##  <div class="col-md-9">
+    ##    <h3>Progress Bars</h3>
+
+    ##    <div class="row">
+    ##      <div class="col-md-6">
+    ##        <div class="progress">
+    ##          <div class="bar" style="width:60%"></div>
+    ##        </div>
+    ##        <div class="progress">
+    ##          <div class="bar" style="width:10%"></div>
+    ##        </div>
+    ##        <div class="progress">
+    ##          <div class="bar" style="width:120%"></div>
+    ##        </div>
+    ##      </div>
+    ##    </div>
+
+    ##    <h3>Tabs</h3>
+
+    ##    <ul class="section-nav">
+    ##      <li class="active"><a data-target="lorem-tab" href="#">Lorem</a></li>
+    ##      <li><a data-target="hipster-tab" href="#">Hipster</a></li>
+    ##      <li><a data-target="bluth-tab" href="#">Bluth</a></li>
+    ##    </ul>
+
+    ##    <div class="inner">
+    ##      <section id="tab-content">
+    ##        <section id="lorem-tab" class="current-tab">
+    ##          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis a turpis id nibh tincidunt congue eu vitae lacus. Curabitur aliquet congue augue id condimentum. Vivamus at sapien in nisl rhoncus bibendum id non lorem. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi tristique erat eget sapien tempor condimentum. Vestibulum velit libero, venenatis pharetra gravida sit amet, lacinia sit amet felis. Pellentesque dignissim fermentum mollis.</p>
+    ##        </section>
+    ##        <section id="hipster-tab">
+    ##          <p>Church-key american apparel next level truffaut, master cleanse direct trade intelligentsia try-hard chambray. Helvetica fanny pack organic pour-over mustache brunch butcher. Try-hard pop-up you probably haven't heard of them godard. Vegan chambray scenester, mixtape banjo intelligentsia +1 leggings godard vice wayfarers irony letterpress stumptown. Meggings 8-bit tofu aesthetic ethical ennui. Skateboard tumblr synth, banksy cosby sweater sriracha banjo gluten-free blue bottle flannel helvetica. Disrupt organic cray, semiotics cliche tonx truffaut vinyl iphone cosby sweater photo booth pug letterpress.</p>
+    ##        </section>
+    ##        <section id="bluth-tab">
+    ##          <p>Hey, look at that – you're mean sober, too. I'll buy you a hundred George Michaels that you can teach to drive! I've been in the film business for a while but I just can't seem to get one in the can. Stack the chafing dishes outside by the mailbox. I'm on the job. Why are you squeezing me with your body? It's a hug, Michael. I'm hugging you. Bob Loblaw Lobs Law Bomb. Oh Gob, you could charm the black off a telegram boy. Coo coo ca chaw. Coo coo ca chaw. Coo coo ca chaw.</p>
+    ##        </section>
+    ##      </section>
+    ##    </div>
+
+    ##  </div>
+    ##</div>
+
+      <div class="row">
+        <div class="col-md-12"><hr></div>
+
+        <div class="col-md-3">
+          <h2>Images</h2>
+        </div>
+
+        <div class="col-md-9">
+          <p>Here are the rules for images and rounded corners:</p>
+          <ul>
+            <li>An image should only have rounded corners if:
+              <ul>
+                <li>The image is a direct child of a container box with rounded corners</li>
+                <li>It is an avatar image</li>
+              </ul>
+            </li>
+            <li>Images with rounded corners should have a corner radius of 4px</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>

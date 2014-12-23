@@ -1,3 +1,5 @@
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 from pyramid_frontend.theme import Theme
 from pyramid_frontend.assets.less import LessAsset
 from pyramid_frontend.assets.requirejs import RequireJSAsset

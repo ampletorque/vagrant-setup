@@ -1,3 +1,5 @@
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 from sqlalchemy import Column, ForeignKey, types
 
 from . import utils
@@ -26,3 +28,16 @@ class Project(Node):
 
     def is_live(self):
         return True
+
+
+class ProjectUpdate(Node):
+    __tablename__ = 'project_updates'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+    node_id = Column(None, ForeignKey('nodes.id'), primary_key=True)
+    project_id = Column(None, ForeignKey('projects.node_id'), nullable=False)
+
+    __mapper_args__ = {'polymorphic_identity': 'ProjectUpdate'}
+
+    def generate_path(self):
+        project_path = self.project.canonical_path()
+        return '%s/updates/%d' % (project_path, self.id)

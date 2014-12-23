@@ -64,6 +64,31 @@ actualities of Crowd Supply. States needed for things like:
 - Project suspended
 ... (try to enumerate other states here)
 
+Here are existing payment states::
+
+    available_payment_statuses = [
+        ('unset', 'Unset'),
+        ('prefunding', 'Project is not funded yet'),
+        ('unfunded', 'Project did not meet funding goal'),
+        ('unpaid', 'Item unpaid'),
+        ('paid', 'Item paid'),
+        ('cancelled', 'Order cancelled'),
+        ('failed', 'Payment failed, awaiting resolution'),
+        ('dead', 'Payment failed, order is closed'),
+    ]
+
+Maybe we should have separate shipping / inventory tracking states::
+
+    available_shipping_statuses = [
+        ('unset', 'Unset'),
+        # XXX fill in here
+    ]
+
+### Custom Descriptors for Payments
+
+If we're designing around only Stripe, we can use a custom descriptor that's
+project-based.
+
 ### Measurement of Delivery Dates
 
 We definitely want to be able to measure the on-time delivery rate of projects,
@@ -74,6 +99,23 @@ A 'project report card' could be good too.
 ### Better Account Page (as in the 'My Account' page)
 
 The current page makes it very difficult to figure out your order status.
+
+### Production Scheduling Model
+
+- We show users the best current guess of the expected ship date for a pledge
+  level if ordered now.
+- We capture and preserve the date that was promised to an individual backer
+  for all eternity.
+- We anticipate the need for a delivery date to be moved back as more qty is
+  consumed, based on a pre-planned table.
+
+Plan:
+
+- Use a PledgeBatch table
+- On a Pledge line item, track the batch_id AND the original expected delivery
+  date. Never change the original expected delivery date.
+- Have an admin interface that lets you update the current expected delivery
+  date of the batch, and add new batches to the end of the table.
 
 
 Platform

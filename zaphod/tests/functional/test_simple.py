@@ -48,4 +48,4 @@ class TestSmoke(FunctionalBase):
 
     def test_index(self):
         resp = self.app.get('/')
-        resp.mustcontain('important')
+        resp.mustcontain('Recently')

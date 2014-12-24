@@ -4,7 +4,7 @@ import hashlib
 
 from six.moves.urllib.parse import urlencode
 
-from webhelpers2.html.tags import literal
+from webhelpers2.html.tags import _make_safe_id_component, literal
 
 
 def grouper(n, iterable):
@@ -36,3 +36,22 @@ def gravatar_url(email, size=200, default=None, rating='g',
         params['f'] = 'y'
     params = urlencode(params)
     return literal('//www.gravatar.com/avatar/%s?%s' % (hash, params))
+
+
+def prettify(name):
+    """
+    Take a string (or something that can be made into a string), replace
+    underscores with spaces, and capitalize the first letter.
+
+    >>> prettify("joe_user")
+    'Joe user'
+    >>> prettify("foo_bar_baz_quux")
+    'Foo bar baz quux'
+    >>> prettify(123)
+    '123'
+    """
+    return str(name).replace('_', ' ').capitalize()
+
+
+def make_id_component(name):
+    return _make_safe_id_component(name and name.replace('.', '_'))

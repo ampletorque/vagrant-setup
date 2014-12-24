@@ -29,6 +29,9 @@ class Project(Node):
     def is_live(self):
         return True
 
+    def is_failed(self):
+        return False
+
 
 class ProjectUpdate(Node):
     __tablename__ = 'project_updates'

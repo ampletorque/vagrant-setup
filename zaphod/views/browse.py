@@ -22,14 +22,17 @@ class ProjectListView(object):
 
     def base_q(self):
         return model.Session.query(model.Project).\
-            filter(model.Project.suspended_time == None).\
             filter(model.Project.published == True).\
-            filter(model.Project.listed == True).\
-            order_by(model.Project.gravity)
+            filter(model.Project.listed == True)
+        #return model.Session.query(model.Project).\
+        #    filter(model.Project.suspended_time == None).\
+        #    filter(model.Project.published == True).\
+        #    filter(model.Project.listed == True).\
+        #    order_by(model.Project.gravity)
 
     def render_html(self):
         q = self.base_q()
-        projects = [project for project in q.all() if not project.is_failed]
+        projects = [project for project in q.all() if not project.is_failed()]
 
         if len(projects) == 2:
             feature_count = 2

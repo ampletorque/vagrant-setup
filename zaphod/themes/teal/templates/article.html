@@ -1,0 +1,35 @@
+<%inherit file="base.html"/>
+
+
+<%def name="title()">${article.name}</%def>
+
+<section class="article">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+
+        % if article.show_heading:
+          <h1 class="text-center">${article.name}</h1>
+        % endif
+
+        ${body}
+      </div>
+    </div>
+
+    % if related_articles:
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+          <h1 class="text-center">Other Popular Articles</h1>
+          <ul>
+            % for other in related_articles:
+              <li>
+                <a href="${request.node_path(other)}">${other.name}</a>
+              </li>
+            % endfor
+          </ul>
+        </div>
+      </div>
+    % endif
+
+  </div>
+</section>

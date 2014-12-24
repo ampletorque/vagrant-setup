@@ -39,6 +39,23 @@ def migrate_aliases(old_node, new_node):
         new_node.update_path(canonical_path)
 
 
+def migrate_articles(user_map):
+    for old_article in scrappy_meta.Session.query(scrappy_model.Article):
+        print("article %s" % old_article.name)
+        article = model.Article(
+            name=old_article.name,
+            teaser=old_article.teaser,
+            body=old_article.body.text,
+            published=old_article.published,
+            listed=old_article.listed,
+            show_heading=old_article.show_heading,
+            show_article_list=old_article.show_article_list,
+            category=old_article.category,
+        )
+        model.Session.add(article)
+        migrate_aliases(old_article, article)
+
+
 def migrate_tags(user_map):
     tag_map = {}
     for old_tag in scrappy_meta.Session.query(cs_model.Tag):
@@ -115,6 +132,7 @@ def main(argv=sys.argv):
 
     with transaction.manager:
         user_map = migrate_users()
+        migrate_articles(user_map)
         tag_map = migrate_tags(user_map)
         creator_map = migrate_creators(user_map)
         project_map = migrate_projects(user_map, creator_map, tag_map)

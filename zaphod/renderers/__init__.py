@@ -3,6 +3,7 @@ from __future__ import (absolute_import, division, print_function,
 
 
 def includeme(config):
+    config.include('.article')
     config.include('.creator')
     config.include('.project')
     config.include('.update')

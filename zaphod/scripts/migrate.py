@@ -28,7 +28,7 @@ def usage(argv):
     sys.exit(1)
 
 
-def migrate_aliases(old_node, new_node):
+def migrate_aliases(settings, old_node, new_node):
     canonical_path = None
     for alias in old_node.aliases:
         print("  path: %s" % alias.path)
@@ -39,7 +39,32 @@ def migrate_aliases(old_node, new_node):
         new_node.update_path(canonical_path)
 
 
-def migrate_articles(user_map):
+def migrate_images(settings):
+    image_map = {}
+    for old_im in scrappy_meta.Session.query(scrappy_model.ImageMeta):
+        print("image %s" % old_im.name)
+        new_im = model.ImageMeta(
+            name=old_im.name,
+            alt=old_im.alt,
+            title=old_im.title,
+            original_ext=old_im.original_ext,
+            width=old_im.width,
+            height=old_im.height,
+        )
+        model.Session.add(new_im)
+        # XXX Copy the actual image path!
+        # XXX Copy image type?
+        image_map[old_im] = new_im
+    return image_map
+
+
+def migrate_image_associations(settings, image_map, old_obj, new_obj):
+    for old_im in old_obj.image_metas:
+        print("  image assoc %s" % old_im.name)
+        new_obj.image_metas.append(image_map[old_im])
+
+
+def migrate_articles(settings, user_map, image_map):
     for old_article in scrappy_meta.Session.query(scrappy_model.Article):
         print("article %s" % old_article.name)
         article = model.Article(
@@ -53,10 +78,11 @@ def migrate_articles(user_map):
             category=old_article.category,
         )
         model.Session.add(article)
-        migrate_aliases(old_article, article)
+        migrate_aliases(settings, old_article, article)
+        migrate_image_associations(settings, image_map, old_article, article)
 
 
-def migrate_tags(user_map):
+def migrate_tags(settings, user_map):
     tag_map = {}
     for old_tag in scrappy_meta.Session.query(cs_model.Tag):
         print("tag %s" % old_tag.name)
@@ -68,12 +94,12 @@ def migrate_tags(user_map):
             listed=old_tag.listed,
         )
         model.Session.add(tag)
-        migrate_aliases(old_tag, tag)
+        migrate_aliases(settings, old_tag, tag)
         tag_map[old_tag] = tag
     return tag_map
 
 
-def migrate_creators(user_map):
+def migrate_creators(settings, user_map, image_map):
     creator_map = {}
     for old_creator in scrappy_meta.Session.query(cs_model.Creator):
         print("creator %s" % old_creator.name)
@@ -85,12 +111,13 @@ def migrate_creators(user_map):
             listed=old_creator.listed,
         )
         model.Session.add(creator)
-        migrate_aliases(old_creator, creator)
+        migrate_aliases(settings, old_creator, creator)
+        migrate_image_associations(settings, image_map, old_creator, creator)
         creator_map[old_creator] = creator
     return creator_map
 
 
-def migrate_projects(user_map, creator_map, tag_map):
+def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
     project_map = {}
     for old_project in scrappy_meta.Session.query(cs_model.Project):
         print("  project %s" % old_project.name)
@@ -103,14 +130,15 @@ def migrate_projects(user_map, creator_map, tag_map):
             listed=old_project.listed,
         )
         model.Session.add(project)
-        migrate_aliases(old_project, project)
+        migrate_aliases(settings, old_project, project)
+        migrate_image_associations(settings, image_map, old_project, project)
         project_map[old_project] = project
         for old_tag in old_project.tags:
             print("    assoc tag %s" % old_tag.name)
             project.tags.add(tag_map[old_tag])
 
 
-def migrate_users():
+def migrate_users(settings):
     user_map = {}
     return user_map
 
@@ -131,9 +159,11 @@ def main(argv=sys.argv):
     scrappy_model.init_model(old_engine, site_map={})
 
     with transaction.manager:
-        user_map = migrate_users()
-        migrate_articles(user_map)
-        tag_map = migrate_tags(user_map)
-        creator_map = migrate_creators(user_map)
-        project_map = migrate_projects(user_map, creator_map, tag_map)
+        user_map = migrate_users(settings)
+        image_map = migrate_images(settings)
+        migrate_articles(settings, user_map, image_map)
+        tag_map = migrate_tags(settings, user_map)
+        creator_map = migrate_creators(settings, user_map, image_map)
+        project_map = migrate_projects(settings, user_map, creator_map,
+                                       tag_map, image_map)
         print(project_map)

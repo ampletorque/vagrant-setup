@@ -6,6 +6,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from . import utils
 from .base import Base, Session
+from .image import ImageMixin
 
 __all__ = ['Alias', 'Node']
 
@@ -29,7 +30,7 @@ class Alias(Base):
         return v
 
 
-class Node(Base):
+class Node(Base, ImageMixin):
     """
     The Node class is the superclass of all pieces of content which are served
     up at a URL. It provides an easy way to make a flat URL namespace (combined

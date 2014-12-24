@@ -4,6 +4,7 @@ from __future__ import (absolute_import, division, print_function,
 from .article import *
 from .base import *
 from .creator import *
+from .image import *
 from .node import *
 from .project import *
 from .provider import *

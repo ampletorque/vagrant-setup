@@ -1,15 +1,21 @@
 <%inherit file="base.html"/>
 
 
+<%namespace name="tiles" file="common/tiles.html"/>
+
+
 <%def name="title()">Index</%def>
 
 
-<section class="section-index">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-12">
-        <h3>If there's anything around here more important than my ego, I want it caught and shot now!</h3>
+% for title, rows in groups:
+  <section class="section-${title.lower().replace(' ', '-')}">
+    <div class="container">
+      <div class="row">
+        <h1>${title}</h1>
       </div>
+      % for row in rows:
+        ${tiles.tile_row(row)}
+      % endfor
     </div>
-  </div>
-</section>
+  </section>
+% endfor

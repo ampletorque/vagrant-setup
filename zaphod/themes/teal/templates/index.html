@@ -10,12 +10,17 @@
 % for title, rows in groups:
   <section class="section-${title.lower().replace(' ', '-')}">
     <div class="container">
+
       <div class="row">
-        <h1>${title}</h1>
+        <div class="col-lg-12">
+          <h1>${title}</h1>
+        </div>
       </div>
+
       % for row in rows:
         ${tiles.tile_row(row)}
       % endfor
+
     </div>
   </section>
 % endfor

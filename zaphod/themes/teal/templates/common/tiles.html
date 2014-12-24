@@ -6,9 +6,10 @@
     % for project in projects:
       <div class="col-sm-${cols}">
         <div class="project-tile">
+          <img src="${project.img_url(request, 'project-tile')}" alt="">
           <h3>${project.name}</h3>
           <h5>By ${project.creator.name}</h5>
-          <pre>${project.img_url(request)}</pre>
+          <p>${project.teaser}</p>
         </div>
       </div>
     % endfor

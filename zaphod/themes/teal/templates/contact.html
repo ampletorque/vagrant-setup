@@ -1,0 +1,56 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="common/forms.html" />
+
+<%def name="title()">Contact Us</%def>
+
+<section class="section-contact">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Contact Us</h1>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-5">
+        <p>You can contact us via email, phone or mail, or use this form. We will try to respond to emails or this form within 24 hours.</p>
+
+        <h3>Email</h3>
+        <p><a href="mailto:info@crowdsupply.com">info@crowdsupply.com</a></p>
+
+        <h3>Phone</h3>
+        <p>800-554-2014</p>
+
+        <h3>Office Address</h3>
+        <p>
+          Crowd Supply, Inc.<br>
+          425 SE 11th Ave<br>
+          Portland, OR 97214
+        </p>
+
+        <h3>Shipping & Receiving Address</h3>
+        <p>
+          Crowd Supply, Inc.<br>
+	  1402 NW Glisan St<br>
+          Portland, OR 97209
+        </p>
+      </div>
+      <div class="col-md-6 col-md-offset-1">
+        ${self.contact_form()}
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<%def name="contact_form()">
+  ${renderer.begin(id='contact-form', class_='form-horizontal form-wrapped')}
+    ${forms.ltext(renderer, 'email', label='Your Email', maxlength=50, size='input-block-level')}
+    ${forms.ltext(renderer, 'subject', size='input-block-level')}
+    ${forms.ltextarea(renderer, 'message', label='Your Comments', rows=6, size='input-block-level')}
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+  ${renderer.end()}
+</%def>

@@ -6,6 +6,8 @@ from pyramid.view import view_config
 from formencode import Schema, validators
 from pyramid_uniform import Form, FormRenderer
 
+from .. import mail
+
 
 class ContactForm(Schema):
     "Validates contact form submissions."
@@ -15,19 +17,18 @@ class ContactForm(Schema):
     message = validators.UnicodeString(not_empty=True)
 
 
-
 @view_config(route_name='contact', renderer='contact.html')
 def contact_view(request):
     form = Form(request, schema=ContactForm)
 
     if form.validate():
         vars = dict(
-            body=contact.message,
-            user_agent=self.request.user_agent,
+            body=form.data['message'],
+            user_agent=request.user_agent,
         )
-        send_with_admin(request, 'contact', vars,
-                        to=contact.email,
-                        reply_to=contact.email)
+        mail.send_with_admin(request, 'contact', vars,
+                             to=form.data['email'],
+                             reply_to=form.data['email'])
 
         request.flash(
             "Thank you for your inquiry. Your message has been received. "

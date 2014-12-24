@@ -7,7 +7,7 @@ from .. import model
 
 
 def get_project(name):
-   return model.Session.query(model.Project).\
+    return model.Session.query(model.Project).\
         filter_by(name=name, published=True).\
         one()
 

@@ -5,12 +5,12 @@
     %>
     % for project in projects:
       <div class="col-sm-${cols}">
-        <div class="project-tile">
-          <img src="${project.img_url(request, 'project-tile')}" alt="">
+        <a class="project-tile" href="${request.node_url(project)}">
+          ${project.img(request, 'project-tile')}
           <h3>${project.name}</h3>
           <h5>By ${project.creator.name}</h5>
           <p>${project.teaser}</p>
-        </div>
+        </a>
       </div>
     % endfor
   </div>

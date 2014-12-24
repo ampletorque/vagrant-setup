@@ -74,7 +74,7 @@ class UserView(object):
             # Set auth token.
             remember(request, user.id, user=user, remember=remember_me)
             request.flash('Login successful.', 'success')
-            raise HTTPFound(location=request.route_url('activity'))
+            raise HTTPFound(location=request.route_url('account'))
         else:
             request.flash('Email or password incorrect.', 'danger')
 

@@ -24,11 +24,11 @@ class ProjectListView(object):
         return model.Session.query(model.Project).\
             filter(model.Project.published == True).\
             filter(model.Project.listed == True)
-        #return model.Session.query(model.Project).\
-        #    filter(model.Project.suspended_time == None).\
-        #    filter(model.Project.published == True).\
-        #    filter(model.Project.listed == True).\
-        #    order_by(model.Project.gravity)
+        # return model.Session.query(model.Project).\
+        #     filter(model.Project.suspended_time == None).\
+        #     filter(model.Project.published == True).\
+        #     filter(model.Project.listed == True).\
+        #     order_by(model.Project.gravity)
 
     def render_html(self):
         q = self.base_q()

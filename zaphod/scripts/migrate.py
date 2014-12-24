@@ -118,3 +118,4 @@ def main(argv=sys.argv):
         tag_map = migrate_tags(user_map)
         creator_map = migrate_creators(user_map)
         project_map = migrate_projects(user_map, creator_map, tag_map)
+        print(project_map)

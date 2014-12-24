@@ -1,12 +1,283 @@
 <%inherit file="base.html"/>
 
 
-<%def name="title()">Launch</%def>
+<%namespace name="forms" file="common/forms.html"/>
+
+
+<%def name="title()">Launch A Project</%def>
 
 
 <section class="section-launch">
   <div class="container">
     <div class="row">
+      <div class="col-md-8 col-md-offset2">
+
+        <p class="pre-header">Crowdfunding for hardware and manufactured goods.</p>
+
+        <div class="row">
+          <div class="col-md-5 offset2">
+            <h5>Highest funding rate in the industry</h5>
+            <p>Crowd Supply campaigns reach or exceed their funding goals over half the time - more than any other crowdfundng platform.</p>
+
+            <h5>Over twice the funding as Kickstarter</h5>
+            <p>The average funded Crowd Supply campaign raises nearly three times the average funded Kickstarter campaign.</p>
+
+            <h5>100% delivery</h5>
+            <p>All of the campaigns funded on Crowd Supply have delivered product or are on track to do so.</p>
+        </div></div>
+
+        <p class="pre-header" style="margin-bottom:30px">
+          You need the right tools to succeed.<br/>
+          Crowdfunding is one tool.<br/>
+          <b>Crowd Supply is the entire toolkit.</b>
+        </p>
+
+        <table>
+          <tr>
+            <th></th>
+            <th>Crowd Supply</th>
+            <th>Everyone Else</th>
+          </tr>
+          <tr class="comparison-heading">
+            <td>Crowdfunding</td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+          </tr>
+          <tr class="comparison-heading">
+            <td>Pre-launch Preparation</td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+            <td class="tick-box"><i class="icon-remove"></i></td>
+          </tr>
+          <tr>
+            <td class="comparison">Vetting and feedback of your overall plan</td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+            <td class="tick-box"><i class="icon-remove"></i></td>
+          </tr>
+          <tr>
+            <td class="comparison">Help formulating pledge levels and pricing</td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+            <td class="tick-box"><i class="icon-remove"></i></td>
+          </tr>
+          <tr>
+            <td class="comparison">BOM and COGS optimizations</td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+            <td class="tick-box"><i class="icon-remove"></i></td>
+          </tr>
+          <tr>
+            <td class="comparison">Connections to third-party vendors and service providers</td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+            <td class="tick-box"><i class="icon-remove"></i></td>
+          </tr>
+          <tr>
+            <td class="comparison">Option of professional video and image production</td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+            <td class="tick-box"><i class="icon-remove"></i></td>
+          </tr>
+          <tr class="comparison-heading">
+            <td>Marketing</td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+            <td class="tick-box"><i class="icon-remove"></i></td>
+          </tr>
+          <tr>
+            <td class="comparison">Guidance crafting and executing a marketing plan</td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+            <td class="tick-box"><i class="icon-remove"></i></td>
+          </tr>
+          <tr>
+            <td class="comparison">Extensive, customized list of media outreach targets</td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+            <td class="tick-box"><i class="icon-remove"></i></td>
+          </tr>
+          <tr>
+            <td class="comparison">Featured in email newsletter and social media</td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+            <td class="tick-box"><i class="icon-remove"></i></td>
+          </tr>
+          <tr>
+            <td class="comparison">Option of professional PR agent</td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+            <td class="tick-box"><i class="icon-remove"></i></td>
+          </tr>
+          <tr>
+            <td class="comparison">Option of dedicated campaign manager</td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+            <td class="tick-box"><i class="icon-remove"></i></td>
+          </tr>
+          <tr class="comparison-heading">
+            <td>Post-campaign Sales</td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+            <td class="tick-box"><i class="icon-remove"></i></td>
+          </tr>
+          <tr>
+            <td class="comparison">Persistent URL for making sales</td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+            <td class="tick-box"><i class="icon-remove"></i></td>
+          </tr>
+          <tr>
+            <td class="comparison">Account creation not required to make a purchase</td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+            <td class="tick-box"><i class="icon-remove"></i></td>
+          </tr>
+          <tr>
+            <td class="comparison">Single page streamlined checkout process</td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+            <td class="tick-box"><i class="icon-remove"></i></td>
+          </tr>
+          <tr>
+            <td class="comparison">Dynamic product pricing based on configuration options</td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+            <td class="tick-box"><i class="icon-remove"></i></td>
+          </tr>
+          <tr>
+            <td class="comparison">Dynamic product ship dates based on demand</td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+            <td class="tick-box"><i class="icon-remove"></i></td>
+          </tr>
+          <tr>
+            <td class="comparison">Tier 1 customer service</td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+            <td class="tick-box"><i class="icon-remove"></i></td>
+          </tr>
+          <tr class="comparison-heading">
+            <td>Fulfillment & Logistics</td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+            <td class="tick-box"><i class="icon-remove"></i></td>
+          </tr>
+          <tr>
+            <td class="comparison">Shipping confirmation e-mails with tracking numbers</td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+            <td class="tick-box"><i class="icon-remove"></i></td>
+          </tr>
+          <tr>
+            <td class="comparison">Warehousing and inventory management</td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+            <td class="tick-box"><i class="icon-remove"></i></td>
+          </tr>
+          <tr>
+            <td class="comparison">Discounted bulk-rate freight costs</td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+            <td class="tick-box"><i class="icon-remove"></i></td>
+          </tr>
+          <tr>
+            <td class="comparison">On-demand pick-and-pack</td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+            <td class="tick-box"><i class="icon-remove"></i></td>
+          </tr>
+          <tr>
+            <td class="comparison">Accept and process returns</td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+            <td class="tick-box"><i class="icon-remove"></i></td>
+          </tr>
+          <tr>
+            <td class="comparison">Domestic and international shipping</td>
+            <td class="tick-box"><i class="icon-ok"></i></td>
+            <td class="tick-box"><i class="icon-remove"></i></td>
+          </tr>
+        </table>
+
+        <hr>
+
+        <div id="launch-icons">
+
+          <a href="how-it-works">
+            <div class="row">
+              <div class="col-md-2">
+                ##<img src="_csdark/images/launch/cropped/icons-retail.png" alt="">
+              </div>
+              <div class="col-md-6">
+                <h5>How to Use Crowd Supply</h5>
+                <p>Find out how Crowd Supply can help you at every stage of your project.</p>
+              </div>
+            </div>
+          </a>
+
+          <a href="funding">
+            <div class="row">
+              <div class="col-md-2">
+                ##<img src="_csdark/images/launch/cropped/icons-cash.png">
+              </div>
+              <div class="col-md-6">
+                <h5>Funding and Fees</h5>
+                <p>We don't make money unless you make money. Understand how to raise funds and what fees are involved.</p>
+              </div>
+            </div>
+          </a>
+
+          <a href="logistics">
+            <div class="row">
+              <div class="col-md-2">
+                ##<img src="_csdark/images/launch/cropped/icons-shipping.png" alt="">
+              </div>
+              <div class="col-md-6">
+                <h5>Fulfillment and Logistics</h5>
+                <p>From capturing orders to shipping out your product, Crowd Supply takes on the back-end logistics.</p>
+              </div>
+            </div>
+          </a>
+
+          <a href="providers">
+            <div class="row">
+              <div class="col-md-2">
+                ##<img src="_csdark/images/launch/cropped/icons-support.png" alt="">
+              </div>
+              <div class="col-md-6">
+                <h5>Service Providers Directory</h5>
+                <p>
+                  Browse our curated list of potential collaborators,
+                  from machine shops to law firms.
+                </p>
+              </div>
+            </div>
+          </a>
+
+          <a href="user-experience">
+            <div class="row">
+              <div class="col-md-2">
+                ##<img src="_csdark/images/launch/cropped/icons-tailored.png" alt="">
+              </div>
+              <div class="col-md-6">
+                <h5>Tailored User Experience</h5>
+                <p>
+                  Discover how we've refined the user experience to make
+                  your campaign as successful as it can be.
+                </p>
+              </div>
+            </div>
+          </a>
+
+          <a href="campaign-information">
+            <div class="row">
+              <div class="col-md-2">
+                ##<img src="_csdark/images/launch/cropped/icons-fulfillment.png" alt="">
+              </div>
+              <div class="col-md-6">
+                <h5>Campaign Checklist</h5>
+                <p>
+                  We'll work with you to create and refine your campaign
+                  page. Here's everything that goes into it.
+                </p>
+              </div>
+            </div>
+          </a>
+
+        </div>
+
+
+        <a name="launch-form"></a>
+        <p class="pre-header"><strong>Ready to get started?</strong> Tell us about your project.</p>
+        ${renderer.begin(class_='form-horizontal form-wrapped', style='margin-top:20px')}
+        <p style="margin:15px">We'd love to hear about your project. Please get in touch with us by e-mailing <a href="mailto:support@crowdsupply.com?subject=Project Inquiry">support@crowdsupply.com</a>, call us at 800-554-2014, or fill out the form below.</p>
+        ${forms.ltext(renderer, 'email', label="Your E-mail Address", maxlength=255, size='input-block-level')}
+        ${forms.ltext(renderer, 'name', label="Project Name", maxlength=255, size='input-block-level')}
+        ${forms.ltextarea(renderer, 'description', label="Project Description", hint="Consider including a project overview, estimate of how much money you hope to raise, and details of how that money would be used.", rows=10, cols=40, size='input-block-level')}
+        ${forms.ltext(renderer, 'goal', label='Funding Goal', prefix='$', size='input-block-level')}
+        ${forms.ltextarea(renderer, 'allocation', label='Use of Funds', size='input-block-level', hint='Describe how the money you raise will be used.', rows=5)}
+        ${forms.lselect(renderer, 'country', '', h.country_codes(), prompt='Select Country')}
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+        ${renderer.end()}
+      </div>
     </div>
   </div>
 </section>

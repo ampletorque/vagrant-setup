@@ -41,3 +41,8 @@ def send(request, template_name, vars, to=None, from_=None,
 
     mailer = get_mailer(request)
     mailer.send(msg)
+
+
+def send_with_admin(request, template_name, vars, to=None, from_=None,
+                    bcc=None, cc=None, reply_to=None):
+    raise NotImplementedError

@@ -10,11 +10,12 @@ from sqlalchemy import Column, types
 
 from . import utils
 from .base import Base
+from .image import ImageMixin
 
 __all__ = ['User']
 
 
-class User(Base):
+class User(Base, ImageMixin):
     # FIXME Add user profile image.
     __tablename__ = 'users'
     __table_args__ = {'mysql_engine': 'InnoDB'}

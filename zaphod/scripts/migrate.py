@@ -138,8 +138,28 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
             project.tags.add(tag_map[old_tag])
 
 
-def migrate_users(settings):
+def migrate_users(settings, image_map):
     user_map = {}
+    user_emails = set()
+    for old_user in scrappy_meta.Session.query(scrappy_model.Account).\
+            order_by(scrappy_model.Account.id.desc()):
+        print("  user %s" % old_user.email)
+
+        if old_user.email in user_emails:
+            email = old_user.email + '.' + str(old_user.id)
+        else:
+            email = old_user.email
+
+        user_emails.add(old_user.email)
+
+        user = model.User(
+            name=old_user.name,
+            email=email,
+            hashed_password=old_user.hashed_password,
+            enabled=old_user.enabled,
+        )
+        model.Session.add(user)
+        migrate_image_associations(settings, image_map, old_user, user)
     return user_map
 
 
@@ -159,8 +179,8 @@ def main(argv=sys.argv):
     scrappy_model.init_model(old_engine, site_map={})
 
     with transaction.manager:
-        user_map = migrate_users(settings)
         image_map = migrate_images(settings)
+        user_map = migrate_users(settings, image_map)
         migrate_articles(settings, user_map, image_map)
         tag_map = migrate_tags(settings, user_map)
         creator_map = migrate_creators(settings, user_map, image_map)

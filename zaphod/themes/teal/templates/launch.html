@@ -10,12 +10,12 @@
 <section class="section-launch">
   <div class="container">
     <div class="row">
-      <div class="col-md-8 col-md-offset2">
+      <div class="col-md-8 col-md-offset-2">
 
         <p class="pre-header">Crowdfunding for hardware and manufactured goods.</p>
 
         <div class="row">
-          <div class="col-md-5 offset2">
+          <div class="col-md-5 offset-2">
             <h5>Highest funding rate in the industry</h5>
             <p>Crowd Supply campaigns reach or exceed their funding goals over half the time - more than any other crowdfundng platform.</p>
 
@@ -26,7 +26,7 @@
             <p>All of the campaigns funded on Crowd Supply have delivered product or are on track to do so.</p>
         </div></div>
 
-        <p class="pre-header" style="margin-bottom:30px">
+        <p class="pre-header">
           You need the right tools to succeed.<br/>
           Crowdfunding is one tool.<br/>
           <b>Crowd Supply is the entire toolkit.</b>
@@ -265,17 +265,17 @@
 
         <a name="launch-form"></a>
         <p class="pre-header"><strong>Ready to get started?</strong> Tell us about your project.</p>
-        ${renderer.begin(class_='form-horizontal form-wrapped', style='margin-top:20px')}
-        <p style="margin:15px">We'd love to hear about your project. Please get in touch with us by e-mailing <a href="mailto:support@crowdsupply.com?subject=Project Inquiry">support@crowdsupply.com</a>, call us at 800-554-2014, or fill out the form below.</p>
-        ${forms.ltext(renderer, 'email', label="Your E-mail Address", maxlength=255, size='input-block-level')}
-        ${forms.ltext(renderer, 'name', label="Project Name", maxlength=255, size='input-block-level')}
-        ${forms.ltextarea(renderer, 'description', label="Project Description", hint="Consider including a project overview, estimate of how much money you hope to raise, and details of how that money would be used.", rows=10, cols=40, size='input-block-level')}
-        ${forms.ltext(renderer, 'goal', label='Funding Goal', prefix='$', size='input-block-level')}
-        ${forms.ltextarea(renderer, 'allocation', label='Use of Funds', size='input-block-level', hint='Describe how the money you raise will be used.', rows=5)}
-        ${forms.lselect(renderer, 'country', '', h.country_codes(), prompt='Select Country')}
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary">Submit</button>
-        </div>
+        ${renderer.begin(class_='form-horizontal form-wrapped')}
+          <p>We'd love to hear about your project. Please get in touch with us by e-mailing <a href="mailto:support@crowdsupply.com?subject=Project Inquiry">support@crowdsupply.com</a>, call us at 800-554-2014, or fill out the form below.</p>
+          ${forms.ltext(renderer, 'email', label="Your E-mail Address", maxlength=255, size='input-block-level')}
+          ${forms.ltext(renderer, 'name', label="Project Name", maxlength=255, size='input-block-level')}
+          ${forms.ltextarea(renderer, 'description', label="Project Description", hint="Consider including a project overview, estimate of how much money you hope to raise, and details of how that money would be used.", rows=10, cols=40, size='input-block-level')}
+          ${forms.ltext(renderer, 'goal', label='Funding Goal', prefix='$', size='input-block-level')}
+          ${forms.ltextarea(renderer, 'allocation', label='Use of Funds', size='input-block-level', hint='Describe how the money you raise will be used.', rows=5)}
+          ${forms.lselect(renderer, 'country', '', h.country_codes(), prompt='Select Country')}
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
         ${renderer.end()}
       </div>
     </div>

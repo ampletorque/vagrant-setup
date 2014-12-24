@@ -1,0 +1,106 @@
+<%inherit file="base.html"/>
+
+
+<%def name="title()">${provider.name}</%def>
+
+
+<%def name="address(a, phone=False)">
+  % if a.first_name or a.last_name:
+    ${a.first_name} ${a.last_name}<br>
+  % endif
+  % if a.company:
+    ${a.company}<br>
+  % endif
+  % if a.address1:
+    ${a.address1}<br>
+  % endif
+  % if a.address2:
+    ${a.address2}<br>
+  % endif
+  % if a.city:
+    ${a.city},
+  % endif
+  ${a.state} ${a.postal_code}
+  % if a.country != 'us':
+    <br>${a.country_name}
+  % endif
+  % if phone and a.phone:
+    <br>${a.phone}
+  % endif
+</%def>
+
+
+<section class="section-provider-map">
+  ##<div data-address="${provider.mailing.inline}" id="google-map"></div>
+</section>
+
+
+<section class="section-provider-info">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <div class="provider-top">
+          <div class="pull-right tag-list">
+            <h3>See More</h3>
+            % for pt in provider.types:
+              <h3>
+                <i class="icon-tag"></i>&nbsp;
+                <a href="${request.node_url(pt)}">${pt.plural_name}</a>
+              </h3>
+            % endfor
+            <h3>
+              <a href="${request.route_path('providers')}">Back to Index</a>
+            </h3>
+          </div>
+          <h1>${provider.name}</h1>
+        </div>
+
+        ${request.render_content(provider, provider.body)}
+        <hr>
+      </div>
+    </div>
+    <div class="row provider-metadata">
+      <div class="col-md-4 col-md-offset-1 provider-metadata-left">
+        % if provider.email:
+          <p>
+            <strong>Email</strong><br>
+            <a href="mailto:${provider.email}">${provider.email}</a>
+          </p>
+        % endif
+        ##% if provider.mailing.phone:
+        ##  <p>
+        ##    <strong>Phone</strong><br>
+        ##    ${provider.mailing.phone}
+        ##  </p>
+        ##% endif
+        % if provider.home_url:
+          <p>
+            <strong>Website</strong><br>
+            <a href="${provider.home_url}">${h.display_url(provider.home_url)}</a>
+          </p>
+        % endif
+      </div>
+      <div class="col-md-2 provider-metadata-center">
+        % if provider.image_metas:
+          ${provider.img(request, 'creator-logo')}
+        % endif
+      </div>
+      <div class="col-md-4 provider-metadata-right">
+        ##% if provider.mailing.city:
+        ##  <p>
+        ##    <strong>Address</strong><br>
+        ##    ${self.address(provider.mailing)}
+        ##  </p>
+        ##% endif
+      </div>
+    </div>
+  </div>
+</section>
+
+##% for credit in provider.credits:
+##  <p>credit on ${credit.project}</p>
+##% endfor
+##
+##% for pt in provider.types:
+##  <p>type ${pt.name}</p>
+##% endfor

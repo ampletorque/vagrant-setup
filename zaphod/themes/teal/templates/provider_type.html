@@ -1,0 +1,35 @@
+<%inherit file="base.html"/>
+
+
+<%namespace name="provider_tiles" file="common/provider_tiles.html"/>
+
+
+<%def name="title()">${provider_type.name}</%def>
+
+
+<section class="provider-type-info">
+  <div class="container">
+    <div class="row">
+      <div class="span10 offset1">
+        <ul class="breadcrumb">
+          <li>
+            <a href="${request.route_path('providers')}">
+              <i class="icon-arrow-left"></i> Service Provider Index
+            </a>
+          </li>
+        </ul>
+
+        <h1>${provider_type.plural_name}</h1>
+        ${request.render_content(provider_type, provider_type.body)}
+
+        % if providers:
+          % for provider in providers:
+            ${provider_tiles.tile(provider)}
+          % endfor
+        % else:
+          <p>No providers found.</p>
+        % endif
+      </div>
+    </div>
+  </div>
+</section>

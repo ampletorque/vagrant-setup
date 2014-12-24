@@ -14,6 +14,7 @@ def includeme(config):
     config.add_route('about', '/about')
     config.add_route('styleguide', '/styleguide')
     config.add_route('subscribe', '/subscribe')
+    config.add_route('providers', '/providers')
 
     config.add_route('cart', '/cart')
 

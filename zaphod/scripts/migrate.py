@@ -163,6 +163,43 @@ def migrate_users(settings, image_map):
     return user_map
 
 
+def migrate_provider_types(settings, user_map, image_map):
+    provider_type_map = {}
+    for old_provider_type in \
+            scrappy_meta.Session.query(cs_model.ProviderType):
+        print("  provider type %s" % old_provider_type.name)
+        provider_type = model.ProviderType(
+            name=old_provider_type.name,
+            teaser=old_provider_type.teaser,
+            body=old_provider_type.body.text,
+            published=old_provider_type.published,
+            listed=old_provider_type.listed,
+        )
+        model.Session.add(provider_type)
+        migrate_aliases(settings, old_provider_type, provider_type)
+        migrate_image_associations(settings, image_map,
+                                   old_provider_type, provider_type)
+        provider_type_map[old_provider_type] = provider_type
+    return provider_type_map
+
+
+def migrate_providers(settings, user_map, image_map, provider_type_map):
+    for old_provider in scrappy_meta.Session.query(cs_model.Provider):
+        print("  provider %s" % old_provider.name)
+        provider = model.Provider(
+            name=old_provider.name,
+            teaser=old_provider.teaser,
+            body=old_provider.body.text,
+            published=old_provider.published,
+            listed=old_provider.listed,
+        )
+        model.Session.add(provider)
+        for old_type in old_provider.types:
+            provider.types.add(provider_type_map[old_type])
+        migrate_aliases(settings, old_provider, provider)
+        migrate_image_associations(settings, image_map, old_provider, provider)
+
+
 def main(argv=sys.argv):
     if len(argv) < 2:
         usage(argv)
@@ -181,6 +218,11 @@ def main(argv=sys.argv):
     with transaction.manager:
         image_map = migrate_images(settings)
         user_map = migrate_users(settings, image_map)
+
+        provider_type_map = migrate_provider_types(settings, user_map,
+                                                   image_map)
+        migrate_providers(settings, user_map, image_map, provider_type_map)
+
         migrate_articles(settings, user_map, image_map)
         tag_map = migrate_tags(settings, user_map)
         creator_map = migrate_creators(settings, user_map, image_map)

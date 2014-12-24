@@ -28,6 +28,11 @@ class ProviderType(Node):
     def generate_path(self):
         return 'providers/' + utils.to_url_name(self.name)
 
+    @property
+    def plural_name(self):
+        # XXX
+        return self.name
+
 
 class Provider(Node):
     __tablename__ = 'providers'
@@ -45,6 +50,7 @@ class Provider(Node):
 
     types = orm.relationship('ProviderType',
                              secondary=provider_type_assoc,
+                             collection_class=set,
                              backref='providers')
 
     def generate_path(self, site_id):

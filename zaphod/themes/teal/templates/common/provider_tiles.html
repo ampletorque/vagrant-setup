@@ -1,0 +1,30 @@
+<%def name="tile(provider)">
+  <div class="provider-tile">
+    <div class="row">
+
+      <div class="col-md-2">
+        % if provider.image_metas:
+          ${provider.img(request, 'creator-logo')}
+        % endif
+      </div>
+
+      <div class="col-md-8">
+        <p class="pull-right">
+          ##% if provider.mailing.city:
+          ##  % if provider.mailing.state:
+          ##    ${provider.mailing.city}, ${provider.mailing.state}
+          ##  % elif provider.mailing.country:
+          ##    ${provider.mailing.city}, ${provider.mailing.country.upper()}
+          ##  % endif
+          ##% endif
+          ##<a href="${provider.home_url}">${h.display_url(provider.home_url)}</a>
+        </p>
+        <h4>
+          <a href="${request.node_url(provider)}">${provider.name}</a>
+        </h4>
+        ## FIXME
+        ##<p>${h.truncate(h.strip_tags(request.render_content(provider, provider.body)), 300)}</p>
+      </div>
+    </div>
+  </div>
+</%def>

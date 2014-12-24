@@ -12,7 +12,7 @@
           <h1 class="text-center">${article.name}</h1>
         % endif
 
-        ${body}
+        ${request.render_content(article, article.body)}
       </div>
     </div>
 

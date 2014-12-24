@@ -1,5 +1,8 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
+
+import markdown
+
 from pyramid.request import Request as BaseRequest
 from pyramid.decorator import reify
 
@@ -42,3 +45,7 @@ class Request(BaseRequest):
         """
         path = obj.canonical_path(suffix=suffix)
         return self.route_url('node', path=path, **kw)
+
+    def render_content(self, obj, body):
+        # XXX Make this more featureful.
+        return markdown.markdown(body)

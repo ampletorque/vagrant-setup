@@ -47,10 +47,10 @@ class TealTheme(Theme):
         #     crop_whitespace=True, pad=True,
         #     extension='png'),
 
-        # FilterChain(
-        #     'creator-logo', width=140, height=140,
-        #     crop_whitespace=True, pad=True,
-        #     extension='png'),
+        FilterChain(
+            'creator-logo', width=140, height=140,
+            crop_whitespace=True, pad=True,
+            extension='png'),
 
         # FilterChain(
         #     'account-avatar', width=120, height=120,

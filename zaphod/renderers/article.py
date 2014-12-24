@@ -19,13 +19,9 @@ def article_renderer(article, system):
     else:
         related_articles = []
 
-    # XXX This should do more sophisticated rendering and be extracted.
-    body = literal(markdown.markdown(article.body))
-
     return render('article.html', {
         'article': article,
         'related_articles': related_articles,
-        'body': body,
     }, request)
 
 

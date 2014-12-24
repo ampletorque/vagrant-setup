@@ -1,0 +1,62 @@
+<%inherit file="base.html"/>
+
+
+<%namespace name="provider_tiles" file="common/provider_tiles.html"/>
+
+
+<%def name="title()">Service Provider Index</%def>
+
+
+<section class="section-provider-type-list">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <h1>Service Provider Index</h1>
+
+        <p>The right partners can make or break your crowdfunding campaign. Here you can browse through service providers that have interacted with Crowd Supply in some way.</p>
+
+        <ul>
+          % for provider_type in provider_types:
+            <li>
+              <a href="${request.node_url(provider_type)}">
+                ${provider_type.plural_name}
+              </a>
+            </li>
+          % endfor
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section-provider-recent-list">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <h3>Recently Added</h3>
+
+        <p>New service providers are listed every day. Check out these recent additions:</p>
+
+        % for provider in providers:
+          ${provider_tiles.tile(provider)}
+        % endfor
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section-ready-to-launch">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Ready to Launch?</h1>
+        <h3>
+          <a class="btn btn-primary btn-large" href="${request.route_path('launch', _anchor='launch-form')}">Tell us about your project.</a>
+        </h3>
+      </div>
+    </div>
+  </div>
+</section>

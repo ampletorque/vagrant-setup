@@ -25,4 +25,6 @@ class Tag(Node):
 
     projects = orm.relationship('Project',
                                 secondary=project_tags,
-                                backref='tags')
+                                collection_class=set,
+                                backref=orm.backref('tags',
+                                                    collection_class=set))

@@ -1,0 +1,15 @@
+<%def name="tile_row(projects)">
+  <div class="row">
+    <%
+      cols = 6 if len(projects) == 2 else 4
+    %>
+    % for project in projects:
+      <div class="col-sm-${cols}">
+        <div class="project-tile">
+          <h3>${project.name}</h3>
+          <h5>By ${project.creator.name}</h5>
+        </div>
+      </div>
+    % endfor
+  </div>
+</%def>

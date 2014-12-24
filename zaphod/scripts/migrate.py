@@ -39,9 +39,26 @@ def migrate_aliases(old_node, new_node):
         new_node.update_path(canonical_path)
 
 
-def migrate(user_map):
-    q = scrappy_meta.Session.query(cs_model.Creator)
-    for old_creator in q:
+def migrate_tags(user_map):
+    tag_map = {}
+    for old_tag in scrappy_meta.Session.query(cs_model.Tag):
+        print("tag %s" % old_tag.name)
+        tag = model.Tag(
+            name=old_tag.name,
+            teaser=old_tag.name,
+            body=old_tag.body.text,
+            published=old_tag.published,
+            listed=old_tag.listed,
+        )
+        model.Session.add(tag)
+        migrate_aliases(old_tag, tag)
+        tag_map[old_tag] = tag
+    return tag_map
+
+
+def migrate_creators(user_map):
+    creator_map = {}
+    for old_creator in scrappy_meta.Session.query(cs_model.Creator):
         print("creator %s" % old_creator.name)
         creator = model.Creator(
             name=old_creator.name,
@@ -52,19 +69,28 @@ def migrate(user_map):
         )
         model.Session.add(creator)
         migrate_aliases(old_creator, creator)
+        creator_map[old_creator] = creator
+    return creator_map
 
-        for old_project in old_creator.projects:
-            print("  project %s" % old_project.name)
-            project = model.Project(
-                creator=creator,
-                name=old_project.name,
-                teaser=old_project.teaser,
-                body=old_project.body.text,
-                published=old_project.published,
-                listed=old_project.listed,
-            )
-            model.Session.add(project)
-            migrate_aliases(old_project, project)
+
+def migrate_projects(user_map, creator_map, tag_map):
+    project_map = {}
+    for old_project in scrappy_meta.Session.query(cs_model.Project):
+        print("  project %s" % old_project.name)
+        project = model.Project(
+            creator=creator_map[old_project.creator],
+            name=old_project.name,
+            teaser=old_project.teaser,
+            body=old_project.body.text,
+            published=old_project.published,
+            listed=old_project.listed,
+        )
+        model.Session.add(project)
+        migrate_aliases(old_project, project)
+        project_map[old_project] = project
+        for old_tag in old_project.tags:
+            print("    assoc tag %s" % old_tag.name)
+            project.tags.add(tag_map[old_tag])
 
 
 def migrate_users():
@@ -89,4 +115,6 @@ def main(argv=sys.argv):
 
     with transaction.manager:
         user_map = migrate_users()
-        migrate(user_map)
+        tag_map = migrate_tags(user_map)
+        creator_map = migrate_creators(user_map)
+        project_map = migrate_projects(user_map, creator_map, tag_map)

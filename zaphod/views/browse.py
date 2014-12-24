@@ -39,7 +39,12 @@ class ProjectListView(object):
         else:
             feature_count = self.feature_count
 
+        browse_tags = model.Session.query(model.Tag).\
+            filter_by(published=True, listed=True).\
+            order_by(model.Tag.name)
+
         data = {
+            'browse_tags': browse_tags,
             'projects': projects,
             'feature_count': feature_count,
             'stage': self.stage,

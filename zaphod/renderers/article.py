@@ -1,10 +1,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import markdown
-
 from pyramid.renderers import render
-from webhelpers2.html.tags import literal
 
 from .. import model
 

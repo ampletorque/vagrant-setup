@@ -1,4 +1,56 @@
-<%inherit file="../base.html"/>
+<%namespace name="header" file="/common/header.html"/>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>${self.title()} | Crowd Supply Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="icon" href="/_teal/images/favicon.ico">
+
+  <!--[if lt IE 9]>
+    <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  ${request.asset_tag('main-less')}
+
+  <script type="text/javascript" src="//use.typekit.net/yne8zlt.js"></script>
+  <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+
+  ${self.additional_head()}
+</head>
+<body>
+  ${header.header()}
+  ${self.tabs()}
+  ${next.body()}
+  ${request.asset_tag('main-js')}
+  ${self.additional_footer()}
+</body>
+</html>
 
 
-${next.body()}
+<%def name="title()"></%def>
+<%def name="additional_head()"></%def>
+<%def name="additional_footer()"></%def>
+
+
+<%def name="tab(label, path)">
+  <div class="col-md-4 col-lg-2">
+    <a href="${path}">${label}</a>
+  </div>
+</%def>
+
+
+<%def name="tabs()">
+  <section class="section-admin-tabs">
+    <div class="container">
+      <div class="row">
+        ${self.tab('Dashboard', '#')}
+        ${self.tab('Orders', '#')}
+        ${self.tab('Vendor Orders', '#')}
+        ${self.tab('Users', '#')}
+        ${self.tab('Leads', '#')}
+        ${self.tab('Content', '#')}
+      </div>
+    </div>
+  </section>
+</%def>

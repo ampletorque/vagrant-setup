@@ -1,0 +1,48 @@
+<%def name="email_signup()">
+  <form method="post" action="${request.route_path('subscribe')}" id="email-signup-form" class="form-inline">
+    <div>
+      ${h.text('email', maxlength=320, placeholder='email@example.com', class_='input-large input-tall', type='email', id='signup-email')}
+      ${h.hidden('source', 'signup')}
+      <button type="submit" class="btn btn-inverse btn-large">Subscribe</button>
+    </div>
+  </form>
+</%def>
+
+
+<%def name="footer()">
+  <section class="section-email-signup">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <h4>Subscribe to receive the Crowd Supply weekly newsletter, highlighting the latest creators and projects:</h4>
+          ${self.email_signup()}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 footer-col-email">
+          <h5>Email</h5>
+          <a href="mailto:info@crowdsupply.com">info@crowdsupply.com</a>
+        </div>
+        <div class="col-md-6 footer-col-follow">
+          <h5>Follow Us</h5>
+          <a href="http://twitter.com/crowd_supply">Twitter</a><br>
+          <a href="http://www.facebook.com/crowdsupply">Facebook</a><br>
+          <a href="http://crowdsupply.tumblr.com">Tumblr</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer class="footer">
+    <div class="container">
+      <ul>
+        <li><a href="/shipping">Shipping</a></li>
+        <li><a href="/returns">Returns</a></li>
+        <li><a href="/terms-of-use">Terms of Use</a></li>
+        <li><a href="/privacy-policy">Privacy Policy</a></li>
+        <li><a href="${request.route_path('contact')}">Contact</a></li>
+        <li><a href="/press">Press</a></li>
+        <li><a href="/jobs">Jobs</a></li>
+      </ul>
+    </div>
+  </footer>
+</%def>

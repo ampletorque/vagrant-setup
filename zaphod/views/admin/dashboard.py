@@ -4,7 +4,7 @@ from __future__ import (absolute_import, division, print_function,
 from pyramid.view import view_config
 
 
-@view_config(route_name='admin', renderer='admin/index.html',
+@view_config(route_name='admin:dashboard', renderer='admin/dashboard.html',
              permission='authenticated')
-def index_view(request):
+def dashboard_view(request):
     return {}

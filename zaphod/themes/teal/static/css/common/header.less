@@ -1,0 +1,40 @@
+//@navbar-cs-height: 57px;
+@navbar-cs-brand-width: 218px;
+@navbar-cs-brand-height: 26px;
+
+.navbar-cs {
+    background-color: @cs-dark;
+
+    .navbar-logo {
+        // image path is relative to document, not this file
+        .at2x('/_teal/images/crowd-supply-logo-black.png', @navbar-cs-brand-width, @navbar-cs-brand-height);
+        .image-replace;
+        background-repeat: no-repeat;
+        background-position: left center;
+        height: @navbar-cs-brand-height;
+        width: @navbar-cs-brand-width;
+    }
+
+
+    .nav > li > a {
+        color: @cs-white;
+        font-size: 15px;
+        //line-height: 30px;
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-shadow: none;
+            -webkit-font-smoothing: antialiased;
+    }
+
+    .navbar-form-search {
+        input[type=text] {
+            color: @cs-white;
+            background-color: @gray-darker;
+        }
+    }
+}
+
+@media (min-width: @screen-sm-min) {
+
+}

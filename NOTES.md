@@ -96,6 +96,14 @@ and see a queue of stuff like 'overdue orders'.
 
 A 'project report card' could be good too.
 
+### User / Account Handling
+
+Prevent accounts from being created with duplicate email addresses, with a unique constraint on User.email. If an order is placed by a non-logged in user with an email address that is not 'taken', create an account for that email. If the email address is already taken, do not associate the order with an account. If the email is not taken, create an account for that email/order.
+
+In a logged-in user's account page, show a form which allows associating an orphan order by order ID and postal code.
+
+If possible, provide alternate means of associating orders easily, but think very carefully about the security implications of doing so.
+
 ### Better Account Page (as in the 'My Account' page)
 
 The current page makes it very difficult to figure out your order status.
@@ -118,6 +126,29 @@ Plan:
   date of the batch, and add new batches to the end of the table.
 
 
+Admin Interface
+---------------
+
+### Tabs
+
+- Dashboard (default)
+    - # of active crowdfunding projects (% for all, and possibly red/green
+      projections)
+    - $ backed for trailing days
+- Orders
+- Users
+- Leads (??)
+- Vendor Orders
+- Content
+    - Articles
+    - Creators
+    - Projects
+    - Updates
+    - Tags
+    - Providers
+    - Provider Types
+
+
 Platform
 --------
 
@@ -131,6 +162,7 @@ Platform
 - pyramid_cron for tasks
 - pyramid_mailer for email
 - alembic
+
 
 Webserver
 ---------

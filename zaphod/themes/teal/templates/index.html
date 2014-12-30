@@ -7,6 +7,16 @@
 <%def name="title()">Index</%def>
 
 
+<section class="section-hero">
+  <div class="cs-hero-quote">
+    <h1>Our projects raise an average of $43,600, over twice as much as Kickstarter.</h1>
+    <p><a href="/launch">Find out why.</a></p>
+    <a class="pull-right btn btn-primary" href="/launch">Launch Your Project</a>
+    <p class="hidden-phone">Your next big idea starts here.</p>
+  </div>
+</section>
+
+
 % for title, rows in groups:
   <section class="section-${title.lower().replace(' ', '-')}">
     <div class="container">

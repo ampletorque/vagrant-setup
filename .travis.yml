@@ -14,7 +14,7 @@ install:
   - "pip install webtest mock coverage nose-cover3 flake8 --use-mirrors"
   - "pip install -e . --use-mirrors"
 
-before_script: "flake8 --ignore=F403,E711 zaphod"
+before_script: "flake8"
 
 script:  "nosetests"
 

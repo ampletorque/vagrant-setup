@@ -6,6 +6,8 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.ext.orderinglist import ordering_list
 
+import six
+
 from . import utils
 from .base import Base
 
@@ -20,9 +22,13 @@ class ImageMixin(object):
             return
 
         table_name = cls.__tablename__
+        if six.PY3:
+            type_name = cls.__name__ + 'ImageAssociation'
+        else:
+            type_name = cls.__name__ + b'ImageAssociation'
 
         ImageAssociation = type(
-            b"%sImageAssociation" % cls.__name__,
+            type_name,
             (Base,),
             dict(__tablename__='%s_image_metas' % table_name,
                  __table_args__={'mysql_engine': 'InnoDB'},

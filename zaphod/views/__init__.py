@@ -17,6 +17,14 @@ def includeme(config):
     config.add_route('subscribe', '/subscribe')
     config.add_route('providers', '/providers')
 
+    config.add_route('questions', '/questions')
+    # XXX Include these?
+    # config.add_route('how', '/how-it-works')
+    # config.add_route('logistics', '/logistics')
+    # config.add_route('funding', '/funding')
+    # config.add_route('campaign_information', '/campaign-information')
+    # config.add_route('user_experience', '/user-experience')
+
     config.add_route('cart', '/cart')
 
     config.add_route('browse', '/browse')
@@ -29,6 +37,9 @@ def includeme(config):
     config.include('.browse')
 
     config.add_route('creators', '/creators')
+
+    config.add_route('ask_question', '/ask-question/{id}')
+    config.add_route('remind_me', '/remind-me/{id}')
 
     # User scaffolding routes
     config.add_route('login', '/login')

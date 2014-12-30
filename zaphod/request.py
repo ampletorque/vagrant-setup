@@ -3,6 +3,7 @@ from __future__ import (absolute_import, division, print_function,
 
 import markdown
 
+from webhelpers2.html.tags import literal
 from pyramid.request import Request as BaseRequest
 from pyramid.decorator import reify
 
@@ -48,4 +49,4 @@ class Request(BaseRequest):
 
     def render_content(self, obj, body):
         # XXX Make this more featureful.
-        return markdown.markdown(body)
+        return literal(markdown.markdown(body))

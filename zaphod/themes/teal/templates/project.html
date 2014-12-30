@@ -1,15 +1,29 @@
-<%inherit file="base.html"/>
+<%inherit file="project_base.html"/>
+
+
+<%namespace name="tiles" file="common/tiles.html"/>
 
 
 <%def name="title()">${project.name}</%def>
 
+% if project.vimeo_id:
+  ${blocks.vimeo_embed(project.vimeo_id)}
+% else:
+  ${project.img(request, 'project-tile')}
+% endif
 
-<section class="section-project">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-12">
-        <h1>${project.name}</h1>
-      </div>
-    </div>
-  </div>
-</section>
+
+<div class="project-block">
+  ## XXX Remind me form
+  ${request.render_content(project, project.body)}
+</div>
+
+
+<div class="project-block">
+  <p>Have a question not answered in the description above or in the <a href="#">Updates</a>?</p>
+  <p>
+    <a class="btn btn-primary" href="${request.route_path('ask_question', id=project.id)}">Ask ${project.creator.name} a Question</a>
+    or
+    <a href="${request.route_path('questions')}">Browse Crowd Supply Questions &amp; Answers</a>
+  </p>
+</div>

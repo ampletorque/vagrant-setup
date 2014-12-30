@@ -7,7 +7,7 @@ from pyramid_frontend.theme import Theme
 from pyramid_frontend.assets.less import LessAsset
 from pyramid_frontend.assets.requirejs import RequireJSAsset
 
-# from .imagefilters import CreatorProfileFilter
+from .imagefilters import CreatorProfileFilter
 
 
 class TealTheme(Theme):
@@ -57,9 +57,9 @@ class TealTheme(Theme):
         #     crop=True, pad=True,
         #     extension='png'),
 
-        # FilterChain(
-        #     'project-body', width=749, extension='jpg',
-        #     quality=85),
+        FilterChain(
+            'project-body', width=749, extension='jpg',
+            quality=85),
 
         FilterChain(
             'project-tile', width=749, height=421,
@@ -75,10 +75,10 @@ class TealTheme(Theme):
         #     crop_whitespace=True, pad=True, crop='nonwhite',
         #     extension='jpg', quality=85),
 
-        # FilterChain(
-        #     'creator-profile', width=200, height=140,
-        #     filters=[CreatorProfileFilter()],
-        #     pad=True, extension='png'),
+        FilterChain(
+            'creator-profile', width=200, height=140,
+            filters=[CreatorProfileFilter()],
+            pad=True, extension='png'),
 
         # FilterChain(
         #     'project-avatar', width=72, height=72,

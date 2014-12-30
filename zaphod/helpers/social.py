@@ -1,7 +1,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from urllib import urlencode
+from six.moves.urllib.parse import urlencode
 
 from webhelpers2.html import HTML, tags
 

@@ -1,7 +1,7 @@
 Zaphod - The Crowd Supply Platform
 ==================================
 
-Scott Torborg, Joshua Lifton
+Scott Torborg - scott.torborg@crowdsupply.com, Joshua Lifton - joshua.lifton@crowdsupply.com
 
 
 Introduction
@@ -22,6 +22,16 @@ Code and Interface Style Guides
     :glob:
 
     style-guides/*
+
+
+Foundation
+==========
+
+.. toctree::
+    :maxdepth: 2
+    :glob:
+
+    foundation/*
 
 
 Data Model

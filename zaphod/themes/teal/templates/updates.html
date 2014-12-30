@@ -1,0 +1,20 @@
+<%inherit file="project_base.html"/>
+
+
+<%def name="title()">Updates from ${project.name}</%def>
+
+
+<%def name="additional_head()"></%def>
+
+
+<div class="project-block">
+  % if not project.published_updates:
+    <p>There are no updates at this time, check back soon.</p>
+  % endif
+  % for update in project.published_updates:
+    % if not loop.first:
+      <hr>
+    % endif
+    ${self.project_update(update)}
+  % endfor
+</div>

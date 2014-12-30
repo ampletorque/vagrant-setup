@@ -138,6 +138,19 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
         for old_tag in old_project.tags:
             print("    assoc tag %s" % old_tag.name)
             project.tags.add(tag_map[old_tag])
+        for old_update in old_project.updates:
+            print("    update %s" % old_update.name)
+            update = model.ProjectUpdate(
+                project=project,
+                name=old_update.name,
+                teaser=old_update.teaser,
+                body=old_update.body.text,
+                published=old_update.published,
+                listed=old_update.listed,
+            )
+            model.Session.add(update)
+            migrate_aliases(settings, old_update, update)
+            migrate_image_associations(settings, image_map, old_update, update)
 
 
 def migrate_users(settings, image_map):

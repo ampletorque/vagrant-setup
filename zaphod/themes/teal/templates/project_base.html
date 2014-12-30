@@ -17,6 +17,45 @@
 </%def>
 
 
+<%def name="tab(suffix)">
+  % if suffix == action:
+    <li class="active">
+      <a href="#">${caller.body()}</a>
+    </li>
+  % else:
+    <li>
+      <a href="${request.node_url(project, suffix=[suffix] if suffix else None)}">${caller.body()}</a>
+    </li>
+  % endif
+</%def>
+
+
+<%def name="project_update(update)">
+  <div class="update">
+    <div class="update-date pull-right">
+      ## FIXME
+      ##<p class="month">${update.created_time.strftime('%b')}</p>
+      ##<p class="day">${update.created_time.strftime('%d')}</p>
+    </div>
+    <a href="${request.node_url(update)}"><h3>${update.name}</h3></a>
+    <p>${request.render_content(update, update.body)}</p>
+    ## FIXME
+    ##<div class="clearfix">
+    ##  <div class="social-wrap">
+    ##    <a href="${h.facebook_share_url(url=request.node_url(update), text='', caption='Crowd Supply Update', name=update.name, image_url='http://%s%s' % (request.host, update.img_url('project-main')), app_id=request.site.settings['facebook.app_id'], redirect_uri=request.url)}">
+    ##      <i class="icon-facebook"></i>
+    ##    </a>
+    ##  </div>
+    ##  <div class="social-wrap">
+    ##    <a href="${h.twitter_tweet_url(text=update.name, via='crowd_supply', url=request.node_url(update))}">
+    ##      <i class="icon-twitter"></i>
+    ##    </a>
+    ##  </div>
+    ##</div>
+  </div>
+</%def>
+
+
 <section class="section-project">
   <div class="container">
     <div class="row">
@@ -51,14 +90,16 @@
     <div class="row">
       <div class="col-lg-12">
         <ul class="nav nav-tabs">
-          <li class="active"><a href="#">Home</a></li>
-          <li>
-            <a href="#">
-              Updates
-              ##<span class="badge">${len(project.published_updates)}</span>
-            </a>
-          </li>
-          <li><a href="#">Backers</a></li>
+          <%self:tab suffix="">
+            Home
+          </%self:tab>
+          <%self:tab suffix="updates">
+            Updates
+            ##<span class="badge">${len(project.published_updates)}</span>
+          </%self:tab>
+          <%self:tab suffix="backers">
+            Backers
+          </%self:tab>
         </ul>
       </div>
     </div>

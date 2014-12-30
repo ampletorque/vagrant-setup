@@ -40,7 +40,8 @@ def includeme(config):
     config.add_route('creators', '/creators')
 
     config.add_route('ask_question', '/ask-question/{id}')
-    config.add_route('remind_me', '/remind-me/{id}')
+    # XXX Possibly replaced by suffix on project renderer
+    # config.add_route('remind_me', '/remind-me/{id}')
 
     # User scaffolding routes
     config.add_route('login', '/login')

@@ -28,12 +28,13 @@ class User(Base, ImageMixin):
                                  default=utils.utcnow)
     enabled = Column(types.Boolean, nullable=False, default=True)
 
-    url_path = Column(types.String(255), nullable=True)
+    url_path = Column(types.String(255), nullable=True, unique=True)
     timezone = Column(types.String(255), nullable=False,
                       default='America/Los_Angeles')
 
-    twitter_usernmae = Column(types.String(255), nullable=True)
+    twitter_username = Column(types.String(255), nullable=True)
 
+    location = Column(types.Unicode(255), nullable=False, default=u'')
     show_in_backers = Column(types.Boolean, nullable=False, default=True)
 
     @staticmethod

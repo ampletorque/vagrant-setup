@@ -1,7 +1,8 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from sqlalchemy import Column, ForeignKey, types
+from sqlalchemy import Column, ForeignKey, types, orm
+from sqlalchemy.sql import and_
 
 from pyramid_es.mixin import ElasticMixin, ESMapping, ESField, ESString
 
@@ -23,6 +24,12 @@ class Project(Node, ElasticMixin):
     # - homepage_url
     # - open_source_url
 
+    updates = orm.relationship(
+        'ProjectUpdate',
+        backref='project',
+        primaryjoin='ProjectUpdate.project_id == Project.node_id',
+    )
+
     __mapper_args__ = {'polymorphic_identity': 'Project'}
 
     def generate_path(self):
@@ -36,6 +43,10 @@ class Project(Node, ElasticMixin):
 
     def is_failed(self):
         return False
+
+    @property
+    def published_updates(self):
+        return [pu for pu in self.updates if pu.published]
 
     @classmethod
     def elastic_mapping(cls):

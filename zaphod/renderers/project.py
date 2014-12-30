@@ -71,4 +71,5 @@ def project_renderer(project, system):
 
 
 def includeme(config):
-    config.add_node_renderer(project_renderer, model.Project, accept_suffix=True)
+    config.add_node_renderer(project_renderer, model.Project,
+                             accept_suffix=True)

@@ -2,7 +2,6 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from sqlalchemy import Column, ForeignKey, types, orm
-from sqlalchemy.sql import and_
 
 from pyramid_es.mixin import ElasticMixin, ESMapping, ESField, ESString
 

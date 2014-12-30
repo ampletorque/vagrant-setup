@@ -182,7 +182,7 @@
           <a href="how-it-works">
             <div class="row">
               <div class="col-md-2">
-                ##<img src="_csdark/images/launch/cropped/icons-retail.png" alt="">
+                <img src="/_teal/images/launch/icons-retail.png" alt="">
               </div>
               <div class="col-md-6">
                 <h5>How to Use Crowd Supply</h5>
@@ -194,7 +194,7 @@
           <a href="funding">
             <div class="row">
               <div class="col-md-2">
-                ##<img src="_csdark/images/launch/cropped/icons-cash.png">
+                <img src="/_teal/images/launch/icons-cash.png">
               </div>
               <div class="col-md-6">
                 <h5>Funding and Fees</h5>
@@ -206,7 +206,7 @@
           <a href="logistics">
             <div class="row">
               <div class="col-md-2">
-                ##<img src="_csdark/images/launch/cropped/icons-shipping.png" alt="">
+                <img src="/_teal/images/launch/icons-shipping.png" alt="">
               </div>
               <div class="col-md-6">
                 <h5>Fulfillment and Logistics</h5>
@@ -218,7 +218,7 @@
           <a href="providers">
             <div class="row">
               <div class="col-md-2">
-                ##<img src="_csdark/images/launch/cropped/icons-support.png" alt="">
+                <img src="/_teal/images/launch/icons-support.png" alt="">
               </div>
               <div class="col-md-6">
                 <h5>Service Providers Directory</h5>
@@ -233,7 +233,7 @@
           <a href="user-experience">
             <div class="row">
               <div class="col-md-2">
-                ##<img src="_csdark/images/launch/cropped/icons-tailored.png" alt="">
+                <img src="/_teal/images/launch/icons-tailored.png" alt="">
               </div>
               <div class="col-md-6">
                 <h5>Tailored User Experience</h5>
@@ -248,7 +248,7 @@
           <a href="campaign-information">
             <div class="row">
               <div class="col-md-2">
-                ##<img src="_csdark/images/launch/cropped/icons-fulfillment.png" alt="">
+                <img src="/_teal/images/launch/icons-fulfillment.png" alt="">
               </div>
               <div class="col-md-6">
                 <h5>Campaign Checklist</h5>
@@ -273,9 +273,9 @@
           ${forms.ltext(renderer, 'goal', label='Funding Goal', prefix='$', size='input-block-level')}
           ${forms.ltextarea(renderer, 'allocation', label='Use of Funds', size='input-block-level', hint='Describe how the money you raise will be used.', rows=5)}
           ${forms.lselect(renderer, 'country', '', h.country_codes(), prompt='Select Country')}
-          <div class="form-actions">
+          <%forms:actions>
             <button type="submit" class="btn btn-primary">Submit</button>
-          </div>
+          </%forms:actions>
         ${renderer.end()}
       </div>
     </div>

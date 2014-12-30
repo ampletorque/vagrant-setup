@@ -6,6 +6,7 @@ from .base import *
 from .creator import *
 from .image import *
 from .node import *
+from .pledges import *
 from .project import *
 from .provider import *
 from .tag import *

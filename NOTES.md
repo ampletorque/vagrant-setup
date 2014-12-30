@@ -111,17 +111,18 @@ The current page makes it very difficult to figure out your order status.
 ### Production Scheduling Model
 
 - We show users the best current guess of the expected ship date for a pledge
-  level if ordered now.
+  level if ordered right now.
 - We capture and preserve the date that was promised to an individual backer
-  for all eternity.
-- We anticipate the need for a delivery date to be moved back as more qty is
-  consumed, based on a pre-planned table.
+  for all eternity (associated with that order line item).
+- We anticipate the need for a delivery date to be moved back automatically as
+  more qty is consumed, based on a pre-planned table.
 
 Plan:
 
-- Use a PledgeBatch table
+- Use a PledgeBatch table like we have now.
 - On a Pledge line item, track the batch_id AND the original expected delivery
-  date. Never change the original expected delivery date.
+  date. Never change the original expected delivery date on the corresponding
+  line item.
 - Have an admin interface that lets you update the current expected delivery
   date of the batch, and add new batches to the end of the table.
 

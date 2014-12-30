@@ -100,8 +100,8 @@ class TealTheme(Theme):
         #     crop=True,
         #     extension='jpg', quality=75),
 
-        # FilterChain(
-        #     'press-logo', width=150, height=75,
-        #     crop_whitespace=True, pad=True,
-        #     extension='png'),
+        FilterChain(
+            'press-logo', width=150, height=75,
+            crop_whitespace=True, pad=True,
+            extension='png'),
     ]

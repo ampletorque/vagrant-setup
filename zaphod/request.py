@@ -1,13 +1,11 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import markdown
-
-from webhelpers2.html.tags import literal
 from pyramid.request import Request as BaseRequest
 from pyramid.decorator import reify
 
 from .model import Session, User
+from .content import render_markdown
 
 
 class Request(BaseRequest):
@@ -48,5 +46,4 @@ class Request(BaseRequest):
         return self.route_url('node', path=path, **kw)
 
     def render_content(self, obj, body):
-        # XXX Make this more featureful.
-        return literal(markdown.markdown(body))
+        return render_markdown(self, obj, body)

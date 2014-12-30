@@ -1,4 +1,6 @@
 Request Properties and Methods
 ==============================
 
-FIXME WIP
+.. automodule:: zaphod.request
+    :members:
+    :undoc-members:

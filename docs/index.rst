@@ -10,6 +10,7 @@ Scott Torborg - scott.torborg@crowdsupply.com, Joshua Lifton - joshua.lifton@cro
     style-guides/index
     foundation/index
     model/index
+    views/index
     testing/index
 
 Indices and Tables

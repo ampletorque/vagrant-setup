@@ -1,4 +1,0 @@
-Node Renderers
-==============
-
-FIXME WIP

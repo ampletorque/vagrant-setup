@@ -1,4 +1,4 @@
-![](/docs/_static/zaphod.jpg "Zaphod Beeblebrox")
+![](/docs/images/zaphod.jpg "Zaphod Beeblebrox")
 
 > You guys are so unhip it's a wonder your bums don't fall off.
 

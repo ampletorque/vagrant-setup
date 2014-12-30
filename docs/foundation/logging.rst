@@ -1,4 +1,6 @@
 Logging
 =======
 
-FIXME WIP
+.. automodule:: zaphod.logging
+    :members:
+    :undoc-members:

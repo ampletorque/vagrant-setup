@@ -1,4 +1,6 @@
 Mail Sending
 ============
 
-FIXME WIP
+.. automodule:: zaphod.mail
+    :members:
+    :undoc-members:

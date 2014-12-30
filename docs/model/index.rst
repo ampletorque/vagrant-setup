@@ -5,4 +5,6 @@ Data Model
     :maxdepth: 1
     :glob:
 
+    overview
+    base
     *

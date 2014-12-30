@@ -1,4 +1,6 @@
 Markdown Integration
 ====================
 
-FIXME WIP
+.. automodule:: zaphod.content
+    :members:
+    :undoc-members:

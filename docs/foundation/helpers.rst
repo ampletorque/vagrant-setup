@@ -4,9 +4,13 @@ Template Helpers
 Social
 ------
 
-FIXME WIP
+.. automodule:: zaphod.helpers.social
+    :members:
+    :undoc-members:
 
-Misc
-----
+Miscellaneous
+-------------
 
-FIXME WIP
+.. automodule:: zaphod.helpers.misc
+    :members:
+    :undoc-members:

@@ -35,6 +35,7 @@ def includeme(config):
     config.add_route('instock', '/instock')
 
     config.include('.browse')
+    config.include('.search')
 
     config.add_route('creators', '/creators')
 

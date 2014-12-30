@@ -1,12 +1,15 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
+
 from sqlalchemy import Column, ForeignKey, types
+
+from pyramid_es.mixin import ElasticMixin, ESMapping, ESField, ESString
 
 from . import utils
 from .node import Node
 
 
-class Project(Node):
+class Project(Node, ElasticMixin):
     __tablename__ = 'projects'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     node_id = Column(None, ForeignKey('nodes.id'), primary_key=True)
@@ -33,6 +36,32 @@ class Project(Node):
 
     def is_failed(self):
         return False
+
+    @classmethod
+    def elastic_mapping(cls):
+        return ESMapping(
+            analyzer='content',
+            properties=ESMapping(
+                ESString('name', boost=5),
+                ESString('teaser', boost=3),
+                ESString('keywords'),
+                # XXX For simplicity we're just passing the non-rendered
+                # markdown string to elasticsearch. We're just using it for
+                # keyword indexing, so that should work ok for now.
+                ESString('body'),
+                ESField('published'),
+                ESField('listed'),
+                # ESField('target'),
+                # ESField('start_time'),
+                # ESField('end_time'),
+                # ESString('levels',
+                #          filter=lambda levels: [pl.name for pl in levels]),
+                creator=ESMapping(
+                    properties=ESMapping(
+                        ESString('name', boost=8),
+                    ),
+                ),
+            ))
 
 
 class ProjectUpdate(Node):

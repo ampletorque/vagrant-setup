@@ -8,3 +8,4 @@ from webhelpers2.text import *
 from webhelpers2.date import *
 
 from .misc import *
+from .social import *

@@ -7,7 +7,7 @@ from .creator import *
 from .image import *
 from .node import *
 from .order import *
-from .pledges import *
+from .pledge import *
 from .project import *
 from .provider import *
 from .tag import *

@@ -6,7 +6,7 @@ import re
 import datetime
 
 
-__all__ = ['utcnow']
+__all__ = ['is_url_name', 'to_url_name', 'utcnow']
 
 
 def is_url_name(s):

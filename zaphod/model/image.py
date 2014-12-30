@@ -16,6 +16,9 @@ class ImageMixin(object):
 
     @declared_attr
     def _image_associations(cls):
+        if not issubclass(cls, Base):
+            return
+
         table_name = cls.__tablename__
 
         ImageAssociation = type(

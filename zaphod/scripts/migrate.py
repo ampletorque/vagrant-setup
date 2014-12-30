@@ -128,6 +128,7 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
             body=old_project.body.text,
             published=old_project.published,
             listed=old_project.listed,
+            gravity=old_project.gravity,
         )
         model.Session.add(project)
         migrate_aliases(settings, old_project, project)

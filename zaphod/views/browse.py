@@ -23,7 +23,8 @@ class ProjectListView(object):
     def base_q(self):
         return model.Session.query(model.Project).\
             filter(model.Project.published == True).\
-            filter(model.Project.listed == True)
+            filter(model.Project.listed == True).\
+            order_by(model.Project.gravity)
         # return model.Session.query(model.Project).\
         #     filter(model.Project.suspended_time == None).\
         #     filter(model.Project.published == True).\

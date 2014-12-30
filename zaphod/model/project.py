@@ -14,6 +14,8 @@ class Project(Node):
     creator_id = Column(None, ForeignKey('creators.node_id'), nullable=False)
     vimeo_id = Column(types.Integer, nullable=True)
 
+    gravity = Column(types.Integer, nullable=False, default=0)
+
     # TO ADD:
     # - homepage_url
     # - open_source_url

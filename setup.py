@@ -32,7 +32,6 @@ requires = [
     'requests>=2.3.0',
     'lxml>=3.2.3',
     'Markdown>=2.5.2',
-    'FormEncode>=1.3.0a1',
 
     # Keep repoze.sendmail pinned at 4.1 to deal with this bug:
     # https://github.com/repoze/repoze.sendmail/issues/31
@@ -43,6 +42,9 @@ requires = [
 if not PY3:
     # Needed for uwsgi deployment with ini-paste-logged.
     requires.append('PasteScript>=1.7.5')
+    requires.append('FormEncode>=1.2')
+else:
+    requires.append('FormEncode>=1.3.0a1')
 
 
 setup(name='zaphod',

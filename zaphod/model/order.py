@@ -3,6 +3,7 @@ from __future__ import (absolute_import, division, print_function,
 
 from sqlalchemy import Column, ForeignKey, types, orm
 
+from . import custom_types
 from .base import Base
 
 
@@ -29,5 +30,9 @@ class CartItem(Base):
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     cart_id = Column(None, ForeignKey('carts.id'), nullable=False)
+    pledge_level_id = Column(None, ForeignKey('pledge_levels.id'),
+                             nullable=False)
+    price_each = Column(custom_types.Money, nullable=False)
+    qty_desired = Column(types.Integer, nullable=False, default=1)
 
     cart = orm.relationship('Cart', backref='items')

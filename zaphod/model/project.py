@@ -5,7 +5,7 @@ from sqlalchemy import Column, ForeignKey, types, orm
 
 from pyramid_es.mixin import ElasticMixin, ESMapping, ESField, ESString
 
-from . import utils
+from . import utils, custom_types
 from .node import Node
 
 
@@ -16,12 +16,16 @@ class Project(Node, ElasticMixin):
 
     creator_id = Column(None, ForeignKey('creators.node_id'), nullable=False)
     vimeo_id = Column(types.Integer, nullable=True)
+    target = Column(custom_types.Money, nullable=False, default=0)
+
+    start_time = Column(types.DateTime, nullable=True)
+    end_time = Column(types.DateTime, nullable=True)
+    suspended_time = Column(types.DateTime, nullable=True)
 
     gravity = Column(types.Integer, nullable=False, default=0)
 
-    # TO ADD:
-    # - homepage_url
-    # - open_source_url
+    homepage_url = Column(types.String(255), nullable=False, default=u'')
+    open_source_url = Column(types.String(255), nullable=False, default=u'')
 
     updates = orm.relationship(
         'ProjectUpdate',
@@ -42,6 +46,18 @@ class Project(Node, ElasticMixin):
 
     def is_failed(self):
         return False
+
+    @property
+    def status(self):
+        # returns one of:
+        # - prelaunch
+        # - crowdfunding
+        # - suspended
+        # - failed
+        # - available (some mixture of preorder and stock)
+        # - funded (no longer available)
+        # XXX FIXME
+        return 'crowdfunding'
 
     @property
     def published_updates(self):

@@ -130,6 +130,10 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
             listed=old_project.listed,
             gravity=old_project.gravity,
             vimeo_id=old_project.vimeo_id,
+            target=old_project.target,
+            start_time=old_project.start_time,
+            end_time=old_project.end_time,
+            suspended_time=old_project.suspended_time,
         )
         model.Session.add(project)
         migrate_aliases(settings, old_project, project)

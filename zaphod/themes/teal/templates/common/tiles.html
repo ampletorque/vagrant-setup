@@ -1,17 +1,191 @@
+<%def name="project_metadata(project)">
+  <div class="stats stats-project clearfix">
+    <div class="progress">
+      <div class="progress-bar" style="width:${project.progress_percent}%"></div>
+    </div>
+    <div class="factoids">
+      <div class="fact">
+        <p><sup>$</sup>${h.commas(project.pledged_amount)}</p>
+        <span>raised</span>
+      </div>
+      <div class="fact">
+        <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
+        <span>funded</span>
+      </div>
+      <div class="fact" data-countdown-to="${project.end_time.isoformat()}">
+        <%
+          val, units = project.remaining
+        %>
+        <p>${val}</p>
+        <span>${units} left</span>
+      </div>
+    </div>
+  </div>
+</%def>
+
+
+<%def name="suspended_metadata(project)">
+    <div class="stats stats-suspended clearfix">
+      <div class="progress">
+        <span class="range pull-left">Campaign Suspended</span>
+      </div>
+      <div class="factoids">
+        <div class="fact">
+          <p><sup>$</sup>${h.commas(project.pledged_amount)}</p>
+          <span>raised</span>
+        </div>
+        <div class="fact">
+          <p class="pcnt-funded">${project.progress_percent}<sup>%</sup></p>
+          <span>funded</span>
+        </div>
+        <div class="fact">
+          <p>${h.format_datetime(project.suspended_time, '%b %d')}</p>
+          <span>suspended</span>
+        </div>
+      </div>
+    </div>
+</%def>
+
+
+<%def name="prelaunch_metadata(project)">
+  <div class="stats stats-prelaunch clearfix">
+    <div class="progress">
+      <span>Coming Soon <i>Signup Here</i></span>
+    </div>
+    <p>
+    </p>
+  </div>
+</%def>
+
+
+<%def name="success_metadata(project)">
+    <div class="stats stats-pre-order clearfix">
+      <div class="progress">
+        <span class="range pull-left">Funded!</span>
+      </div>
+      <div class="factoids">
+        <div class="fact">
+          <p><sup>$</sup>${h.commas(project.pledged_amount)}</p>
+          <span>raised</span>
+        </div>
+        <div class="fact">
+          <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
+          <span>funded</span>
+        </div>
+        <div class="fact">
+          <p>${h.commas(project.num_pledges)}</p>
+          <span>pledges</span>
+        </div>
+      </div>
+    </div>
+</%def>
+
+
+<%def name="available_metadata(project)">
+    <div class="stats stats-pre-order clearfix">
+      <div class="progress">
+        <span class="range pull-left">Funded!</span>
+        <span class="range pull-right">Pre-Order Now</span>
+      </div>
+      <div class="factoids">
+        <div class="fact">
+          <p><sup>$</sup>${h.commas(project.pledged_amount)}</p>
+          <span>raised</span>
+        </div>
+        <div class="fact">
+          <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
+          <span>funded</span>
+        </div>
+        <div class="fact">
+          <p>${h.commas(project.num_pledges)}</p>
+          <span>pledges</span>
+        </div>
+      </div>
+    </div>
+</%def>
+
+
+<%def name="metadata(project, cols=3)">
+  <%
+    # Never show a full width tile
+    cols = 3 if cols < 2 else cols
+    width = 12 / cols
+
+    utcnow = h.datetime.utcnow()
+  %>
+  <div class="col-sm-${width} stats-tile">
+    % if project.status == 'crowdfunding':
+      ${self.project_metadata(project)}
+    % elif project.status == 'suspended':
+      ${self.suspended_metadata(project)}
+    % elif project.status == 'funded':
+      ${self.success_metadata(project)}
+    % elif project.status == 'prelaunch':
+      ${self.prelaunch_metadata(project)}
+    % elif project.status == 'available':
+      ${self.available_metadata(project)}
+    % endif
+  </div>
+</%def>
+
+
+<%def name="tile(project, cols=3)">
+  <%
+    # Never show a full width tile
+    cols = 3 if cols < 2 else cols
+    width = 12 / cols
+
+    utcnow = h.datetime.utcnow()
+  %>
+  <a href="${request.node_url(project)}" class="col-sm-${width} project-tile">
+    ${project.img(request, 'project-tile')}
+    <div class="project-tile-overview">
+      <div class="description">
+        % if project.status == 'prelaunch':
+          <h3>${project.name}</h3>
+          <p>This project is launching soon. Click for more information or to enter your email address for news &amp; updates.</p>
+        % else:
+          <h3>${project.name}</h3>
+          <p>${project.teaser}</p>
+        % endif
+      </div>
+    </div>
+
+    <div class="${'' if cols == 1 else 'visible-xs'}">
+      ${self.metadata(project, cols)}
+    </div>
+  </a>
+</%def>
+
+
 <%def name="tile_row(projects)">
-  <div class="row">
+  <div class="row project-row">
+    <!-- Background row -->
+    <div class="row background-row visible-desktop">
     <%
-      cols = 6 if len(projects) == 2 else 4
+      cols = len(projects)
+      cols = 3 if cols < 2 else cols
+      width = 12 / cols
     %>
     % for project in projects:
-      <div class="col-sm-${cols}">
-        <a class="project-tile" href="${request.node_url(project)}">
-          ${project.img(request, 'project-tile')}
-          <h3>${project.name}</h3>
-          <h5>By ${project.creator.name}</h5>
-          <p>${project.teaser}</p>
-        </a>
-      </div>
+      <div class="col-sm-${width}"></div>
+    % endfor
+    </div>
+
+    <!-- Project tile -->
+    <div class="row">
+    % for project in projects:
+      ${self.tile(project, cols)}
+    % endfor
+    </div>
+  </div>
+
+  <!-- Metadata row -->
+  <div class="row metadata-row hidden-xs">
+    % for project in projects:
+      <a href="${request.node_url(project)}">
+        ${self.metadata(project, cols)}
+      </a>
     % endfor
   </div>
 </%def>

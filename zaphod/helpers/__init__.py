@@ -7,5 +7,9 @@ from webhelpers2.html import *
 from webhelpers2.text import *
 from webhelpers2.date import *
 
+from datetime import datetime
+
 from .misc import *
 from .social import *
+
+used = [datetime]

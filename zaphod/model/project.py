@@ -1,6 +1,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+from datetime import datetime
 from sqlalchemy import Column, ForeignKey, types, orm
 
 from pyramid_es.mixin import ElasticMixin, ESMapping, ESField, ESString
@@ -58,6 +59,29 @@ class Project(Node, ElasticMixin):
         # - funded (no longer available)
         # XXX FIXME
         return 'crowdfunding'
+
+    @property
+    def progress_percent(self):
+        # XXX FIXME
+        return 72
+
+    @property
+    def pledged_amount(self):
+        # XXX FIXME
+        return 12345
+
+    @property
+    def remaining(self):
+        utcnow = datetime.utcnow()
+        if self.start_time <= utcnow:
+            diff = self.end_time - utcnow
+        else:
+            diff = self.end_time - self.start_time
+
+        if diff.days > 2:
+            return diff.days, 'days'
+        else:
+            return (diff.seconds / 3600) + (diff.days * 24), 'hours'
 
     @property
     def published_updates(self):

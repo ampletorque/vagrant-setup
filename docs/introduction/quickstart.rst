@@ -1,7 +1,6 @@
 Quick Start
 ===========
 
-
 Install Dependencies
 --------------------
 
@@ -10,8 +9,8 @@ These services are required:
 - MySQL
 - Redis
 - Elasticsearch
-- lessc
-- requirejs
+- lessc (via the ``less`` npm package)
+- requirejs (via the ``requirejs`` npm package)
 
 Install Zaphod
 --------------

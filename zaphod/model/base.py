@@ -11,4 +11,21 @@ __all__ = ['Base', 'Session']
 
 
 Session = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
-Base = declarative_base()
+
+
+class _Base(object):
+
+    @classmethod
+    def get(cls, id):
+        """
+        Get an instance of this class by primary key.
+
+        :param id:
+            Primary key value.
+        :return:
+            Instance of the class.
+        """
+        return Session.query(cls).get(id)
+
+
+Base = declarative_base(cls=_Base)

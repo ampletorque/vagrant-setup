@@ -3,13 +3,20 @@
 <%namespace name="forms" file="/common/forms.html"/>
 
 
-<%def name="title()">Login</%def>
+<%def name="title()">Login to your account</%def>
 
 
 <section class="section-login">
   <div class="container">
     <div class="row">
-      <div class="col-sm-6 col-sm-offset-3">
+      <div class="col-lg-12">
+        <h1>Log In To Your Account</h1>
+      </div>
+    </div>
+
+    <div class="row">
+
+      <div class="col-sm-6">
 
         ${renderer.begin(id='login-form', class_='form-horizontal')}
 
@@ -19,16 +26,19 @@
           ${forms.lcheckbox(renderer, 'remember_me')}
 
           <%forms:actions>
-            <button type="submit" class="btn btn-primary">Login</button>
-          </%forms:actions>
-
-          <%forms:actions>
-            <a href="${request.route_path('forgot-password')}">Forgot your password or don't have one? Click here.</a>
+            <button type="submit" class="btn btn-primary">Sign In</button>
           </%forms:actions>
 
         ${renderer.end()}
 
       </div>
+
+      <div class="col-sm-6">
+        <p>Existing customers who provided a password during the checkout process can log in here to view order and shipment status. If you placed an order with us but don't yet have a password, <a href="${request.route_path('forgot-password')}">click here to create one</a>.</p>
+        <p>If you are a new customer and wish to create an account, <a href="${request.route_path('cart')}">view your shopping cart</a> and create an account after you complete the checkout process.</p>
+        <p><a id="forgot-password-link" href="${request.route_path('forgot-password')}">Forgot your password or don't have one? Click here.</a></p>
+      </div>
+
     </div>
   </div>
 </section>

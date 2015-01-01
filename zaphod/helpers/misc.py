@@ -9,31 +9,6 @@ from six.moves.urllib.parse import urlencode
 from webhelpers2.html.tags import _make_safe_id_component, literal
 
 
-# def localeconv():
-#     "Manually install en_US for systems that don't have it."
-#     d = {'currency_symbol': '$',
-#          'decimal_point': '.',
-#          'frac_digits': 2,
-#          'grouping': [3, 3, 0],
-#          'int_curr_symbol': 'USD ',
-#          'int_frac_digits': 2,
-#          'mon_decimal_point': '.',
-#          'mon_grouping': [3, 3, 0],
-#          'mon_thousands_sep': ',',
-#          'n_cs_precedes': 1,
-#          'n_sep_by_space': 0,
-#          'n_sign_posn': 1,
-#          'negative_sign': '-',
-#          'p_cs_precedes': 1,
-#          'p_sep_by_space': 0,
-#          'p_sign_posn': 1,
-#          'positive_sign': '',
-#          'thousands_sep': ','}
-#     return d
-# locale.setlocale(locale.LC_ALL, 'C')
-# locale.localeconv = localeconv
-
-
 def grouper(n, iterable):
     """
     Return elements from iterable n items at a time.

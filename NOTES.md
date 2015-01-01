@@ -188,3 +188,8 @@ a few things.
 introduced during dev, and switch to it if possible.
 - Use require.js
 - Try to avoid direct use of jquery?
+- Use SVG crowd supply logo
+- Try to improve a couple visual language inconsistencies, e.g. creator pages
+- Higher resolution photos? Maybe retina photos with srcset plus a polyfill or
+  something similar.
+- Use a slimmed down icon set, e.g. font-awesome via fontello.

@@ -32,6 +32,9 @@ class Project(Node, ElasticMixin):
     homepage_url = Column(types.String(255), nullable=False, default=u'')
     open_source_url = Column(types.String(255), nullable=False, default=u'')
 
+    # XXX Turn this into a column.
+    accepts_preorders = True
+
     updates = orm.relationship(
         'ProjectUpdate',
         backref='project',
@@ -67,8 +70,19 @@ class Project(Node, ElasticMixin):
         # - failed
         # - available (some mixture of preorder and stock)
         # - funded (no longer available)
-        # XXX FIXME
-        return 'crowdfunding'
+        utcnow = utils.utcnow()
+        if utcnow < self.start_time:
+            return 'prelaunch'
+        elif self.suspended_time:
+            return 'suspended'
+        elif self.start_time <= utcnow <= self.end_time:
+            return 'crowdfunding'
+        elif self.pledged_amount < self.target:
+            return 'failed'
+        elif self.accepts_preorders:
+            return 'available'
+        else:
+            return 'funded'
 
     @property
     def progress_percent(self):
@@ -81,6 +95,7 @@ class Project(Node, ElasticMixin):
         """
         Amount raised in crowdfunding and preorder stages.
         """
+        # XXX FIXME Filter out cancelled orders.
         base = Session.query(func.sum(CartItem.qty_desired *
                                       CartItem.price_each)).\
             join(CartItem.cart).\
@@ -92,6 +107,25 @@ class Project(Node, ElasticMixin):
         # elsewhere_amount = self.pledged_elsewhere_amount or 0
         elsewhere_amount = 0
         return base + elsewhere_amount
+
+    @property
+    def num_backers(self):
+        # XXX Performance
+        return sum(level.num_backers for level in self.levels)
+
+    @property
+    def num_pledges(self):
+        # XXX Performance
+        # if (self.status != 'fundraising' and
+        #         self.pledged_elsewhere_count > 0):
+        #     return self.pledged_elsewhere_count
+        # XXX FIXME Filter out cancelled orders.
+        return Session.query(func.sum(CartItem.qty_desired)).\
+            join(CartItem.cart).\
+            join(Cart.order).\
+            join(CartItem.pledge_level).\
+            filter(PledgeLevel.project == self).\
+            scalar() or 0
 
     @property
     def remaining(self):

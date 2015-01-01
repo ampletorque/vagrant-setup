@@ -82,32 +82,38 @@ class PrelaunchView(ProjectListView):
     stage = u'Pre-launch Projects'
 
     def base_q(self):
+        utcnow = datetime.utcnow()
         return ProjectListView.base_q(self).\
-            filter(model.Project.stage == model.Project.FUNDRAISING).\
-            filter(model.Project.start_time > datetime.utcnow())
+            filter(utcnow < model.Project.start_time)
 
 
 class CrowdfundingView(ProjectListView):
     stage = u'Crowdfunding Projects'
 
     def base_q(self):
+        utcnow = datetime.utcnow()
         return ProjectListView.base_q(self).\
-            filter(model.Project.stage == model.Project.FUNDRAISING).\
-            filter(model.Project.start_time <= datetime.utcnow())
+            filter(utcnow >= model.Project.start_time,
+                   utcnow < model.Project.end_time)
 
 
 class PreorderView(ProjectListView):
     stage = u'Pre-order Projects'
 
     def base_q(self):
+        utcnow = datetime.utcnow()
+        # XXX Filter out failed projects and projects that don't accept
+        # preorders.
         return ProjectListView.base_q(self).\
-            filter(model.Project.stage == model.Project.PREORDER)
+            filter(utcnow >= model.Project.end_time)
 
 
 class InStockView(ProjectListView):
     stage = 'In Stock Products'
 
     def base_q(self):
+        # XXX Not sure what to do with this in a world where we don't
+        # distinguish between preorder and in-stock at a project level.
         return ProjectListView.base_q(self).\
             filter(model.Project.stage == model.Project.PRODUCT)
 

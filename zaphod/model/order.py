@@ -36,3 +36,4 @@ class CartItem(Base):
     qty_desired = Column(types.Integer, nullable=False, default=1)
 
     cart = orm.relationship('Cart', backref='items')
+    pledge_level = orm.relationship('PledgeLevel', backref='cart_items')

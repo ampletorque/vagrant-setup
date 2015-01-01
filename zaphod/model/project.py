@@ -3,10 +3,14 @@ from __future__ import (absolute_import, division, print_function,
 
 from datetime import datetime
 from sqlalchemy import Column, ForeignKey, types, orm
+from sqlalchemy.sql import func
 
 from pyramid_es.mixin import ElasticMixin, ESMapping, ESField, ESString
 
 from . import utils, custom_types
+from .base import Session
+from .order import Cart, CartItem
+from .pledge import PledgeLevel
 from .node import Node
 
 
@@ -32,6 +36,12 @@ class Project(Node, ElasticMixin):
         'ProjectUpdate',
         backref='project',
         primaryjoin='ProjectUpdate.project_id == Project.node_id',
+    )
+
+    levels = orm.relationship(
+        'PledgeLevel',
+        backref='project',
+        cascade='all, delete, delete-orphan',
     )
 
     __mapper_args__ = {'polymorphic_identity': 'Project'}
@@ -62,13 +72,26 @@ class Project(Node, ElasticMixin):
 
     @property
     def progress_percent(self):
-        # XXX FIXME
-        return 72
+        if self.target:
+            return self.pledged_amount * 100 / self.target
+        return 0
 
     @property
     def pledged_amount(self):
-        # XXX FIXME
-        return 12345
+        """
+        Amount raised in crowdfunding and preorder stages.
+        """
+        base = Session.query(func.sum(CartItem.qty_desired *
+                                      CartItem.price_each)).\
+            join(CartItem.cart).\
+            join(Cart.order).\
+            join(CartItem.pledge_level).\
+            filter(PledgeLevel.project == self).\
+            scalar() or 0
+        # FIXME XXX
+        # elsewhere_amount = self.pledged_elsewhere_amount or 0
+        elsewhere_amount = 0
+        return base + elsewhere_amount
 
     @property
     def remaining(self):

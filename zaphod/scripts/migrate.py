@@ -31,7 +31,7 @@ def usage(argv):
 def migrate_aliases(settings, old_node, new_node):
     canonical_path = None
     for alias in old_node.aliases:
-        print("  path: %s" % alias.path)
+        print("  path: %r" % alias.path)
         if alias.canonical:
             canonical_path = alias.path
         new_node.update_path(alias.path)
@@ -80,6 +80,7 @@ def migrate_articles(settings, user_map, image_map):
         model.Session.add(article)
         migrate_aliases(settings, old_article, article)
         migrate_image_associations(settings, image_map, old_article, article)
+        model.Session.flush()
 
 
 def migrate_tags(settings, user_map):
@@ -96,6 +97,7 @@ def migrate_tags(settings, user_map):
         model.Session.add(tag)
         migrate_aliases(settings, old_tag, tag)
         tag_map[old_tag] = tag
+        model.Session.flush()
     return tag_map
 
 
@@ -114,11 +116,13 @@ def migrate_creators(settings, user_map, image_map):
         migrate_aliases(settings, old_creator, creator)
         migrate_image_associations(settings, image_map, old_creator, creator)
         creator_map[old_creator] = creator
+        model.Session.flush()
     return creator_map
 
 
 def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
     project_map = {}
+    pledge_level_map = {}
     for old_project in scrappy_meta.Session.query(cs_model.Project):
         print("  project %s" % old_project.name)
         project = model.Project(
@@ -155,6 +159,20 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
             model.Session.add(update)
             migrate_aliases(settings, old_update, update)
             migrate_image_associations(settings, image_map, old_update, update)
+        for old_pledge_level in old_project.levels:
+            print("    pledge level %s" % old_pledge_level.name)
+            pledge_level = model.PledgeLevel(
+                project=project,
+                name=old_pledge_level.name,
+                non_physical=old_pledge_level.non_physical,
+                gravity=old_pledge_level.gravity,
+            )
+            model.Session.add(pledge_level)
+            migrate_image_associations(settings, image_map,
+                                       old_pledge_level, pledge_level)
+            pledge_level_map[old_pledge_level] = pledge_level
+        model.Session.flush()
+    return project_map, pledge_level_map
 
 
 def migrate_users(settings, image_map):
@@ -172,6 +190,7 @@ def migrate_users(settings, image_map):
         user_emails.add(old_user.email)
 
         user = model.User(
+            id=old_user.id,
             name=old_user.name,
             email=email,
             hashed_password=old_user.hashed_password,
@@ -179,6 +198,8 @@ def migrate_users(settings, image_map):
         )
         model.Session.add(user)
         migrate_image_associations(settings, image_map, old_user, user)
+        user_map[old_user] = user
+        model.Session.flush()
     return user_map
 
 
@@ -199,6 +220,7 @@ def migrate_provider_types(settings, user_map, image_map):
         migrate_image_associations(settings, image_map,
                                    old_provider_type, provider_type)
         provider_type_map[old_provider_type] = provider_type
+        model.Session.flush()
     return provider_type_map
 
 
@@ -217,6 +239,31 @@ def migrate_providers(settings, user_map, image_map, provider_type_map):
             provider.types.add(provider_type_map[old_type])
         migrate_aliases(settings, old_provider, provider)
         migrate_image_associations(settings, image_map, old_provider, provider)
+        model.Session.flush()
+
+
+def migrate_orders(settings, user_map, pledge_level_map):
+    for old_order in scrappy_meta.Session.query(scrappy_model.Order):
+        print("  order %s" % old_order.id)
+        if old_order.account:
+            user = user_map[old_order.account]
+        else:
+            user = None
+        order = model.Order(
+            id=old_order.id,
+            user=user,
+        )
+        model.Session.add(order)
+        cart = model.Cart(order=order)
+        model.Session.add(cart)
+        for old_ci in old_order.cart.items:
+            ci = model.CartItem(
+                pledge_level=pledge_level_map[old_ci.product],
+                price_each=old_ci.price_each,
+                qty_desired=old_ci.qty_desired,
+            )
+            order.cart.items.append(ci)
+        model.Session.flush()
 
 
 def main(argv=sys.argv):
@@ -232,7 +279,7 @@ def main(argv=sys.argv):
     model.Base.metadata.create_all(engine)
 
     old_engine = create_engine(old_url)
-    scrappy_model.init_model(old_engine, site_map={})
+    scrappy_model.init_model(old_engine, site_map={}, default_site_id=701)
 
     with transaction.manager:
         image_map = migrate_images(settings)
@@ -245,6 +292,7 @@ def main(argv=sys.argv):
         migrate_articles(settings, user_map, image_map)
         tag_map = migrate_tags(settings, user_map)
         creator_map = migrate_creators(settings, user_map, image_map)
-        project_map = migrate_projects(settings, user_map, creator_map,
-                                       tag_map, image_map)
-        print(project_map)
+        project_map, pledge_level_map = \
+            migrate_projects(settings, user_map, creator_map,
+                             tag_map, image_map)
+        migrate_orders(settings, user_map, pledge_level_map)

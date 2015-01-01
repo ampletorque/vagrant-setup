@@ -1,7 +1,6 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import locale
 import hashlib
 
 from six.moves.urllib.parse import urlencode
@@ -75,11 +74,12 @@ def currency(n, show_fractional=True):
     """
     if n is None:
         return ''
-    s = locale.currency(n, grouping=True)
     frac = n - int(n)
     if (not show_fractional) or (show_fractional == 'nonzero' and frac > 0):
-        s = s[:-3]
-    return s
+        s = commas(n, decimal=False)
+    else:
+        s = commas(n, decimal=True)
+    return '$' + s
 
 
 def commas(n, decimal=False):
@@ -89,7 +89,19 @@ def commas(n, decimal=False):
     """
     if n is None:
         return ''
-    return locale.format('%.2f' if decimal else '%d', n, grouping=True)
+
+    s = '%d' % n
+    pieces = []
+    for ii, c in enumerate(reversed(list(s))):
+        if ii and ((ii % 3) == 0):
+            pieces.append(',')
+        pieces.append(c)
+
+    s = ''.join(reversed(pieces))
+
+    if decimal:
+        s += ('%0.2f' % n)[-3:]
+    return s
 
 
 def format_percent(percent):

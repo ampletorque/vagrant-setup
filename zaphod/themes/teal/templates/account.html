@@ -1,34 +1,66 @@
 <%inherit file="base.html"/>
 
-<%namespace name="forms" file="/common/forms.html"/>
+<%def name="title()">Account Information</%def>
 
 
-<%def name="title()">User Settings</%def>
-
-
-<section class="section-settings">
+<section class="section-account">
   <div class="container">
     <div class="row">
-      <div class="col-md-6 col-md-offset-3">
-        <h4 class="text-center">Settings for ${request.user.email}</h4>
-
-        <div class="block-form">
-          ${renderer.begin(class_='form-horizontal')}
-
-            ${forms.ltext(renderer, 'name', request.user.name)}
-            ${forms.ltext(renderer, 'email', request.user.email)}
-
-            ${forms.lpassword(renderer, 'password')}
-            ${forms.lpassword(renderer, 'password2', label='Confirm')}
-
-            <%forms:actions>
-              <button type="submit" class="btn btn-primary">Save</button>
-            </%forms:actions>
-
-          ${renderer.end()}
-        </div>
-
+      <div class="col-lg-12">
+        <h1 class="text-center">My Account</h1>
       </div>
     </div>
+
+    <div class="row">
+      <div class="col-lg-12">
+        <h3>Account Details</h3>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-2">
+      </div>
+
+      <div class="col-md-10">
+        <p>Welcome back, ${request.user.name} (${request.user.email})</p>
+        ##<p>Joined Mar 20, 2013</p>
+
+        <a class="btn btn-default" href="${request.route_path('settings')}">Edit Account Details</a>
+        <a class="btn btn-default" href="https://en.gravatar.com">Update Avatar</a>
+        <a class="btn btn-default" href="${request.route_path('logout')}">Sign Out</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section-account-orders">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h3>Projects Backed &amp; Orders</h3>
+      </div>
+    </div>
+
+    % for order in request.user.orders:
+      % for pledge in order.cart.items:
+        <div class="row">
+          <div class="col-md-2">
+            ## Item image
+            ${pledge.pledge_level.img(request, 'pledge-icon')}
+          </div>
+          <div class="col-md-10">
+            <h4>
+              Order ${pledge.cart.order.id} -
+              <a href="${request.node_path(pledge.pledge_level.project)}">${pledge.pledge_level.name}</a> - ${pledge.pledge_level.project.name}
+            </h4>
+            <p>
+              Backed __________ - Ships ________ -
+              <a href="${request.route_path('order', id=pledge.cart.order.id)}">View Order Details</a>
+            </p>
+          </div>
+        </div>
+      % endfor
+    % endfor
   </div>
 </section>

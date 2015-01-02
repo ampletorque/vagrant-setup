@@ -50,6 +50,8 @@ def includeme(config):
     config.add_route('forgot-password', '/forgot-password')
     config.add_route('forgot-reset', '/forgot-reset')
     config.add_route('account', '/account')
+    config.add_route('order', '/account/order/{id}')
+    config.add_route('settings', '/account/settings')
 
     # This needs to stay the last route registered.
     config.add_route('node', '/*path')

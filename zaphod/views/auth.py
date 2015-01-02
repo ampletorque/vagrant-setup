@@ -81,6 +81,11 @@ class UserView(object):
     @view_config(route_name='account', renderer='account.html',
                  permission='authenticated')
     def account(self):
+        return {}
+
+    @view_config(route_name='settings', renderer='settings.html',
+                 permission='authenticated')
+    def settings(self):
         request = self.request
 
         form = Form(request, schema=SettingsForm)
@@ -94,7 +99,7 @@ class UserView(object):
                 request.user.update_password(password)
                 request.flash('Updated password.', 'success')
 
-            return HTTPFound(location=request.current_route_url())
+            return HTTPFound(location=request.route_url('account'))
 
         return dict(renderer=FormRenderer(form))
 

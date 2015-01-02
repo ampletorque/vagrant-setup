@@ -37,10 +37,10 @@ class TealTheme(Theme):
         #     crop=True, pad=True,
         #     extension='jpg', quality=85),
 
-        # FilterChain(
-        #     'pledge-icon', width=100, height=100,
-        #     crop_whitespace=True, pad=True,
-        #     extension='jpg', quality=85),
+        FilterChain(
+            'pledge-icon', width=100, height=100,
+            crop_whitespace=True, pad=True,
+            extension='jpg', quality=85),
 
         # FilterChain(
         #     'creator-avatar', width=120, height=60,

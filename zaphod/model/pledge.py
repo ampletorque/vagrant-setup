@@ -4,6 +4,7 @@ from __future__ import (absolute_import, division, print_function,
 from sqlalchemy import Column, ForeignKey, types, orm
 from sqlalchemy.sql import func, not_
 
+from . import custom_types
 from .base import Base, Session
 from .image import ImageMixin
 from .order import Order, Cart, CartItem
@@ -28,6 +29,8 @@ class PledgeLevel(Base, ImageMixin):
     name = Column(types.Unicode(255), nullable=False, default=u'')
     gravity = Column(types.Integer, nullable=False, default=0)
     non_physical = Column(types.Boolean, nullable=False, default=False)
+    published = Column(types.Boolean, nullable=False, default=False)
+    price = Column(custom_types.Money, nullable=False, default=0)
 
     batches = orm.relationship('PledgeBatch', backref='pledge_level')
 

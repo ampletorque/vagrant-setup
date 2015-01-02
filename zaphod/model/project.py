@@ -1,6 +1,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+from operator import attrgetter
 from datetime import datetime
 from sqlalchemy import Column, ForeignKey, types, orm
 from sqlalchemy.sql import func
@@ -142,7 +143,15 @@ class Project(Node, ElasticMixin):
 
     @property
     def published_updates(self):
+        # XXX FIXME turn into a relationship
         return [pu for pu in self.updates if pu.published]
+
+    @property
+    def published_levels(self):
+        # XXX FIXME turn into a relationship
+        levels = [pl for pl in self.levels if pl.published]
+        levels.sort(key=attrgetter('gravity'))
+        return levels
 
     @classmethod
     def elastic_mapping(cls):

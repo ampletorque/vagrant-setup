@@ -56,6 +56,104 @@
 </%def>
 
 
+<%def name="social_buttons(project)">
+
+</%def>
+
+
+<%def name="stats_crowdfunding(project)">
+  <p class="pledged">
+    <span><sup>$</sup>${h.commas(project.pledged_amount)}</span>&nbsp;raised
+  </p>
+  <p class="goal">
+    of&nbsp;<span><sup>$</sup>${h.commas(project.target)}</span>&nbsp;goal
+  </p>
+
+  <div class="progress">
+    <div class="progress-bar" style="width: ${project.progress_percent}%"></div>
+  </div>
+
+  <div class="factoids row">
+    <div class="fact col-xs-4" data-countdown-to="${project.end_time.isoformat()}">
+      <%
+        val, units = project.remaining
+      %>
+      <p>${val}</p>
+      <span>${units} left</span>
+    </div>
+    <div class="fact col-xs-4">
+      <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
+      <span>funded</span>
+    </div>
+    <div class="fact col-xs-4">
+      <p>${h.commas(project.num_pledges)}</p>
+      <span>pledges</span>
+    </div>
+  </div>
+
+  <div class="social-buttons">
+    <p>Support this project on social media!</p>
+    ${self.social_buttons(project)}
+  </div>
+</%def>
+
+
+<%def name="stats_suspended(project)">
+</%def>
+
+
+<%def name="stats_funded(project)">
+</%def>
+
+
+<%def name="stats_prelaunch(project)">
+</%def>
+
+
+<%def name="stats_available(project)">
+</%def>
+
+
+<%def name="stats_tile(project)">
+  <div class="project-block">
+    % if project.status == 'crowdfunding':
+      ${self.stats_crowdfunding(project)}
+    % elif project.status == 'suspended':
+      ${self.stats_suspended(project)}
+    % elif project.status == 'funded':
+      ${self.stats_funded(project)}
+    % elif project.status == 'prelaunch':
+      ${self.stats_prelaunch(project)}
+    % elif project.status == 'available':
+      ${self.stats_available(project)}
+    % endif
+  </div>
+</%def>
+
+
+<%def name="pledge_levels(project)">
+  <div class="project-block">
+    % for pledge_level in project.published_levels:
+      <form method="post" action="${request.route_path('cart:add')}">
+        <div class="pledge-level">
+          ${pledge_level.img(request, 'pledge-icon')}
+          <h3>${pledge_level.name}</h3>
+          <div class="pledge-level-price">${h.currency(pledge_level.price)}</div>
+
+          ${h.hidden('product_id', pledge_level.id)}
+
+          ## XXX FIXME
+          <button class="btn btn-yellow">Back This Project</button>
+        </div>
+      </form>
+      % if not loop.last:
+        <hr>
+      % endif
+    % endfor
+  </div>
+</%def>
+
+
 % if request.user.has_permission('admin'):
   <section class="section-admin-bar">
     <div class="container">
@@ -108,7 +206,7 @@
           </%self:tab>
           <%self:tab suffix="updates">
             Updates
-            ##<span class="badge">${len(project.published_updates)}</span>
+            <span class="badge">${len(project.published_updates)}</span>
           </%self:tab>
           <%self:tab suffix="backers">
             Backers
@@ -122,15 +220,8 @@
         ${next.body()}
       </div>
       <div class="col-md-4">
-        <div class="project-block">
-          ## XXX
-          <p>project metadata goes here</p>
-        </div>
-
-        <div class="project-block">
-          ## XXX
-          <p>pledge levels go here</p>
-        </div>
+        ${self.stats_tile(project)}
+        ${self.pledge_levels(project)}
       </div>
     </div>
 

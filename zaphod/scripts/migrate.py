@@ -166,6 +166,8 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
                 name=old_pledge_level.name,
                 non_physical=old_pledge_level.non_physical,
                 gravity=old_pledge_level.gravity,
+                published=old_pledge_level.published,
+                price=old_pledge_level.price,
             )
             model.Session.add(pledge_level)
             migrate_image_associations(settings, image_map,

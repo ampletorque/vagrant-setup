@@ -50,6 +50,8 @@ def migrate_images(settings):
             original_ext=old_im.original_ext,
             width=old_im.width,
             height=old_im.height,
+            created_time=old_im.created_time,
+            updated_time=old_im.updated_time,
         )
         model.Session.add(new_im)
         # XXX Copy the actual image path!
@@ -76,6 +78,10 @@ def migrate_articles(settings, user_map, image_map):
             show_heading=old_article.show_heading,
             show_article_list=old_article.show_article_list,
             category=old_article.category,
+            created_by=user_map[old_article.created_by],
+            created_time=old_article.created_time,
+            updated_by=user_map[old_article.updated_by],
+            updated_time=old_article.updated_time,
         )
         model.Session.add(article)
         migrate_aliases(settings, old_article, article)
@@ -93,6 +99,10 @@ def migrate_tags(settings, user_map):
             body=old_tag.body.text,
             published=old_tag.published,
             listed=old_tag.listed,
+            created_by=user_map[old_tag.created_by],
+            created_time=old_tag.created_time,
+            updated_by=user_map[old_tag.updated_by],
+            updated_time=old_tag.updated_time,
         )
         model.Session.add(tag)
         migrate_aliases(settings, old_tag, tag)
@@ -111,6 +121,10 @@ def migrate_creators(settings, user_map, image_map):
             body=old_creator.body.text,
             published=old_creator.published,
             listed=old_creator.listed,
+            created_by=user_map[old_creator.created_by],
+            created_time=old_creator.created_time,
+            updated_by=user_map[old_creator.updated_by],
+            updated_time=old_creator.updated_time,
         )
         model.Session.add(creator)
         migrate_aliases(settings, old_creator, creator)
@@ -138,6 +152,10 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
             start_time=old_project.start_time,
             end_time=old_project.end_time,
             suspended_time=old_project.suspended_time,
+            created_by=user_map[old_project.created_by],
+            created_time=old_project.created_time,
+            updated_by=user_map[old_project.updated_by],
+            updated_time=old_project.updated_time,
         )
         model.Session.add(project)
         migrate_aliases(settings, old_project, project)
@@ -155,6 +173,10 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
                 body=old_update.body.text,
                 published=old_update.published,
                 listed=old_update.listed,
+                created_by=user_map[old_update.created_by],
+                created_time=old_update.created_time,
+                updated_by=user_map[old_update.updated_by],
+                updated_time=old_update.updated_time,
             )
             model.Session.add(update)
             migrate_aliases(settings, old_update, update)
@@ -184,6 +206,10 @@ def migrate_users(settings, image_map):
             order_by(scrappy_model.Account.id.desc()):
         print("  user %s" % old_user.email)
 
+        if old_user.id == 1:
+            user_map[old_user] = model.User.get(1)
+            continue
+
         if old_user.email in user_emails:
             email = old_user.email + '.' + str(old_user.id)
         else:
@@ -197,11 +223,26 @@ def migrate_users(settings, image_map):
             email=email,
             hashed_password=old_user.hashed_password,
             enabled=old_user.enabled,
+            created_time=old_user.created_time,
+            updated_time=old_user.updated_time,
         )
         model.Session.add(user)
         migrate_image_associations(settings, image_map, old_user, user)
         user_map[old_user] = user
         model.Session.flush()
+
+    # Take a second pass through to set the updated by / created by.
+    for old_user in scrappy_meta.Session.query(scrappy_model.Account).\
+            order_by(scrappy_model.Account.id.desc()):
+        new_user = user_map[old_user]
+        new_user.updated_by = user_map[old_user.updated_by]
+        new_user.created_by = user_map[old_user.created_by]
+
+    # Set image updated by / created by.
+    for old_image, new_image in image_map.items():
+        new_image.updated_by = user_map[old_image.updated_by]
+        new_image.created_by = user_map[old_image.created_by]
+
     return user_map
 
 
@@ -216,6 +257,10 @@ def migrate_provider_types(settings, user_map, image_map):
             body=old_provider_type.body.text,
             published=old_provider_type.published,
             listed=old_provider_type.listed,
+            created_by=user_map[old_provider_type.created_by],
+            created_time=old_provider_type.created_time,
+            updated_by=user_map[old_provider_type.updated_by],
+            updated_time=old_provider_type.updated_time,
         )
         model.Session.add(provider_type)
         migrate_aliases(settings, old_provider_type, provider_type)
@@ -235,6 +280,10 @@ def migrate_providers(settings, user_map, image_map, provider_type_map):
             body=old_provider.body.text,
             published=old_provider.published,
             listed=old_provider.listed,
+            created_by=user_map[old_provider.created_by],
+            created_time=old_provider.created_time,
+            updated_by=user_map[old_provider.updated_by],
+            updated_time=old_provider.updated_time,
         )
         model.Session.add(provider)
         for old_type in old_provider.types:
@@ -254,6 +303,10 @@ def migrate_orders(settings, user_map, pledge_level_map):
         order = model.Order(
             id=old_order.id,
             user=user,
+            created_by=user_map[old_order.created_by],
+            created_time=old_order.created_time,
+            updated_by=user_map[old_order.updated_by],
+            updated_time=old_order.updated_time,
         )
         model.Session.add(order)
         cart = model.Cart(order=order)
@@ -284,6 +337,14 @@ def main(argv=sys.argv):
     scrappy_model.init_model(old_engine, site_map={}, default_site_id=701)
 
     with transaction.manager:
+        root_user = model.User(
+            name=u'Root User',
+            email='root@crowdsupply.com',
+        )
+        root_user.update_password('root')
+        model.Session.add(root_user)
+        model.Session.flush()
+
         image_map = migrate_images(settings)
         user_map = migrate_users(settings, image_map)
 

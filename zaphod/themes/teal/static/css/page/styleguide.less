@@ -1,3 +1,4 @@
+// Logos
 .styleguide-logo-light, .styleguide-logo-dark, .styleguide-logo-white {
     width: @cs-logo-width + 40px;
     height: @cs-logo-height + 40px;
@@ -5,7 +6,6 @@
     background-repeat: no-repeat;
     margin: 16px 0;
 }
-
 .styleguide-logo-light {
     background-color: @cs-dark-grey;
     border: 1px solid @cs-dark-grey;
@@ -26,4 +26,59 @@
     width: 120px;
     height: 120px;
     background-image: url(/_teal/images/crowd-supply-icon.png);
+}
+
+// Colors
+.styleguide-color {
+    clear: both;
+    padding-bottom: 10px;
+}
+.styleguide-color-block {
+    width: 90px;
+    height: 90px;
+    border-radius: 5px;
+    border: 1px solid #888;
+    float: left;
+    margin-right: 10px;
+    margin-bottom: 20px;
+}
+.styleguide-color-teal {
+    .styleguide-color-block {
+        background-color: @cs-teal;
+    }
+    code:before {
+        content: "@cs-teal: @{cs-teal}";
+    }
+}
+.styleguide-color-dark-teal {
+    .styleguide-color-block {
+        background-color: @cs-dark-teal;
+    }
+    code:before {
+        content: "@cs-dark-teal: @{cs-dark-teal}";
+    }
+}
+.styleguide-color-dark-grey {
+    .styleguide-color-block {
+        background-color: @cs-dark-grey;
+    }
+    code:before {
+        content: "@cs-dark-grey: @{cs-dark-grey}";
+    }
+}
+.styleguide-color-yellow {
+    .styleguide-color-block {
+        background-color: @cs-yellow;
+    }
+    code:before {
+        content: "@cs-yellow: @{cs-yellow}";
+    }
+}
+.styleguide-color-offwhite {
+    .styleguide-color-block {
+        background-color: @cs-offwhite;
+    }
+    code:before {
+        content: "@cs-offwhite: @{cs-offwhite}";
+    }
 }

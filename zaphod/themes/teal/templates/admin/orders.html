@@ -1,9 +1,9 @@
 <%inherit file="base.html"/>
 
-<%def name="title()">List Creators</%def>
+<%def name="title()">List Orders</%def>
 
 
-<section class="section-creators">
+<section class="section-admin-orders">
   <div class="container">
     <div class="row">
       <table class="table">
@@ -11,17 +11,15 @@
           <tr>
             <th></th>
             <th>ID</th>
-            <th>Name</th>
           </tr>
         </thead>
         <tbody>
-          % for creator in creators:
+          % for order in orders:
             <tr>
               <td>
-                <a href="#">Edit</a>
+                <a href="${request.route_path('admin:order', id=order.id)}">Edit</a>
               </td>
-              <td>${creator.id}</td>
-              <td>${creator.name}</td>
+              <td>${order.id}</td>
             </tr>
           % endfor
         </tbody>

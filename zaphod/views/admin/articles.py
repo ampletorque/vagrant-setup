@@ -10,7 +10,7 @@ from ... import model
 
 
 class UpdateForm(Schema):
-    "Schema for validating project update form."
+    "Schema for validating article update form."
     pre_validators = [NestedVariables()]
     name = validators.UnicodeString(max=255, not_empty=True)
     body = validators.UnicodeString()
@@ -18,35 +18,28 @@ class UpdateForm(Schema):
     listed = validators.Bool()
     published = validators.Bool()
     use_custom_paths = validators.Bool()
-    creator_id = validators.Int(not_empty=True)
     teaser = validators.UnicodeString(max=255)
-    vimeo_id = validators.Int()
-    target = validators.Number()
-    start_time = validators.DateConverter()
-    # Remember we probably want to add a day to this value.
-    end_time = validators.DateConverter()
-    gravity = validators.Int(not_empty=True)
 
 
-class ProjectsView(object):
+class ArticlesView(object):
     def __init__(self, request):
         self.request = request
 
-    @view_config(route_name='admin:projects', renderer='admin/projects.html',
+    @view_config(route_name='admin:articles', renderer='admin/articles.html',
                  permission='authenticated')
     def index(self):
-        q = model.Session.query(model.Project)
-        return dict(projects=q.all())
+        q = model.Session.query(model.Article)
+        return dict(articles=q.all())
 
-    @view_config(route_name='admin:project', renderer='admin/project.html',
+    @view_config(route_name='admin:article', renderer='admin/article.html',
                  permission='authenticated')
     def edit(self):
         request = self.request
-        project = model.Project.get(request.matchdict['id'])
+        article = model.Article.get(request.matchdict['id'])
 
         form = Form(request, schema=UpdateForm)
         if form.validate():
             # XXX do shit
             pass
 
-        return dict(project=project, renderer=FormRenderer(form))
+        return dict(article=article, renderer=FormRenderer(form))

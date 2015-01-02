@@ -3,6 +3,20 @@
 
 <%def name="title()">${article.name}</%def>
 
+
+% if request.user.has_permission('admin'):
+  <section class="section-admin-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <p><a href="${request.route_path('admin:article', id=article.id)}">Admin Edit Page</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+% endif
+
+
 <section class="article">
   <div class="container">
     <div class="row">

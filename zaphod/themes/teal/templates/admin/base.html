@@ -44,12 +44,12 @@
   <section class="section-admin-tabs">
     <div class="container">
       <div class="row">
-        ${self.tab('Dashboard', '#')}
-        ${self.tab('Orders', '#')}
-        ${self.tab('Vendor Orders', '#')}
-        ${self.tab('Users', '#')}
-        ${self.tab('Leads', '#')}
-        ${self.tab('Content', '#')}
+        ${self.tab('Dashboard', request.route_path('admin:dashboard'))}
+        ${self.tab('Orders', request.route_path('admin:orders'))}
+        ${self.tab('Vendor Orders', request.route_path('admin:vendor_orders'))}
+        ${self.tab('Users', request.route_path('admin:users'))}
+        ${self.tab('Leads', request.route_path('admin:leads'))}
+        ${self.tab('Content', request.route_path('admin:content'))}
       </div>
     </div>
   </section>

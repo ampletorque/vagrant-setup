@@ -1,7 +1,9 @@
 <%inherit file="base.html"/>
 
+<%def name="title()">List Projects</%def>
 
-<section class="section-projects">
+
+<section class="section-admin-projects">
   <div class="container">
     <div class="row">
       <table class="table">
@@ -16,7 +18,7 @@
           % for project in projects:
             <tr>
               <td>
-                <a href="#">Edit</a>
+                <a href="${request.route_path('admin:project', id=project.id)}">Edit</a>
               </td>
               <td>${project.id}</td>
               <td>${project.name}</td>

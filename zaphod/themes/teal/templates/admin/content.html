@@ -1,0 +1,21 @@
+<%inherit file="base.html"/>
+
+<%def name="title()">Content</%def>
+
+
+<section class="section-content">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul>
+          <li><a href="${request.route_path('admin:articles')}">Articles</a></li>
+          <li><a href="${request.route_path('admin:creators')}">Creators</a></li>
+          <li><a href="${request.route_path('admin:projects')}">Projects</a></li>
+          <li><a href="${request.route_path('admin:tags')}">Tags</a></li>
+          <li><a href="${request.route_path('admin:provider_types')}">Provider Types</a></li>
+          <li><a href="${request.route_path('admin:providers')}">Providers</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

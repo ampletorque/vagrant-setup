@@ -4,6 +4,19 @@
 <%def name="title()">${creator.name}</%def>
 
 
+% if request.user.has_permission('admin'):
+  <section class="section-admin-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <p><a href="${request.route_path('admin:creator', id=creator.id)}">Admin Edit Page</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+% endif
+
+
 <section class="section-creator">
   <div class="container">
     <div class="row">

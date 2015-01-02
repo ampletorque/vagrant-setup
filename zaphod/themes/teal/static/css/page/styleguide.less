@@ -1,0 +1,29 @@
+.styleguide-logo-light, .styleguide-logo-dark, .styleguide-logo-white {
+    width: @cs-logo-width + 40px;
+    height: @cs-logo-height + 40px;
+    background-position: 20px 20px;
+    background-repeat: no-repeat;
+    margin: 16px 0;
+}
+
+.styleguide-logo-light {
+    background-color: @cs-dark-grey;
+    border: 1px solid @cs-dark-grey;
+    .at2x('/_teal/images/crowd-supply-logo-light.png', @cs-logo-width, @cs-logo-height);
+}
+.styleguide-logo-dark {
+    background-color: @cs-white;
+    border: 1px solid #888;
+    .at2x('/_teal/images/crowd-supply-logo-dark.png', @cs-logo-width, @cs-logo-height);
+}
+.styleguide-logo-white {
+    background-color: @cs-teal;
+    border: 1px solid @cs-teal;
+    .at2x('/_teal/images/crowd-supply-logo-white.png', @cs-logo-width, @cs-logo-height);
+}
+.styleguide-logo-icon {
+    float: right;
+    width: 120px;
+    height: 120px;
+    background-image: url(/_teal/images/crowd-supply-icon.png);
+}

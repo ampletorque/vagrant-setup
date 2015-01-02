@@ -1,13 +1,13 @@
 //@navbar-cs-height: 57px;
-@navbar-cs-brand-width: 218px;
-@navbar-cs-brand-height: 26px;
+@navbar-cs-brand-width: @cs-logo-width;
+@navbar-cs-brand-height: @cs-logo-height;
 
 .navbar-cs {
     background-color: @cs-dark;
 
     .navbar-logo {
         // image path is relative to document, not this file
-        .at2x('/_teal/images/crowd-supply-logo-black.png', @navbar-cs-brand-width, @navbar-cs-brand-height);
+        .at2x('/_teal/images/crowd-supply-logo-light.png', @navbar-cs-brand-width, @navbar-cs-brand-height);
         .image-replace;
         background-repeat: no-repeat;
         background-position: left center;

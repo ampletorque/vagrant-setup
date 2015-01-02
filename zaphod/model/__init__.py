@@ -12,4 +12,5 @@ from .project import *
 from .provider import *
 from .tag import *
 from .user import *
+from .user_mixin import *
 from .utils import *

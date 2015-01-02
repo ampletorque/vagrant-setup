@@ -5,16 +5,17 @@ from sqlalchemy import Column, ForeignKey, types, orm
 
 from . import custom_types
 from .base import Base
+from .user_mixin import UserMixin
 
 
-class Order(Base):
+class Order(Base, UserMixin):
     __tablename__ = 'orders'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     cart_id = Column(None, ForeignKey('carts.id'), nullable=False, unique=True)
     user_id = Column(None, ForeignKey('users.id'), nullable=True)
 
-    user = orm.relationship('User', backref='orders')
+    user = orm.relationship('User', backref='orders', foreign_keys=user_id)
 
 
 class Cart(Base):

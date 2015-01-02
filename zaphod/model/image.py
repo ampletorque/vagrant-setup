@@ -10,6 +10,7 @@ import six
 
 from . import utils
 from .base import Base
+from .user_mixin import UserMixin
 
 __all__ = ['ImageMixin', 'ImageMeta']
 
@@ -76,7 +77,7 @@ class ImageMixin(object):
             return request.image_url(im.name, im.original_ext, chain)
 
 
-class ImageMeta(Base):
+class ImageMeta(Base, UserMixin):
     """
     A record of an image associated with any content or used independently.
     Note that the actual image data is stored on disk as a normal image file,

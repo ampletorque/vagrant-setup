@@ -12,6 +12,18 @@ Until the platform takes over running the live site, this repo should also
 serve to maintain the script(s) to migrate data from the old site.
 
 
+Browser Support
+---------------
+
+Ditching IE8 and below enables a lot of interesting features and saves dev time. The experience for those browsers would probably be "crappy but usable" and they account for around 0.4% of sessions. ???
+
+Example features include:
+
+- SVG
+- HTML5 form features (date pickers, sliders, validation) (IE9+)
+- requestAnimationFrame
+
+
 Workflows / Model
 -----------------
 

@@ -78,3 +78,37 @@ class PledgeLevel(Base, ImageMixin):
             filter(CartItem.product == self).\
             filter(not_(Order.status.in_(['canc', 'frau']))).\
             scalar() or 0
+
+    @property
+    def published_options(self):
+        # XXX Turn into a relationship
+        return [opt for opt in self.options if opt.published]
+
+
+class Option(Base):
+    __tablename__ = 'options'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+    id = Column(types.Integer, primary_key=True)
+    pledge_level_id = Column(None, ForeignKey('pledge_levels.id'), nullable=False)
+    name = Column(types.Unicode(255), nullable=False, default=u'')
+    gravity = Column(types.Integer, nullable=False, default=0)
+    published = Column(types.Boolean, nullable=False, default=False)
+
+    pledge_level = orm.relationship('PledgeLevel', backref='options')
+
+    @property
+    def published_values(self):
+        # XXX Turn into a relationship
+        return [val for val in self.values if val.published]
+
+
+class OptionValue(Base):
+    __tablename__ = 'option_values'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+    id = Column(types.Integer, primary_key=True)
+    option_id = Column(None, ForeignKey('options.id'), nullable=False)
+    description = Column(types.Unicode(255), nullable=False, default=u'')
+    gravity = Column(types.Integer, nullable=False, default=0)
+    published = Column(types.Boolean, nullable=False, default=False)
+
+    option = orm.relationship('Option', backref='values')

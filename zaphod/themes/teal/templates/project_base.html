@@ -134,7 +134,7 @@
 <%def name="pledge_levels(project)">
   <div class="project-block">
     % for pledge_level in project.published_levels:
-      <form method="post" action="${request.route_path('cart:add')}">
+      <form class="form-horizontal" method="post" action="${request.route_path('cart:add')}">
         <div class="pledge-level">
           ${pledge_level.img(request, 'pledge-icon')}
           <h3>${pledge_level.name}</h3>
@@ -142,8 +142,25 @@
 
           ${h.hidden('product_id', pledge_level.id)}
 
-          ## XXX FIXME
-          <button class="btn btn-yellow">Back This Project</button>
+          % for option in pledge_level.published_options:
+            <div class="form-group">
+              <label class="col-xs-4 control-label" for="option-${option.id}">${option.name}</label>
+              <div class="col-xs-8">
+                <select id="option-${option.id}" name="option-${loop.index}.value_id" class="form-control">
+                  % for value in option.published_values:
+                    <option value="${value.id}">${value.description}</option>
+                  % endfor
+                </select>
+              </div>
+            </div>
+          % endfor
+
+          <div class="form-group">
+            <div class="col-xs-8 col-xs-offset-4">
+              ## XXX FIXME
+              <button class="btn btn-yellow">Back This Project</button>
+            </div>
+          </div>
         </div>
       </form>
       % if not loop.last:

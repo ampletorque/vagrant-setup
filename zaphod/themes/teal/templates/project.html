@@ -7,8 +7,8 @@
 
 <%def name="title()">${project.name}</%def>
 
-% if project.vimeo_id:
-  ${blocks.vimeo_embed(project.vimeo_id)}
+% if project.crowdfunding_vimeo_id:
+  ${blocks.vimeo_embed(project.crowdfunding_vimeo_id)}
 % else:
   ${project.img(request, 'project-tile')}
 % endif

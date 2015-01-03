@@ -205,6 +205,22 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
             migrate_image_associations(settings, image_map,
                                        old_pledge_level, pledge_level)
             pledge_level_map[old_pledge_level] = pledge_level
+            for old_option in old_pledge_level.all_options:
+                print("      option %s" % old_option.name)
+                option = model.Option(
+                    name=old_option.name,
+                    gravity=old_option.gravity,
+                    published=old_option.enabled,
+                )
+                pledge_level.options.append(option)
+                for old_value in old_option.all_values:
+                    print("        value %s" % old_value.description)
+                    value = model.OptionValue(
+                        description=old_value.description,
+                        gravity=old_value.gravity,
+                        published=old_value.enabled,
+                    )
+                    option.values.append(value)
         model.Session.flush()
     return project_map, pledge_level_map
 

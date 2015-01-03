@@ -21,20 +21,29 @@ class Project(Node, ElasticMixin):
     node_id = Column(None, ForeignKey('nodes.id'), primary_key=True)
 
     creator_id = Column(None, ForeignKey('creators.node_id'), nullable=False)
-    vimeo_id = Column(types.Integer, nullable=True)
     target = Column(custom_types.Money, nullable=False, default=0)
+    accepts_preorders = Column(types.Boolean, nullable=False, default=False)
 
     start_time = Column(types.DateTime, nullable=True)
     end_time = Column(types.DateTime, nullable=True)
     suspended_time = Column(types.DateTime, nullable=True)
 
+    prelaunch_vimeo_id = Column(types.Integer, nullable=True)
+    prelaunch_teaser = Column(types.UnicodeText, nullable=False, default=u'')
+    prelaunch_body = Column(types.UnicodeText, nullable=False, default=u'')
+
+    crowdfunding_vimeo_id = Column(types.Integer, nullable=True)
+    crowdfunding_teaser = Node.teaser
+    crowdfunding_body = Node.body
+
+    available_vimeo_id = Column(types.Integer, nullable=True)
+    available_teaser = Column(types.UnicodeText, nullable=False, default=u'')
+    available_body = Column(types.UnicodeText, nullable=False, default=u'')
+
     gravity = Column(types.Integer, nullable=False, default=0)
 
     homepage_url = Column(types.String(255), nullable=False, default=u'')
     open_source_url = Column(types.String(255), nullable=False, default=u'')
-
-    # XXX Turn this into a column.
-    accepts_preorders = True
 
     updates = orm.relationship(
         'ProjectUpdate',
@@ -159,19 +168,23 @@ class Project(Node, ElasticMixin):
             analyzer='content',
             properties=ESMapping(
                 ESString('name', boost=5),
-                ESString('teaser', boost=3),
                 ESString('keywords'),
                 # XXX For simplicity we're just passing the non-rendered
                 # markdown string to elasticsearch. We're just using it for
                 # keyword indexing, so that should work ok for now.
-                ESString('body'),
+                ESString('prelaunch_teaser', boost=3),
+                ESString('prelaunch_body'),
+                ESString('crowdfunding_teaser', boost=3),
+                ESString('crowdfunding_body'),
+                ESString('available_teaser', boost=3),
+                ESString('available_body'),
                 ESField('published'),
                 ESField('listed'),
-                # ESField('target'),
-                # ESField('start_time'),
-                # ESField('end_time'),
-                # ESString('levels',
-                #          filter=lambda levels: [pl.name for pl in levels]),
+                ESField('target'),
+                ESField('start_time'),
+                ESField('end_time'),
+                ESString('levels',
+                         filter=lambda levels: [pl.name for pl in levels]),
                 creator=ESMapping(
                     properties=ESMapping(
                         ESString('name', boost=8),

@@ -31,6 +31,8 @@ class PledgeLevel(Base, ImageMixin):
     non_physical = Column(types.Boolean, nullable=False, default=False)
     published = Column(types.Boolean, nullable=False, default=False)
     price = Column(custom_types.Money, nullable=False, default=0)
+    accepts_preorders = Column(types.Boolean, nullable=False, default=False)
+    in_stock = Column(types.Boolean, nullable=False, default=False)
 
     batches = orm.relationship('PledgeBatch', backref='pledge_level')
 

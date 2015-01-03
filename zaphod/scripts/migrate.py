@@ -142,12 +142,22 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
         project = model.Project(
             creator=creator_map[old_project.creator],
             name=old_project.name,
-            teaser=old_project.teaser,
-            body=old_project.body.text,
+
+            prelaunch_vimeo_id=None,
+            prelaunch_teaser=old_project.teaser,
+            prelaunch_body=u'',
+
+            crowdfunding_vimeo_id=old_project.vimeo_id,
+            crowdfunding_teaser=old_project.teaser,
+            crowdfunding_body=old_project.body.text,
+
+            available_vimeo_id=old_project.vimeo_id,
+            available_teaser=old_project.teaser,
+            available_body=old_project.body.text,
+
             published=old_project.published,
             listed=old_project.listed,
             gravity=old_project.gravity,
-            vimeo_id=old_project.vimeo_id,
             target=old_project.target,
             start_time=old_project.start_time,
             end_time=old_project.end_time,

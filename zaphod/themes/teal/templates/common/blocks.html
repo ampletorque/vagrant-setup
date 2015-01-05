@@ -3,3 +3,10 @@
     <iframe class="embed-responsive-item" src="//player.vimeo.com/video/${vimeo_id}?title=0&amp;byline=0&amp;portrait=0&amp;api=1" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
   </div>
 </%def>
+
+
+<%def name="flash(msg, category='info')">
+  <section class="flash flash-${category}">
+    <div class="container">${msg}</div>
+  </section>
+</%def>

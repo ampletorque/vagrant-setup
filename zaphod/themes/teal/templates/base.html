@@ -1,5 +1,6 @@
-<%namespace name="header" file="common/header.html"/>
-<%namespace name="footer" file="common/footer.html"/>
+<%namespace name="header" file="common/header.html"/>\
+<%namespace name="footer" file="common/footer.html"/>\
+<%namespace name="blocks" file="common/blocks.html"/>\
 <!DOCTYPE html>
 <html>
 <head>
@@ -26,6 +27,7 @@
 </head>
 <body>
   ${header.header()}
+  ${self.flash_messages()}
   ${next.body()}
   ${footer.footer()}
   ${request.asset_tag('main-js')}
@@ -37,3 +39,10 @@
 <%def name="title()"></%def>
 <%def name="additional_head()"></%def>
 <%def name="additional_footer()"></%def>
+
+
+<%def name="flash_messages()">
+  % for msg, category in request.session.pop_flash():
+    ${blocks.flash(msg, category)}
+  % endfor
+</%def>

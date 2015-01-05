@@ -1,7 +1,7 @@
 <%inherit file="base.html"/>
 
 <%namespace name="forms" file="common/forms.html"/>
-##<%namespace name="blocks" file="common/blocks.html"/>
+<%namespace name="blocks" file="common/blocks.html"/>
 
 
 <%def name="title()">Crowd Supply Style Guide</%def>
@@ -243,10 +243,10 @@
           ${forms.ltext(renderer, 'email', label='Email Address')}
           ${forms.lpassword(renderer, 'password1', label='Password')}
           ${forms.lcheckbox(renderer, 'remember_me', label='Remember me')}
-          <div class="form-actions">
+          <%forms:actions>
             <button type="submit" class="btn btn-primary">Sign in</button>
             <button type="submit" class="btn">Reset Password</button>
-          </div>
+          </%forms:actions>
         </form>
 
         ##<form class="form-vertical form-wrapped">
@@ -261,10 +261,10 @@
             ${forms.ltext(renderer, 'input01', label='Text Input', hint='This is some short text under the group.')}
             ##${forms.lcheckbox_list(renderer, [('check01', 'Checkbox Option One', False), ('check02', 'Checkbox Option Two', True), ('check03', 'Checkbox Option Three', False)], hint='This is some short text under the group.', label='Checkbox Input')}
 
-            <div class="input-group error">
-              <label class="control-label" for="phone">Phone</label>
-              <div class="controls">
-                <input type="text" name="phone" id="phone" value="555-55-1212">
+            <div class="form-group has-error">
+              <label class="control-label col-sm-3" for="phone">Phone</label>
+              <div class="col-sm-9">
+                <input class="form-control" type="text" name="phone" id="phone" value="555-55-1212">
                 <ul class="error">
                   <li>Phone Number is in incorrect format</li>
                 </ul>
@@ -279,11 +279,11 @@
 
             ${forms.ltextarea(renderer, 'textarea01', label='Textarea', size='input-block-level')}
 
-            <div class="form-actions">
+            <%forms:actions>
               <button type="submit" class="btn btn-primary">Save Changes</button>
               <button class="btn">Cancel</button>
               <span>This is some form advice about submissions.</span>
-            </div>
+            </%forms:actions>
 
           </fieldset>
         </form>
@@ -291,27 +291,27 @@
 
     </div>
 
-    ##<div class="row">
-    ##  <div class="col-md-12"><hr></div>
+    <div class="row">
+      <div class="col-md-12"><hr></div>
 
-    ##  <div class="col-md-3">
-    ##    <h2>Alerts</h2>
-    ##  </div>
+      <div class="col-md-3">
+        <h2>Alerts</h2>
+      </div>
 
-    ##  <div class="col-md-9">
-    ##    <p>Alerts will normally appear only at the top of the page, just below the header, with no whitespace.</p>
-    ##    <p>User-initiated changes to data should almost always trigger a flash of the appropriate severity.</p>
-    ##    <p>Use <code>'success'</code> to indicate a successful data change or <code>'error'</code> to indicate a failure.</p>
-    ##    <br>
-    ##    <br>
-    ##  </div>
-    ##</div>
+      <div class="col-md-9">
+        <p>Alerts will normally appear only at the top of the page, just below the header, with no whitespace.</pflash
+        <p>User-initiated changes to data should almost always trigger a flash of the appropriate severity.</p>
+        <p>Use <code>'success'</code> to indicate a successful data change or <code>'error'</code> to indicate a failure.</p>
+        <br>
+        <br>
+      </div>
+    </div>
   </div>
 
-  ##${blocks.flash('This is a sample alert for something that was successful.', category='success')}
-  ##${blocks.flash('This is a sample alert for something that went ok.', category='info')}
-  ##${blocks.flash('This is a sample alert for something that might have been a little off.', category='warning')}
-  ##${blocks.flash('This is a sample alert for something that is really broken.', category='error')}
+  ${blocks.flash('This is a sample alert for something that was successful.', category='success')}
+  ${blocks.flash('This is a sample alert for something that went ok.', category='info')}
+  ${blocks.flash('This is a sample alert for something that might have been a little off.', category='warning')}
+  ${blocks.flash('This is a sample alert for something that is really broken.', category='error')}
 
   <div class="container">
     <div class="row">

@@ -1,6 +1,6 @@
 <%inherit file="base.html"/>
 
-##<%namespace name="forms" file="common/forms.html"/>
+<%namespace name="forms" file="common/forms.html"/>
 ##<%namespace name="blocks" file="common/blocks.html"/>
 
 
@@ -230,66 +230,66 @@
     ##  </div>
     ##</div>
 
-    ##<div class="row">
-    ##  <div class="col-md-12"><hr></div>
+    <div class="row">
+      <div class="col-md-12"><hr></div>
 
-    ##  <div class="col-md-3">
-    ##    <h2>Forms</h2>
-    ##  </div><!-- /fourcol -->
+      <div class="col-md-3">
+        <h2>Forms</h2>
+      </div>
 
-    ##  <div class="col-md-9">
+      <div class="col-md-9">
 
-    ##    <form class="form-horizontal form-wrapped">
-    ##      ${forms.ltext(renderer, 'email', label='Email Address')}
-    ##      ${forms.lpassword(renderer, 'password1', label='Password')}
-    ##      ${forms.lcheckbox(renderer, 'remember_me', label='Remember me')}
-    ##      <div class="form-actions">
-    ##        <button type="submit" class="btn btn-primary">Sign in</button>
-    ##        <button type="submit" class="btn">Reset Password</button>
-    ##      </div>
-    ##    </form>
+        <form class="form-horizontal form-wrapped">
+          ${forms.ltext(renderer, 'email', label='Email Address')}
+          ${forms.lpassword(renderer, 'password1', label='Password')}
+          ${forms.lcheckbox(renderer, 'remember_me', label='Remember me')}
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Sign in</button>
+            <button type="submit" class="btn">Reset Password</button>
+          </div>
+        </form>
 
-    ##    <form class="form-vertical form-wrapped">
-    ##      ${forms.ltext(renderer, 'small', size='input-small', placeholder='Small')}
-    ##      ${forms.ltext(renderer, 'default', placeholder='Default')}
-    ##      ${forms.ltext(renderer, 'xxlarge', size='input-xxlarge', placeholder='XXLarge')}
-    ##    </form>
+        ##<form class="form-vertical form-wrapped">
+        ##  ${forms.ltext(renderer, 'small', size='input-small', placeholder='Small')}
+        ##  ${forms.ltext(renderer, 'default', placeholder='Default')}
+        ##  ${forms.ltext(renderer, 'xxlarge', size='input-xxlarge', placeholder='XXLarge')}
+        ##</form>
 
-    ##    <form class="form-horizontal form-wrapped">
-    ##      <fieldset>
-    ##        <div class="control-legend">An Amazing Form</div>
-    ##        ${forms.ltext(renderer, 'input01', label='Text Input', hint='This is some short text under the group.')}
-    ##        ${forms.lcheckbox_list(renderer, [('check01', 'Checkbox Option One', False), ('check02', 'Checkbox Option Two', True), ('check03', 'Checkbox Option Three', False)], hint='This is some short text under the group.', label='Checkbox Input')}
+        <form class="form-horizontal form-wrapped">
+          <fieldset>
+            <div class="control-legend">An Amazing Form</div>
+            ${forms.ltext(renderer, 'input01', label='Text Input', hint='This is some short text under the group.')}
+            ##${forms.lcheckbox_list(renderer, [('check01', 'Checkbox Option One', False), ('check02', 'Checkbox Option Two', True), ('check03', 'Checkbox Option Three', False)], hint='This is some short text under the group.', label='Checkbox Input')}
 
-    ##        <div class="control-group error">
-    ##          <label class="control-label" for="phone">Phone</label>
-    ##          <div class="controls">
-    ##            <input type="text" name="phone" id="phone" value="555-55-1212">
-    ##            <ul class="error">
-    ##              <li>Phone Number is in incorrect format</li>
-    ##            </ul>
-    ##          </div>
-    ##        </div>
+            <div class="input-group error">
+              <label class="control-label" for="phone">Phone</label>
+              <div class="controls">
+                <input type="text" name="phone" id="phone" value="555-55-1212">
+                <ul class="error">
+                  <li>Phone Number is in incorrect format</li>
+                </ul>
+              </div>
+            </div>
 
-    ##        ${forms.ltext(renderer, 'prefixed', 450, label='Prefixed', prefix='$', size='input-small')}
+            ${forms.ltext(renderer, 'prefixed', 450, label='Prefixed', prefix='$', size='input-small')}
 
-    ##        ${forms.lselect(renderer, 'select01', None, range(5), prompt='Options', label='Select Input', hint='This is some short test under the group.', required=True)}
+            ${forms.lselect(renderer, 'select01', None, range(5), prompt='Options', label='Select Input', hint='This is some short test under the group.', required=True)}
 
-    ##        ${forms.lfile(renderer, 'file01', label='File Input')}
+            ${forms.lfile(renderer, 'file01', label='File Input')}
 
-    ##        ${forms.ltextarea(renderer, 'textarea01', label='Textarea', size='input-block-level')}
+            ${forms.ltextarea(renderer, 'textarea01', label='Textarea', size='input-block-level')}
 
-    ##        <div class="form-actions">
-    ##          <button type="submit" class="btn btn-primary">Save Changes</button>
-    ##          <button class="btn">Cancel</button>
-    ##          <span>This is some form advice about submissions.</span>
-    ##        </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+              <button class="btn">Cancel</button>
+              <span>This is some form advice about submissions.</span>
+            </div>
 
-    ##      </fieldset>
-    ##    </form>
-    ##  </div>
+          </fieldset>
+        </form>
+      </div>
 
-    ##</div>
+    </div>
 
     ##<div class="row">
     ##  <div class="col-md-12"><hr></div>
@@ -335,7 +335,7 @@
             </tr>
           </thead>
           <tbody>
-            % for cls in (None, 'primary', 'yellow', 'danger', 'inverse'):
+            % for cls in (None, 'primary', 'cta', 'danger', 'inverse'):
               <tr>
                 <td>
                   <button class="btn ${'btn-%s' % cls if cls else ''}">
@@ -408,54 +408,69 @@
 
     </div>
 
-    ##<div class="row">
-    ##  <div class="col-md-12"><hr></div>
+    <div class="row">
+      <div class="col-md-12"><hr></div>
 
-    ##  <div class="col-md-3">
-    ##    <h2>Widgets</h2>
-    ##  </div>
+      <div class="col-md-3">
+        <h2>Widgets</h2>
+      </div>
 
-    ##  <div class="col-md-9">
-    ##    <h3>Progress Bars</h3>
+      <div class="col-md-9">
+        <h3>Progress Bars</h3>
 
-    ##    <div class="row">
-    ##      <div class="col-md-6">
-    ##        <div class="progress">
-    ##          <div class="bar" style="width:60%"></div>
-    ##        </div>
-    ##        <div class="progress">
-    ##          <div class="bar" style="width:10%"></div>
-    ##        </div>
-    ##        <div class="progress">
-    ##          <div class="bar" style="width:120%"></div>
-    ##        </div>
-    ##      </div>
-    ##    </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="progress">
+              <div class="progress-bar" style="width:60%"></div>
+            </div>
+            <div class="progress">
+              <div class="progress-bar" style="width:10%"></div>
+            </div>
+            <div class="progress">
+              <div class="progress-bar" style="width:120%"></div>
+            </div>
+          </div>
+        </div>
 
-    ##    <h3>Tabs</h3>
+        <h3>Status Bars</h3>
 
-    ##    <ul class="section-nav">
-    ##      <li class="active"><a data-target="lorem-tab" href="#">Lorem</a></li>
-    ##      <li><a data-target="hipster-tab" href="#">Hipster</a></li>
-    ##      <li><a data-target="bluth-tab" href="#">Bluth</a></li>
-    ##    </ul>
+        <p>Used when a progess bar gets replaced with a status and/or metadata.</p>
 
-    ##    <div class="inner">
-    ##      <section id="tab-content">
-    ##        <section id="lorem-tab" class="current-tab">
-    ##          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis a turpis id nibh tincidunt congue eu vitae lacus. Curabitur aliquet congue augue id condimentum. Vivamus at sapien in nisl rhoncus bibendum id non lorem. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi tristique erat eget sapien tempor condimentum. Vestibulum velit libero, venenatis pharetra gravida sit amet, lacinia sit amet felis. Pellentesque dignissim fermentum mollis.</p>
-    ##        </section>
-    ##        <section id="hipster-tab">
-    ##          <p>Church-key american apparel next level truffaut, master cleanse direct trade intelligentsia try-hard chambray. Helvetica fanny pack organic pour-over mustache brunch butcher. Try-hard pop-up you probably haven't heard of them godard. Vegan chambray scenester, mixtape banjo intelligentsia +1 leggings godard vice wayfarers irony letterpress stumptown. Meggings 8-bit tofu aesthetic ethical ennui. Skateboard tumblr synth, banksy cosby sweater sriracha banjo gluten-free blue bottle flannel helvetica. Disrupt organic cray, semiotics cliche tonx truffaut vinyl iphone cosby sweater photo booth pug letterpress.</p>
-    ##        </section>
-    ##        <section id="bluth-tab">
-    ##          <p>Hey, look at that – you're mean sober, too. I'll buy you a hundred George Michaels that you can teach to drive! I've been in the film business for a while but I just can't seem to get one in the can. Stack the chafing dishes outside by the mailbox. I'm on the job. Why are you squeezing me with your body? It's a hug, Michael. I'm hugging you. Bob Loblaw Lobs Law Bomb. Oh Gob, you could charm the black off a telegram boy. Coo coo ca chaw. Coo coo ca chaw. Coo coo ca chaw.</p>
-    ##        </section>
-    ##      </section>
-    ##    </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="status-bar">
+              <div class="status-bar-left">Funded!</div>
+              <div class="status-bar-right">Pre-Order Now</div>
+            </div>
+            <div class="status-bar status-bar-light">
+              <div class="status-bar-left">Coming Soon</div>
+              <div class="status-bar-right">Sign Up for Updates</div>
+            </div>
+          </div>
+        </div>
 
-    ##  </div>
-    ##</div>
+        <h3>Tabs</h3>
+
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#lorem-tab">Lorem</a></li>
+          <li><a href="#hipster-tab">Hipster</a></li>
+          <li><a href="#bluth-tab">Bluth</a></li>
+        </ul>
+
+        <div class="tab-content">
+          <div class="tab-pane active" id="lorem-tab">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis a turpis id nibh tincidunt congue eu vitae lacus. Curabitur aliquet congue augue id condimentum. Vivamus at sapien in nisl rhoncus bibendum id non lorem. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi tristique erat eget sapien tempor condimentum. Vestibulum velit libero, venenatis pharetra gravida sit amet, lacinia sit amet felis. Pellentesque dignissim fermentum mollis.</p>
+          </div>
+          <div class="tab-pane" id="hipster-tab">
+            <p>Church-key american apparel next level truffaut, master cleanse direct trade intelligentsia try-hard chambray. Helvetica fanny pack organic pour-over mustache brunch butcher. Try-hard pop-up you probably haven't heard of them godard. Vegan chambray scenester, mixtape banjo intelligentsia +1 leggings godard vice wayfarers irony letterpress stumptown. Meggings 8-bit tofu aesthetic ethical ennui. Skateboard tumblr synth, banksy cosby sweater sriracha banjo gluten-free blue bottle flannel helvetica. Disrupt organic cray, semiotics cliche tonx truffaut vinyl iphone cosby sweater photo booth pug letterpress.</p>
+          </div>
+          <div class="tab-pane" id="bluth-tab">
+            <p>Hey, look at that – you're mean sober, too. I'll buy you a hundred George Michaels that you can teach to drive! I've been in the film business for a while but I just can't seem to get one in the can. Stack the chafing dishes outside by the mailbox. I'm on the job. Why are you squeezing me with your body? It's a hug, Michael. I'm hugging you. Bob Loblaw Lobs Law Bomb. Oh Gob, you could charm the black off a telegram boy. Coo coo ca chaw. Coo coo ca chaw. Coo coo ca chaw.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
 
       <div class="row">
         <div class="col-md-12"><hr></div>

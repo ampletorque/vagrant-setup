@@ -1,0 +1,35 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="common/forms.html"/>
+
+
+<%def name="title()">Cart</%def>
+
+
+<section class="section-cart">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="text-center">Cart</h1>
+
+        ## XXX show items
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section-checkout">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        ${renderer.begin(class_='form-horizontal')}
+
+          ## XXX add fields
+
+        ${renderer.end()}
+      </div>
+    </div>
+  </div>
+</section>

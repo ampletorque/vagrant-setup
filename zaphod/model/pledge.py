@@ -89,7 +89,8 @@ class Option(Base):
     __tablename__ = 'options'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
-    pledge_level_id = Column(None, ForeignKey('pledge_levels.id'), nullable=False)
+    pledge_level_id = Column(None, ForeignKey('pledge_levels.id'),
+                             nullable=False)
     name = Column(types.Unicode(255), nullable=False, default=u'')
     gravity = Column(types.Integer, nullable=False, default=0)
     published = Column(types.Boolean, nullable=False, default=False)

@@ -1,10 +1,6 @@
 from unittest import TestCase
 from sqlalchemy import create_engine
 
-from unittest import TestCase
-
-from pyramid.testing import DummyRequest
-
 from ... import model
 
 
@@ -89,7 +85,7 @@ class ModelTest(TestCase):
 
     def _clear_classes(self, *classes):
         for cls in classes:
-            for obj in meta.Session.query(cls):
+            for obj in model.Session.query(cls):
                 model.Session.delete(obj)
         model.Session.commit()
 

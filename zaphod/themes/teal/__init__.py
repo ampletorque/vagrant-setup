@@ -26,6 +26,7 @@ class TealTheme(Theme):
         ),
     }
 
+    # XXX All of these may need size tweaking
     image_filters = [
         # FilterChain(
         #     'project-main', width=749, height=421,
@@ -90,10 +91,10 @@ class TealTheme(Theme):
             crop=True, pad=True,
             extension='png'),
 
-        # FilterChain(
-        #     'pledge-body', width=150, height=150,
-        #     crop_whitespace=True, pad=True,
-        #     extension='jpg', quality=70),
+        FilterChain(
+            'pledge-body', width=150, height=150,
+            crop_whitespace=True, pad=True,
+            extension='jpg', quality=70),
 
         # FilterChain(
         #     'hero-wide', width=2000, height=300,

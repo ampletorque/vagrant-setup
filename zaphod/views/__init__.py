@@ -33,8 +33,8 @@ def includeme(config):
     config.add_route('search', '/search')
     config.add_route('prelaunch', '/prelaunch')
     config.add_route('crowdfunding', '/crowdfunding')
-    config.add_route('preorder', '/preorder')
-    config.add_route('instock', '/instock')
+    config.add_route('available', '/available')
+    config.add_route('archive', '/archive')
 
     config.include('.browse')
     config.include('.search')

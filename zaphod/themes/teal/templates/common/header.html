@@ -30,7 +30,14 @@
             </a>
             <ul class="dropdown-menu" role="menu">
               <li><a href="${request.route_path('cart')}">My Cart</a></li>
-              <li><a href="${request.route_path('account')}">My Account</a></li>
+              <li>
+                <a href="${request.route_path('account')}">
+                  % if request.user:
+                    <img class="visible-xs img-avatar" src="${h.gravatar_url(request.user.email, size=40, default='mm')}" alt="">
+                  % endif
+                  My Account
+                </a>
+              </li>
               % if request.user:
                 % if request.user.has_permission('admin'):
                   <li><a href="${request.route_path('admin:dashboard')}">Admin</a></li>

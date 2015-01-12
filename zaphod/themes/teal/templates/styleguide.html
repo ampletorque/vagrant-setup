@@ -332,25 +332,55 @@
             <tr>
               <th>Button</th>
               <th>Class</th>
+              <th>Usage</th>
             </tr>
           </thead>
           <tbody>
-            % for cls in (None, 'primary', 'cta', 'danger', 'inverse'):
-              <tr>
-                <td>
-                  <button class="btn ${'btn-%s' % cls if cls else ''}">
-                    % if cls:
-                      ${cls.capitalize()}
-                    % else:
-                      Default
-                    % endif
-                  </button>
-                </td>
-                <td>
-                  <code>btn ${'btn-%s' % cls if cls else ''}</code>
-                </td>
-              </tr>
-            % endfor
+            <tr>
+              <td>
+                <button class="btn btn-default">Default</button>
+              </td>
+              <td>
+                <code>btn btn-default</code>
+              </td>
+              <td>Default actions which do not persist data, like 'Cancel'.</td>
+            </tr>
+            <tr>
+              <td>
+                <button class="btn btn-primary">Primary</button>
+              </td>
+              <td>
+                <code>btn btn-primary</code>
+              </td>
+              <td>Actions which save data but don't fit into a more specific button.</td>
+            </tr>
+            <tr>
+              <td>
+                <button class="btn btn-cta">CTA</button>
+              </td>
+              <td>
+                <code>btn btn-cta</code>
+              </td>
+              <td>Order-related Calls to Action, e.g. 'Add to Cart' or 'Complete Order'.</td>
+            </tr>
+            <tr>
+              <td>
+                <button class="btn btn-danger">Danger</button>
+              </td>
+              <td>
+                <code>btn btn-danger</code>
+              </td>
+              <td>Actions which delete or destroy data.</td>
+            </tr>
+            <tr>
+              <td>
+                <button class="btn btn-dark">Dark</button>
+              </td>
+              <td>
+                <code>btn btn-dark</code>
+              </td>
+              <td>Similar to <code>btn-default</code> for use in contexts where more contrast is required.</td>
+            </tr>
           </tbody>
         </table>
 

@@ -171,7 +171,7 @@
 </%def>
 
 
-% if request.user.has_permission('admin'):
+% if request.user and request.user.has_permission('admin'):
   <section class="section-admin-bar">
     <div class="container">
       <div class="row">

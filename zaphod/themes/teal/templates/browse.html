@@ -32,7 +32,7 @@
     <div class="row">
       <div class="col-sm-4 col-md-2 browse-filters">
         <h3>Browse By Stage</h3>
-        <ul class="unstyled sidebar-list">
+        <ul class="list-unstyled list-sidebar">
           <%self:filter_target url="${request.route_url('prelaunch')}">
             Pre-launch
           </%self:filter_target>
@@ -47,7 +47,7 @@
           </%self:filter_target>
         </ul>
         <h3>Browse By Tag</h3>
-        <ul class="unstyled sidebar-list">
+        <ul class="list-unstyled list-sidebar">
           % for filter_tag in browse_tags:
             <%self:filter_target url="${request.node_path(filter_tag)}">
               ${filter_tag.name}

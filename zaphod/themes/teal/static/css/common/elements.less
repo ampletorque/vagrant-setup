@@ -29,3 +29,31 @@ a {
         color: @cs-white;
     }
 }
+
+
+.list-sidebar {
+    li {
+        background-color: @cs-black;
+        font-weight: bold;
+        font-size: 12px;
+        -webkit-font-smoothing: antialiased;
+        border-top: 1px solid #8a959c;
+
+        a {
+            display: block;
+            padding: 3px 6px;
+            color: @cs-white;
+
+            &:hover {
+                text-decoration: none;
+                background-color: lighten(@cs-dark-grey, 10%);
+            }
+        }
+
+        &.selected, &.active {
+            background-color: @cs-teal;
+        }
+    }
+}
+
+

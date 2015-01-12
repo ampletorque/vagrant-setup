@@ -63,7 +63,9 @@ class CartItem(Base):
     pledge_level = orm.relationship('PledgeLevel', backref='cart_items')
 
 
+# XXX Maybe this should be a CartItem.shipment_id foreign key instead?
 shipment_items = Table(
+    'shipment_items',
     Base.metadata,
     Column('shipment_id', None, ForeignKey('shipments.id'), primary_key=True),
     Column('cart_item_id', None, ForeignKey('cart_items.id'),

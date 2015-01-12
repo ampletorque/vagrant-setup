@@ -23,7 +23,7 @@
 <div class="project-block">
   <p>Have a question not answered in the description above or in the <a href="#">Updates</a>?</p>
   <p>
-    <a class="btn btn-primary" href="${request.route_path('ask_question', id=project.id)}">Ask ${project.creator.name} a Question</a>
+    <a class="btn btn-primary" href="${request.node_path(project, suffix=['ask-question'])}">Ask ${project.creator.name} a Question</a>
     or
     <a href="${request.route_path('questions')}">Browse Crowd Supply Questions &amp; Answers</a>
   </p>

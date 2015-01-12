@@ -1,6 +1,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import re
 import hashlib
 
 from six.moves.urllib.parse import urlencode
@@ -124,3 +125,67 @@ def format_percent(percent):
         return "%d" % round(percent)
     else:
         return commas(percent)
+
+
+def plural(count, noun, zero_word=False, capitalize=False, with_number=True,
+           words=10):
+    """
+    Return a pluralized version of `noun` if count != 1 else return the
+    singular.
+
+    kwargs:
+      `zero_word`: If truthy value, use this instead of 0 for count
+      `capitalize`: If True, capitalize the returned words
+      `with_number`: If True, display `count` in the returned string
+      `words`: If True, always try to convert numbers to words
+               If False, never try to convert numbers to words
+               If an integer, this acts as a threshold for what numbers are
+               converted to words.
+               If count is less than zero, words will always be False.
+
+    Ex:
+    h.plural(5, 'category') => 'five categories'
+    h.plural(1, 'category') => 'one category'
+    h.plural(0, 'category') => 'zero categories'
+    h.plural(-1, 'category', words=10) => '-1 categories'
+    """
+    noun = pluralize(noun) if count != 1 else noun
+
+    if count < 0:
+        words = False
+    count = count or zero_word
+
+    if words is not False and (words is True or words >= count):
+        count = num_as_word(count)
+    count = str(count)
+
+    if with_number:
+        return "%s %s" % (count.capitalize() if capitalize else count,
+                          noun.capitalize() if capitalize else noun)
+    return "%s" % noun.capitalize() if capitalize else noun
+
+
+def pluralize(noun):
+    """
+    Super janky pluralization function. That's how we roll.
+    """
+    for pattern, search, replace in (('[ml]ouse$', '([ml])ouse$', '\\1ice'),
+                                     ('child$', '(child)$', '\\1ren'),
+                                     ('booth$', '(booth)$', '\\1s'),
+                                     ('foot$', '(f)oot$', '\\1eet'),
+                                     ('ooth$', 'ooth$', 'eeth'),
+                                     ('l[eo]af$', '(l)([eo])af$',
+                                      '\\1\\2aves'),
+                                     ('sis$', 'sis$', 'ses'),
+                                     ('human$', '(h)uman$', '\\1umans'),
+                                     ('man$', '(m)an$', '\\1en'),
+                                     ('person$', '(p)erson', '\\1eople'),
+                                     ('ife$', 'ife$', 'ives'),
+                                     ('eau$', 'eau$', 'eaux'),
+                                     ('lf$', 'lf$', 'lves'),
+                                     ('[sxz]$', '$', 'es'),
+                                     ('[^aeioudgkprt]h$', '$', 'es'),
+                                     ('(qu|[^aeiou])y$', 'y$', 'ies'),
+                                     ('$', '$', 's')):
+        if re.search(pattern, noun, flags=re.I):
+            return re.sub(search, replace, noun, flags=re.I)

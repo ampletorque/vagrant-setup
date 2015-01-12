@@ -53,10 +53,10 @@ class TealTheme(Theme):
             crop_whitespace=True, pad=True,
             extension='png'),
 
-        # FilterChain(
-        #     'account-avatar', width=120, height=120,
-        #     crop=True, pad=True,
-        #     extension='png'),
+        FilterChain(
+            'large-avatar', width=120, height=120,
+            crop=True, pad=True,
+            extension='png'),
 
         FilterChain(
             'project-body', width=749, extension='jpg',

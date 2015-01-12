@@ -49,6 +49,7 @@ def includeme(config):
     config.add_route('account', '/account')
     config.add_route('order', '/account/order/{id}')
     config.add_route('settings', '/account/settings')
+    config.add_route('profile', '/people/{path}')
 
     # This needs to stay the last route registered.
     config.add_route('node', '/*path')

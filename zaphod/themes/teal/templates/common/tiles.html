@@ -108,7 +108,6 @@
 <%def name="metadata(project, cols=3)">
   <%
     # Never show a full width tile
-    cols = 3 if cols < 2 else cols
     width = 12 / cols
 
     utcnow = h.datetime.utcnow()
@@ -132,7 +131,6 @@
 <%def name="tile(project, cols=3)">
   <%
     # Never show a full width tile
-    cols = 3 if cols < 2 else cols
     width = 12 / cols
 
     utcnow = h.datetime.utcnow()
@@ -158,14 +156,15 @@
 </%def>
 
 
-<%def name="tile_row(projects)">
+<%def name="tile_row(projects, cols=None)">
   <div class="project-row">
     <!-- Background row -->
     <div class="background-row hidden-xs">
       <div class="row">
         <%
-          cols = len(projects)
-          cols = 3 if cols < 2 else cols
+          if not cols:
+            cols = len(projects)
+            cols = 3 if cols < 2 else cols
           width = 12 / cols
         %>
         % for project in projects:

@@ -412,3 +412,10 @@ def main(argv=sys.argv):
             migrate_projects(settings, user_map, creator_map,
                              tag_map, image_map)
         migrate_orders(settings, user_map, pledge_level_map)
+
+        scott_user = model.Session.query(model.User).\
+            filter_by(email='scott.torborg@crowdsupply.com').\
+            one()
+        scott_user.url_path = 'storborg'
+        scott_user.location = 'Portland, OR'
+        scott_user.twitter_username = 'storborg'

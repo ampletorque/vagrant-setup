@@ -53,7 +53,7 @@ class CartItem(Base):
     qty_desired = Column(types.Integer, nullable=False, default=1)
     shipping_price = Column(custom_types.Money, nullable=False)
     crowdfunding = Column(types.Boolean, nullable=False)
-    expected_delivery_date = Column(types.DateTime, nullable=False)
+    expected_delivery_date = Column(types.DateTime, nullable=True)
 
     status = Column(types.String(255), nullable=False)
 

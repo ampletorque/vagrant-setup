@@ -333,15 +333,26 @@ def migrate_orders(settings, user_map, pledge_level_map):
             created_time=old_order.created_time,
             updated_by=user_map[old_order.updated_by],
             updated_time=old_order.updated_time,
+            status='init',
         )
         model.Session.add(order)
         cart = model.Cart(order=order)
         model.Session.add(cart)
         for old_ci in old_order.cart.items:
+            delivery_date = None
+            if hasattr(old_ci, 'batch'):
+                old_batch = old_ci.batch
+                if old_batch:
+                    delivery_date = old_ci.batch.delivery_date
             ci = model.CartItem(
                 pledge_level=pledge_level_map[old_ci.product],
                 price_each=old_ci.price_each,
                 qty_desired=old_ci.qty_desired,
+                crowdfunding=(old_ci.discriminator in ('P', 'E')),
+                status='init',
+                # XXX
+                shipping_price=0,
+                expected_delivery_date=delivery_date,
             )
             order.cart.items.append(ci)
         model.Session.flush()

@@ -1,0 +1,31 @@
+.form-group {
+    position: relative;
+
+    .error {
+        font-weight: bold;
+        list-style-type: none;
+        background-color: @state-danger-text;
+        color: #fff;
+        padding: 2px 5px;
+        border-radius: 5px;
+        z-index: 10;
+        -webkit-font-smoothing: antialiased;
+
+        position: absolute;
+        margin-top: 3px;
+
+        // Shadowed like dropdowns.
+        .box-shadow(0 6px 12px rgba(0, 0, 0, .175));
+
+        &:before {
+            display: block;
+            content: "";
+            border-left: 8px solid transparent;
+            border-bottom: 8px solid @state-danger-text;
+            border-right: 8px solid transparent;
+            position: absolute;
+            top: -7px;
+            left: 15px;
+        }
+    }
+}

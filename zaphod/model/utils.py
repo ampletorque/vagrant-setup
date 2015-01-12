@@ -5,6 +5,8 @@ import six
 import re
 import datetime
 
+from unidecode import unidecode
+
 
 __all__ = ['is_url_name', 'to_url_name', 'utcnow']
 
@@ -21,14 +23,7 @@ def to_url_name(s, convert_camel_case=False):
     """
     Convert a string to a legal URL name.
     """
-    if not isinstance(s, six.text_type):
-        raise ValueError("Need to be called with a unicode string!")
-    # Transliterate accented unicode characters to the base character.  Not all
-    # characters can be transliterated, so fallback to simple replacement.
-    try:
-        s = s.encode('ascii', 'transliterate')
-    except UnicodeEncodeError:
-        s = s.encode('ascii', 'replace')
+    s = unidecode(s)
     if convert_camel_case:
         # Convert CamelCaseStrings to Camel Case Strings.
         s = re.sub(r'([a-z])([A-Z])', '\g<1> \g<2>', s)

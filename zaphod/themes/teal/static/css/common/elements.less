@@ -12,10 +12,9 @@ img {
 
 a {
     color: @cs-teal;
-}
-
-.btn-primary {
-    .button-variant(@cs-white; @cs-teal; @cs-teal);
+    &:hover {
+        color: @cs-dark-teal;
+    }
 }
 
 .img-avatar {
@@ -27,6 +26,9 @@ a {
 
     a {
         color: @cs-white;
+        &:hover {
+            color: @cs-white;
+        }
     }
 }
 

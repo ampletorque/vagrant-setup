@@ -80,15 +80,15 @@ class TealTheme(Theme):
             filters=[CreatorProfileFilter()],
             pad=True, extension='png'),
 
-        # FilterChain(
-        #     'project-avatar', width=72, height=72,
-        #     crop=True, pad=True,
-        #     extension='png'),
+        FilterChain(
+            'project-avatar', width=72, height=72,
+            crop=True, pad=True,
+            extension='png'),
 
-        # FilterChain(
-        #     'header-avatar', width=34, height=34,
-        #     crop=True, pad=True,
-        #     extension='png'),
+        FilterChain(
+            'header-avatar', width=34, height=34,
+            crop=True, pad=True,
+            extension='png'),
 
         # FilterChain(
         #     'pledge-body', width=150, height=150,

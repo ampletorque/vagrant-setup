@@ -118,6 +118,8 @@ def migrate_creators(settings, user_map, image_map):
         creator = model.Creator(
             name=old_creator.name,
             teaser=old_creator.teaser,
+            location=old_creator.location,
+            home_url=old_creator.home_url,
             body=old_creator.body.text,
             published=old_creator.published,
             listed=old_creator.listed,
@@ -221,6 +223,20 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
                         published=old_value.enabled,
                     )
                     option.values.append(value)
+        for old_owner in old_project.ownerships:
+            print("    ownership %s" % old_owner.account.email)
+            new_owner = model.ProjectOwner(
+                project=project,
+                user=user_map[old_owner.account],
+                title=old_owner.title,
+                can_change_content=old_owner.can_change_content,
+                can_post_updates=old_owner.can_post_updates,
+                can_receive_questions=old_owner.can_receive_questions,
+                can_manage_payments=old_owner.can_manage_stripe,
+                can_manage_owners=old_owner.can_manage_owners,
+                show_on_campaign=old_owner.show_on_campaign,
+            )
+            model.Session.add(new_owner)
         model.Session.flush()
     return project_map, pledge_level_map
 

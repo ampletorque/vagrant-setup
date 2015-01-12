@@ -9,7 +9,7 @@ from sqlalchemy.sql import func
 from pyramid_es.mixin import ElasticMixin, ESMapping, ESField, ESString
 
 from . import utils, custom_types
-from .base import Session
+from .base import Base, Session
 from .order import Cart, CartItem
 from .pledge import PledgeLevel
 from .node import Node
@@ -56,6 +56,9 @@ class Project(Node, ElasticMixin):
         backref='project',
         cascade='all, delete, delete-orphan',
     )
+
+    ownerships = orm.relationship('ProjectOwner', backref='project',
+                                  cascade='all, delete, delete-orphan')
 
     __mapper_args__ = {'polymorphic_identity': 'Project'}
 
@@ -162,6 +165,11 @@ class Project(Node, ElasticMixin):
         levels.sort(key=attrgetter('gravity'))
         return levels
 
+    @property
+    def published_ownerships(self):
+        # XXX FIXME turn into a relationship
+        return [owner for owner in self.ownerships if owner.show_on_campaign]
+
     @classmethod
     def elastic_mapping(cls):
         return ESMapping(
@@ -204,3 +212,20 @@ class ProjectUpdate(Node):
     def generate_path(self):
         project_path = self.project.canonical_path()
         return '%s/updates/%d' % (project_path, self.id)
+
+
+class ProjectOwner(Base):
+    __tablename__ = 'project_owners'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+    project_id = Column(None, ForeignKey('projects.node_id'), primary_key=True)
+    user_id = Column(None, ForeignKey('users.id'), primary_key=True)
+    title = Column(types.Unicode(255), nullable=False, default=u'')
+    can_change_content = Column(types.Boolean, nullable=False, default=False)
+    can_post_updates = Column(types.Boolean, nullable=False, default=False)
+    can_receive_questions = Column(types.Boolean, nullable=False,
+                                   default=False)
+    can_manage_payments = Column(types.Boolean, nullable=False, default=False)
+    can_manage_owners = Column(types.Boolean, nullable=False, default=False)
+    show_on_campaign = Column(types.Boolean, nullable=False, default=False)
+
+    user = orm.relationship('User', backref='project_ownerships')

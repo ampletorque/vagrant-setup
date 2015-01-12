@@ -5,7 +5,7 @@ import hashlib
 
 from six.moves.urllib.parse import urlencode
 
-from webhelpers2.html.tags import _make_safe_id_component, literal
+from webhelpers2.html.tags import HTML, _make_safe_id_component, literal
 
 
 def grouper(n, iterable):
@@ -37,6 +37,19 @@ def gravatar_url(email, size=200, default=None, rating='g',
         params['f'] = 'y'
     params = urlencode(params)
     return literal('//www.gravatar.com/avatar/%s?%s' % (hash, params))
+
+
+def image_or_gravatar(request, obj, chain, title=None, class_=None, id=None,
+                      **kwargs):
+    img = obj.img(request, chain, class_=class_, id=id)
+    if img:
+        return img
+    else:
+        registry = request.registry
+        chain, with_themes = registry.image_filter_registry[chain]
+        size = max(chain.width, chain.height)
+        return HTML.img(src=gravatar_url(obj.email, size=size, **kwargs),
+                        alt='', class_=class_, id=id, title=title)
 
 
 def prettify(name):

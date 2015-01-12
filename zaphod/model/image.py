@@ -63,12 +63,13 @@ class ImageMixin(object):
                                 order_by=ImageAssociation.gravity,
                                 cascade='all, delete-orphan')
 
-    def img(self, request, chain=None):
+    def img(self, request, chain=None, class_=None, id=None):
         # XXX Improve this for performance...
         if self.image_metas:
             im = self.image_metas[0]
             return request.image_tag(im.name, im.original_ext, chain,
-                                     title=im.title, alt=im.alt)
+                                     title=im.title, alt=im.alt,
+                                     class_=class_, id=id)
 
     def img_url(self, request, chain=None):
         # XXX Improve this for performance...

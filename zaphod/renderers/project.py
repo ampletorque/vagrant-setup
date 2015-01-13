@@ -6,7 +6,7 @@ from pyramid.renderers import render
 from formencode import Schema, validators
 from pyramid_uniform import Form, FormRenderer
 
-from .. import model, helpers as h
+from .. import model, mail
 
 
 class AskQuestionForm(Schema):
@@ -20,21 +20,21 @@ def ask_question_handler(project, request):
     if form.validate():
         email = form.data['email']
         message = form.data['message']
-        # creator_emails = [owner.account.email
-        #                  for owner in project.ownerships
-        #                  if owner.can_receive_questions]
+        creator_emails = [(owner.user.name, owner.user.email)
+                          for owner in project.ownerships
+                          if owner.can_receive_questions]
 
-        subject = h.truncate(message, 30).\
-            replace('\n', ' ').replace('\r', '')
-
-        # send_with_admin('project_question',
-        #                '[Campaign Question] %s' % subject,
-        #                email=email,
-        #                message=message,
-        #                project=project,
-        #                to=creator_emails,
-        #                reply_to=email,
-        #                cc='support@crowdsupply.com')
+        mail.send_with_admin(
+            request,
+            'project_question',
+            vars=dict(
+                email=email,
+                message=message,
+                project=project,
+            ),
+            to=creator_emails,
+            reply_to=email,
+            cc=request.registry.settings['mailer.from'])
 
         request.flash(
             "Thanks, we'll try to answer your question as soon as "

@@ -26,7 +26,9 @@ class User(Base, ImageMixin, UserMixin):
     password_reset_token = Column(types.String(64), nullable=False, default='')
     password_reset_time = Column(types.DateTime, nullable=False,
                                  default=utils.utcnow)
+
     enabled = Column(types.Boolean, nullable=False, default=True)
+    admin = Column(types.Boolean, nullable=False, default=False)
 
     url_path = Column(types.String(255), nullable=True, unique=True)
     timezone = Column(types.String(255), nullable=False,

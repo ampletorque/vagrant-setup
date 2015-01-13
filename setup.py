@@ -33,6 +33,7 @@ requires = [
     'lxml>=3.2.3',
     'Markdown>=2.5.2',
     'unidecode',
+    'pytz',
 
     # Keep repoze.sendmail pinned at 4.1 to deal with this bug:
     # https://github.com/repoze/repoze.sendmail/issues/31

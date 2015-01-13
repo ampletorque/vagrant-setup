@@ -127,6 +127,37 @@ def format_percent(percent):
         return commas(percent)
 
 
+def num_as_word(num):
+    """
+    Attempts to convert numbers to words -- Only up to 100.
+    """
+    ones = ('zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven',
+            'eight', 'nine')
+    teens = ('ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen',
+             'sixteen', 'seventeen', 'eighteen', 'nineteen')
+    tens = ('twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty',
+            'ninety')
+    try:
+        if int(num) != float(num):
+            raise ValueError
+        num = int(num)
+    except (TypeError, ValueError):
+        return num
+
+    if num < 10:
+        return ones[num]
+    elif num < 20:
+        return teens[num - 10]
+    elif num > 99:
+        return num
+
+    for (cap, val) in ((k, 20 + (10 * v)) for (v, k) in enumerate(tens)):
+        if val + 10 > num:
+            if num % 10:
+                return cap + '-' + ones[num % 10]
+            return cap
+
+
 def plural(count, noun, zero_word=False, capitalize=False, with_number=True,
            words=10):
     """

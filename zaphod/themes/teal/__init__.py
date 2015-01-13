@@ -28,10 +28,10 @@ class TealTheme(Theme):
 
     # XXX All of these may need size tweaking
     image_filters = [
-        # FilterChain(
-        #     'project-main', width=749, height=421,
-        #     crop_whitespace=True, pad=True, crop='nonwhite',
-        #     extension='jpg', quality=85),
+        FilterChain(
+            'project-main', width=749, height=421,
+            crop_whitespace=True, pad=True, crop='nonwhite',
+            extension='jpg', quality=85),
 
         # FilterChain(
         #     'project-slider', width=100, height=100,

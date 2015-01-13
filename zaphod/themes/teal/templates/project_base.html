@@ -292,6 +292,12 @@
 % if project.related_projects:
   <section class="section-related-projects">
     <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <h1 class="text-center">Similar Projects</h1>
+        </div>
+      </div>
+
       % for row in h.grouper(4, project.related_projects):
         ${tiles.tile_row(row)}
       % endfor

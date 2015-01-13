@@ -76,7 +76,7 @@ class UserView(object):
             request.flash('Login successful.', 'success')
             raise HTTPFound(location=request.route_url('account'))
         else:
-            request.flash('Email or password incorrect.', 'danger')
+            request.flash('Email or password incorrect.', 'error')
 
     @view_config(route_name='account', renderer='account.html',
                  permission='authenticated')
@@ -173,7 +173,7 @@ class UserView(object):
         now = datetime.utcnow()
         expiration_time = user.password_reset_time + timedelta(days=1)
         if now > expiration_time:
-            request.flash('Password reset email has expired.', 'danger')
+            request.flash('Password reset email has expired.', 'error')
             raise HTTPFound(location=request.route_url('forgot-password'))
 
         return user
@@ -188,7 +188,7 @@ class UserView(object):
 
             if not user:
                 request.flash("No user with that email address "
-                              "exists. Please double check it.", 'danger')
+                              "exists. Please double check it.", 'error')
                 raise HTTPFound(location=request.current_route_url())
 
             token = user.set_reset_password_token()
@@ -202,7 +202,7 @@ class UserView(object):
             mail.send(request, 'forgot_password', vars, to=[user.email])
 
             request.flash("An email has been sent with "
-                          "instructions to reset your password.", 'danger')
+                          "instructions to reset your password.", 'error')
             return HTTPFound(location=request.route_url('login'))
 
         return dict(renderer=FormRenderer(form))

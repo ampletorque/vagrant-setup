@@ -5,7 +5,6 @@ import os
 import os.path
 import email.utils
 from datetime import datetime
-from email.mime.text import MIMEText
 
 from pyramid.renderers import render
 from pyramid.settings import asbool
@@ -29,13 +28,12 @@ def dump_locally(settings, msg):
     now = datetime.now()
     local_dir = settings['mailer.debug_dir']
     base_dir = now.strftime('%Y%m%d-%H%M%S')
-    this_dir = os.path.join(local_dir, 'emails', base_dir)
+    this_dir = os.path.join(local_dir, base_dir)
     if not os.path.exists(this_dir):
         os.makedirs(this_dir)
 
     with open(os.path.join(this_dir, 'headers.txt'), 'w') as f:
-        raw_msg = MIMEText('', 'plain', msg.charset)
-        msg._set_info(raw_msg)
+        raw_msg = msg.to_message()
         f.write(raw_msg.as_string())
 
     with open(os.path.join(this_dir, 'body.txt'), 'w') as f:
@@ -81,9 +79,9 @@ def send(request, template_name, vars, to=None, from_=None,
 
     if asbool(settings.get('mailer.debug')):
         dump_locally(settings, msg)
-
-    mailer = get_mailer(request)
-    mailer.send(msg)
+    else:
+        mailer = get_mailer(request)
+        mailer.send(msg)
 
 
 def load_admin_users(template_name):

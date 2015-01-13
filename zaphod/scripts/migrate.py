@@ -269,6 +269,7 @@ def migrate_users(settings, image_map):
             enabled=old_user.enabled,
             created_time=old_user.created_time,
             updated_time=old_user.updated_time,
+            admin=old_user.has_permission('admin'),
         )
         model.Session.add(user)
         migrate_image_associations(settings, image_map, old_user, user)

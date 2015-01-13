@@ -3,7 +3,7 @@ from __future__ import (absolute_import, division, print_function,
 
 from operator import attrgetter
 from datetime import datetime
-from sqlalchemy import Column, ForeignKey, types, orm
+from sqlalchemy import Table, Column, ForeignKey, types, orm
 from sqlalchemy.sql import func
 
 from pyramid_es.mixin import ElasticMixin, ESMapping, ESField, ESString
@@ -13,6 +13,16 @@ from .base import Base, Session
 from .order import Cart, CartItem
 from .pledge import PledgeLevel
 from .node import Node
+
+
+related_projects = Table(
+    'related_projects',
+    Base.metadata,
+    Column('source_id', None, ForeignKey('projects.node_id'),
+           primary_key=True),
+    Column('dest_id', None, ForeignKey('projects.node_id'),
+           primary_key=True),
+    mysql_engine='InnoDB')
 
 
 class Project(Node, ElasticMixin):
@@ -60,6 +70,14 @@ class Project(Node, ElasticMixin):
     ownerships = orm.relationship('ProjectOwner', backref='project',
                                   cascade='all, delete, delete-orphan')
 
+    # XXX Might be able to clean this up with the new SQLAlchemy relationship
+    # APIs and/or annotations.
+    related_projects = orm.relationship(
+        'Project',
+        secondary=related_projects,
+        primaryjoin='related_projects.c.source_id == Project.node_id',
+        secondaryjoin='related_projects.c.dest_id == Project.node_id')
+
     __mapper_args__ = {'polymorphic_identity': 'Project'}
 
     def generate_path(self):
@@ -95,7 +113,7 @@ class Project(Node, ElasticMixin):
         elif self.accepts_preorders:
             return 'available'
         else:
-            return 'funded'
+            return 'archive'
 
     @property
     def progress_percent(self):

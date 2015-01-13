@@ -168,6 +168,8 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
             created_time=old_project.created_time,
             updated_by=user_map[old_project.updated_by],
             updated_time=old_project.updated_time,
+
+            accepts_preorders=(old_project.stage in (2, 3)),
         )
         model.Session.add(project)
         migrate_aliases(settings, old_project, project)
@@ -374,6 +376,12 @@ def migrate_orders(settings, user_map, pledge_level_map):
         model.Session.flush()
 
 
+def migrate_related_projects(settings, project_map):
+    for old_project, new_project in project_map.items():
+        new_project.related_projects[:] = [project_map[old_rel] for old_rel in
+                                           old_project.related_projects]
+
+
 def main(argv=sys.argv):
     if len(argv) < 2:
         usage(argv)
@@ -411,6 +419,7 @@ def main(argv=sys.argv):
         project_map, pledge_level_map = \
             migrate_projects(settings, user_map, creator_map,
                              tag_map, image_map)
+        migrate_related_projects(settings, project_map)
         migrate_orders(settings, user_map, pledge_level_map)
 
         scott_user = model.Session.query(model.User).\

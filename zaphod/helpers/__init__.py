@@ -11,5 +11,6 @@ from datetime import datetime
 
 from .misc import *
 from .social import *
+from .timezone import *
 
 used = [datetime]

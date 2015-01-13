@@ -10,12 +10,13 @@
     overflow: hidden;
 }
 .background-filler {
-    //background-color: @tile-background;
-    background-color: #fdd;
+    background-color: @tile-background;
+    //background-color: #fdd;
     height: 450px;
 }
 
 .metadata-row {
+    margin-bottom: 30px;
     .stats {
         background-color: @tile-background;
     }
@@ -42,13 +43,15 @@
 }
 
 .fact {
+    margin-top: 15px;
     text-align: center;
     padding-bottom: 15px;
 
     p {
+        color: @gray;
         font-size: 18px; // 18px
         font-weight: 400;
-        line-height: 12px;
+        line-height: 22px;
         margin: 0;
     }
 
@@ -57,5 +60,15 @@
         display: block;
         font-size: 13px; // 13px
         font-weight: 300;
+    }
+}
+.fact-small {
+    p {
+        font-size: 16px;
+    }
+}
+.fact-micro {
+    p {
+        font-size: 13px;
     }
 }

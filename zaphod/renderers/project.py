@@ -111,7 +111,10 @@ def project_renderer(project, system):
 
         raise NotImplementedError
 
-    return render('project.html', dict(project=project), request)
+    return render('project.html', {
+        'action': None,
+        'project': project,
+    }, request)
 
 
 def includeme(config):

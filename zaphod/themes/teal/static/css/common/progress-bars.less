@@ -1,0 +1,53 @@
+.progress {
+    height: 8px;
+    background-color: #dce2e3;
+    background-image: none;
+    box-shadow: none;
+    border-radius: 0;
+    .reset-filter();
+    margin-top: 13px;
+    margin-bottom: 13px;
+
+    .progress-bar {
+        max-width: 100%;
+        color: @text-color;
+        background-color: @cs-teal;
+        background-image: none;
+        position: relative;
+        .reset-filter();
+    }
+}
+
+.status-bar {
+    .clearfix();
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 22px;
+    padding: 6px 8px;
+}
+.status-bar-left {
+    float: left;
+}
+.status-bar-right {
+    float: right;
+}
+
+.status-bar-dark {
+    background-color: @cs-dark-teal;
+    color: @cs-white;
+    -webkit-font-smoothing: antialiased;
+}
+.status-bar-primary {
+    background-color: @cs-teal;
+    color: @cs-white;
+    -webkit-font-smoothing: antialiased;
+}
+.status-bar-light {
+    background-color: darken(@gray-lighter, 15%);
+    color: @gray-dark;
+}
+.status-bar-danger {
+    background-color: @btn-danger-bg;
+    color: @cs-white;
+    -webkit-font-smoothing: antialiased;
+}

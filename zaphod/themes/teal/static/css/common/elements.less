@@ -34,10 +34,20 @@ a {
 .section-admin-bar {
     background-color: @cs-teal;
 
+    p {
+        margin: 0;
+    }
+
     a {
+        line-height: 20px;
+        font-weight: bold;
+        display: inline-block;
+        padding: 5px 10px;
         color: @cs-white;
         &:hover {
             color: @cs-white;
+            background-color: lighten(@cs-teal, 3%);
+            text-decoration: none;
         }
     }
 }

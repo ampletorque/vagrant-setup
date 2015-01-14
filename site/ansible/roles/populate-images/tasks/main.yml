@@ -1,0 +1,11 @@
+# XXX Need the setguid bit here
+- name: create images dir
+  sudo: yes
+  file: path=/var/media/crowdsupply/images/originals
+        state=directory
+        owner=deploy
+        group=deploy
+
+- name: upload images
+  synchronize: src=/var/media/crowdsupply/images/originals
+               dest=/var/media/crowdsupply/images

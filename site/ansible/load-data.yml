@@ -1,4 +1,5 @@
 ---
 - hosts: webservers
   roles:
+    - populate-images
     - mysql-database

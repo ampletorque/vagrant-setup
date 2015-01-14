@@ -28,6 +28,13 @@
         owner=deploy
         group=deploy
 
+- name: setup dir for egg cache
+  sudo: yes
+  file: path=/var/www
+        state=directory
+        owner=www-data
+        group=www-data
+
 - name: configure uwsgi
   sudo: yes
   template: src=emperor.ini.j2

@@ -26,3 +26,4 @@
     - less
     - uglify-js
     - requirejs
+    - autoprefixer

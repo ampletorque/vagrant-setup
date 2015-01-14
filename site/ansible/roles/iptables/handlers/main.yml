@@ -1,0 +1,4 @@
+---
+- name: reload iptables
+  sudo: yes
+  shell: iptables-restore < /etc/iptables.rules

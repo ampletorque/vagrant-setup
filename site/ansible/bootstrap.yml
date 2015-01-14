@@ -1,0 +1,81 @@
+---
+# This playbook is used to bootstrap a freshly-reset SoftLayer server to the
+# point where it can be logged into, etc.
+
+# FIXME A bunch of this stuff should really be in separate roles so it can be
+# confirmed / checked on a normal provision run.
+
+- hosts: fresh
+  remote_user: root
+
+  vars_prompt:
+    - name: "root_password"
+      prompt: "New root password?"
+      private: yes
+      encrypt: "md5_crypt"
+      confirm: yes
+      salt_size: 7
+    - name: "user_password"
+      prompt: "New user password?"
+      private: yes
+      encrypt: "md5_crypt"
+      confirm: yes
+      salt_size: 7
+
+  tasks:
+    - name: set root password
+      user: name=root password={{ root_password }}
+
+    - name: create deploy group
+      group: name=deploy
+
+    - name: create deploy user
+      user: name=deploy
+            group=deploy
+            groups=staff
+            password={{ user_password }}
+            shell=/bin/bash
+
+    - name: copy sudoers file for safe editing
+      command: cp -f /etc/sudoers /etc/sudoers.tmp
+
+    - name: create sudoers file backup
+      command: cp -f /etc/sudoers /etc/sudoers.bak
+
+    # From: https://raymii.org/s/tutorials/Ansible_-_Sudo_Safety_and_Sanity_Checks.html
+    - name: enable passwordless sudo for deploy user
+      # This line needs to be fully quoted because of the ': ' on the line. Go YAML.
+      lineinfile: "dest=/etc/sudoers.tmp state=present regexp='^deploy' line='deploy ALL=(ALL) NOPASSWD: ALL'"
+
+    - name: also make sure ssh-agent works via sudo
+      lineinfile: dest=/etc/sudoers.tmp state=present regexp='^Defaults env_keep\+\=SSH_AUTH_SOCK' line='Defaults env_keep+=SSH_AUTH_SOCK'
+
+    - name: check and install modified sudoers file
+      shell: visudo -q -c -f /etc/sudoers.tmp && cp -f /etc/sudoers.tmp /etc/sudoers
+
+    - name: install deploy user ssh key
+      authorized_key: user=deploy key="{{ item }}"
+      with_file:
+        - keys/scott
+
+    - name: update kernel
+      apt: pkg=linux-generic
+           state=latest
+           update_cache=yes
+           cache_valid_time=3600
+      notify:
+        reboot
+
+    # Do this last: in case something fails earlier, we don't want to lock out
+    # ssh access.
+    - name: configure sshd
+      template: src=templates/ssh/sshd_config.j2
+                dest=/etc/ssh/sshd_config
+                owner=root
+                group=root
+                mode=0644
+
+  handlers:
+    - name: reboot
+      shell: /sbin/reboot now
+

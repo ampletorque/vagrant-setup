@@ -1,0 +1,23 @@
+---
+- name: install java runtime
+  sudo: yes
+  apt: pkg=openjdk-6-jre-headless
+       state=latest
+       update_cache=yes
+       cache_valid_time=3600
+
+- name: fetch elasticsearch deb
+  sudo: yes
+  get_url: url={{ elasticsearch.url }}/{{ elasticsearch.deb.package }}
+           dest={{ elasticsearch.tmp }}//{{ elasticsearch.deb.package }}
+           mode=0440
+  register: elasticsearch_deb
+
+- name: install elasticsearch
+  sudo: yes
+  shell: dpkg -i -E --force-confnew {{ elasticsearch.tmp }}/{{ elasticsearch.deb.package }} 2>&1 | grep skipping | wc -l
+  when: elasticsearch_deb.changed
+
+- name: ensure elasticsearch is started
+  sudo: yes
+  service: name={{ elasticsearch.deb.service }} state=started

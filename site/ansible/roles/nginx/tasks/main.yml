@@ -1,0 +1,37 @@
+---
+- name: install nginx
+  sudo: yes
+  apt: pkg=nginx-full
+       state=latest
+       update_cache=yes
+       cache_valid_time=3600
+
+- name: ensure nginx is started
+  sudo: yes
+  service: name=nginx state=started
+
+- name: configure nginx
+  sudo: yes
+  template: src=nginx.conf.j2
+            dest=/etc/nginx/nginx.conf
+            owner=root
+            group=root
+            mode=0644
+  notify:
+    - reload nginx
+
+- name: setup nginx sites-enabled dir
+  sudo: yes
+  file: path=/etc/nginx/sites-enabled
+        state=directory
+        owner=deploy
+        group=deploy
+
+- name: delete default site
+  sudo: yes
+  file: path=/etc/nginx/sites-enabled/default
+        state=absent
+        owner=deploy
+        group=deploy
+  notify:
+    - reload nginx

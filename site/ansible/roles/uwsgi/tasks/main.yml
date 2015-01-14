@@ -1,0 +1,39 @@
+---
+- name: install uwsgi
+  sudo: yes
+  pip: name=uwsgi state=present
+
+- name: install uwsgi service script
+  sudo: yes
+  template: src=service.conf.j2
+            dest=/etc/init/uwsgi.conf
+            owner=root
+            group=root
+            mode=0644
+
+- name: create uwsgi log dir
+  sudo: yes
+  file: path=/var/log/uwsgi
+        state=directory
+
+- name: create uwsgi config dir
+  sudo: yes
+  file: path=/etc/uwsgi
+        state=directory
+
+- name: create uwsgi vassals dir
+  sudo: yes
+  file: path=/etc/uwsgi/vassals
+        state=directory
+        owner=deploy
+        group=deploy
+
+- name: configure uwsgi
+  sudo: yes
+  template: src=emperor.ini.j2
+            dest=/etc/uwsgi/emperor.ini
+            owner=root
+            group=root
+            mode=0644
+  notify:
+    - restart uwsgi

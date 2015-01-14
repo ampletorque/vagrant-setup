@@ -1,0 +1,16 @@
+---
+- hosts: webservers
+  roles:
+    - { role: timezone, timezone: 'America/Los_Angeles'}
+    - git
+    - iptables
+    - python
+    - postfix
+    - mysql
+    - redis
+    - elasticsearch
+    - nginx
+    - uwsgi
+    - image-processing
+    - node
+    - certs

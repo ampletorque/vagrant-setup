@@ -1,0 +1,11 @@
+---
+- name: copy iptables file
+  sudo: yes
+  template: src=iptables.conf.j2
+            dest=/etc/iptables.rules
+            owner=root
+            group=root
+            mode=0644
+
+  notify:
+    - reload iptables

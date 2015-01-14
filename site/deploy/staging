@@ -1,2 +1,0 @@
-[webservers]
-staging.crowdsupply.com ansible_ssh_user=deploy

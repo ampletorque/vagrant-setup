@@ -1,0 +1,28 @@
+---
+- name: install apt_repository dependencies
+  sudo: yes
+  apt: pkg=python-pycurl
+       state=latest
+       update_cache=yes
+       cache_valid_time=3600
+
+- name: add node.js ppa
+  sudo: yes
+  apt_repository: repo=ppa:chris-lea/node.js
+
+- name: install node.js
+  sudo: yes
+  apt: pkg=nodejs
+       state=latest
+       update_cache=yes
+       cache_valid_time=3600
+
+- name: install npm packages
+  sudo: yes
+  npm: name={{ item }}
+       global=yes
+       state=present
+  with_items:
+    - less
+    - uglify-js
+    - requirejs

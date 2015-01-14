@@ -1,0 +1,47 @@
+#############################################################################
+# File templated by Ansible
+# Base template: {{ template_path }}
+# User: {{ template_uid }} on {{ template_host }}
+#############################################################################
+
+# This should be installed by ansible as /etc/iptables.rules and reloaded
+# automatically by a handler when it is changed.
+
+# WARNING
+# Be careful when editing this file not to restrict ssh access. Doing that will
+# render the host unreachable in a very broken way.
+
+*security
+:INPUT ACCEPT [373:37547]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [327:33458]
+COMMIT
+
+*raw
+:PREROUTING ACCEPT [385:41663]
+:OUTPUT ACCEPT [327:33458]
+COMMIT
+
+*nat 
+:PREROUTING ACCEPT [127173:7033011]
+:POSTROUTING ACCEPT [31583:2332178]
+:OUTPUT ACCEPT [32021:2375633] 
+COMMIT
+
+# Block some sketchy shit like sF scans.
+*mangle 
+:PREROUTING ACCEPT [444:43563] 
+:INPUT ACCEPT [444:43563] :FORWARD ACCEPT [0:0] 
+:OUTPUT ACCEPT [402:144198] 
+:POSTROUTING ACCEPT [402:144198] 
+-A PREROUTING -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG FIN,PSH,URG -j DROP 
+-A PREROUTING -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG NONE -j DROP 
+-A PREROUTING -p tcp -m tcp --tcp-flags SYN,RST SYN,RST -j DROP 
+-A PREROUTING -p tcp -m tcp --tcp-flags FIN,SYN FIN,SYN -j DROP 
+COMMIT
+
+*filter 
+:INPUT ACCEPT [373:37547]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [333:34314]
+COMMIT

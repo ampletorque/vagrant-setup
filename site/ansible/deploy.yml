@@ -1,0 +1,68 @@
+---
+- hosts: webservers
+  tasks:
+    # FIXME need to setgid here
+    - name: setup pyramid logging dirs
+      sudo: yes
+      file: path=/var/log/pyramid
+            state=directory
+            owner=www-data
+            group=staff
+            mode=775
+
+    # FIXME need to setgid here
+    - name: setup media dir
+      sudo: yes
+      file: path=/var/media/crowdsupply
+            state=directory
+            owner=www-data
+            group=staff
+            mode=775
+
+    - name: checkout zaphod source
+      git: repo="git@github.com:storborg/zaphod.git"
+           dest=/var/sw/zaphod
+           accept_hostkey=yes
+      notify:
+        - run setup.py develop
+        - recompile assets
+        - run alembic migrations
+        - reload uwsgi
+        - restart nginx
+
+    - name: link uwsgi config file
+      file: src=/var/sw/zaphod/site/conf/uwsgi.conf
+            path=/etc/uwsgi/vassals/zaphod.ini
+            owner=deploy
+            group=deploy
+            state=link
+      notify:
+        - reload uwsgi
+
+    - name: link nginx config file
+      file: src=/var/sw/zaphod/site/conf/nginx-staging.conf
+            path=/etc/nginx/sites-enabled/100-crowdsupply.com
+            owner=deploy
+            group=deploy
+            state=link
+      notify:
+        - restart nginx
+
+
+  handlers:
+    - name: run setup.py develop
+      command: /var/sw/pyramid27/bin/python setup.py develop chdir=/var/sw/zaphod
+
+    - name: recompile assets
+      command: /var/sw/pyramid27/bin/pcompile /var/sw/zaphod/site/conf/production.ini
+
+    - name: run alembic migrations
+      command: /var/sw/pyramid27/bin/alembic -c /var/sw/zaphod/site/conf/alembic.ini upgrade head
+
+    - name: reload uwsgi
+      sudo: yes
+      service: name=uwsgi state=reloaded
+
+    - name: restart nginx
+      sudo: yes
+      service: name=nginx state=restarted

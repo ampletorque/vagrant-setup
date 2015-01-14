@@ -1,6 +1,8 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import socket
+
 from pyramid_frontend.images.filters import ThumbFilter, VignetteFilter
 from pyramid_frontend.images.chain import FilterChain
 from pyramid_frontend.theme import Theme
@@ -10,6 +12,12 @@ from pyramid_frontend.assets.requirejs import RequireJSAsset
 from .imagefilters import CreatorProfileFilter
 
 
+if socket.gethostname().startswith('janus.'):
+    lessc_path = '/var/sw/less-1.7.0/node_modules/less/bin/lessc'
+else:
+    lessc_path = 'lessc'
+
+
 class TealTheme(Theme):
     key = 'teal'
 
@@ -17,7 +25,7 @@ class TealTheme(Theme):
         'main-less': LessAsset(
             '/_teal/css/main.less',
             less_path='/_teal/js/vendor/less.js',
-            lessc_path='/var/sw/less-1.7.0/node_modules/less/bin/lessc',
+            lessc_path=lessc_path,
         ),
         'main-js': RequireJSAsset(
             '/_teal/js/main.js',

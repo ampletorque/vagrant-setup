@@ -9,6 +9,7 @@
     - python-pip
     - libxml2-dev
     - libxslt-dev
+    - libmemcached-dev
 
 # Don't rely on Ubuntu virtualenv package (Fixed in 13.10)
 # https://bugs.launchpad.net/ubuntu/+source/python2.7/+bug/1115466

@@ -55,6 +55,7 @@
 
     - name: install deploy user ssh key
       authorized_key: user=deploy key="{{ item }}"
+      # XXX Add more keys here
       with_file:
         - keys/scott
 

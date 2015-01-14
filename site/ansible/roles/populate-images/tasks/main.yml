@@ -9,3 +9,4 @@
 - name: upload images
   synchronize: src=/var/media/crowdsupply/images/originals
                dest=/var/media/crowdsupply/images
+               perms=no

@@ -1,7 +1,0 @@
----
-- hosts: webservers
-  roles:
-    - populate-images
-    - mysql-database
-
-# XXX Add a task or role to rebuild the elasticsearch index after populating data

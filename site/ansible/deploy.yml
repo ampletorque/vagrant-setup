@@ -1,23 +1,21 @@
 ---
 - hosts: webservers
   tasks:
-    # FIXME need to setgid here
     - name: setup pyramid logging dirs
       sudo: yes
       file: path=/var/log/pyramid
             state=directory
             owner=www-data
             group=staff
-            mode=775
+            mode=2775
 
-    # FIXME need to setgid here
     - name: setup media dir
       sudo: yes
       file: path=/var/media/crowdsupply
             state=directory
             owner=www-data
             group=staff
-            mode=775
+            mode=2775
 
     - name: checkout zaphod source
       git: repo="git@github.com:storborg/zaphod.git"

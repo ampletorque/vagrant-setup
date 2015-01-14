@@ -1,0 +1,9 @@
+---
+- hosts: webservers
+  roles:
+    - populate-images
+    - mysql-database
+
+  tasks:
+    - name: reindex elasticsearch
+      command: /var/sw/pyramid27/bin/reindex_zaphod /var/sw/zaphod/site/conf/production.ini

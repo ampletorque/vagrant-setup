@@ -53,6 +53,8 @@ setup(name='zaphod',
       version='0.0',
       description='The Crowd Supply Platform',
       long_description='',
+      # Using this invalid trove classifier prevents accidentally uploading
+      # something to pypi.
       classifier=['Private :: Do Not Upload'],
       url='http://github.com/crowdsupply/zaphod',
       keywords='',
@@ -71,5 +73,6 @@ setup(name='zaphod',
       [console_scripts]
       initialize_zaphod_db = zaphod.scripts.initializedb:main
       migrate_zaphod_db = zaphod.scripts.migrate:main
+      reindex_zaphod = zaphod.scripts.reindex:main
       """,
       )

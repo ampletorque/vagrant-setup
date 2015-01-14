@@ -20,6 +20,14 @@
   notify:
     - reload nginx
 
+- name: configure nginx https
+  sudo: yes
+  template: src=https-default.conf.j2
+            dest=/etc/nginx/https-default.conf
+            owner=root
+            group=root
+            mode=0644
+
 - name: setup nginx sites-enabled dir
   sudo: yes
   file: path=/etc/nginx/sites-enabled

@@ -39,3 +39,5 @@ def includeme(config):
 
     config.add_route('admin:leads', '/leads')
     config.add_route('admin:lead', '/lead/{id}')
+
+    config.add_route('admin:settings', '/settings')

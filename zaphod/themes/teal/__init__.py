@@ -27,8 +27,18 @@ class TealTheme(Theme):
             less_path='/_teal/js/vendor/less.js',
             lessc_path=lessc_path,
         ),
+        'admin-less': LessAsset(
+            '/_teal/css/admin.less',
+            less_path='/_teal/js/vendor/less.js',
+            lessc_path=lessc_path,
+        ),
         'main-js': RequireJSAsset(
             '/_teal/js/main.js',
+            require_config_path='/_teal/js/require_config.js',
+            require_base_url='/_teal/js/vendor/',
+        ),
+        'admin-js': RequireJSAsset(
+            '/_teal/js/admin.js',
             require_config_path='/_teal/js/require_config.js',
             require_base_url='/_teal/js/vendor/',
         ),

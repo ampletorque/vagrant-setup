@@ -2,6 +2,10 @@
 @navbar-cs-brand-width: @cs-logo-width;
 @navbar-cs-brand-height: @cs-logo-height;
 
+.navbar-cs-pad {
+    height: 50px;
+}
+
 .navbar-cs {
     background-color: @cs-dark-grey;
 
@@ -18,7 +22,8 @@
         padding-bottom: 12px;
 
         &:hover {
-            background-color: #333333;
+            background-color: rgba(255, 255, 255, 0.1);
+            //background-color: rgba(0, 0, 0, 0.1);
         }
     }
 
@@ -27,7 +32,7 @@
 
         input[type=text] {
             color: @cs-white;
-            background-color: @cs-dark-grey;
+            background-color: transparent;
         }
     }
 
@@ -52,7 +57,15 @@
         -webkit-font-smoothing: antialiased;
 
         &:hover {
-            background-color: #333333;
+            //background-color: rgba(0, 0, 0, 0.1);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    }
+
+    .nav > li.active > a {
+        background-color: rgba(255, 255, 255, 0.1);
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.1);
         }
     }
 

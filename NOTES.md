@@ -205,3 +205,11 @@ introduced during dev, and switch to it if possible.
 - Higher resolution photos? Maybe retina photos with srcset plus a polyfill or
   something similar.
 - Use a slimmed down icon set, e.g. font-awesome via fontello.
+
+TO DO:
+
+- Use .box-shadow() mixin instead of box-shadow rule directly
+- Switch to SVG logo??
+- Styling for breadcrumbs
+- Styleguide info for tiles
+- Use sticky sidebar on styleguide

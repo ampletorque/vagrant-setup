@@ -1,3 +1,35 @@
+@form-wrapped-padding: 15px;
+
+.form-wrapped {
+    background: @cs-white;
+    border: 1px solid darken(@gray-lighter, 12%);
+    // XXX There's a browser bug that breaks the rendering on the background
+    // overflow when this is enabled... look into it.
+    //border-radius: 3px;
+    margin-bottom: 20px;
+    padding: @form-wrapped-padding;
+    overflow: hidden;
+
+    .box-shadow(0 1px 3px rgba(0, 0, 0, 0.1));
+
+    .form-actions {
+        margin: -(@form-wrapped-padding + 15px);
+        margin-top: 0;
+        margin-bottom: -@form-wrapped-padding;
+        padding: @form-wrapped-padding;
+    }
+
+    legend {
+        line-height: 21px;
+        padding-bottom: 8px;
+    }
+}
+
+.form-actions {
+    border-top: 1px solid darken(@gray-lighter, 12%);
+    background-color: @gray-lighter;
+}
+
 .form-group {
     position: relative;
 

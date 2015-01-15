@@ -257,7 +257,7 @@
 
         <form class="form-horizontal form-wrapped">
           <fieldset>
-            <div class="control-legend">An Amazing Form</div>
+            <legend>An Amazing Form</legend>
             ${forms.ltext(renderer, 'input01', label='Text Input', hint='This is some short text under the group.')}
             ##${forms.lcheckbox_list(renderer, [('check01', 'Checkbox Option One', False), ('check02', 'Checkbox Option Two', True), ('check03', 'Checkbox Option Three', False)], hint='This is some short text under the group.', label='Checkbox Input')}
 
@@ -273,7 +273,7 @@
 
             ${forms.ltext(renderer, 'prefixed', 450, label='Prefixed', prefix='$', size='input-small')}
 
-            ${forms.lselect(renderer, 'select01', None, range(5), prompt='Options', label='Select Input', hint='This is some short test under the group.', required=True)}
+            ${forms.lselect(renderer, 'select01', None, range(5), prompt='Options', label='Select Input', hint='This is some short text under the group.', required=True)}
 
             ${forms.lfile(renderer, 'file01', label='File Input')}
 

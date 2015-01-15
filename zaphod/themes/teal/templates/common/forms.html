@@ -134,7 +134,9 @@
 
 
 <%def name="actions(label_cols=3)">
-  <%self:element label_cols="${label_cols}">
-    ${caller.body()}
-  </%self:element>
+  <div class="form-group form-actions">
+    <div class="col-sm-${12 - label_cols} col-sm-offset-${label_cols}">
+      ${caller.body()}
+    </div>
+  </div>
 </%def>

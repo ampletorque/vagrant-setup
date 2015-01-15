@@ -166,10 +166,11 @@ class Project(Node, ElasticMixin):
         else:
             diff = self.end_time - self.start_time
 
-        if diff.days > 2:
+        if diff.days >= 2:
             return diff.days, 'days'
         else:
-            return (diff.seconds / 3600) + (diff.days * 24), 'hours'
+            hours = int(round((diff.seconds / 3600) + (diff.days * 24)))
+            return hours, 'hours'
 
     @property
     def published_updates(self):

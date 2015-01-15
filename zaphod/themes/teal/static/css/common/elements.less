@@ -32,7 +32,8 @@ a {
 }
 
 .section-admin-bar {
-    background-color: @cs-teal;
+    background-color: @cs-admin-purple;
+    color: @cs-white;
 
     p {
         margin: 0;
@@ -42,11 +43,12 @@ a {
         line-height: 20px;
         font-weight: bold;
         display: inline-block;
-        padding: 5px 10px;
+        padding: 10px;
         color: @cs-white;
+
         &:hover {
             color: @cs-white;
-            background-color: lighten(@cs-teal, 3%);
+            background-color: lighten(@cs-admin-purple, 8%);
             text-decoration: none;
         }
     }
@@ -112,5 +114,26 @@ a {
     }
     .comparison {
         padding-left: 30px;
+    }
+}
+
+.section-admin-tabs {
+    background-color: @cs-admin-purple;
+
+    a {
+        display: block;
+        padding: 10px;
+        color: @cs-white;
+        font-weight: bold;
+
+        &:hover {
+            text-decoration: none;
+            color: @cs-white;
+            background-color: lighten(@cs-admin-purple, 8%);
+        }
+    }
+
+    .col-md-4 {
+        text-align: center;
     }
 }

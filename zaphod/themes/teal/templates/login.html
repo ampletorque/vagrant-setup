@@ -10,7 +10,7 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        <h1>Log In To Your Account</h1>
+        <h1 class="page-header">Log In To Your Account</h1>
       </div>
     </div>
 
@@ -18,7 +18,7 @@
 
       <div class="col-sm-6">
 
-        ${renderer.begin(id='login-form', class_='form-horizontal')}
+        ${renderer.begin(id='login-form', class_='form-horizontal form-wrapped')}
 
           ${forms.ltext(renderer, 'email', placeholder='you@example.com')}
           ${forms.lpassword(renderer, 'password')}

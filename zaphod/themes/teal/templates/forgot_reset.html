@@ -11,7 +11,7 @@
     <div class="row">
       <div class="col-sm-6 col-sm-offset-3">
 
-        ${renderer.begin(request.url, class_='form-horizontal')}
+        ${renderer.begin(request.url, class_='form-horizontal form-wrapped')}
 
           ${forms.lpassword(renderer, 'password')}
           ${forms.lpassword(renderer, 'password2', label='Confirm')}

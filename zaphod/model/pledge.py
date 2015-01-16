@@ -75,7 +75,7 @@ class PledgeLevel(Base, ImageMixin):
         return Session.query(func.sum(CartItem.qty_desired)).\
             join(CartItem.cart).\
             join(Cart.order).\
-            filter(CartItem.product == self).\
+            filter(CartItem.pledge_level == self).\
             filter(not_(Order.status.in_(['canc', 'frau']))).\
             scalar() or 0
 
@@ -83,6 +83,11 @@ class PledgeLevel(Base, ImageMixin):
     def published_options(self):
         # XXX Turn into a relationship
         return [opt for opt in self.options if opt.published]
+
+    @property
+    def is_available(self):
+        # FIXME XXX Implement this
+        return True
 
 
 class Option(Base):

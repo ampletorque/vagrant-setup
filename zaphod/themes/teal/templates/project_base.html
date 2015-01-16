@@ -223,38 +223,103 @@
 </%def>
 
 
-<%def name="pledge_levels(project)">
-  <div class="project-block">
-    % for pledge_level in project.published_levels:
-      <form class="form-horizontal" method="post" action="${request.route_path('cart:add')}">
-        <div class="pledge-level">
-          ${pledge_level.img(request, 'pledge-icon')}
+<%def name="pledge_level(project, pledge_level)">
+  <form method="post" action="${request.route_path('cart:add')}">
+    <div class="pledge-level">
+      <div class="clearfix">
+        <div class="pull-left">
           <h3>${pledge_level.name}</h3>
-          <div class="pledge-level-price">${h.currency(pledge_level.price)}</div>
+          <p class="pledge-level-delivery pledge-level-metadata">
+            % if pledge_level.non_physical:
+              Thank you!
+            % elif pledge_level.in_stock:
+              In Stock
+            % elif pledge_level.is_available:
+              Ships ${pledge_level.current_delivery_date.strftime('%B %Y')}
+            % elif not pledge_level.batches:
+              Preview only: check back soon!
+            % else:
+              No longer available
+            % endif
+          </p>
+        </div>
+        <div class="pull-right text-right">
+          <p class="pledge-level-price">
+            <sup>$</sup>${h.commas(int(pledge_level.price))}
+          </p>
+          % if not pledge_level.non_physical:
+            <p class="pledge-level-shipping pledge-level-metadata">
+              Free US Shipping!
+            </p>
+          % endif
+        </div>
+      </div>
 
-          ${h.hidden('product_id', pledge_level.id)}
+      <div class="row">
+        <div class="col-xs-4">
+          ${pledge_level.img(request, 'pledge-icon')}
+        </div>
+
+        <div class="col-xs-8">
+          ${h.hidden('pledge_level_id', pledge_level.id)}
 
           % for option in pledge_level.published_options:
             <div class="form-group">
-              <label class="col-xs-4 control-label" for="option-${option.id}">${option.name}</label>
-              <div class="col-xs-8">
-                <select id="option-${option.id}" name="option-${loop.index}.value_id" class="form-control">
-                  % for value in option.published_values:
-                    <option value="${value.id}">${value.description}</option>
-                  % endfor
-                </select>
-              </div>
+              <label for="option-${option.id}">${option.name}</label>
+              <select id="option-${option.id}" name="option-${loop.index}.value_id" class="form-control">
+                % for value in option.published_values:
+                  <option value="${value.id}">${value.description}</option>
+                % endfor
+              </select>
             </div>
           % endfor
 
-          <div class="form-group">
-            <div class="col-xs-8 col-xs-offset-4">
-              ## XXX FIXME
-              <button class="btn btn-cta">Back This Project</button>
-            </div>
-          </div>
+          % if project.status == 'crowdfunding':
+            <button type="submit" class="btn btn-block btn-cta">Back This Project</button>
+
+            <%
+              qty_claimed = pledge_level.qty_claimed
+              qty_remaining = pledge_level.qty_remaining
+            %>
+            <p class="pledge-level-supporters pledge-level-metadata text-right">
+              % if pledge_level.non_physical and qty_claimed > 0:
+                ${h.commas(qty_claimed)}
+                % if qty_claimed == 1:
+                  person loves us
+                % else:
+                  people love us
+                % endif
+              % elif qty_claimed > 0:
+                ${h.commas(qty_claimed)}
+                claimed
+              % endif
+              % if qty_claimed and (qty_remaining is not None):
+                ,
+              % endif
+              % if qty_remaining is not None:
+                ${h.commas(qty_remaining)} left
+              % endif
+            </p>
+
+          % elif project.status == 'available':
+            % if pledge_level.in_stock:
+              <button type="submit" class="btn btn-block btn-cta">Add to Cart</button>
+            % elif pledge_level.accepts_preorders:
+              <button type="submit" class="btn btn-block btn-cta">Pre-order</button>
+            % endif
+          % endif
+
         </div>
-      </form>
+      </div>
+    </div>
+  </form>
+</%def>
+
+
+<%def name="pledge_levels(project)">
+  <div class="project-block">
+    % for pledge_level in project.published_levels:
+      ${self.pledge_level(project, pledge_level)}
       % if not loop.last:
         <hr>
       % endif

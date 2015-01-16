@@ -139,6 +139,7 @@ def migrate_creators(settings, user_map, image_map):
 def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
     project_map = {}
     pledge_level_map = {}
+    batch_map = {}
     for old_project in scrappy_meta.Session.query(cs_model.Project):
         print("  project %s" % old_project.name)
         project = model.Project(
@@ -225,6 +226,14 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
                         published=old_value.enabled,
                     )
                     option.values.append(value)
+            for old_batch in old_pledge_level.batches:
+                print("      batch %s" % old_batch.id)
+                batch = model.PledgeBatch(
+                    qty=old_batch.qty,
+                    delivery_date=old_batch.delivery_date
+                )
+                batch_map[old_batch] = batch
+                pledge_level.batches.append(batch)
         for old_owner in old_project.ownerships:
             print("    ownership %s" % old_owner.account.email)
             new_owner = model.ProjectOwner(
@@ -240,7 +249,7 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
             )
             model.Session.add(new_owner)
         model.Session.flush()
-    return project_map, pledge_level_map
+    return project_map, pledge_level_map, batch_map
 
 
 def migrate_users(settings, image_map):
@@ -338,7 +347,7 @@ def migrate_providers(settings, user_map, image_map, provider_type_map):
         model.Session.flush()
 
 
-def migrate_orders(settings, user_map, pledge_level_map):
+def migrate_orders(settings, user_map, pledge_level_map, batch_map):
     for old_order in scrappy_meta.Session.query(scrappy_model.Order):
         print("  order %s" % old_order.id)
         if old_order.account:
@@ -359,10 +368,9 @@ def migrate_orders(settings, user_map, pledge_level_map):
         model.Session.add(cart)
         for old_ci in old_order.cart.items:
             delivery_date = None
-            if hasattr(old_ci, 'batch'):
-                old_batch = old_ci.batch
-                if old_batch:
-                    delivery_date = old_ci.batch.delivery_date
+            old_batch = getattr(old_ci, 'batch', None)
+            if old_batch:
+                delivery_date = old_ci.batch.delivery_date
             ci = model.CartItem(
                 pledge_level=pledge_level_map[old_ci.product],
                 price_each=old_ci.price_each,
@@ -373,6 +381,8 @@ def migrate_orders(settings, user_map, pledge_level_map):
                 shipping_price=0,
                 expected_delivery_date=delivery_date,
             )
+            if old_batch:
+                ci.batch = batch_map[old_batch]
             order.cart.items.append(ci)
         model.Session.flush()
 
@@ -417,11 +427,11 @@ def main(argv=sys.argv):
         migrate_articles(settings, user_map, image_map)
         tag_map = migrate_tags(settings, user_map)
         creator_map = migrate_creators(settings, user_map, image_map)
-        project_map, pledge_level_map = \
+        project_map, pledge_level_map, batch_map = \
             migrate_projects(settings, user_map, creator_map,
                              tag_map, image_map)
         migrate_related_projects(settings, project_map)
-        migrate_orders(settings, user_map, pledge_level_map)
+        migrate_orders(settings, user_map, pledge_level_map, batch_map)
 
         scott_user = model.Session.query(model.User).\
             filter_by(email='scott.torborg@crowdsupply.com').\

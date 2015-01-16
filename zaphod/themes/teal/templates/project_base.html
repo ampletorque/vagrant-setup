@@ -417,14 +417,14 @@
 
             <div class="col-sm-9">
               <h4>${project.creator.name}</h4>
-              <div class="creator-block-teaser">${project.creator.teaser}</div>
-              <div class="creator-block-metadata">
+              <p class="creator-block-teaser">${project.creator.teaser}</p>
+              <p class="creator-block-metadata">
                 <i class="fa fa-map-marker"></i>&nbsp;${project.creator.location}
                 % if project.creator.home_url:
                   &nbsp;&middot;&nbsp;
                   <a href="${project.creator.home_url}">${project.creator.display_url}</a>
                 % endif
-              </div>
+              </p>
             </div>
           </div>
 

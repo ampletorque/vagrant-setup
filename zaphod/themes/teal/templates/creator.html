@@ -1,5 +1,7 @@
 <%inherit file="base.html"/>
 
+<%namespace name="tiles" file="common/tiles.html"/>
+
 
 <%def name="title()">${creator.name}</%def>
 
@@ -24,15 +26,30 @@
 <section class="section-creator">
   <div class="container">
     <div class="row">
-      <div class="col-lg-12">
-        <h1>${creator.name}</h1>
+      <div class="col-sm-3">
+        ${creator.img(request, 'creator-profile')}
+      </div>
 
-        % for project in projects:
-          <h3>
-            <a href="${request.node_path(project)}">${project.name}</a>
-          </h3>
-        % endfor
+      <div class="col-sm-9">
+        <h4>${creator.name}</h4>
+        <p class="creator-block-teaser">${creator.teaser}</p>
+        <p class="creator-block-metadata">
+          <i class="fa fa-map-marker"></i>&nbsp;${creator.location}
+          % if creator.home_url:
+            &nbsp;&middot;&nbsp;
+            <a href="${creator.home_url}">${creator.display_url}</a>
+          % endif
+        </p>
       </div>
     </div>
+  </div>
+</section>
+
+
+<section class="section-creator-projects">
+  <div class="container">
+    % for row in h.grouper(4, projects):
+      ${tiles.tile_row(row)}
+    % endfor
   </div>
 </section>

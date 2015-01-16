@@ -213,6 +213,8 @@ TO DO:
 - Styling for breadcrumbs
 - Styleguide info for tiles
 - Use sticky sidebar on styleguide
+- Introduce an @hr-color variable and add it to the styleguide
+- Standardize colors for grey / lightened text, add vars, add to styleguide
 
 
 Caching

@@ -1,7 +1,7 @@
 <%def name="account_menu()">
   <ul class="nav navbar-nav navbar-right">
     <li class="dropdown">
-      <a href="${request.route_path('account')}" class="dropdown-toggle" data-toggle="dropdown">
+      <a href="${request.route_path('account')}" class="dropdown-toggle-gravatar" data-toggle="dropdown">
         % if request.user:
           ${h.image_or_gravatar(request, request.user, 'header-avatar', default='mm', title=request.user.name, class_='img-avatar')}
         % else:

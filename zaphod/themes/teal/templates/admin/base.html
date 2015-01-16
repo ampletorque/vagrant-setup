@@ -60,7 +60,17 @@
       <div class="collapse navbar-collapse navbar-admin-collapse">
         <ul class="nav navbar-nav">
           ${self.admin_tab('Dashboard', request.route_path('admin:dashboard'))}
-          ${self.admin_tab('Content', request.route_path('admin:content'))}
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Content <span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="${request.route_path('admin:articles')}">Articles</a></li>
+              <li><a href="${request.route_path('admin:creators')}">Creators</a></li>
+              <li><a href="${request.route_path('admin:projects')}">Projects</a></li>
+              <li><a href="${request.route_path('admin:tags')}">Tags</a></li>
+              <li><a href="${request.route_path('admin:provider_types')}">Provider Types</a></li>
+              <li><a href="${request.route_path('admin:providers')}">Providers</a></li>
+            </ul>
+          </li>
           ${self.admin_tab('Orders', request.route_path('admin:orders'))}
           ${self.admin_tab('Vendor Orders', request.route_path('admin:vendor_orders'))}
           ${self.admin_tab('Users', request.route_path('admin:users'))}
@@ -79,7 +89,7 @@
 <%def name="admin_account_menu()">
   <ul class="nav navbar-nav navbar-right">
     <li class="dropdown">
-      <a href="${request.route_path('account')}" class="dropdown-toggle" data-toggle="dropdown">
+      <a href="${request.route_path('account')}" class="dropdown-toggle-gravatar" data-toggle="dropdown">
         ${h.image_or_gravatar(request, request.user, 'header-avatar', default='mm', title=request.user.name, class_='img-avatar')}
       </a>
       <ul class="dropdown-menu" role="menu">

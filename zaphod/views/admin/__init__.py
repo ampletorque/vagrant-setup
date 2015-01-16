@@ -5,8 +5,6 @@ from __future__ import (absolute_import, division, print_function,
 def includeme(config):
     config.add_route('admin:dashboard', '/dashboard')
 
-    config.add_route('admin:content', '/content')
-
     config.add_route('admin:creators', '/creators')
     config.add_route('admin:creator', '/creator/{id}')
 

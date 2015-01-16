@@ -79,10 +79,10 @@
 
 
 <%def name="stats_crowdfunding(project)">
-  <p class="pledged">
+  <p class="project-pledged">
     <span><sup>$</sup>${h.commas(project.pledged_amount)}</span>&nbsp;raised
   </p>
-  <p class="goal">
+  <p class="project-goal">
     of&nbsp;<span><sup>$</sup>${h.commas(project.target)}</span>&nbsp;goal
   </p>
 
@@ -116,18 +116,92 @@
 
 
 <%def name="stats_suspended(project)">
+  <p class="project-pledged">
+    <span><sup>$</sup>${h.commas(project.pledged_amount)}</span>&nbsp;raised
+  </p>
+  <p class="project-goal">
+    of&nbsp;<span><sup>$</sup>${h.commas(project.target)}</span>&nbsp;goal
+  </p>
+  <div class="status-bar status-bar-danger">
+    <div class="status-bar-left">Campaign Suspended</div>
+  </div>
+  <div class="factoids row">
+    <div class="fact col-xs-4">
+      <p>${h.format_datetime(request, project.suspended_time, '%b %d')}</p>
+      <span>suspended</span>
+    </div>
+    <div class="fact col-xs-4">
+      <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
+      <span>funded</span>
+    </div>
+    <div class="fact col-xs-4">
+      <p>${h.commas(project.num_pledges)}</p>
+      <span>pledges</span>
+    </div>
+  </div>
 </%def>
 
 
 <%def name="stats_funded(project)">
-</%def>
-
-
-<%def name="stats_prelaunch(project)">
+  <p class="project-pledged">
+    <span><sup>$</sup>${h.commas(project.pledged_amount)}</span>&nbsp;raised
+  </p>
+  <p class="project-goal">
+    of&nbsp;<span><sup>$</sup>${h.commas(project.target)}</span>&nbsp;goal
+  </p>
+  <div class="status-bar status-bar-primary">
+    <span class="status-bar-left">Funded!</span>
+  </div>
+  <div class="factoids row">
+    <div class="fact col-xs-4">
+      <p>${h.format_datetime(request, project.final_day, '%b %d')}</p>
+      <span>Funded on</span>
+    </div>
+    <div class="fact col-xs-4">
+      <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
+      <span>funded</span>
+    </div>
+    <div class="fact col-xs-4">
+      <p>${h.commas(project.num_pledges)}</p>
+      <span>pledges</span>
+    </div>
+  </div>
+  <div class="social-buttons">
+    <p>Support this project on social media!</p>
+    ${self.social_buttons(project)}
+  </div>
 </%def>
 
 
 <%def name="stats_available(project)">
+  <p class="project-pledged">
+    <span><sup>$</sup>${h.commas(project.pledged_amount)}</span>&nbsp;raised
+  </p>
+  <p class="project-goal">
+    of&nbsp;<span><sup>$</sup>${h.commas(project.target)}</span>&nbsp;goal
+  </p>
+  <div class="status-bar status-bar-primary">
+    <span class="status-bar-left">Funded!</span>
+    <span class="status-bar-right">Pre-Order Now</span>
+  </div>
+  <div class="factoids row">
+    <div class="fact col-xs-4">
+      <p>${h.format_datetime(request, project.final_day, '%b %d')}</p>
+      <span>Funded on</span>
+    </div>
+    <div class="fact col-xs-4">
+      <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
+      <span>funded</span>
+    </div>
+    <div class="fact col-xs-4">
+      <p>${h.commas(project.num_pledges)}</p>
+      <span>pledges</span>
+    </div>
+  </div>
+  <div class="social-buttons">
+    <p>Support this project on social media!</p>
+    ${self.social_buttons(project)}
+  </div>
 </%def>
 
 
@@ -139,10 +213,10 @@
       ${self.stats_suspended(project)}
     % elif project.status == 'funded':
       ${self.stats_funded(project)}
-    % elif project.status == 'prelaunch':
-      ${self.stats_prelaunch(project)}
     % elif project.status == 'available':
       ${self.stats_available(project)}
+    % else:
+      <% assert False, "don't know what stats tile to use for %r" % project.status %>
     % endif
   </div>
 </%def>

@@ -3,6 +3,9 @@ from __future__ import (absolute_import, division, print_function,
 
 from operator import attrgetter
 from datetime import datetime
+
+import pytz
+
 from sqlalchemy import Table, Column, ForeignKey, types, orm
 from sqlalchemy.sql import func
 
@@ -157,6 +160,12 @@ class Project(Node, ElasticMixin):
             join(CartItem.pledge_level).\
             filter(PledgeLevel.project == self).\
             scalar() or 0
+
+    @property
+    def final_day(self):
+        end = pytz.utc.localize(self.end_time)
+        pst = pytz.timezone('America/Los_Angeles')
+        return end.astimezone(pst).replace(tzinfo=None)
 
     @property
     def remaining(self):

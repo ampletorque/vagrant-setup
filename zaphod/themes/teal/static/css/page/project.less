@@ -1,14 +1,44 @@
+@project-block-padding: 15px;
+
 .section-project {
     background-color: @cs-offwhite;
 }
 
 .project-block {
     background-color: @cs-white;
-    padding: 16px;
+    padding: @project-block-padding;
     margin-bottom: 30px;
+
+    .status-bar {
+        margin: 0 -@project-block-padding;
+    }
+
+    .project-pledged {
+        margin-bottom: 0;
+        color: @gray;
+        span {
+            color: @cs-black;
+            font-size: 35px;
+        }
+    }
+    .project-goal {
+        color: @gray;
+        span {
+            color: @cs-black;
+            font-size: 22px;
+        }
+    }
 }
 
 .breadcrumb-project {
     margin-top: 15px;
     margin-bottom: 0;
+}
+
+.social-buttons {
+    text-align: center;
+    .fa {
+        margin-top: 10px;
+        font-size: 24px;
+    }
 }

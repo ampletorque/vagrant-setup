@@ -78,7 +78,8 @@ def backers_handler(project, request):
         join(model.Cart.items).\
         join(model.CartItem.pledge_level).\
         filter(model.PledgeLevel.project == project).\
-        filter(model.User.show_in_backers == True)
+        filter(model.User.show_in_backers == True).\
+        order_by(model.Order.id.desc())
     # XXX filter out cancelled orders
 
     backers = q.all()

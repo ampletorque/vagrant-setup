@@ -4,16 +4,16 @@
 <%def name="title()">Backers of ${project.name}</%def>
 
 
-<div class="project-block">
+<div class="project-block project-block-backers">
   <h2>Backers</h2>
   % if backers:
-  <ul>
+    <ul class="list-unstyled">
     % for backer in backers:
-    <li>
-      <img class="avatar" src="${h.gravatar_url(backer.email, size=64, default='mm')}" alt="">
-      <p>${h.abbreviate_name(backer.name)}</p>
-      % if backer.location:
-      <p><i class="fa fa-map-marker"></i> ${backer.location}</p>
+    <li class="backer">
+      <img class="pull-left img-avatar" src="${h.gravatar_url(backer.email, size=64, default='mm')}" alt="">
+      <p>${backer.show_name}</p>
+      % if backer.show_location:
+        <p class="backer-location"><i class="fa fa-map-marker"></i> ${backer.show_location}</p>
       % endif
     </li>
     % endfor

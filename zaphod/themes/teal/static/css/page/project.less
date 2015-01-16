@@ -30,6 +30,17 @@
     }
 }
 
+.project-block-backers {
+    padding-bottom: 0;
+
+    h2 {
+        margin-top: 0;
+    }
+    .list-unstyled {
+        margin-bottom: 0;
+    }
+}
+
 .breadcrumb-project {
     margin-top: 15px;
     margin-bottom: 0;
@@ -88,4 +99,21 @@
 
 .pledge-level-supporters {
     margin-top: 5px;
+}
+
+.backer {
+    .clearfix();
+    padding-top: 15px;
+    padding-bottom: 15px;
+
+    + .backer {
+        border-top: 1px solid lighten(@gray-light, 30%);
+    }
+
+    img {
+        margin-right: 15px;
+    }
+}
+.backer-location {
+    color: @gray-light;
 }

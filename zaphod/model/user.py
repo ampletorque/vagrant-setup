@@ -36,8 +36,9 @@ class User(Base, ImageMixin, UserMixin):
 
     twitter_username = Column(types.String(255), nullable=True)
 
-    location = Column(types.Unicode(255), nullable=False, default=u'')
+    show_location = Column(types.Unicode(255), nullable=False, default=u'')
     show_in_backers = Column(types.Boolean, nullable=False, default=True)
+    show_name = Column(types.Unicode(255), nullable=False, default=u'')
 
     @staticmethod
     def hash_password(password):

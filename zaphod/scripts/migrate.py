@@ -15,7 +15,7 @@ try:
 except ImportError:
     scrappy_meta = scrappy_model = cs_model = None
 
-from .. import model
+from .. import model, helpers as h
 
 
 old_url = 'mysql+pymysql://crowdsupply:quux@localhost/crowdsupply?charset=utf8'
@@ -252,6 +252,21 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
     return project_map, pledge_level_map, batch_map
 
 
+def lookup_location(old_user):
+    q = scrappy_meta.Session.query(scrappy_model.Order).\
+        filter_by(account=old_user).\
+        order_by(scrappy_model.Order.id.desc())
+    order = q.first()
+    if order and not order.cart.non_physical:
+        if order.shipping.country == 'us':
+            return '%s, %s' % (order.shipping.city,
+                               order.shipping.state)
+        else:
+            return '%s, %s' % (order.shipping.city,
+                               order.shipping.country_name)
+    return ''
+
+
 def migrate_users(settings, image_map):
     user_map = {}
     user_emails = set()
@@ -279,6 +294,8 @@ def migrate_users(settings, image_map):
             created_time=old_user.created_time,
             updated_time=old_user.updated_time,
             admin=old_user.has_permission('admin'),
+            show_name=h.abbreviate_name(old_user.name),
+            show_location=lookup_location(old_user),
         )
         model.Session.add(user)
         migrate_image_associations(settings, image_map, old_user, user)

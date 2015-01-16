@@ -3,6 +3,7 @@ from __future__ import (absolute_import, division, print_function,
 
 import re
 import hashlib
+import string
 
 from six.moves.urllib.parse import urlencode
 
@@ -228,3 +229,14 @@ def pluralize(noun):
                                      ('$', '$', 's')):
         if re.search(pattern, noun, flags=re.I):
             return re.sub(search, replace, noun, flags=re.I)
+
+
+def abbreviate_name(name):
+    words = string.capwords(name).split()
+    if len(words) == 0:
+        return u''
+    elif len(words) == 1:
+        return name
+    first = words[0]
+    last_initial = words[-1][0]
+    return first + ' ' + last_initial

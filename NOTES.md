@@ -213,3 +213,29 @@ TO DO:
 - Styling for breadcrumbs
 - Styleguide info for tiles
 - Use sticky sidebar on styleguide
+
+
+Caching
+-------
+
+Use dogpile.cache with a Redis backend. Dogpile has a Mako cache plugin that
+will make it easy to use the builtin Mako markup for caching in a clean way.
+
+Here's a recipe that might be useful:
+http://dogpilecache.readthedocs.org/en/latest/usage.html#invalidating-a-group-of-related-keys
+
+At the very least, try to cache these fragments:
+
+- Entire home page
+- Entire node pages (project, article, update, provider, etc)
+- Project backers lists
+- Project tiles
+- Project updates
+- Browse by stage pages
+
+It probably doesn't make sense to cache search pages, because elasticsearch is
+fast and the hit rate is low enough that it's better to just regenerate the
+results and render (hopefully cached) tiles.
+
+If the 'account menu' could be extracted out of normal responses, it would be
+possible to cache the entire responses for many pages.

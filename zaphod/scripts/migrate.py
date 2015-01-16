@@ -205,6 +205,7 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
                 gravity=old_pledge_level.gravity,
                 published=old_pledge_level.published,
                 price=old_pledge_level.price,
+                accepts_orders=(old_project.stage in (2, 3)),
             )
             model.Session.add(pledge_level)
             migrate_image_associations(settings, image_map,

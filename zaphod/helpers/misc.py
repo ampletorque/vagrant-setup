@@ -164,21 +164,29 @@ def plural(count, noun, zero_word=False, capitalize=False, with_number=True,
     Return a pluralized version of `noun` if count != 1 else return the
     singular.
 
-    kwargs:
-      `zero_word`: If truthy value, use this instead of 0 for count
-      `capitalize`: If True, capitalize the returned words
-      `with_number`: If True, display `count` in the returned string
-      `words`: If True, always try to convert numbers to words
-               If False, never try to convert numbers to words
-               If an integer, this acts as a threshold for what numbers are
-               converted to words.
-               If count is less than zero, words will always be False.
-
     Ex:
     h.plural(5, 'category') => 'five categories'
     h.plural(1, 'category') => 'one category'
     h.plural(0, 'category') => 'zero categories'
     h.plural(-1, 'category', words=10) => '-1 categories'
+
+    :param count: Numeric count of objects
+    :type count: int
+    :param noun: The singular noun to (potentially) pluralize
+    :type noun: str
+    :param zero_word: If True, use this instead of 0 for count
+    :type zero_word: bool
+    :param capitalize: If True, capitalize the returned words
+    :type capitalize: bool
+    :param with_number: If True, include ``count`` in the returned string
+    :type with_number: bool
+    :param words:
+        If True, always try to convert numbers to words. If False,
+        never try to convert numbers to words. If an integer, this acts as a
+        threshold for what numbers are converted to words. If the count s less
+        than zero, words will always be False.
+    :returns: Pluralized string
+    :rtype: str
     """
     noun = pluralize(noun) if count != 1 else noun
 

@@ -359,22 +359,22 @@
 
     <div class="row">
       <div class="col-lg-12">
-        <div class="pull-right">
+        <ul class="list-unstyled list-tags pull-right text-right">
           % if project.creator.location:
-            <p>
+            <li>
               <i class="fa fa-map-marker"></i>&nbsp;
               ${project.creator.location}
-            </p>
+            </li>
           % endif
           % for tag in list(project.tags)[:2]:
             % if tag.published:
-              <p>
+              <li>
                 <i class="fa fa-tag"></i>
                 <a href="${request.node_url(tag)}">${tag.name}</a>
-              </p>
+              </li>
             % endif
           % endfor
-        </div>
+        </ul>
 
         <h1>${project.name}</h1>
       </div>

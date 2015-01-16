@@ -1,0 +1,29 @@
+<%inherit file="base.html"/>
+
+<%def name="title()">List Vendor Orders</%def>
+
+
+<section class="section-admin-vendor-orders">
+  <div class="container">
+    <div class="row">
+      <table class="table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>ID</th>
+          </tr>
+        </thead>
+        <tbody>
+          % for vendor_order in vendor_orders:
+            <tr>
+              <td>
+                <a href="${request.route_path('admin:vendor_order', id=vendor_order.id)}">Edit</a>
+              </td>
+              <td>${vendor_order.id}</td>
+            </tr>
+          % endfor
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

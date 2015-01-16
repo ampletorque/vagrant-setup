@@ -14,3 +14,4 @@ from .tag import *
 from .user import *
 from .user_mixin import *
 from .utils import *
+from .vendor_order import *

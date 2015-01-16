@@ -1,16 +1,17 @@
-Quick Start
-===========
+Quick Start with Local Development Server
+=========================================
 
 Install Dependencies
 --------------------
 
 These services are required:
 
-- MySQL
+- MySQL or MariaDB
 - Redis
 - Elasticsearch
 - lessc (via the ``less`` npm package)
 - requirejs (via the ``requirejs`` npm package)
+- autoprefixer (via the ``autoprefixer`` npm package)
 
 Install Zaphod
 --------------

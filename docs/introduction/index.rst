@@ -5,4 +5,5 @@ Introduction
     :maxdepth: 2
 
     overview
-    quickstart
+    quickstart-local
+    quickstart-vagrant

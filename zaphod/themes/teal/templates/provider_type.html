@@ -37,7 +37,10 @@
         </ul>
 
         <h1>${provider_type.plural_name}</h1>
-        ${request.render_content(provider_type, provider_type.body)}
+
+        <div class="rendered-content">
+          ${request.render_content(provider_type, provider_type.body)}
+        </div>
 
         % if providers:
           % for provider in providers:

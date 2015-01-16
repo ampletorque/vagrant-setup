@@ -38,7 +38,11 @@
       <p class="update-date-day">${update.created_time.strftime('%d')}</p>
     </div>
     <a href="${request.node_path(update)}"><h3>${update.name}</h3></a>
-    <p>${request.render_content(update, update.body)}</p>
+
+    <div class="rendered-content">
+      ${request.render_content(update, update.body)}
+    </div>
+
     <div class="social-buttons">
       <p>Share this update on social media:</p>
       <div class="row">

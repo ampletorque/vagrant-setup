@@ -30,7 +30,9 @@
           <h1 class="text-center">${article.name}</h1>
         % endif
 
-        ${request.render_content(article, article.body)}
+        <div class="rendered-content">
+          ${request.render_content(article, article.body)}
+        </div>
       </div>
     </div>
 

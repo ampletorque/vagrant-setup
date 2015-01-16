@@ -72,7 +72,9 @@
           <h1>${provider.name}</h1>
         </div>
 
-        ${request.render_content(provider, provider.body)}
+        <div class="rendered-content">
+          ${request.render_content(provider, provider.body)}
+        </div>
         <hr>
       </div>
     </div>

@@ -6,6 +6,8 @@ import os.path
 import email.utils
 from datetime import datetime
 
+import six
+
 from pyramid.renderers import render
 from pyramid.settings import asbool
 from pyramid_mailer import get_mailer
@@ -56,7 +58,7 @@ def send(request, template_name, vars, to=None, from_=None,
 
     recipients = to or [settings['mailer.from']]
     recipients = [recipient
-                  if isinstance(recipient, basestring) else
+                  if isinstance(recipient, six.string_types) else
                   email.utils.formataddr(recipient)
                   for recipient in recipients]
 

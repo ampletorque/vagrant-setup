@@ -63,8 +63,7 @@ class CartItem(Base):
 
     cart = orm.relationship('Cart', backref='items')
     pledge_level = orm.relationship('PledgeLevel', backref='cart_items')
-    batch = orm.relationship('PledgeBatch',
-                                                backref='cart_items')
+    batch = orm.relationship('PledgeBatch', backref='cart_items')
 
 
 # XXX Maybe this should be a CartItem.shipment_id foreign key instead?

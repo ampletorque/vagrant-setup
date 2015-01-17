@@ -4,6 +4,7 @@ from __future__ import (absolute_import, division, print_function,
 import re
 import hashlib
 import string
+import time
 
 from six.moves.urllib.parse import urlencode
 
@@ -240,3 +241,7 @@ def abbreviate_name(name):
     first = words[0]
     last_initial = words[-1][0]
     return first + ' ' + last_initial
+
+
+def loaded_time():
+    return time.time()

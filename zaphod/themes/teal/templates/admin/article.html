@@ -1,6 +1,7 @@
 <%inherit file="base.html"/>
 
 <%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="widgets" file="/admin/common/widgets.html"/>
 
 <%def name="title()">Edit Article ${article.id}</%def>
 
@@ -10,12 +11,22 @@
     <div class="row">
       <div class="col-lg-12">
         <a class="pull-right" href="${request.node_path(article)}">View Public Page</a>
-        <h1>${self.title()}</h1>
+        <h1 class="page-header">${self.title()}</h1>
 
-        ${renderer.begin(id='update-form', class_='form-horizontal')}
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
           ${forms.ltext(renderer, 'name', article.name)}
-          ${forms.ltextarea(renderer, 'teaser', article.teaser)}
-          ${forms.ltextarea(renderer, 'body', article.body)}
+
+          ${widgets.aliases(renderer, article)}
+
+          ${forms.ltextarea(renderer, 'teaser', article.teaser, rows=3, hint='Optional summary.')}
+          ${forms.ltextarea(renderer, 'keywords', article.keywords, rows=3, hint='Included in a keywords meta tag and used for search.')}
+          ${forms.ltextarea(renderer, 'body', article.body, rows=15)}
+
+          ${forms.ltext(renderer, 'category', article.category, hint='Group related articles by using the same category.')}
+          ${forms.lcheckbox(renderer, 'show_heading', article.show_heading, label='Show heading on article page.')}
+          ${forms.lcheckbox(renderer, 'show_article_list', article.show_article_list, label='Show list of related articles on article page.')}
+
+
           ${forms.lcheckbox(renderer, 'listed', article.listed)}
           ${forms.lcheckbox(renderer, 'published', article.published)}
 

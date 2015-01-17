@@ -1,3 +1,4 @@
+<%namespace name="blocks" file="/common/blocks.html"/>\
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,6 +20,9 @@
 </head>
 <body>
   ${self.admin_header()}
+  % for msg, category in request.session.pop_flash():
+    ${blocks.flash(msg, category)}
+  % endfor
   ${next.body()}
   ${request.asset_tag('admin-js')}
   ${self.additional_footer()}

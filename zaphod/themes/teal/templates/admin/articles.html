@@ -12,6 +12,8 @@
             <th></th>
             <th>ID</th>
             <th>Name</th>
+            <th>Published</th>
+            <th>Listed</th>
           </tr>
         </thead>
         <tbody>
@@ -22,6 +24,16 @@
               </td>
               <td>${article.id}</td>
               <td>${article.name}</td>
+              <td>
+                % if article.published:
+                  Yes
+                % endif
+              </td>
+              <td>
+                % if article.listed:
+                  Yes
+                % endif
+              </td>
             </tr>
           % endfor
         </tbody>

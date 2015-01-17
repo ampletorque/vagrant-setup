@@ -95,3 +95,11 @@ class Node(Base, ImageMixin, UserMixin, CommentMixin):
                 # If it is canonical and pointing to another node, we can't
                 # replace it, so fail.
                 raise ValueError("Provided path is not unique.")
+
+    @property
+    def override_path(self):
+        return self.canonical_path()
+
+    @override_path.setter
+    def override_path(self, path):
+        self.update_path(path)

@@ -54,6 +54,8 @@ class CartItem(Base):
     shipping_price = Column(custom_types.Money, nullable=False)
     crowdfunding = Column(types.Boolean, nullable=False)
     expected_delivery_date = Column(types.DateTime, nullable=True)
+    shipped_date = Column(types.DateTime, nullable=True)
+    batch_id = Column(None, ForeignKey('pledge_batches.id'), nullable=True)
 
     status = Column(types.String(255), nullable=False)
 
@@ -61,6 +63,8 @@ class CartItem(Base):
 
     cart = orm.relationship('Cart', backref='items')
     pledge_level = orm.relationship('PledgeLevel', backref='cart_items')
+    batch = orm.relationship('PledgeBatch',
+                                                backref='cart_items')
 
 
 # XXX Maybe this should be a CartItem.shipment_id foreign key instead?

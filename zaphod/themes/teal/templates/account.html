@@ -56,7 +56,29 @@
               <a href="${request.node_path(pledge.pledge_level.project)}">${pledge.pledge_level.name}</a> - ${pledge.pledge_level.project.name}
             </h4>
             <p>
-              Backed __________ - Ships ________ -
+              Backed on ${h.format_datetime(request, pledge.cart.order.created_time, '%b %d, %Y')}<br>
+              % if pledge.shipped_date:
+                Shipped on ${h.format_datetime(request, pledge.shipped_date, '%b %d, %Y')}<br>
+                % if pledge.expected_delivery_date:
+                  % if pledge.shipped_date < pledge.expected_delivery_date:
+                    <strong>Shipped ${(pledge.expected_delivery_date - pledge.shipped_date).days} days early!</strong>
+                  % else:
+                    <strong>Shipped ${(pledge.shipped_date - pledge.expected_delivery_date).days} days late!</strong>
+                  % endif
+                  Originally expected to ship on ${h.format_datetime(request, pledge.expected_delivery_date, '%b %d, %Y')}
+                % endif
+              % elif pledge.pledge_level.non_physical:
+                No shipment
+              % elif pledge.batch  and pledge.expected_delivery_date != pledge.batch.delivery_date:
+                <strong>This project has fallen behind schedule and is currently expecting to ship on ${h.format_datetime(request, pledge.batch.delivery_date, '%b %d, %Y')}. Please see project updates for more information.</strong><br>
+                Originally expected to ship on ${h.format_datetime(request, pledge.expected_delivery_date, '%b %d, %Y')}
+              % elif pledge.expected_delivery_date:
+                Ships on ${h.format_datetime(request, pledge.expected_delivery_date, '%b %d, %Y')}
+              % else:
+                Delivery date unknown
+              % endif
+            </p>
+            <p>
               <a href="${request.route_path('order', id=pledge.cart.order.id)}">View Order Details</a>
             </p>
           </div>

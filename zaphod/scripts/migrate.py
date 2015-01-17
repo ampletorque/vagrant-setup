@@ -397,6 +397,7 @@ def migrate_orders(settings, user_map, pledge_level_map, batch_map):
                 status='init',
                 # XXX
                 shipping_price=0,
+                shipped_date=old_ci.shipped_date,
                 expected_delivery_date=delivery_date,
             )
             if old_batch:

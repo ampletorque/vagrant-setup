@@ -39,3 +39,5 @@ def includeme(config):
     config.add_route('admin:lead', '/lead/{id}')
 
     config.add_route('admin:settings', '/settings')
+
+    config.add_route('admin:mail_template', '/mail-template/{template_name}')

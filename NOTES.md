@@ -270,6 +270,10 @@ available whenever possible.
     - In-stock sales
     - Shipping??
 
+- Project launch report: for a given time period, show new projects launched. Break down by:
+    - Funding goal buckets
+    - Tag
+
 - Revenue report: for a given time period, show recognized revenue. Break down by:
     - Crowdfunding fees
     - Fulfillment fees??
@@ -300,12 +304,17 @@ available whenever possible.
     - Shipment in count
     - Shipment out count
 
-- Delay report: for each project with open orders, show:
+- Delay report: for a given time period, show:
+    - Orders which were shipped
+        - late
+        - on time
+    - "Most late" orders
+
+- Current delay dashboard: for each project with open orders, show:
     - # of orders that are open
     - # of orders that are currently late
     - Earliest open delivery date
     - Age of latest project update
-    XXX This doesn't really make it possible to retroactively explore project delays.
 
 **User Reports**
 

@@ -8,6 +8,7 @@ from . import utils
 from .base import Base, Session
 from .image import ImageMixin
 from .user_mixin import UserMixin
+from .comment import CommentMixin
 
 __all__ = ['Alias', 'Node']
 
@@ -31,7 +32,7 @@ class Alias(Base):
         return v
 
 
-class Node(Base, ImageMixin, UserMixin):
+class Node(Base, ImageMixin, UserMixin, CommentMixin):
     """
     The Node class is the superclass of all pieces of content which are served
     up at a URL. It provides an easy way to make a flat URL namespace (combined

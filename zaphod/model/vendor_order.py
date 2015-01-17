@@ -5,9 +5,10 @@ from sqlalchemy import Column, ForeignKey, types, orm
 
 from .base import Base
 from .user_mixin import UserMixin
+from .comment import CommentMixin
 
 
-class VendorOrder(Base, UserMixin):
+class VendorOrder(Base, UserMixin, CommentMixin):
     __tablename__ = 'vendor_orders'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)

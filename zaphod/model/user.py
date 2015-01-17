@@ -12,11 +12,12 @@ from . import utils
 from .base import Base
 from .image import ImageMixin
 from .user_mixin import UserMixin
+from .comment import CommentMixin
 
 __all__ = ['User']
 
 
-class User(Base, ImageMixin, UserMixin):
+class User(Base, ImageMixin, UserMixin, CommentMixin):
     __tablename__ = 'users'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)

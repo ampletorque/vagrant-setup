@@ -207,7 +207,8 @@ class UserView(object):
             ))
             vars = dict(user=user, link=link)
 
-            mail.send(request, 'forgot_password', vars, to=[user.email])
+            mail.send(request, 'forgot_password', vars, to=[(user.name,
+                                                             user.email)])
 
             request.flash("An email has been sent with "
                           "instructions to reset your password.", 'error')

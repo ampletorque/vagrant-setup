@@ -22,7 +22,8 @@ body {
 }
 
 a {
-  color: #049cdb;
+  color: #00b2ad;
+  text-decoration: none;
 }
 
 .btn {
@@ -74,6 +75,9 @@ table.footer-wrap {
 .footer-wrap .container td.content p {
   font-size: 10px;
   font-weight: bold;
+}
+.footer-wrap a {
+  margin-right: 15px;
 }
 
 .h1,
@@ -227,10 +231,10 @@ ul li {
               <tr>
                 <td>
                   <p>
-                    <a href="${request.relative_url('/shipping')}">Shipping</a> |
-                    <a href="${request.relative_url('/returns')}">Returns</a> |
-                    <a href="${request.relative_url('/terms-of-use')}">Terms</a> |
-                    <a href="${request.relative_url('/privacy-policy')}">Privacy Policy</a> |
+                    <a href="${request.relative_url('/shipping')}">Shipping</a>
+                    <a href="${request.relative_url('/returns')}">Returns</a>
+                    <a href="${request.relative_url('/terms-of-use')}">Terms</a>
+                    <a href="${request.relative_url('/privacy-policy')}">Privacy Policy</a>
                     <a href="${request.route_url('contact')}">Contact</a>
                   </p>
                 </td>

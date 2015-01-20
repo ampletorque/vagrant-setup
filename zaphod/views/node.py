@@ -61,8 +61,7 @@ class NodeView(object):
         if not alias.canonical:
             # Redirect to the canonical alias.
             canon_url = request.node_url(node, suffix,
-                                         _query=request.params,
-                                         _scheme=request.scheme)
+                                         _query=request.params)
             raise HTTPMovedPermanently(location=canon_url)
 
         system = dict(request=request, suffix=suffix)

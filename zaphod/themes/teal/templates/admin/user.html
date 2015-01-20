@@ -2,7 +2,7 @@
 
 <%namespace name="forms" file="/common/forms.html"/>
 
-<%def name="title()">Edit User ${user.id}</%def>
+<%def name="title()">Edit User ${obj.id}</%def>
 
 
 <section class="section-admin-user">
@@ -12,8 +12,8 @@
         <h1>${self.title()}</h1>
 
         ${renderer.begin(id='update-form', class_='form-horizontal')}
-          ${forms.ltext(renderer, 'name', user.name)}
-          ${forms.ltext(renderer, 'email', user.email, prefix='@')}
+          ${forms.ltext(renderer, 'name', obj.name)}
+          ${forms.ltext(renderer, 'email', obj.email, prefix='@')}
 
           <%forms:actions>
             <button class="btn btn-primary" type="submit">Save</button>

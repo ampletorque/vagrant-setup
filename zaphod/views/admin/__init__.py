@@ -3,6 +3,10 @@ from __future__ import (absolute_import, division, print_function,
 
 
 def includeme(config):
+    # XXX These have to exist...
+    config.add_route('admin:base_edit', '/base-edit')
+    config.add_route('admin:base_list', '/base-list')
+
     config.add_route('admin:dashboard', '/dashboard')
 
     config.add_route('admin:creators', '/creators')

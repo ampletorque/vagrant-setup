@@ -98,8 +98,14 @@ class Node(Base, ImageMixin, UserMixin, CommentMixin):
 
     @property
     def override_path(self):
-        return self.canonical_path()
+        if self.use_custom_paths:
+            return self.canonical_path()
 
     @override_path.setter
     def override_path(self, path):
-        self.update_path(path)
+        if path:
+            self.use_custom_paths = True
+            self.update_path(path)
+        else:
+            self.use_custom_paths = False
+            self.update_path(self.generate_path())

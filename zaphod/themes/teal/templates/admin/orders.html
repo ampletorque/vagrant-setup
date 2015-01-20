@@ -14,7 +14,7 @@
           </tr>
         </thead>
         <tbody>
-          % for order in orders:
+          % for order in objs:
             <tr>
               <td>
                 <a href="${request.route_path('admin:order', id=order.id)}">Edit</a>

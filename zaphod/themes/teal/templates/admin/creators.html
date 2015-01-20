@@ -12,16 +12,28 @@
             <th></th>
             <th>ID</th>
             <th>Name</th>
+            <th>Published</th>
+            <th>Listed</th>
           </tr>
         </thead>
         <tbody>
-          % for creator in creators:
+          % for creator in objs:
             <tr>
               <td>
-                <a href="#">Edit</a>
+                <a href="${request.route_path('admin:creator', id=creator.id)}">Edit</a>
               </td>
               <td>${creator.id}</td>
               <td>${creator.name}</td>
+              <td>
+                % if creator.published:
+                  Yes
+                % endif
+              </td>
+              <td>
+                % if creator.listed:
+                  Yes
+                % endif
+              </td>
             </tr>
           % endfor
         </tbody>

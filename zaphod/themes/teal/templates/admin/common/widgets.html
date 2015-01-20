@@ -2,6 +2,5 @@
 
 
 <%def name="aliases(renderer, obj)">
-  ${forms.lcheckbox(renderer, 'use_custom_paths', obj.use_custom_paths, label='Override recommended URL')}
-  ${forms.ltext(renderer, 'override_path', obj.override_path, label='URL', disabled=(False and not obj.use_custom_paths))}
+  ${forms.ltext(renderer, 'override_path', obj.override_path, label='URL Path', placeholder=obj.generate_path(), hint='Leave blank to use recommended URL path.')}
 </%def>

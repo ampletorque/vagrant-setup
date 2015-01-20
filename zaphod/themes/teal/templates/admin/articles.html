@@ -17,7 +17,7 @@
           </tr>
         </thead>
         <tbody>
-          % for article in articles:
+          % for article in objs:
             <tr>
               <td>
                 <a href="${request.route_path('admin:article', id=article.id)}">Edit</a>

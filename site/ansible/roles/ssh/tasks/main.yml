@@ -1,0 +1,13 @@
+---
+- name: install deploy user ssh key
+  authorized_key: user=deploy key="{{ item }}"
+  with_file:
+    - keys/scott
+    - keys/josh
+- name: configure sshd
+  template: src=sshd_config.j2
+            dest=/etc/ssh/sshd_config
+            owner=root
+            group=root
+            mode=0644
+# XXX Restart sshd if config file has been updated!

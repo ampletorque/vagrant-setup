@@ -1,0 +1,9 @@
+---
+- name: create deploy group
+  group: name=deploy
+
+- name: create deploy user
+  user: name=deploy
+        group=deploy
+        groups=staff
+        shell=/bin/bash

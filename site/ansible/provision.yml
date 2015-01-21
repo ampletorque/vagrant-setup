@@ -2,6 +2,8 @@
 - hosts: webservers
   roles:
     - { role: timezone, timezone: 'America/Los_Angeles'}
+    - deploy-user
+    - ssh
     - git
     - iptables
     - python

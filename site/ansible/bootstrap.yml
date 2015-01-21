@@ -1,10 +1,6 @@
 ---
-# This playbook is used to bootstrap a freshly-reset SoftLayer server to the
-# point where it can be logged into, etc.
-
-# FIXME A bunch of this stuff should really be in separate roles so it can be
-# confirmed / checked on a normal provision run.
-
+# This playbook is used to bootstrap a freshly-reset server to the point where
+# it can be logged into, etc.
 - hosts: fresh
   remote_user: root
 
@@ -15,26 +11,10 @@
       encrypt: "md5_crypt"
       confirm: yes
       salt_size: 7
-    - name: "user_password"
-      prompt: "New user password?"
-      private: yes
-      encrypt: "md5_crypt"
-      confirm: yes
-      salt_size: 7
 
   tasks:
     - name: set root password
       user: name=root password={{ root_password }}
-
-    - name: create deploy group
-      group: name=deploy
-
-    - name: create deploy user
-      user: name=deploy
-            group=deploy
-            groups=staff
-            password={{ user_password }}
-            shell=/bin/bash
 
     - name: copy sudoers file for safe editing
       command: cp -f /etc/sudoers /etc/sudoers.tmp
@@ -53,13 +33,6 @@
     - name: check and install modified sudoers file
       shell: visudo -q -c -f /etc/sudoers.tmp && cp -f /etc/sudoers.tmp /etc/sudoers
 
-    - name: install deploy user ssh key
-      authorized_key: user=deploy key="{{ item }}"
-      # XXX Add more keys here
-      with_file:
-        - keys/scott
-        - keys/josh
-
     - name: update kernel
       apt: pkg=linux-generic
            state=latest
@@ -68,16 +41,10 @@
       notify:
         reboot
 
-    # Do this last: in case something fails earlier, we don't want to lock out
-    # ssh access.
-    - name: configure sshd
-      template: src=templates/ssh/sshd_config.j2
-                dest=/etc/ssh/sshd_config
-                owner=root
-                group=root
-                mode=0644
+  roles:
+    - deploy-user
+    - ssh
 
   handlers:
     - name: reboot
       shell: /sbin/reboot now
-

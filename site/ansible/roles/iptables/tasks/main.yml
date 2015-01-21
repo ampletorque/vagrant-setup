@@ -9,3 +9,14 @@
 
   notify:
     - reload iptables
+
+- name: copy ip6tables file
+  sudo: yes
+  template: src=ip6tables.conf.j2
+            dest=/etc/ip6tables.rules
+            owner=root
+            group=root
+            mode=0644
+
+  notify:
+    - reload ip6tables

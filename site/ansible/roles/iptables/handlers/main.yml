@@ -2,3 +2,6 @@
 - name: reload iptables
   sudo: yes
   shell: iptables-restore < /etc/iptables.rules
+- name: reload ip6tables
+  sudo: yes
+  shell: ip6tables-restore < /etc/ip6tables.rules

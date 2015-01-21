@@ -58,6 +58,7 @@
       # XXX Add more keys here
       with_file:
         - keys/scott
+        - keys/josh
 
     - name: update kernel
       apt: pkg=linux-generic

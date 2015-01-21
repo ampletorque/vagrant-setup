@@ -36,7 +36,7 @@
 </%def>
 
 
-<%def name="ltext(renderer, name, value=None, label=None, hint=None, prefix=None, suffix=None, label_cols=3, **kwargs)">
+<%def name="ltext(renderer, name, value=None, label=None, hint=None, prefix=None, suffix=None, label_cols=3, class_='', **kwargs)">
   <%self:element renderer="${renderer}" label="${label}" name="${name}" hint="${hint}" label_cols="${label_cols}">
     <div class="${'input-group' if prefix or suffix else ''}">
       ${self.addon(prefix)}
@@ -46,6 +46,41 @@
         ${h.text(name, value, class_='form-control', **kwargs)}
       % endif
       ${self.addon(suffix)}
+    </div>
+  </%self:element>
+</%def>
+
+
+<%def name="datepicker(name, value)">
+  <input type="text" name="${name}" value="${value and value.strftime('%m/%d/%Y')}" class="form-control" data-datepicker="datepicker">
+</%def>
+
+
+<%def name="ldatepicker(renderer, name, value=None, label=None, hint=None, label_cols=3)">
+  <%self:element renderer="${renderer}" label="${label}" name="${name}" hint="${hint}" label_cols="${label_cols}">
+    ${self.datepicker(name, renderer and renderer.value(name, value))}
+  </%self:element>
+</%def>
+
+
+<%def name="ldaterange(renderer, name_start, name_end, value_start, value_end, label='Date Range', hint=None, size='input-small', **kwargs)">
+  <%self:element renderer="${renderer}" label="${label}" name="${name_start}" hint="${hint}">
+    <div class="row">
+      <div class="col-xs-4">
+        <div class="input-group">
+          ${self.datepicker(name_start, value_start)}
+          <span class="input-group-addon">12:01 AM</span>
+        </div>
+      </div>
+      <div class="col-xs-1">
+        <div class="form-control-static">to</div>
+      </div>
+      <div class="col-xs-4">
+        <div class="input-group">
+          ${self.datepicker(name_end, value_end)}
+          <span class="input-group-addon">11:59 PM</span>
+        </div>
+      </div>
     </div>
   </%self:element>
 </%def>

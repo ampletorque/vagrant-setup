@@ -4,8 +4,6 @@ Ansible To-Do List
 - Configure MySQL to bind only to loopback
 - Configure MySQL for performance??
 
-- Configure smtpd to bind only to loopback
-
 - Set Pyramid log file permissions to group-writeable so that deploy user can
   run Pyramid scripts.
 

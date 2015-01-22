@@ -3,7 +3,8 @@ from __future__ import (absolute_import, division, print_function,
 
 import re
 from string import Template
-from urllib import urlencode
+
+from six.moves import range
 
 from webhelpers2.html import HTML, literal
 
@@ -115,12 +116,11 @@ class Page(list):
         """
         Return the URL for a particular page number.
         """
-        params = self.request.GET.copy()
         if new_page == 1:
-            params.pop(self.page_param, None)
+            query = {self.page_param: None}
         else:
-            params[self.page_param] = new_page
-        return self.request.path + '?' + urlencode(params)
+            query = {self.page_param: new_page}
+        return self.request.current_path_with_params(**query)
 
     @property
     def previous_url(self):
@@ -171,7 +171,7 @@ class Page(list):
                              active=False)
 
         # Then yield radius pages
-        for page in xrange(self.page - radius, self.page + radius + 1):
+        for page in range(self.page - radius, self.page + radius + 1):
             if 1 < page < self.page_count:
                 yield PagerPiece(number=page,
                                  url=self.page_url(page),
@@ -392,7 +392,7 @@ class Page(list):
                 text = HTML.span(c=text, **self.dotdot_attr)
             nav_items.append(text)
 
-        for thispage in xrange(leftmost_page, rightmost_page + 1):
+        for thispage in range(leftmost_page, rightmost_page + 1):
             # Hilight the current page number and do not use a link
             if thispage == self.page:
                 text = '%s' % (thispage,)

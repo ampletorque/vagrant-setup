@@ -17,6 +17,14 @@
             group=staff
             mode=2775
 
+    - name: setup media images dir
+      sudo: yes
+      file: path=/var/media/crowdsupply/images
+            state=directory
+            owner=www-data
+            group=staff
+            mode=2775
+
     - name: checkout zaphod source
       git: repo="git@github.com:storborg/zaphod.git"
            dest=/var/sw/zaphod

@@ -28,9 +28,8 @@ lc-messages-dir	        = /usr/share/mysql
 
 skip-external-locking
 
-# We can't only listen on localhost, because we need to be able to accept
-# remote connections from UPS Worldship instances.
-bind-address		    = 0.0.0.0
+# Only listen on localhost.
+bind-address		    = 127.0.0.1
 
 key_buffer		        = 16M
 max_allowed_packet	    = 16M

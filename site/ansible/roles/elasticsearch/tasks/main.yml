@@ -18,6 +18,16 @@
   shell: dpkg -i -E --force-confnew {{ elasticsearch.tmp }}/{{ elasticsearch.deb.package }} 2>&1 | grep skipping | wc -l
   when: elasticsearch_deb.changed
 
+- name: install elasticsearch config file
+  sudo: yes
+  template: src=elasticsearch.yml.j2
+            dest=/etc/elasticsearch/elasticsearch.yml
+            owner=root
+            group=root
+            mode=0644
+  notify:
+    - restart elasticsearch
+
 - name: ensure elasticsearch is started
   sudo: yes
   service: name={{ elasticsearch.deb.service }} state=started

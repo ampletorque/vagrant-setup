@@ -1,8 +1,7 @@
 Ansible To-Do List
 ==================
 
-- Configure MySQL to bind only to loopback
-- Configure MySQL for performance??
+- Install OpenSSL 1.0.1j
 
 - Set Pyramid log file permissions to group-writeable so that deploy user can
   run Pyramid scripts.

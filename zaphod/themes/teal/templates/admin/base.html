@@ -1,4 +1,4 @@
-<%namespace name="header" file="/common/header.html"/>
+<%namespace name="blocks" file="/common/blocks.html"/>\
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,7 +11,7 @@
     <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
 
-  ${request.asset_tag('main-less')}
+  ${request.asset_tag('admin-less')}
 
   <script type="text/javascript" src="//use.typekit.net/yne8zlt.js"></script>
   <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
@@ -19,10 +19,12 @@
   ${self.additional_head()}
 </head>
 <body>
-  ${header.header()}
-  ${self.tabs()}
+  ${self.admin_header()}
+  % for msg, category in request.session.pop_flash():
+    ${blocks.flash(msg, category)}
+  % endfor
   ${next.body()}
-  ${request.asset_tag('main-js')}
+  ${request.asset_tag('admin-js')}
   ${self.additional_footer()}
 </body>
 </html>
@@ -33,24 +35,81 @@
 <%def name="additional_footer()"></%def>
 
 
-<%def name="tab(label, path)">
-  <div class="col-md-4 col-lg-2">
-    <a href="${path}">${label}</a>
-  </div>
+<%def name="admin_tab(label, path)">
+  % if request.path.startswith(path):
+    <li class="active"><a href="#">${label}</a></li>
+  % else:
+    <li><a href="${path}">${label}</a></li>
+  % endif
 </%def>
 
 
-<%def name="tabs()">
-  <section class="section-admin-tabs">
+<%def name="admin_header()">
+  <div class="navbar-cs-pad"></div>
+  <nav class="navbar navbar-inverse navbar-fixed-top navbar-cs navbar-admin">
     <div class="container">
-      <div class="row">
-        ${self.tab('Dashboard', request.route_path('admin:dashboard'))}
-        ${self.tab('Orders', request.route_path('admin:orders'))}
-        ${self.tab('Vendor Orders', request.route_path('admin:vendor_orders'))}
-        ${self.tab('Users', request.route_path('admin:users'))}
-        ${self.tab('Leads', request.route_path('admin:leads'))}
-        ${self.tab('Content', request.route_path('admin:content'))}
+
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-admin-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="${request.route_path('admin:dashboard')}">
+          <span class="navbar-admin-logo">Admin</span>
+        </a>
       </div>
+
+      <div class="collapse navbar-collapse navbar-admin-collapse">
+        <ul class="nav navbar-nav">
+          ${self.admin_tab('Dashboard', request.route_path('admin:dashboard'))}
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Content <span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="${request.route_path('admin:articles')}">Articles</a></li>
+              <li><a href="${request.route_path('admin:creators')}">Creators</a></li>
+              <li><a href="${request.route_path('admin:projects')}">Projects</a></li>
+              <li><a href="${request.route_path('admin:tags')}">Tags</a></li>
+              <li><a href="${request.route_path('admin:provider_types')}">Provider Types</a></li>
+              <li><a href="${request.route_path('admin:providers')}">Providers</a></li>
+            </ul>
+          </li>
+          ${self.admin_tab('Orders', request.route_path('admin:orders'))}
+          ${self.admin_tab('Buying', request.route_path('admin:vendor_orders'))}
+          ${self.admin_tab('Users', request.route_path('admin:users'))}
+          ${self.admin_tab('Leads', request.route_path('admin:leads'))}
+          ${self.admin_tab('Reports', request.route_path('admin:reports'))}
+        </ul>
+
+        ${self.admin_account_menu()}
+
+      </div>
+
     </div>
-  </section>
+  </nav>
+</%def>
+
+
+<%def name="admin_account_menu()">
+  <ul class="nav navbar-nav navbar-right">
+    <li class="dropdown">
+      <a href="${request.route_path('account')}" class="dropdown-toggle-gravatar" data-toggle="dropdown">
+        ${h.image_or_gravatar(request, request.user, 'header-avatar', default='mm', title=request.user.name, class_='img-avatar')}
+      </a>
+      <ul class="dropdown-menu" role="menu">
+        <li>
+          <a href="${request.route_path('account')}">
+            ${h.image_or_gravatar(request, request.user, 'header-avatar', default='mm', title=request.user.name, class_='visible-xs img-avatar')}
+            My Account
+          </a>
+        </li>
+        <li><a href="${request.route_path('admin:settings')}">Settings</a></li>
+        <li class="divider"></li>
+        <li><a href="${request.route_path('index')}">View Public Site</a></li>
+        <li class="divider"></li>
+        <li><a href="${request.route_path('logout')}">Sign Out</a></li>
+      </ul>
+    </li>
+  </ul>
 </%def>

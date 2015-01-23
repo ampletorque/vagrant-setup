@@ -33,17 +33,13 @@ def includeme(config):
     config.add_route('search', '/search')
     config.add_route('prelaunch', '/prelaunch')
     config.add_route('crowdfunding', '/crowdfunding')
-    config.add_route('preorder', '/preorder')
-    config.add_route('instock', '/instock')
+    config.add_route('available', '/available')
+    config.add_route('archive', '/archive')
 
     config.include('.browse')
     config.include('.search')
 
     config.add_route('creators', '/creators')
-
-    config.add_route('ask_question', '/ask-question/{id}')
-    # XXX Possibly replaced by suffix on project renderer
-    # config.add_route('remind_me', '/remind-me/{id}')
 
     # User scaffolding routes
     config.add_route('login', '/login')
@@ -53,6 +49,7 @@ def includeme(config):
     config.add_route('account', '/account')
     config.add_route('order', '/account/order/{id}')
     config.add_route('settings', '/account/settings')
+    config.add_route('profile', '/people/{path}')
 
     # This needs to stay the last route registered.
     config.add_route('node', '/*path')

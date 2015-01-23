@@ -96,6 +96,8 @@ Maybe we should have separate shipping / inventory tracking states::
         # XXX fill in here
     ]
 
+Change 'delivery date' language to 'ship date'!
+
 ### Custom Descriptors for Payments
 
 If we're designing around only Stripe, we can use a custom descriptor that's
@@ -137,6 +139,13 @@ Plan:
   line item.
 - Have an admin interface that lets you update the current expected delivery
   date of the batch, and add new batches to the end of the table.
+
+
+### Model Cleanup
+
+- Ensure consistent table naming.
+- Be consistent about using either ``_time`` or ``_date`` as the suffix for
+  DATETIME columns, but not both!
 
 
 Admin Interface
@@ -205,3 +214,155 @@ introduced during dev, and switch to it if possible.
 - Higher resolution photos? Maybe retina photos with srcset plus a polyfill or
   something similar.
 - Use a slimmed down icon set, e.g. font-awesome via fontello.
+
+TO DO:
+
+- Use .box-shadow() mixin instead of box-shadow rule directly
+- Switch to SVG logo??
+- Styling for breadcrumbs
+- Styleguide info for tiles
+- Use sticky sidebar on styleguide
+- Introduce an @hr-color variable and add it to the styleguide
+- Standardize colors for grey / lightened text, add vars, add to styleguide
+
+
+Caching
+-------
+
+Use dogpile.cache with a Redis backend. Dogpile has a Mako cache plugin that
+will make it easy to use the builtin Mako markup for caching in a clean way.
+
+Here's a recipe that might be useful:
+http://dogpilecache.readthedocs.org/en/latest/usage.html#invalidating-a-group-of-related-keys
+
+At the very least, try to cache these fragments:
+
+- Entire home page
+- Entire node pages (project, article, update, provider, etc)
+- Project backers lists
+- Project tiles
+- Project updates
+- Browse by stage pages
+
+It probably doesn't make sense to cache search pages, because elasticsearch is
+fast and the hit rate is low enough that it's better to just regenerate the
+results and render (hopefully cached) tiles.
+
+If the 'account menu' could be extracted out of normal responses, it would be
+possible to cache the entire responses for many pages.
+
+
+Reporting
+---------
+
+**Sitewide Reports**
+
+For simplicity, just have a 'Reporting' tab on the admin interface with a list
+of all of these, and a link to each one. Try to make CSV and JSON downloads
+available whenever possible.
+
+- Sales report: for a given time period, show 'booked orders'. Break down by:
+    - Crowdfunding pledges
+        - To funded campaigns
+        - To not-yet-ended campaigns
+        - To failed campaigns
+    - Pre-order commitments
+    - In-stock sales
+    - Shipping??
+
+- Project launch report: for a given time period, show new projects launched. Break down by:
+    - Funding goal buckets
+    - Tag
+
+- Revenue report: for a given time period, show recognized revenue. Break down by:
+    - Crowdfunding fees
+    - Fulfillment fees??
+    - Pre-order fees
+    - In-stock sales
+    - Shipping revenue??
+
+- COGS report: for a given time period, show recognized COGS. Break down by:
+    - In-stock product cost
+    - Fulfillment cost
+    - Outbound freight cost
+
+- Inventory report: as of a certain date, show:
+    - Confirmed inventory value
+    - Unconfirmed inventory value
+
+- Cashflow report: for a given time period, show:
+    - Total payments in
+        - by CC type
+        - by alt payment type
+    - Total payments out to creators
+
+- Payments report: for a given time period, show:
+    - Payments by gateway, broken down by CC type
+
+- Operations report: for a given time period, show:
+    - Stock inventory adjustment count / $ value
+    - Shipment in count
+    - Shipment out count
+
+- Delay report: for a given time period, show:
+    - Orders which were shipped
+        - late
+        - on time
+    - "Most late" orders
+
+- Current delay dashboard: for each project with open orders, show:
+    - # of orders that are open
+    - # of orders that are currently late
+    - Earliest open delivery date
+    - Age of latest project update
+
+**User Reports**
+
+- Show users that have backed multiple projects
+
+- Show projects which were "the best for getting backers cross-projects"
+
+
+**Project Reports**
+
+Include a tab or multiple tabs on the project edit page to link to each of
+these. Anticipate reusing them in a creator-facing interface.
+
+- Funding history: for the project, show:
+    - Graph of pledges over time
+    - Graph of backers over time
+    - Linear projections
+
+- Order status: for the project, show:
+    - # of closed orders
+        - # of closed orders that shipped on time
+        - # of closed orders that shipped late
+    - # of open orders
+        - # of open orders that are currently late
+    - Earliest open delivery date
+    - Age of latest project update
+    XXX Basically a mirror of the 'delay report' that is project specific.
+
+- Balance sheet: for the project, show:
+    - Crowdfunding pledges ($ and count)
+    - Crowdfunding payment fees
+    - Crowdfunding Crowd Supply fees
+    - Net crowdfunding income
+    - Preorder commitments ($ and count)
+    - Preorder payment fees
+    - Preorder Crowd Supply fees
+    - Net preorder income
+    - Actual fulfillment fees
+    - Projected fulfillment fees??
+    - Actual freight fees
+    - Project freight fees??
+    - Net total income
+    - List of payments to creators
+    - Balanced owed to creators
+
+- SKU breakdown: for the project by SKU, show:
+    - Qty ordered: international, domestic, total
+    - Qty delivered
+    - Qty remaining
+    - Next due delivery date
+    - Show a full calendar of delivery obligations??

@@ -3,9 +3,11 @@ from __future__ import (absolute_import, division, print_function,
 
 
 def includeme(config):
-    config.add_route('admin:dashboard', '/dashboard')
+    # XXX These have to exist...
+    config.add_route('admin:base_edit', '/base-edit')
+    config.add_route('admin:base_list', '/base-list')
 
-    config.add_route('admin:content', '/content')
+    config.add_route('admin:dashboard', '/dashboard')
 
     config.add_route('admin:creators', '/creators')
     config.add_route('admin:creator', '/creator/{id}')
@@ -39,3 +41,9 @@ def includeme(config):
 
     config.add_route('admin:leads', '/leads')
     config.add_route('admin:lead', '/lead/{id}')
+
+    config.add_route('admin:settings', '/settings')
+
+    config.add_route('admin:mail_template', '/mail-template/{template_name}')
+
+    config.add_route('admin:reports', '/reports')

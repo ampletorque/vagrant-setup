@@ -12,16 +12,28 @@
             <th></th>
             <th>ID</th>
             <th>Name</th>
+            <th>Published</th>
+            <th>Listed</th>
           </tr>
         </thead>
         <tbody>
-          % for provider_type in provider_types:
+          % for provider_type in objs:
             <tr>
               <td>
                 <a href="${request.route_path('admin:provider_type', id=provider_type.id)}">Edit</a>
               </td>
               <td>${provider_type.id}</td>
               <td>${provider_type.name}</td>
+              <td>
+                % if provider_type.published:
+                  Yes
+                % endif
+              </td>
+              <td>
+                % if provider_type.listed:
+                  Yes
+                % endif
+              </td>
             </tr>
           % endfor
         </tbody>

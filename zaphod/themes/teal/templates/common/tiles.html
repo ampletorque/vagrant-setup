@@ -1,17 +1,24 @@
+<%def name="numeric_fact(amount, label, format)">
+  <div class="fact ${'fact-micro' if amount > 1000000 else 'fact-small' if amount > 100000 else ''} col-xs-4">
+    % if format == '$':
+      <p><sup>$</sup>${h.commas(amount)}</p>
+    % elif format == '%':
+      <p>${h.format_percent(amount)}<sup>%</sup></p>
+    % else:
+      <p>${h.commas(amount)}</p>
+    % endif
+    <span>${label}</span>
+  </div>
+</%def>
+
 <%def name="project_metadata(project)">
   <div class="stats stats-project">
     <div class="progress">
       <div class="progress-bar" style="width:${project.progress_percent}%"></div>
     </div>
     <div class="factoids row">
-      <div class="fact col-xs-4">
-        <p><sup>$</sup>${h.commas(project.pledged_amount)}</p>
-        <span>raised</span>
-      </div>
-      <div class="fact col-xs-4">
-        <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
-        <span>funded</span>
-      </div>
+      ${self.numeric_fact(project.pledged_amount, 'raised', '$')}
+      ${self.numeric_fact(project.progress_percent, 'funded', '%')}
       <div class="fact col-xs-4" data-countdown-to="${project.end_time.isoformat()}">
         <%
           val, units = project.remaining
@@ -25,120 +32,125 @@
 
 
 <%def name="suspended_metadata(project)">
-    <div class="stats stats-suspended clearfix">
-      <div class="progress">
-        <span class="range pull-left">Campaign Suspended</span>
-      </div>
-      <div class="factoids row">
-        <div class="fact col-xs-4">
-          <p><sup>$</sup>${h.commas(project.pledged_amount)}</p>
-          <span>raised</span>
-        </div>
-        <div class="fact col-xs-4">
-          <p class="pcnt-funded">${project.progress_percent}<sup>%</sup></p>
-          <span>funded</span>
-        </div>
-        <div class="fact col-xs-4">
-          <p>${h.format_datetime(project.suspended_time, '%b %d')}</p>
-          <span>suspended</span>
-        </div>
+  <div class="stats stats-suspended">
+    <div class="status-bar status-bar-danger">
+      <div class="status-bar-left">Campaign Suspended</div>
+    </div>
+    <div class="factoids row">
+      ${self.numeric_fact(project.pledged_amount, 'raised', '$')}
+      ${self.numeric_fact(project.progress_percent, 'funded', '%')}
+      <div class="fact col-xs-4">
+        <p>${h.format_datetime(request, project.suspended_time, '%b %d')}</p>
+        <span>suspended</span>
       </div>
     </div>
-</%def>
-
-
-<%def name="prelaunch_metadata(project)">
-  <div class="stats stats-prelaunch clearfix">
-    <div class="progress">
-      <span>Coming Soon <i>Signup Here</i></span>
-    </div>
-    <p>
-    </p>
   </div>
 </%def>
 
 
-<%def name="success_metadata(project)">
-    <div class="stats stats-pre-order clearfix">
-      <div class="progress">
-        <span class="range pull-left">Funded!</span>
-      </div>
-      <div class="factoids row">
-        <div class="fact col-xs-4">
-          <p><sup>$</sup>${h.commas(project.pledged_amount)}</p>
-          <span>raised</span>
-        </div>
-        <div class="fact col-xs-4">
-          <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
-          <span>funded</span>
-        </div>
-        <div class="fact col-xs-4">
-          <p>${h.commas(project.num_pledges)}</p>
-          <span>pledges</span>
-        </div>
+<%def name="failed_metadata(project)">
+  <div class="stats stats-failed">
+    <div class="status-bar status-bar-light">
+      <div class="status-bar-left">Funding Unsuccessful</div>
+    </div>
+    <div class="factoids row">
+      ${self.numeric_fact(project.pledged_amount, 'raised', '$')}
+      ${self.numeric_fact(project.progress_percent, 'funded', '%')}
+      <div class="fact col-xs-4">
+        <p>${h.format_datetime(request, project.end_time, '%b %d')}</p>
+        <span>ended</span>
       </div>
     </div>
+  </div>
+</%def>
+
+
+<%def name="prelaunch_metadata(project)">
+  <div class="stats stats-prelaunch">
+    <div class="status-bar status-bar-light">
+      <div class="status-bar-left">Coming Soon</div>
+      <div class="status-bar-right">Signup For Updates</div>
+    </div>
+  </div>
+</%def>
+
+
+<%def name="archive_metadata(project)">
+  <div class="stats stats-pre-order">
+    <div class="status-bar status-bar-primary">
+      <div class="status-bar-left">Funded!</div>
+      <div class="status-bar-right">No Longer Available</div>
+    </div>
+    <div class="factoids row">
+      ${self.numeric_fact(project.pledged_amount, 'raised', '$')}
+      ${self.numeric_fact(project.progress_percent, 'funded', '%')}
+      <div class="fact col-xs-4">
+        <p>${h.commas(project.num_pledges)}</p>
+        <span>pledges</span>
+      </div>
+    </div>
+  </div>
 </%def>
 
 
 <%def name="available_metadata(project)">
-    <div class="stats stats-pre-order clearfix">
-      <div class="progress">
-        <span class="range pull-left">Funded!</span>
-        <span class="range pull-right">Pre-Order Now</span>
-      </div>
-      <div class="factoids row">
-        <div class="fact col-xs-4">
-          <p><sup>$</sup>${h.commas(project.pledged_amount)}</p>
-          <span>raised</span>
-        </div>
-        <div class="fact col-xs-4">
-          <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
-          <span>funded</span>
-        </div>
-        <div class="fact col-xs-4">
-          <p>${h.commas(project.num_pledges)}</p>
-          <span>pledges</span>
-        </div>
+  <div class="stats stats-pre-order clearfix">
+    <div class="status-bar status-bar-primary">
+      <div class="status-bar-left">Funded!</div>
+      <div class="status-bar-right">Order Now</div>
+    </div>
+    <div class="factoids row">
+      ${self.numeric_fact(project.pledged_amount, 'raised', '$')}
+      ${self.numeric_fact(project.progress_percent, 'funded', '%')}
+      <div class="fact col-xs-4">
+        <p>${h.commas(project.num_pledges)}</p>
+        <span>pledges</span>
       </div>
     </div>
+  </div>
 </%def>
 
 
 <%def name="metadata(project, cols=3)">
   <%
     # Never show a full width tile
-    cols = 3 if cols < 2 else cols
     width = 12 / cols
 
     utcnow = h.datetime.utcnow()
   %>
-  <div class="col-sm-${width} stats-tile">
-    % if project.status == 'crowdfunding':
-      ${self.project_metadata(project)}
-    % elif project.status == 'suspended':
-      ${self.suspended_metadata(project)}
-    % elif project.status == 'funded':
-      ${self.success_metadata(project)}
-    % elif project.status == 'prelaunch':
-      ${self.prelaunch_metadata(project)}
-    % elif project.status == 'available':
-      ${self.available_metadata(project)}
-    % endif
+  <div class="col-sm-12 col-md-${width} stats-tile">
+    ${self.metadata_inline(project)}
   </div>
+</%def>
+
+
+<%def name="metadata_inline(project)">
+  % if project.status == 'crowdfunding':
+    ${self.project_metadata(project)}
+  % elif project.status == 'suspended':
+    ${self.suspended_metadata(project)}
+  % elif project.status == 'archive':
+    ${self.archive_metadata(project)}
+  % elif project.status == 'prelaunch':
+    ${self.prelaunch_metadata(project)}
+  % elif project.status == 'available':
+    ${self.available_metadata(project)}
+  % elif project.status == 'failed':
+    ${self.failed_metadata(project)}
+  % endif
 </%def>
 
 
 <%def name="tile(project, cols=3)">
   <%
     # Never show a full width tile
-    cols = 3 if cols < 2 else cols
     width = 12 / cols
 
     utcnow = h.datetime.utcnow()
   %>
-  <div class="col-sm-${width}">
+  <div class="col-sm-12 col-md-${width}">
     <a href="${request.node_url(project)}" class="project-tile">
+      <!-- project status is ${project.status} -->
       ${project.img(request, 'project-tile')}
       <div class="project-tile-overview">
         % if project.status == 'prelaunch':
@@ -150,26 +162,27 @@
         % endif
       </div>
 
-      <div class="${'' if cols == 1 else 'visible-xs'}">
-        ${self.metadata(project, cols)}
+      <div class="${'' if cols == 1 else 'visible-xs visible-sm'}">
+        ${self.metadata_inline(project)}
       </div>
     </a>
   </div>
 </%def>
 
 
-<%def name="tile_row(projects)">
+<%def name="tile_row(projects, cols=None)">
   <div class="project-row">
     <!-- Background row -->
-    <div class="background-row hidden-xs">
+    <div class="background-row hidden-xs hidden-sm">
       <div class="row">
         <%
-          cols = len(projects)
-          cols = 3 if cols < 2 else cols
+          if not cols:
+            cols = len(projects)
+            cols = 3 if cols < 2 else cols
           width = 12 / cols
         %>
         % for project in projects:
-          <div class="col-sm-${width}">
+          <div class="col-sm-12 col-md-${width}">
             <a href="${request.node_url(project)}">
               <div class="background-filler">
               </div>
@@ -188,7 +201,7 @@
   </div>
 
   <!-- Metadata row -->
-  <div class="row metadata-row hidden-xs">
+  <div class="row metadata-row hidden-xs hidden-sm">
     % for project in projects:
       <a href="${request.node_url(project)}">
         ${self.metadata(project, cols)}

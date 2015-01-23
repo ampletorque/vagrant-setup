@@ -2,8 +2,39 @@
 @navbar-cs-brand-width: @cs-logo-width;
 @navbar-cs-brand-height: @cs-logo-height;
 
+.navbar-cs-pad {
+    height: 50px;
+}
+
 .navbar-cs {
     background-color: @cs-dark-grey;
+
+    .navbar-collapse {
+        max-height: 470px;
+    }
+
+    .navbar-toggle {
+        border: 0;
+    }
+
+    .navbar-brand {
+        padding-top: 12px;
+        padding-bottom: 12px;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            //background-color: rgba(0, 0, 0, 0.1);
+        }
+    }
+
+    .navbar-form {
+        border: 0;
+
+        input[type=text] {
+            color: @cs-white;
+            background-color: transparent;
+        }
+    }
 
     .navbar-logo {
         // image path is relative to document, not this file
@@ -19,22 +50,147 @@
     .nav > li > a {
         color: @cs-white;
         font-size: 15px;
-        //line-height: 30px;
         text-transform: uppercase;
         font-weight: 600;
         letter-spacing: 1px;
         text-shadow: none;
-            -webkit-font-smoothing: antialiased;
+        -webkit-font-smoothing: antialiased;
+
+        &:hover {
+            //background-color: rgba(0, 0, 0, 0.1);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
     }
 
-    .navbar-form-search {
-        input[type=text] {
+    .nav > li.active > a {
+        background-color: rgba(255, 255, 255, 0.1);
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    }
+
+    .dropdown-toggle {
+        .caret {
+            margin-bottom: 3px;
+        }
+    }
+
+    .dropdown-toggle-gravatar {
+        padding-top: 8px;
+        padding-bottom: 8px;
+
+    }
+
+    .navbar-nav > .open > a,
+    .navbar-nav > .open > a:hover,
+    .navbar-nav > .open > a:focus {
+        background-color: @cs-teal;
+        //position: relative;
+        // Put this button just above the dropdown menu, so that it isn't shadowed by the shown menu.
+        z-index: 1001;
+    }
+
+    li > .dropdown-menu {
+        margin-top: -1px;
+        margin-right: -1px;
+    }
+
+    .dropdown-menu {
+        background-color: @cs-teal;
+
+        > li > a {
             color: @cs-white;
-            background-color: @gray-darker;
+            font-weight: 600;
+            font-size: 15px;
+            line-height: 28px;
+            -webkit-font-smoothing: antialiased;
+            &:hover {
+                background-color: lighten(@cs-teal, 10%);
+            }
+        }
+
+        img {
+            float: right;
+            margin: -10px -20px;
         }
     }
 }
 
-@media (min-width: @screen-sm-min) {
+@media (max-width: @screen-xs-max) {
+    .navbar-cs {
 
+        .navbar-form {
+            padding: 0;
+            margin: 0 -5px;
+            input[type=text] {
+                height: 40px;
+            }
+        }
+
+        .dropdown-toggle-gravatar {
+            display: none;
+        }
+
+        .nav > li > a {
+            margin: 5px 10px;
+            border-radius: 4px;
+            background-color: #333333;
+            &:hover {
+                color: #333333;
+                background-color: @cs-white;
+            }
+
+        }
+
+        .dropdown-menu {
+            display: block;
+            position: static;
+            float: none;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            box-shadow: none;
+
+            > li > a {
+                margin: 5px 10px;
+                border-radius: 4px;
+                color: @cs-white;
+                background-color: #333333;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                line-height: 20px;
+                font-size: 15px;
+                text-transform: uppercase;
+                font-weight: 600;
+                -webkit-font-smoothing: antialiased;
+
+                &:hover {
+                    color: #333333;
+                    background-color: @cs-white;
+                }
+            }
+        }
+
+    }
+}
+
+
+
+
+@media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {
+    .navbar-cs {
+        .nav > li > a {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+        .navbar-form {
+            padding-left: 5px;
+            padding-right: 5px;
+            input[type=text] {
+                width: 105px;
+            }
+        }
+    }
 }

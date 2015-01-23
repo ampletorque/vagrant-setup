@@ -1,0 +1,26 @@
+---
+- name: install python basics
+  sudo: yes
+  apt: pkg={{ item }} state=latest update_cache=yes cache_valid_time=3600
+  with_items:
+    - python2.7
+    - python2.7-dev
+    - python-dev
+    - python-pip
+    - libxml2-dev
+    - libxslt-dev
+    - libmemcached-dev
+
+# Don't rely on Ubuntu virtualenv package (Fixed in 13.10)
+# https://bugs.launchpad.net/ubuntu/+source/python2.7/+bug/1115466
+- name: install python-virtualenv
+  sudo: yes
+  pip: name=virtualenv
+
+- name: create /var/sw dir
+  sudo: yes
+  file: path=/var/sw owner=deploy group=deploy state=directory
+
+# This is specifically run without sudo.
+- name: setup python virtualenv
+  command: virtualenv /var/sw/pyramid27 creates=/var/sw/pyramid27

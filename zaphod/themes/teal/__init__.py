@@ -1,6 +1,8 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import socket
+
 from pyramid_frontend.images.filters import ThumbFilter, VignetteFilter
 from pyramid_frontend.images.chain import FilterChain
 from pyramid_frontend.theme import Theme
@@ -10,6 +12,12 @@ from pyramid_frontend.assets.requirejs import RequireJSAsset
 from .imagefilters import CreatorProfileFilter
 
 
+if socket.gethostname().startswith('janus.'):
+    lessc_path = '/var/sw/less-1.7.0/node_modules/less/bin/lessc'
+else:
+    lessc_path = 'lessc'
+
+
 class TealTheme(Theme):
     key = 'teal'
 
@@ -17,20 +25,31 @@ class TealTheme(Theme):
         'main-less': LessAsset(
             '/_teal/css/main.less',
             less_path='/_teal/js/vendor/less.js',
-            lessc_path='/var/sw/less-1.7.0/node_modules/less/bin/lessc',
+            lessc_path=lessc_path,
+        ),
+        'admin-less': LessAsset(
+            '/_teal/css/admin.less',
+            less_path='/_teal/js/vendor/less.js',
+            lessc_path=lessc_path,
         ),
         'main-js': RequireJSAsset(
             '/_teal/js/main.js',
             require_config_path='/_teal/js/require_config.js',
             require_base_url='/_teal/js/vendor/',
         ),
+        'admin-js': RequireJSAsset(
+            '/_teal/js/admin.js',
+            require_config_path='/_teal/js/require_config.js',
+            require_base_url='/_teal/js/vendor/',
+        ),
     }
 
+    # XXX All of these may need size tweaking
     image_filters = [
-        # FilterChain(
-        #     'project-main', width=749, height=421,
-        #     crop_whitespace=True, pad=True, crop='nonwhite',
-        #     extension='jpg', quality=85),
+        FilterChain(
+            'project-main', width=749, height=421,
+            crop_whitespace=True, pad=True, crop='nonwhite',
+            extension='jpg', quality=85),
 
         # FilterChain(
         #     'project-slider', width=100, height=100,
@@ -52,10 +71,10 @@ class TealTheme(Theme):
             crop_whitespace=True, pad=True,
             extension='png'),
 
-        # FilterChain(
-        #     'account-avatar', width=120, height=120,
-        #     crop=True, pad=True,
-        #     extension='png'),
+        FilterChain(
+            'large-avatar', width=120, height=120,
+            crop=True, pad=True,
+            extension='png'),
 
         FilterChain(
             'project-body', width=749, extension='jpg',
@@ -80,20 +99,20 @@ class TealTheme(Theme):
             filters=[CreatorProfileFilter()],
             pad=True, extension='png'),
 
-        # FilterChain(
-        #     'project-avatar', width=72, height=72,
-        #     crop=True, pad=True,
-        #     extension='png'),
+        FilterChain(
+            'project-avatar', width=72, height=72,
+            crop=True, pad=True,
+            extension='png'),
 
-        # FilterChain(
-        #     'header-avatar', width=34, height=34,
-        #     crop=True, pad=True,
-        #     extension='png'),
+        FilterChain(
+            'header-avatar', width=34, height=34,
+            crop=True, pad=True,
+            extension='png'),
 
-        # FilterChain(
-        #     'pledge-body', width=150, height=150,
-        #     crop_whitespace=True, pad=True,
-        #     extension='jpg', quality=70),
+        FilterChain(
+            'pledge-body', width=150, height=150,
+            crop_whitespace=True, pad=True,
+            extension='jpg', quality=70),
 
         # FilterChain(
         #     'hero-wide', width=2000, height=300,

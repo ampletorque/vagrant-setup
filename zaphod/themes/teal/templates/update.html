@@ -1,0 +1,8 @@
+<%inherit file="project_base.html"/>
+
+<%def name="title()">${project.name} - ${update.name}</%def>
+
+
+<div class="project-block">
+  ${self.project_update(update)}
+</div>

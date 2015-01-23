@@ -1,0 +1,13 @@
+---
+- name: install postfix
+  sudo: yes
+  apt: pkg=postfix state=latest update_cache=yes cache_valid_time=3600
+
+- name: bind postfix to loopback only
+  sudo: yes
+  lineinfile: dest=/etc/postfix/main.cf
+              state=present
+              regexp='^inet_interfaces'
+              line='inet_interfaces = 127.0.0.1'
+  notify:
+    - restart postfix

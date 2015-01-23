@@ -1,0 +1,11 @@
+- name: setup mysql db
+  shell: mysql -uroot < /var/sw/zaphod/site/conf/dbsetup.sql
+
+- name: dump local db
+  local_action: shell mysqldump -uroot zaphod > /tmp/zaphod.sql
+
+- name: copy db dump
+  copy: src=/tmp/zaphod.sql dest=/tmp/zaphod.sql
+
+- name: load db dump
+  shell: mysql -uroot zaphod < /tmp/zaphod.sql

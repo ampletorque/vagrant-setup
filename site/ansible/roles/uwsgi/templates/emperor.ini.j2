@@ -1,0 +1,10 @@
+#############################################################################
+# File templated by Ansible
+# Base template: {{ template_path }}
+# User: {{ template_uid }} on {{ template_host }}
+#############################################################################
+
+[uwsgi]
+emperor = /etc/uwsgi/vassals
+die-on-term = true
+logto = /var/log/uwsgi/emperor.log

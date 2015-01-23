@@ -32,6 +32,8 @@ requires = [
     'requests>=2.3.0',
     'lxml>=3.2.3',
     'Markdown>=2.5.2',
+    'unidecode',
+    'pytz',
 
     # Keep repoze.sendmail pinned at 4.1 to deal with this bug:
     # https://github.com/repoze/repoze.sendmail/issues/31
@@ -51,6 +53,8 @@ setup(name='zaphod',
       version='0.0',
       description='The Crowd Supply Platform',
       long_description='',
+      # Using this invalid trove classifier prevents accidentally uploading
+      # something to pypi.
       classifier=['Private :: Do Not Upload'],
       url='http://github.com/crowdsupply/zaphod',
       keywords='',
@@ -69,5 +73,6 @@ setup(name='zaphod',
       [console_scripts]
       initialize_zaphod_db = zaphod.scripts.initializedb:main
       migrate_zaphod_db = zaphod.scripts.migrate:main
+      reindex_zaphod = zaphod.scripts.reindex:main
       """,
       )

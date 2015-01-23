@@ -28,20 +28,16 @@ def load_projects(rows):
 def index_view(request):
     recently_launched = [
         [
-            'USB Armory: Open Source USB Stick Computer',
-            'A Weather Walked In',
-        ],
-        [
             'Librem 15: A Free/Libre Software Laptop That '
             'Respects Your Essential Freedoms',
-            'High Tech Plant Operating System',
+            'USB Armory: Open Source USB Stick Computer',
         ],
     ]
 
     recently_funded = [
         [
+            'A Weather Walked In',
             'Goodwell: Open Source Modern Toothbrush',
-            'Circuit Stickers Holiday Greeting Card',
         ],
         [
             'Hydrogen: Next-Generation Supercapacitor-Powered '

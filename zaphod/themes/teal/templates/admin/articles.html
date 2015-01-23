@@ -12,16 +12,28 @@
             <th></th>
             <th>ID</th>
             <th>Name</th>
+            <th>Published</th>
+            <th>Listed</th>
           </tr>
         </thead>
         <tbody>
-          % for article in articles:
+          % for article in objs:
             <tr>
               <td>
                 <a href="${request.route_path('admin:article', id=article.id)}">Edit</a>
               </td>
               <td>${article.id}</td>
               <td>${article.name}</td>
+              <td>
+                % if article.published:
+                  Yes
+                % endif
+              </td>
+              <td>
+                % if article.listed:
+                  Yes
+                % endif
+              </td>
             </tr>
           % endfor
         </tbody>

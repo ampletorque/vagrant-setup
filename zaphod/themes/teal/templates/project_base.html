@@ -1,12 +1,13 @@
 <%inherit file="base.html"/>
 
 <%namespace name="blocks" file="common/blocks.html"/>
+<%namespace name="tiles" file="common/tiles.html"/>
 
 <%def name="title()">${project.name}</%def>
 
 
 <%def name="breadcrumbs(project)">
-  <ol class="breadcrumb">
+  <ol class="breadcrumb breadcrumb-project">
     <li>Creators</li>
     <li>
       <a href="${request.node_url(project.creator)}">
@@ -33,39 +34,60 @@
 <%def name="project_update(update)">
   <div class="update">
     <div class="update-date pull-right">
-      ## FIXME
-      ##<p class="month">${update.created_time.strftime('%b')}</p>
-      ##<p class="day">${update.created_time.strftime('%d')}</p>
+      <p class="update-date-month">${update.created_time.strftime('%b')}</p>
+      <p class="update-date-day">${update.created_time.strftime('%d')}</p>
     </div>
-    <a href="${request.node_url(update)}"><h3>${update.name}</h3></a>
-    <p>${request.render_content(update, update.body)}</p>
-    ## FIXME
-    ##<div class="clearfix">
-    ##  <div class="social-wrap">
-    ##    <a href="${h.facebook_share_url(url=request.node_url(update), text='', caption='Crowd Supply Update', name=update.name, image_url='http://%s%s' % (request.host, update.img_url('project-main')), app_id=request.site.settings['facebook.app_id'], redirect_uri=request.url)}">
-    ##      <i class="icon-facebook"></i>
-    ##    </a>
-    ##  </div>
-    ##  <div class="social-wrap">
-    ##    <a href="${h.twitter_tweet_url(text=update.name, via='crowd_supply', url=request.node_url(update))}">
-    ##      <i class="icon-twitter"></i>
-    ##    </a>
-    ##  </div>
-    ##</div>
+    <a href="${request.node_path(update)}"><h3>${update.name}</h3></a>
+
+    <div class="rendered-content">
+      ${request.render_content(update, update.body)}
+    </div>
+
+    <div class="social-buttons">
+      <p>Share this update on social media:</p>
+      <div class="row">
+        <div class="col-xs-2 col-xs-offset-4">
+          <a href="${h.facebook_share_url(url=request.node_url(update), text='', caption='Crowd Supply Update', name=update.name, image_url=update.img_url(request, 'project-main'), app_id=request.registry.settings['facebook.app_id'], redirect_uri=request.url)}">
+            <i class="fa fa-facebook"></i>
+          </a>
+        </div>
+        <div class="col-xs-2">
+          <a href="${h.twitter_tweet_url(text=update.name, via='crowd_supply', url=request.node_url(update))}">
+            <i class="fa fa-twitter"></i>
+          </a>
+        </div>
+      </div>
+    </div>
   </div>
 </%def>
 
 
 <%def name="social_buttons(project)">
-
+  <div class="row">
+    <div class="col-xs-4">
+      <a href="${h.project_facebook_url(request, project)}">
+        <i class="fa fa-facebook"></i>
+      </a>
+    </div>
+    <div class="col-xs-4">
+      <a href="${h.project_twitter_url(request, project)}">
+        <i class="fa fa-twitter"></i>
+      </a>
+    </div>
+    <div class="col-xs-4">
+      <a href="${h.project_pin_it_url(request, project)}">
+        <i class="fa fa-pinterest"></i>
+      </a>
+    </div>
+  </div>
 </%def>
 
 
 <%def name="stats_crowdfunding(project)">
-  <p class="pledged">
+  <p class="project-pledged">
     <span><sup>$</sup>${h.commas(project.pledged_amount)}</span>&nbsp;raised
   </p>
-  <p class="goal">
+  <p class="project-goal">
     of&nbsp;<span><sup>$</sup>${h.commas(project.target)}</span>&nbsp;goal
   </p>
 
@@ -99,18 +121,92 @@
 
 
 <%def name="stats_suspended(project)">
+  <p class="project-pledged">
+    <span><sup>$</sup>${h.commas(project.pledged_amount)}</span>&nbsp;raised
+  </p>
+  <p class="project-goal">
+    of&nbsp;<span><sup>$</sup>${h.commas(project.target)}</span>&nbsp;goal
+  </p>
+  <div class="status-bar status-bar-danger">
+    <div class="status-bar-left">Campaign Suspended</div>
+  </div>
+  <div class="factoids row">
+    <div class="fact col-xs-4">
+      <p>${h.format_datetime(request, project.suspended_time, '%b %d')}</p>
+      <span>suspended</span>
+    </div>
+    <div class="fact col-xs-4">
+      <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
+      <span>funded</span>
+    </div>
+    <div class="fact col-xs-4">
+      <p>${h.commas(project.num_pledges)}</p>
+      <span>pledges</span>
+    </div>
+  </div>
 </%def>
 
 
 <%def name="stats_funded(project)">
-</%def>
-
-
-<%def name="stats_prelaunch(project)">
+  <p class="project-pledged">
+    <span><sup>$</sup>${h.commas(project.pledged_amount)}</span>&nbsp;raised
+  </p>
+  <p class="project-goal">
+    of&nbsp;<span><sup>$</sup>${h.commas(project.target)}</span>&nbsp;goal
+  </p>
+  <div class="status-bar status-bar-primary">
+    <span class="status-bar-left">Funded!</span>
+  </div>
+  <div class="factoids row">
+    <div class="fact col-xs-4">
+      <p>${h.format_datetime(request, project.final_day, '%b %d')}</p>
+      <span>Funded on</span>
+    </div>
+    <div class="fact col-xs-4">
+      <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
+      <span>funded</span>
+    </div>
+    <div class="fact col-xs-4">
+      <p>${h.commas(project.num_pledges)}</p>
+      <span>pledges</span>
+    </div>
+  </div>
+  <div class="social-buttons">
+    <p>Support this project on social media!</p>
+    ${self.social_buttons(project)}
+  </div>
 </%def>
 
 
 <%def name="stats_available(project)">
+  <p class="project-pledged">
+    <span><sup>$</sup>${h.commas(project.pledged_amount)}</span>&nbsp;raised
+  </p>
+  <p class="project-goal">
+    of&nbsp;<span><sup>$</sup>${h.commas(project.target)}</span>&nbsp;goal
+  </p>
+  <div class="status-bar status-bar-primary">
+    <span class="status-bar-left">Funded!</span>
+    <span class="status-bar-right">Pre-Order Now</span>
+  </div>
+  <div class="factoids row">
+    <div class="fact col-xs-4">
+      <p>${h.format_datetime(request, project.final_day, '%b %d')}</p>
+      <span>Funded on</span>
+    </div>
+    <div class="fact col-xs-4">
+      <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
+      <span>funded</span>
+    </div>
+    <div class="fact col-xs-4">
+      <p>${h.commas(project.num_pledges)}</p>
+      <span>pledges</span>
+    </div>
+  </div>
+  <div class="social-buttons">
+    <p>Support this project on social media!</p>
+    ${self.social_buttons(project)}
+  </div>
 </%def>
 
 
@@ -122,47 +218,112 @@
       ${self.stats_suspended(project)}
     % elif project.status == 'funded':
       ${self.stats_funded(project)}
-    % elif project.status == 'prelaunch':
-      ${self.stats_prelaunch(project)}
     % elif project.status == 'available':
       ${self.stats_available(project)}
+    % else:
+      <% assert False, "don't know what stats tile to use for %r" % project.status %>
     % endif
   </div>
+</%def>
+
+
+<%def name="pledge_level(project, pledge_level)">
+  <form method="post" action="${request.route_path('cart:add')}">
+    <div class="pledge-level">
+      <div class="clearfix">
+        <div class="pull-left">
+          <h3>${pledge_level.name}</h3>
+          <p class="pledge-level-delivery pledge-level-metadata">
+            % if pledge_level.non_physical:
+              Thank you!
+            % elif pledge_level.in_stock:
+              In Stock
+            % elif pledge_level.is_available:
+              Ships ${pledge_level.current_delivery_date.strftime('%B %Y')}
+            % elif not pledge_level.batches:
+              Preview only: check back soon!
+            % else:
+              No longer available
+            % endif
+          </p>
+        </div>
+        <div class="pull-right text-right">
+          <p class="pledge-level-price">
+            <sup>$</sup>${h.commas(int(pledge_level.price))}
+          </p>
+          % if not pledge_level.non_physical:
+            <p class="pledge-level-shipping pledge-level-metadata">
+              Free US Shipping!
+            </p>
+          % endif
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-4">
+          ${pledge_level.img(request, 'pledge-icon')}
+        </div>
+
+        <div class="col-xs-8">
+          ${h.hidden('pledge_level_id', pledge_level.id)}
+
+          % for option in pledge_level.published_options:
+            <div class="form-group">
+              <label for="option-${option.id}">${option.name}</label>
+              <select id="option-${option.id}" name="option-${loop.index}.value_id" class="form-control">
+                % for value in option.published_values:
+                  <option value="${value.id}">${value.description}</option>
+                % endfor
+              </select>
+            </div>
+          % endfor
+
+          % if project.status == 'crowdfunding':
+            <button type="submit" class="btn btn-block btn-cta">Back This Project</button>
+
+            <%
+              qty_claimed = pledge_level.qty_claimed
+              qty_remaining = pledge_level.qty_remaining
+            %>
+            <p class="pledge-level-supporters pledge-level-metadata text-right">
+              % if pledge_level.non_physical and qty_claimed > 0:
+                ${h.commas(qty_claimed)}
+                % if qty_claimed == 1:
+                  person loves us
+                % else:
+                  people love us
+                % endif
+              % elif qty_claimed > 0:
+                ${h.commas(qty_claimed)}
+                claimed
+              % endif
+              % if qty_claimed and (qty_remaining is not None):
+                ,
+              % endif
+              % if qty_remaining is not None:
+                ${h.commas(qty_remaining)} left
+              % endif
+            </p>
+
+          % elif project.status == 'available':
+            % if pledge_level.in_stock:
+              <button type="submit" class="btn btn-block btn-cta">Add to Cart</button>
+            % elif pledge_level.accepts_preorders:
+              <button type="submit" class="btn btn-block btn-cta">Pre-order</button>
+            % endif
+          % endif
+
+        </div>
+      </div>
+    </div>
+  </form>
 </%def>
 
 
 <%def name="pledge_levels(project)">
   <div class="project-block">
     % for pledge_level in project.published_levels:
-      <form class="form-horizontal" method="post" action="${request.route_path('cart:add')}">
-        <div class="pledge-level">
-          ${pledge_level.img(request, 'pledge-icon')}
-          <h3>${pledge_level.name}</h3>
-          <div class="pledge-level-price">${h.currency(pledge_level.price)}</div>
-
-          ${h.hidden('product_id', pledge_level.id)}
-
-          % for option in pledge_level.published_options:
-            <div class="form-group">
-              <label class="col-xs-4 control-label" for="option-${option.id}">${option.name}</label>
-              <div class="col-xs-8">
-                <select id="option-${option.id}" name="option-${loop.index}.value_id" class="form-control">
-                  % for value in option.published_values:
-                    <option value="${value.id}">${value.description}</option>
-                  % endfor
-                </select>
-              </div>
-            </div>
-          % endfor
-
-          <div class="form-group">
-            <div class="col-xs-8 col-xs-offset-4">
-              ## XXX FIXME
-              <button class="btn btn-yellow">Back This Project</button>
-            </div>
-          </div>
-        </div>
-      </form>
+      ${self.pledge_level(project, pledge_level)}
       % if not loop.last:
         <hr>
       % endif
@@ -171,12 +332,16 @@
 </%def>
 
 
-% if request.user.has_permission('admin'):
+% if request.user and request.user.has_permission('admin'):
   <section class="section-admin-bar">
     <div class="container">
       <div class="row">
         <div class="col-lg-12">
-          <p><a href="${request.route_path('admin:project', id=project.id)}">Admin Edit Page</a></p>
+          <p>
+            <a href="${request.route_path('admin:project', id=project.id)}">
+              Edit Project ${project.id} - ${project.name}
+            </a>
+          </p>
         </div>
       </div>
     </div>
@@ -194,22 +359,22 @@
 
     <div class="row">
       <div class="col-lg-12">
-        <div class="pull-right">
+        <ul class="list-unstyled list-tags pull-right text-right">
           % if project.creator.location:
-            <p>
+            <li>
               <i class="fa fa-map-marker"></i>&nbsp;
               ${project.creator.location}
-            </p>
+            </li>
           % endif
           % for tag in list(project.tags)[:2]:
             % if tag.published:
-              <p>
+              <li>
                 <i class="fa fa-tag"></i>
                 <a href="${request.node_url(tag)}">${tag.name}</a>
-              </p>
+              </li>
             % endif
           % endfor
-        </div>
+        </ul>
 
         <h1>${project.name}</h1>
       </div>
@@ -218,7 +383,7 @@
     <div class="row">
       <div class="col-lg-12">
         <ul class="nav nav-tabs">
-          <%self:tab suffix="">
+          <%self:tab suffix="${None}">
             Home
           </%self:tab>
           <%self:tab suffix="updates">
@@ -245,43 +410,61 @@
     <div class="row">
       <div class="col-lg-12">
         <div class="project-block">
-          <div class="pull-left">
-            ${project.creator.img(request, 'creator-profile')}
+          <div class="row">
+            <div class="col-sm-3">
+              ${project.creator.img(request, 'creator-profile')}
+            </div>
+
+            <div class="col-sm-9">
+              <h4>${project.creator.name}</h4>
+              <p class="creator-block-teaser">${project.creator.teaser}</p>
+              <p class="creator-block-metadata">
+                <i class="fa fa-map-marker"></i>&nbsp;${project.creator.location}
+                % if project.creator.home_url:
+                  &nbsp;&middot;&nbsp;
+                  <a href="${project.creator.home_url}">${project.creator.display_url}</a>
+                % endif
+              </p>
+            </div>
           </div>
 
-          <h4>${project.creator.name}</h4>
-          <div class="creator-block-teaser">${project.creator.teaser}</div>
-          <div class="creator-block-metadata">
-            <i class="icon-map-marker"></i>&nbsp;${project.creator.location}
-            % if project.creator.home_url:
-              &nbsp;&middot;&nbsp;
-              <a href="${project.creator.home_url}">${project.creator.display_url}</a>
-            % endif
-          </div>
-
-          <hr>
-
-          <p>Project owners go here...</p>
-
-          ## XXX FIXME
-          ##% if project.published_ownerships:
-          ##  <div class="row">
-          ##    <div class="span12">
-          ##      <div class="creator-hr"><hr></div>
-          ##    </div>
-          ##    % for owner in project.published_ownerships:
-          ##      <div class="span3">
-          ##        <div class="project-owner">
-          ##          ${h.image_or_gravatar(request, owner.account, 'project-avatar', default='mm', title=owner.account.name)}
-          ##          <h4>${owner.account.name}</h4>
-          ##          <p>${owner.title}</p>
-          ##        </div>
-          ##      </div>
-          ##    % endfor
-          ##  </div>
-          ##% endif
+          % if project.published_ownerships:
+            <div class="row">
+              <div class="col-lg-12">
+                <hr>
+              </div>
+            </div>
+            <div class="row">
+              % for owner in project.published_ownerships:
+                <div class="col-xs-6 col-sm-3">
+                  <div class="project-owner">
+                    ${h.image_or_gravatar(request, owner.user, 'project-avatar', default='mm', title=owner.user.name, class_='img-avatar')}
+                    <h4>${owner.user.name}</h4>
+                    <p>${owner.title}</p>
+                  </div>
+                </div>
+              % endfor
+            </div>
+          % endif
         </div>
       </div>
     </div>
   </div>
 </section>
+
+
+% if project.related_projects:
+  <section class="section-related-projects">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <h1 class="text-center">Similar Projects</h1>
+        </div>
+      </div>
+
+      % for row in h.grouper(4, project.related_projects):
+        ${tiles.tile_row(row)}
+      % endfor
+    </div>
+  </section>
+% endif

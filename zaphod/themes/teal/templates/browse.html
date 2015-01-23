@@ -21,6 +21,19 @@
 </%def>
 
 
+% if tag and request.user and request.user.has_permission('admin'):
+  <section class="section-admin-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <p><a href="${request.route_path('admin:tag', id=tag.id)}">Admin Edit Page</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+% endif
+
+
 <section class="section-browse">
   <div class="container">
     <div class="row">
@@ -32,22 +45,14 @@
     <div class="row">
       <div class="col-sm-4 col-md-2 browse-filters">
         <h3>Browse By Stage</h3>
-        <ul class="unstyled sidebar-list">
-          <%self:filter_target url="${request.route_url('prelaunch')}">
-            Pre-launch
-          </%self:filter_target>
-          <%self:filter_target url="${request.route_url('crowdfunding')}">
-            Crowdfunding
-          </%self:filter_target>
-          <%self:filter_target url="${request.route_url('preorder')}">
-            Pre-order
-          </%self:filter_target>
-          <%self:filter_target url="${request.route_url('instock')}">
-            In Stock
-          </%self:filter_target>
+        <ul class="list-unstyled list-sidebar">
+          <%self:filter_target url="${request.route_url('prelaunch')}">Pre-launch</%self:filter_target>
+          <%self:filter_target url="${request.route_url('crowdfunding')}">Crowdfunding</%self:filter_target>
+          <%self:filter_target url="${request.route_url('available')}">Funded &amp; Available</%self:filter_target>
+          <%self:filter_target url="${request.route_url('archive')}">Archive</%self:filter_target>
         </ul>
         <h3>Browse By Tag</h3>
-        <ul class="unstyled sidebar-list">
+        <ul class="list-unstyled list-sidebar">
           % for filter_tag in browse_tags:
             <%self:filter_target url="${request.node_path(filter_tag)}">
               ${filter_tag.name}

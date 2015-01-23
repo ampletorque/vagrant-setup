@@ -1,11 +1,14 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import re
 import hashlib
+import string
+import time
 
 from six.moves.urllib.parse import urlencode
 
-from webhelpers2.html.tags import _make_safe_id_component, literal
+from webhelpers2.html.tags import HTML, _make_safe_id_component, literal
 
 
 def grouper(n, iterable):
@@ -37,6 +40,19 @@ def gravatar_url(email, size=200, default=None, rating='g',
         params['f'] = 'y'
     params = urlencode(params)
     return literal('//www.gravatar.com/avatar/%s?%s' % (hash, params))
+
+
+def image_or_gravatar(request, obj, chain, title=None, class_=None, id=None,
+                      **kwargs):
+    img = obj.img(request, chain, class_=class_, id=id)
+    if img:
+        return img
+    else:
+        registry = request.registry
+        chain, with_themes = registry.image_filter_registry[chain]
+        size = max(chain.width, chain.height)
+        return HTML.img(src=gravatar_url(obj.email, size=size, **kwargs),
+                        alt='', class_=class_, id=id, title=title)
 
 
 def prettify(name):
@@ -111,3 +127,121 @@ def format_percent(percent):
         return "%d" % round(percent)
     else:
         return commas(percent)
+
+
+def num_as_word(num):
+    """
+    Attempts to convert numbers to words -- Only up to 100.
+    """
+    ones = ('zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven',
+            'eight', 'nine')
+    teens = ('ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen',
+             'sixteen', 'seventeen', 'eighteen', 'nineteen')
+    tens = ('twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty',
+            'ninety')
+    try:
+        if int(num) != float(num):
+            raise ValueError
+        num = int(num)
+    except (TypeError, ValueError):
+        return num
+
+    if num < 10:
+        return ones[num]
+    elif num < 20:
+        return teens[num - 10]
+    elif num > 99:
+        return num
+
+    for (cap, val) in ((k, 20 + (10 * v)) for (v, k) in enumerate(tens)):
+        if val + 10 > num:
+            if num % 10:
+                return cap + '-' + ones[num % 10]
+            return cap
+
+
+def plural(count, noun, zero_word=False, capitalize=False, with_number=True,
+           words=10):
+    """
+    Return a pluralized version of `noun` if count != 1 else return the
+    singular.
+
+    Ex:
+    h.plural(5, 'category') => 'five categories'
+    h.plural(1, 'category') => 'one category'
+    h.plural(0, 'category') => 'zero categories'
+    h.plural(-1, 'category', words=10) => '-1 categories'
+
+    :param count: Numeric count of objects
+    :type count: int
+    :param noun: The singular noun to (potentially) pluralize
+    :type noun: str
+    :param zero_word: If True, use this instead of 0 for count
+    :type zero_word: bool
+    :param capitalize: If True, capitalize the returned words
+    :type capitalize: bool
+    :param with_number: If True, include ``count`` in the returned string
+    :type with_number: bool
+    :param words:
+        If True, always try to convert numbers to words. If False,
+        never try to convert numbers to words. If an integer, this acts as a
+        threshold for what numbers are converted to words. If the count s less
+        than zero, words will always be False.
+    :returns: Pluralized string
+    :rtype: str
+    """
+    noun = pluralize(noun) if count != 1 else noun
+
+    if count < 0:
+        words = False
+    count = count or zero_word
+
+    if words is not False and (words is True or words >= count):
+        count = num_as_word(count)
+    count = str(count)
+
+    if with_number:
+        return "%s %s" % (count.capitalize() if capitalize else count,
+                          noun.capitalize() if capitalize else noun)
+    return "%s" % noun.capitalize() if capitalize else noun
+
+
+def pluralize(noun):
+    """
+    Super janky pluralization function. That's how we roll.
+    """
+    for pattern, search, replace in (('[ml]ouse$', '([ml])ouse$', '\\1ice'),
+                                     ('child$', '(child)$', '\\1ren'),
+                                     ('booth$', '(booth)$', '\\1s'),
+                                     ('foot$', '(f)oot$', '\\1eet'),
+                                     ('ooth$', 'ooth$', 'eeth'),
+                                     ('l[eo]af$', '(l)([eo])af$',
+                                      '\\1\\2aves'),
+                                     ('sis$', 'sis$', 'ses'),
+                                     ('human$', '(h)uman$', '\\1umans'),
+                                     ('man$', '(m)an$', '\\1en'),
+                                     ('person$', '(p)erson', '\\1eople'),
+                                     ('ife$', 'ife$', 'ives'),
+                                     ('eau$', 'eau$', 'eaux'),
+                                     ('lf$', 'lf$', 'lves'),
+                                     ('[sxz]$', '$', 'es'),
+                                     ('[^aeioudgkprt]h$', '$', 'es'),
+                                     ('(qu|[^aeiou])y$', 'y$', 'ies'),
+                                     ('$', '$', 's')):
+        if re.search(pattern, noun, flags=re.I):
+            return re.sub(search, replace, noun, flags=re.I)
+
+
+def abbreviate_name(name):
+    words = string.capwords(name).split()
+    if len(words) == 0:
+        return u''
+    elif len(words) == 1:
+        return name
+    first = words[0]
+    last_initial = words[-1][0]
+    return first + ' ' + last_initial
+
+
+def loaded_time():
+    return time.time()

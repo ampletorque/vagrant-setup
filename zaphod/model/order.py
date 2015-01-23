@@ -6,9 +6,10 @@ from sqlalchemy import Table, Column, ForeignKey, types, orm
 from . import custom_types
 from .base import Base
 from .user_mixin import UserMixin
+from .comment import CommentMixin
 
 
-class Order(Base, UserMixin):
+class Order(Base, UserMixin, CommentMixin):
     __tablename__ = 'orders'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
@@ -53,7 +54,9 @@ class CartItem(Base):
     qty_desired = Column(types.Integer, nullable=False, default=1)
     shipping_price = Column(custom_types.Money, nullable=False)
     crowdfunding = Column(types.Boolean, nullable=False)
-    expected_delivery_date = Column(types.DateTime, nullable=False)
+    expected_delivery_date = Column(types.DateTime, nullable=True)
+    shipped_date = Column(types.DateTime, nullable=True)
+    batch_id = Column(None, ForeignKey('pledge_batches.id'), nullable=True)
 
     status = Column(types.String(255), nullable=False)
 
@@ -61,6 +64,7 @@ class CartItem(Base):
 
     cart = orm.relationship('Cart', backref='items')
     pledge_level = orm.relationship('PledgeLevel', backref='cart_items')
+    batch = orm.relationship('PledgeBatch', backref='cart_items')
 
 
 # XXX Maybe this should be a CartItem.shipment_id foreign key instead?

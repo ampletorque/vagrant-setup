@@ -10,7 +10,9 @@ from .order import *
 from .pledge import *
 from .project import *
 from .provider import *
+from .sku import *
 from .tag import *
 from .user import *
 from .user_mixin import *
 from .utils import *
+from .vendor_order import *

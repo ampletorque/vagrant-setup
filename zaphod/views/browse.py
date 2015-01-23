@@ -97,8 +97,8 @@ class CrowdfundingView(ProjectListView):
                    utcnow < model.Project.end_time)
 
 
-class PreorderView(ProjectListView):
-    stage = u'Pre-order Projects'
+class AvailableView(ProjectListView):
+    stage = u'Funded & Available Projects'
 
     def base_q(self):
         utcnow = datetime.utcnow()
@@ -108,19 +108,20 @@ class PreorderView(ProjectListView):
             filter(utcnow >= model.Project.end_time)
 
 
-class InStockView(ProjectListView):
-    stage = 'In Stock Products'
+class ArchiveView(ProjectListView):
+    stage = 'Project Archive'
 
     def base_q(self):
-        # XXX Not sure what to do with this in a world where we don't
-        # distinguish between preorder and in-stock at a project level.
+        utcnow = datetime.utcnow()
+        # XXX Filter out projects which aren't available for pre-order or
+        # in-stock.
         return ProjectListView.base_q(self).\
-            filter(model.Project.stage == model.Project.PRODUCT)
+            filter(utcnow >= model.Project.end_time)
 
 
 def includeme(config):
     config.add_view(EverythingView, route_name='browse')
     config.add_view(PrelaunchView, route_name='prelaunch')
     config.add_view(CrowdfundingView, route_name='crowdfunding')
-    config.add_view(PreorderView, route_name='preorder')
-    config.add_view(InStockView, route_name='instock')
+    config.add_view(AvailableView, route_name='available')
+    config.add_view(ArchiveView, route_name='archive')

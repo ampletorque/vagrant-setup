@@ -3,51 +3,6 @@ from __future__ import (absolute_import, division, print_function,
 
 from six.moves.urllib.parse import urlencode
 
-from webhelpers2.html import HTML, tags
-
-
-def twitter_follow_button(name, show_follower_count=True):
-    twitter_url = "http://twitter.com/%s" % name
-    link_text = "Follow @%s" % name
-    show_count = str(bool(show_follower_count)).lower()
-
-    return HTML.a(link_text, href=twitter_url,
-                  class_="twitter-follow-button",
-                  **{"data-show-count": show_count})
-
-
-def pin_it_url(dst_url, media, description):
-    return "http://pinterest.com/pin/create/button/?%s" % (
-        urlencode(dict(url=dst_url, media=media, description=description)))
-
-
-def pinterest_follow_url(username):
-    return "http://pinterest.com/%s/" % username
-
-
-def pin_it_button(dst_url, media, description="", label="Pin It",
-                  count='none'):
-    pin_url = pin_it_url(dst_url, media, description)
-    return tags.link_to(label, pin_url, **{'class': 'pin-it-button',
-                                           'count-layout': count})
-
-
-def pinterest_follow_button(username, style='pinterest'):
-    cdn_url = "http://passets-cdn.pinterest.com/images/"
-    basic_styles = {
-        "follow": (cdn_url + "follow-on-pinterest-button.png", 156, 26),
-        "pinterest": (cdn_url + "pinterest-button.png", 78, 26),
-        "big-p": (cdn_url + "big-p-button.png", 61, 61),
-        "small-p": (cdn_url + "small-p-button.png", 16, 16)
-    }
-
-    button_style = basic_styles.get(style, style)
-    return tags.link_to(tags.image(button_style[0],
-                                   "Follow Me on Pinterest",
-                                   width=button_style[1],
-                                   height=button_style[2]),
-                        pinterest_follow_url(username))
-
 
 def twitter_tweet_url(text, url, via):
     text = text.encode('ascii', 'ignore')
@@ -70,6 +25,41 @@ def facebook_share_url(text, url, name, caption, image_url, app_id,
                        redirect_uri=redirect_uri)))
 
 
+def pin_it_url(dst_url, media, description):
+    # XXX Pinterest doesn't seem to want to use https for this right now, but
+    # check back later.
+    return "http://pinterest.com/pin/create/button/?%s" % (
+        urlencode(dict(url=dst_url, media=media, description=description)))
+
+
 def gplus_share_url(url):
     return 'https://plus.google.com/share?%s' % (
         urlencode(dict(url=url)))
+
+
+def project_facebook_url(request, project):
+    return facebook_share_url(
+        text=project.teaser,
+        url=request.node_url(project),
+        name=project.name,
+        caption='Funding on Crowd Supply',
+        image_url=project.img_url(request, 'project-main'),
+        app_id=request.registry.settings['facebook.app_id'],
+        redirect_uri=request.url)
+
+
+def project_twitter_url(request, project):
+    return twitter_tweet_url(
+        text='Check out this crowdfunding project!',
+        via='crowd_supply',
+        url=request.node_url(project))
+
+
+def project_pin_it_url(request, project):
+    # XXX Consider adding 'pinset' support to this.
+    return pin_it_url(
+        dst_url=request.node_url(project),
+        media=project.img_url(request, 'project-main'),
+        # media=request.route_url('pinset', id=project.id),
+        description='Funding on Crowd Supply',
+    )

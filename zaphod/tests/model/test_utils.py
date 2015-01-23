@@ -20,10 +20,6 @@ class TestUtils(TestCase):
         self.assertEquals(utils.to_url_name(u'hello-this-is-already'),
                           'hello-this-is-already')
 
-    def test_to_url_name_bad(self):
-        with self.assertRaisesRegexp(ValueError, 'unicode'):
-            utils.to_url_name('hello')
-
     def test_to_url_name_unicode(self):
         # unicode snowman!
         self.assertEquals(utils.to_url_name(u'snowman \u2603 melts'),

@@ -14,16 +14,35 @@
 % endif
 
 
+<%def name="remind_me_form(project)">
+  % if project.status == 'crowdfunding':
+    <div class="project-remind-me">
+      <p><strong>Funding ends</strong> on ${h.format_datetime(request, project.final_day, '%b %d, %Y')} at 11:59pm PDT</p>
+      <form id="remind-me-form" class="form-inline" action="${request.node_path(project, suffix=['remind-me'])}" method="POST">
+        <div class="input-group">
+          ${h.text('email', None, placeholder='me@example.com', class_='form-control')}
+          <span class="input-group-btn">
+            <button type="submit" class="btn btn-default">Remind Me</button>
+          </span>
+        </div>
+      </form>
+    </div>
+  % endif
+</%def>
+
+
 <div class="project-block">
-  ## XXX Remind me form
-  ${request.render_content(project, project.body)}
+  ${self.remind_me_form(project)}
+  <div class="rendered-content">
+    ${request.render_content(project, project.body)}
+  </div>
 </div>
 
 
 <div class="project-block">
   <p>Have a question not answered in the description above or in the <a href="#">Updates</a>?</p>
   <p>
-    <a class="btn btn-primary" href="${request.route_path('ask_question', id=project.id)}">Ask ${project.creator.name} a Question</a>
+    <a class="btn btn-primary" href="${request.node_path(project, suffix=['ask-question'])}">Ask ${project.creator.name} a Question</a>
     or
     <a href="${request.route_path('questions')}">Browse Crowd Supply Questions &amp; Answers</a>
   </p>

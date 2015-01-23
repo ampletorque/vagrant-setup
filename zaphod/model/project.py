@@ -3,16 +3,29 @@ from __future__ import (absolute_import, division, print_function,
 
 from operator import attrgetter
 from datetime import datetime
-from sqlalchemy import Column, ForeignKey, types, orm
+
+import pytz
+
+from sqlalchemy import Table, Column, ForeignKey, types, orm
 from sqlalchemy.sql import func
 
 from pyramid_es.mixin import ElasticMixin, ESMapping, ESField, ESString
 
 from . import utils, custom_types
-from .base import Session
+from .base import Base, Session
 from .order import Cart, CartItem
 from .pledge import PledgeLevel
 from .node import Node
+
+
+related_projects = Table(
+    'related_projects',
+    Base.metadata,
+    Column('source_id', None, ForeignKey('projects.node_id'),
+           primary_key=True),
+    Column('dest_id', None, ForeignKey('projects.node_id'),
+           primary_key=True),
+    mysql_engine='InnoDB')
 
 
 class Project(Node, ElasticMixin):
@@ -57,6 +70,17 @@ class Project(Node, ElasticMixin):
         cascade='all, delete, delete-orphan',
     )
 
+    ownerships = orm.relationship('ProjectOwner', backref='project',
+                                  cascade='all, delete, delete-orphan')
+
+    # XXX Might be able to clean this up with the new SQLAlchemy relationship
+    # APIs and/or annotations.
+    related_projects = orm.relationship(
+        'Project',
+        secondary=related_projects,
+        primaryjoin='related_projects.c.source_id == Project.node_id',
+        secondaryjoin='related_projects.c.dest_id == Project.node_id')
+
     __mapper_args__ = {'polymorphic_identity': 'Project'}
 
     def generate_path(self):
@@ -92,7 +116,7 @@ class Project(Node, ElasticMixin):
         elif self.accepts_preorders:
             return 'available'
         else:
-            return 'funded'
+            return 'archive'
 
     @property
     def progress_percent(self):
@@ -138,6 +162,12 @@ class Project(Node, ElasticMixin):
             scalar() or 0
 
     @property
+    def final_day(self):
+        end = pytz.utc.localize(self.end_time)
+        pst = pytz.timezone('America/Los_Angeles')
+        return end.astimezone(pst).replace(tzinfo=None)
+
+    @property
     def remaining(self):
         utcnow = datetime.utcnow()
         if self.start_time <= utcnow:
@@ -145,10 +175,11 @@ class Project(Node, ElasticMixin):
         else:
             diff = self.end_time - self.start_time
 
-        if diff.days > 2:
+        if diff.days >= 2:
             return diff.days, 'days'
         else:
-            return (diff.seconds / 3600) + (diff.days * 24), 'hours'
+            hours = int(round((diff.seconds / 3600) + (diff.days * 24)))
+            return hours, 'hours'
 
     @property
     def published_updates(self):
@@ -161,6 +192,11 @@ class Project(Node, ElasticMixin):
         levels = [pl for pl in self.levels if pl.published]
         levels.sort(key=attrgetter('gravity'))
         return levels
+
+    @property
+    def published_ownerships(self):
+        # XXX FIXME turn into a relationship
+        return [owner for owner in self.ownerships if owner.show_on_campaign]
 
     @classmethod
     def elastic_mapping(cls):
@@ -204,3 +240,20 @@ class ProjectUpdate(Node):
     def generate_path(self):
         project_path = self.project.canonical_path()
         return '%s/updates/%d' % (project_path, self.id)
+
+
+class ProjectOwner(Base):
+    __tablename__ = 'project_owners'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+    project_id = Column(None, ForeignKey('projects.node_id'), primary_key=True)
+    user_id = Column(None, ForeignKey('users.id'), primary_key=True)
+    title = Column(types.Unicode(255), nullable=False, default=u'')
+    can_change_content = Column(types.Boolean, nullable=False, default=False)
+    can_post_updates = Column(types.Boolean, nullable=False, default=False)
+    can_receive_questions = Column(types.Boolean, nullable=False,
+                                   default=False)
+    can_manage_payments = Column(types.Boolean, nullable=False, default=False)
+    can_manage_owners = Column(types.Boolean, nullable=False, default=False)
+    show_on_campaign = Column(types.Boolean, nullable=False, default=False)
+
+    user = orm.relationship('User', backref='project_ownerships')

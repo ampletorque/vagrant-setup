@@ -1,0 +1,20 @@
+---
+- name: setup certs dir
+  sudo: yes
+  file: path=/var/certs
+        state=directory
+        owner=root
+        group=root
+        mode=755
+
+- name: copy ssl certificate
+  sudo: yes
+  copy: src=/var/certs/{{ item }}
+        dest=/var/certs/{{ item }}
+        owner=root
+        group=root
+        mode=644
+  with_items:
+    - wildcard_crowdsupply_com-jan2015.crt
+    - wildcard_crowdsupply_com-jan2015.key
+    - wildcard_crowdsupply_com-jan2015.trusted.crt

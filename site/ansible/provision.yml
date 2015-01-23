@@ -1,0 +1,20 @@
+---
+- hosts: webservers
+  roles:
+    - { role: timezone, timezone: 'America/Los_Angeles'}
+    - deploy-user
+    - ssh
+    - git
+    - iptables
+    - python
+    - postfix
+    - mysql
+    - redis
+    - elasticsearch
+    - nginx
+    - uwsgi
+    - image-processing
+    - node
+    - certs
+
+# XXX Add some basic system helpers here, like vim.

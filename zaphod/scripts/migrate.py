@@ -15,7 +15,7 @@ try:
 except ImportError:
     scrappy_meta = scrappy_model = cs_model = None
 
-from .. import model
+from .. import model, helpers as h
 
 
 old_url = 'mysql+pymysql://crowdsupply:quux@localhost/crowdsupply?charset=utf8'
@@ -118,6 +118,8 @@ def migrate_creators(settings, user_map, image_map):
         creator = model.Creator(
             name=old_creator.name,
             teaser=old_creator.teaser,
+            location=old_creator.location,
+            home_url=old_creator.home_url,
             body=old_creator.body.text,
             published=old_creator.published,
             listed=old_creator.listed,
@@ -137,6 +139,7 @@ def migrate_creators(settings, user_map, image_map):
 def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
     project_map = {}
     pledge_level_map = {}
+    batch_map = {}
     for old_project in scrappy_meta.Session.query(cs_model.Project):
         print("  project %s" % old_project.name)
         project = model.Project(
@@ -166,6 +169,8 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
             created_time=old_project.created_time,
             updated_by=user_map[old_project.updated_by],
             updated_time=old_project.updated_time,
+
+            accepts_preorders=(old_project.stage in (2, 3)),
         )
         model.Session.add(project)
         migrate_aliases(settings, old_project, project)
@@ -200,6 +205,7 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
                 gravity=old_pledge_level.gravity,
                 published=old_pledge_level.published,
                 price=old_pledge_level.price,
+                accepts_preorders=(old_project.stage in (2, 3)),
             )
             model.Session.add(pledge_level)
             migrate_image_associations(settings, image_map,
@@ -221,8 +227,45 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
                         published=old_value.enabled,
                     )
                     option.values.append(value)
+            for old_batch in old_pledge_level.batches:
+                print("      batch %s" % old_batch.id)
+                batch = model.PledgeBatch(
+                    qty=old_batch.qty,
+                    delivery_date=old_batch.delivery_date
+                )
+                batch_map[old_batch] = batch
+                pledge_level.batches.append(batch)
+        for old_owner in old_project.ownerships:
+            print("    ownership %s" % old_owner.account.email)
+            new_owner = model.ProjectOwner(
+                project=project,
+                user=user_map[old_owner.account],
+                title=old_owner.title,
+                can_change_content=old_owner.can_change_content,
+                can_post_updates=old_owner.can_post_updates,
+                can_receive_questions=old_owner.can_receive_questions,
+                can_manage_payments=old_owner.can_manage_stripe,
+                can_manage_owners=old_owner.can_manage_owners,
+                show_on_campaign=old_owner.show_on_campaign,
+            )
+            model.Session.add(new_owner)
         model.Session.flush()
-    return project_map, pledge_level_map
+    return project_map, pledge_level_map, batch_map
+
+
+def lookup_location(old_user):
+    q = scrappy_meta.Session.query(scrappy_model.Order).\
+        filter_by(account=old_user).\
+        order_by(scrappy_model.Order.id.desc())
+    order = q.first()
+    if order and not order.cart.non_physical:
+        if order.shipping.country == 'us':
+            return '%s, %s' % (order.shipping.city,
+                               order.shipping.state)
+        else:
+            return '%s, %s' % (order.shipping.city,
+                               order.shipping.country_name)
+    return ''
 
 
 def migrate_users(settings, image_map):
@@ -251,6 +294,9 @@ def migrate_users(settings, image_map):
             enabled=old_user.enabled,
             created_time=old_user.created_time,
             updated_time=old_user.updated_time,
+            admin=old_user.has_permission('admin'),
+            show_name=h.abbreviate_name(old_user.name),
+            show_location=lookup_location(old_user),
         )
         model.Session.add(user)
         migrate_image_associations(settings, image_map, old_user, user)
@@ -319,7 +365,7 @@ def migrate_providers(settings, user_map, image_map, provider_type_map):
         model.Session.flush()
 
 
-def migrate_orders(settings, user_map, pledge_level_map):
+def migrate_orders(settings, user_map, pledge_level_map, batch_map):
     for old_order in scrappy_meta.Session.query(scrappy_model.Order):
         print("  order %s" % old_order.id)
         if old_order.account:
@@ -333,18 +379,37 @@ def migrate_orders(settings, user_map, pledge_level_map):
             created_time=old_order.created_time,
             updated_by=user_map[old_order.updated_by],
             updated_time=old_order.updated_time,
+            status='init',
         )
         model.Session.add(order)
         cart = model.Cart(order=order)
         model.Session.add(cart)
         for old_ci in old_order.cart.items:
+            delivery_date = None
+            old_batch = getattr(old_ci, 'batch', None)
+            if old_batch:
+                delivery_date = old_ci.batch.delivery_date
             ci = model.CartItem(
                 pledge_level=pledge_level_map[old_ci.product],
                 price_each=old_ci.price_each,
                 qty_desired=old_ci.qty_desired,
+                crowdfunding=(old_ci.discriminator in ('P', 'E')),
+                status='init',
+                # XXX
+                shipping_price=0,
+                shipped_date=old_ci.shipped_date,
+                expected_delivery_date=delivery_date,
             )
+            if old_batch:
+                ci.batch = batch_map[old_batch]
             order.cart.items.append(ci)
         model.Session.flush()
+
+
+def migrate_related_projects(settings, project_map):
+    for old_project, new_project in project_map.items():
+        new_project.related_projects[:] = [project_map[old_rel] for old_rel in
+                                           old_project.related_projects]
 
 
 def main(argv=sys.argv):
@@ -381,7 +446,15 @@ def main(argv=sys.argv):
         migrate_articles(settings, user_map, image_map)
         tag_map = migrate_tags(settings, user_map)
         creator_map = migrate_creators(settings, user_map, image_map)
-        project_map, pledge_level_map = \
+        project_map, pledge_level_map, batch_map = \
             migrate_projects(settings, user_map, creator_map,
                              tag_map, image_map)
-        migrate_orders(settings, user_map, pledge_level_map)
+        migrate_related_projects(settings, project_map)
+        migrate_orders(settings, user_map, pledge_level_map, batch_map)
+
+        scott_user = model.Session.query(model.User).\
+            filter_by(email='scott.torborg@crowdsupply.com').\
+            one()
+        scott_user.url_path = 'storborg'
+        scott_user.location = 'Portland, OR'
+        scott_user.twitter_username = 'storborg'

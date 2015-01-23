@@ -8,6 +8,7 @@ from . import utils
 from .base import Base, Session
 from .image import ImageMixin
 from .user_mixin import UserMixin
+from .comment import CommentMixin
 
 __all__ = ['Alias', 'Node']
 
@@ -31,7 +32,7 @@ class Alias(Base):
         return v
 
 
-class Node(Base, ImageMixin, UserMixin):
+class Node(Base, ImageMixin, UserMixin, CommentMixin):
     """
     The Node class is the superclass of all pieces of content which are served
     up at a URL. It provides an easy way to make a flat URL namespace (combined
@@ -94,3 +95,17 @@ class Node(Base, ImageMixin, UserMixin):
                 # If it is canonical and pointing to another node, we can't
                 # replace it, so fail.
                 raise ValueError("Provided path is not unique.")
+
+    @property
+    def override_path(self):
+        if self.use_custom_paths:
+            return self.canonical_path()
+
+    @override_path.setter
+    def override_path(self, path):
+        if path:
+            self.use_custom_paths = True
+            self.update_path(path)
+        else:
+            self.use_custom_paths = False
+            self.update_path(self.generate_path())

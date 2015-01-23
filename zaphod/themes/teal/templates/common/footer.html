@@ -1,10 +1,12 @@
 <%def name="email_signup()">
   <form method="post" action="${request.route_path('subscribe')}" id="email-signup-form" class="form-inline">
-    <div class="form-group">
+    <div class="input-group">
       ${h.text('email', maxlength=320, placeholder='email@example.com', class_='form-control input-lg', type='email', id='signup-email')}
       ${h.hidden('source', 'signup')}
+      <span class="input-group-btn">
+        <button type="submit" class="btn btn-dark btn-lg">Subscribe</button>
+      </span>
     </div>
-    <button type="submit" class="btn btn-default btn-lg">Subscribe</button>
   </form>
 </%def>
 
@@ -37,9 +39,10 @@
       <ul>
         <li><a href="/shipping">Shipping</a></li>
         <li><a href="/returns">Returns</a></li>
-        <li><a href="/terms-of-use">Terms of Use</a></li>
+        <li><a href="/terms-of-use">Terms</a></li>
         <li><a href="/privacy-policy">Privacy Policy</a></li>
         <li><a href="${request.route_path('contact')}">Contact</a></li>
+        <li><a href="${request.route_path('security')}">Security</a></li>
         <li><a href="/press">Press</a></li>
         <li><a href="/jobs">Jobs</a></li>
       </ul>

@@ -12,11 +12,12 @@ from . import utils
 from .base import Base
 from .image import ImageMixin
 from .user_mixin import UserMixin
+from .comment import CommentMixin
 
 __all__ = ['User']
 
 
-class User(Base, ImageMixin, UserMixin):
+class User(Base, ImageMixin, UserMixin, CommentMixin):
     __tablename__ = 'users'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
@@ -26,7 +27,9 @@ class User(Base, ImageMixin, UserMixin):
     password_reset_token = Column(types.String(64), nullable=False, default='')
     password_reset_time = Column(types.DateTime, nullable=False,
                                  default=utils.utcnow)
+
     enabled = Column(types.Boolean, nullable=False, default=True)
+    admin = Column(types.Boolean, nullable=False, default=False)
 
     url_path = Column(types.String(255), nullable=True, unique=True)
     timezone = Column(types.String(255), nullable=False,
@@ -34,8 +37,9 @@ class User(Base, ImageMixin, UserMixin):
 
     twitter_username = Column(types.String(255), nullable=True)
 
-    location = Column(types.Unicode(255), nullable=False, default=u'')
+    show_location = Column(types.Unicode(255), nullable=False, default=u'')
     show_in_backers = Column(types.Boolean, nullable=False, default=True)
+    show_name = Column(types.Unicode(255), nullable=False, default=u'')
 
     @staticmethod
     def hash_password(password):

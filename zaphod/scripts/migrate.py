@@ -379,7 +379,6 @@ def migrate_orders(settings, user_map, pledge_level_map, batch_map):
             created_time=old_order.created_time,
             updated_by=user_map[old_order.updated_by],
             updated_time=old_order.updated_time,
-            status='init',
         )
         model.Session.add(order)
         cart = model.Cart(order=order)

@@ -15,15 +15,29 @@ class Order(Base, UserMixin, CommentMixin):
     id = Column(types.Integer, primary_key=True)
     cart_id = Column(None, ForeignKey('carts.id'), nullable=False, unique=True)
     user_id = Column(None, ForeignKey('users.id'), nullable=True)
-    status = Column(types.String(255), nullable=False)
+    closed = Column(types.Boolean, nullable=False, default=False)
 
     user = orm.relationship('User', backref='orders', foreign_keys=user_id)
 
     @property
     def order_total(self):
+        """
+        Return the total 'price' of this order, including shipping and all
+        associated surcharges charged to the customer.
+        """
         return self.cart.items_total + self.cart.shipping_total
 
-    def ship_items(self, items):
+    def update_status(self):
+        """
+        Update the .closed status of this order. It is 'closed' if and only if
+        all of the cart items are closed and the order is fully paid.
+        """
+        raise NotImplementedError
+
+    def ship_items(self, items, tracking_num, source, cost):
+        """
+        Add a new shipment to an order, marking the supplied items as shipped.
+        """
         raise NotImplementedError
 
 
@@ -56,9 +70,10 @@ class CartItem(Base):
     crowdfunding = Column(types.Boolean, nullable=False)
     expected_delivery_date = Column(types.DateTime, nullable=True)
     shipped_date = Column(types.DateTime, nullable=True)
+    shipment_id = Column(None, ForeignKey('shipments.id'), nullable=True)
     batch_id = Column(None, ForeignKey('pledge_batches.id'), nullable=True)
 
-    status = Column(types.String(255), nullable=False)
+    status = Column(types.CHAR(8), nullable=False)
 
     customer_comments = Column(types.UnicodeText, nullable=False, default=u'')
 
@@ -66,15 +81,33 @@ class CartItem(Base):
     pledge_level = orm.relationship('PledgeLevel', backref='cart_items')
     batch = orm.relationship('PledgeBatch', backref='cart_items')
 
+    available_statuses = [
+        ('init', 'Initial Value'),
+        ('failed', 'Project Did Not Fund'),
+        ('wait', 'Waiting for Production'),
+        ('shipped', 'Shipped'),
+        ('cancel', 'Cancelled'),
+        # XXX Add more!
+    ]
 
-# XXX Maybe this should be a CartItem.shipment_id foreign key instead?
-shipment_items = Table(
-    'shipment_items',
-    Base.metadata,
-    Column('shipment_id', None, ForeignKey('shipments.id'), primary_key=True),
-    Column('cart_item_id', None, ForeignKey('cart_items.id'),
-           primary_key=True),
-    mysql_engine='InnoDB')
+    @property
+    def status_description(self):
+        return self.available_statuses[self.status]
+
+    def update_status(self):
+        """
+        Update the status of this item.
+        """
+        raise NotImplementedError
+
+    def calculate_price(self):
+        """
+        Calculate the price of this item, including option values.
+        """
+        price = self.pledge_level.price
+        for ov in self.option_values:
+            price += ov.price_increase
+        return price
 
 
 class Shipment(Base, UserMixin):
@@ -84,11 +117,14 @@ class Shipment(Base, UserMixin):
     order_id = Column(None, ForeignKey('orders.id'), nullable=False)
     tracking_number = Column(types.String(255), nullable=True)
     source = Column(types.CHAR(4), nullable=False)
+    cost = Column(custom_types.Money, nullable=True)
 
     order = orm.relationship('Order', backref='shipments')
-    items = orm.relationship('CartItem',
-                             backref='shipments',
-                             secondary=shipment_items)
+    items = orm.relationship('CartItem', backref='shipments')
 
     available_sources = {'hist': u'Historical Data Population',
                          'manl': u'Manually Marked as Shipped'}
+
+    @property
+    def source_description(self):
+        return self.available_sources[self.source]

@@ -4,7 +4,7 @@ from __future__ import (absolute_import, division, print_function,
 from pyramid.httpexceptions import HTTPFound, HTTPBadRequest
 from pyramid.view import view_config
 
-from formencode import Schema, validators
+from formencode import Schema, ForEach, NestedVariables, validators
 from pyramid_uniform import Form, FormRenderer
 
 from .. import model
@@ -19,23 +19,32 @@ class CheckoutForm(Schema):
 class AddToCartSchema(Schema):
     "Validates add-to-cart actions."
     allow_extra_fields = False
+    pre_validators = [NestedVariables]
     pledge_level_id = validators.Int(not_empty=True)
     qty = validators.Int(not_empty=True, min=1)
-    # XXX add options
+    options = ForEach(validators.Int(not_empty=True))
 
 
 class CartView(object):
     def __init__(self, request):
         self.request = request
 
-    @view_config(route_name='cart', renderer='cart.html')
-    def cart(self):
+    def get_cart(self, create_new=False):
         request = self.request
         cart_id = request.session.get('cart_id')
         if cart_id:
             cart = model.Cart.get(cart_id)
+        elif create_new:
+            cart = model.Cart()
+            model.Session.add(cart)
         else:
             cart = None
+        return cart
+
+    @view_config(route_name='cart', renderer='cart.html')
+    def cart(self):
+        request = self.request
+        cart = self.get_cart()
 
         form = Form(request, schema=CheckoutForm)
         if form.validate():
@@ -48,10 +57,24 @@ class CartView(object):
     @view_config(route_name='cart:add')
     def add(self):
         request = self.request
+        cart = self.get_cart()
 
         form = Form(request, schema=AddToCartSchema)
         if form.validate():
-            # XXX add items to cart
+            pledge_level = model.PledgeLevel.get(form.data['pledge_level_id'])
+            if not pledge_level:
+                raise HTTPBadRequest
+            ci = model.CartItem(
+                qty_desired=form.data['qty'],
+                pledge_level=pledge_level,
+                cart=cart,
+                # XXX Lots of other columns to add here.
+            )
+            for opt_id in form.data['options']:
+                ov = model.OptionValue.get(opt_id)
+                ci.option_values.add(ov)
+            ci.price_each = ci.calculate_price()
+            model.Session.add(ci)
 
             return HTTPFound(location=request.route_url('cart'))
         else:

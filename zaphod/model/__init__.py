@@ -5,6 +5,7 @@ from .article import *
 from .base import *
 from .creator import *
 from .image import *
+from .item import *
 from .node import *
 from .order import *
 from .pledge import *

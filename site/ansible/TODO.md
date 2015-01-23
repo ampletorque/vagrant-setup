@@ -1,8 +1,6 @@
 Ansible To-Do List
 ==================
 
-- Install OpenSSL 1.0.1j
-
 - Set Pyramid log file permissions to group-writeable so that deploy user can
   run Pyramid scripts.
 

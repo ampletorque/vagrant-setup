@@ -1,0 +1,45 @@
+# This playbook downloads, compiles, and installs OpenSSL 1.0.2, because Ubuntu
+# sucks and doesn't have PPAs for it.
+---
+- name: check openssl version
+  command: openssl version
+  register: openssl_version
+
+- name: download openssl distribution
+  get_url: url=https://www.openssl.org/source/openssl-1.0.2.tar.gz
+           sha256sum=8c48baf3babe0d505d16cfc0cf272589c66d3624264098213db0fb00034728e9
+           dest=/tmp/openssl-1.0.2.tar.gz
+  when: openssl_version.stdout.find('1.0.2') == -1
+
+- name: extract package
+  command: tar -zxf openssl-1.0.2.tar.gz chdir=/tmp
+  when: openssl_version.stdout.find('1.0.2') == -1
+
+- name: configure package
+  command: ./config chdir=/tmp/openssl-1.0.2
+  when: openssl_version.stdout.find('1.0.2') == -1
+
+- name: make package
+  command: make chdir=/tmp/openssl-1.0.2
+  when: openssl_version.stdout.find('1.0.2') == -1
+
+- name: make test package
+  command: make test chdir=/tmp/openssl-1.0.2
+  when: openssl_version.stdout.find('1.0.2') == -1
+
+- name: make install package
+  sudo: yes
+  command: make install chdir=/tmp/openssl-1.0.2
+  when: openssl_version.stdout.find('1.0.2') == -1
+
+- name: backup old openssl
+  sudo: yes
+  command: mv /usr/bin/openssl /usr/bin/openssl.bak
+  when: openssl_version.stdout.find('1.0.2') == -1
+
+- name: symlink new openssl
+  sudo: yes
+  file: src=/usr/local/ssl/bin/openssl
+        dest=/usr/bin/openssl
+        state=link
+  when: openssl_version.stdout.find('1.0.2') == -1

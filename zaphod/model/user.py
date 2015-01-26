@@ -30,6 +30,7 @@ class User(Base, ImageMixin, UserMixin, CommentMixin):
 
     enabled = Column(types.Boolean, nullable=False, default=True)
     admin = Column(types.Boolean, nullable=False, default=False)
+    show_admin_bars = Column(types.Boolean, nullable=False, default=False)
 
     url_path = Column(types.String(255), nullable=True, unique=True)
     timezone = Column(types.String(255), nullable=False,

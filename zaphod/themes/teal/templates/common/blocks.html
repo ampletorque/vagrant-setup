@@ -10,3 +10,18 @@
     <div class="container">${msg}</div>
   </section>
 </%def>
+
+
+<%def name="admin_bar()">
+  % if request.user and request.user.admin and request.user.show_admin_bars:
+    <section class="section-admin-bar">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+            ${caller.body()}
+          </div>
+        </div>
+      </div>
+    </section>
+  % endif
+</%def>

@@ -1,6 +1,7 @@
 <%inherit file="base.html"/>
 
 <%namespace name="tiles" file="common/tiles.html"/>
+<%namespace name="blocks" file="common/blocks.html"/>
 
 
 <%def name="title()">
@@ -21,16 +22,14 @@
 </%def>
 
 
-% if tag and request.user and request.user.has_permission('admin'):
-  <section class="section-admin-bar">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-12">
-          <p><a href="${request.route_path('admin:tag', id=tag.id)}">Admin Edit Page</a></p>
-        </div>
-      </div>
-    </div>
-  </section>
+% if tag:
+  <%blocks:admin_bar>
+    <p>
+      <a href="${request.route_path('admin:tag', id=tag.id)}">
+        Edit Tag ${tag.id} - ${tag.name}
+      </a>
+    </p>
+  </%blocks:admin_bar>
 % endif
 
 

@@ -1,5 +1,7 @@
 <%inherit file="base.html"/>
 
+<%namespace name="blocks" file="common/blocks.html"/>
+
 
 <%def name="title()">${provider.name}</%def>
 
@@ -30,21 +32,13 @@
 </%def>
 
 
-% if request.user and request.user.has_permission('admin'):
-  <section class="section-admin-bar">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-12">
-          <p>
-            <a href="${request.route_path('admin:provider', id=provider.id)}">
-              Edit Provider ${provider.id} - ${provider.name}
-            </a>
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-% endif
+<%blocks:admin_bar>
+  <p>
+    <a href="${request.route_path('admin:provider', id=provider.id)}">
+      Edit Provider ${provider.id} - ${provider.name}
+    </a>
+  </p>
+</%blocks:admin_bar>
 
 
 <section class="section-provider">

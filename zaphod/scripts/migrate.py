@@ -285,6 +285,7 @@ def migrate_users(settings, image_map):
             email = old_user.email
 
         user_emails.add(old_user.email)
+        is_admin = old_user.has_permission('admin')
 
         user = model.User(
             id=old_user.id,
@@ -294,7 +295,8 @@ def migrate_users(settings, image_map):
             enabled=old_user.enabled,
             created_time=old_user.created_time,
             updated_time=old_user.updated_time,
-            admin=old_user.has_permission('admin'),
+            admin=is_admin,
+            show_admin_bars=is_admin,
             show_name=h.abbreviate_name(old_user.name),
             show_location=lookup_location(old_user),
         )

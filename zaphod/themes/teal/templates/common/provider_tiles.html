@@ -22,8 +22,7 @@
         <h4>
           <a href="${request.node_url(provider)}">${provider.name}</a>
         </h4>
-        ## FIXME
-        ##<p>${h.truncate(h.strip_tags(request.render_content(provider, provider.body)), 300)}</p>
+        <p>${h.truncate(h.strip_tags(request.render_content(provider, provider.body)), 300)}</p>
       </div>
     </div>
   </div>

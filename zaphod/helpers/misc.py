@@ -245,3 +245,8 @@ def abbreviate_name(name):
 
 def loaded_time():
     return time.time()
+
+
+def strip_tags(s):
+    "Strip any sgml/xml/html tags from input. Might be a bit reckless."
+    return re.sub(r'<.+?>|&\w*?;', u'', s)

@@ -7,7 +7,7 @@ from sqlalchemy.sql import func, not_
 from . import custom_types
 from .base import Base, Session
 from .image import ImageMixin
-from .order import Order, Cart, CartItem
+from .order import Cart, CartItem
 
 
 class PledgeBatch(Base):

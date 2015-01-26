@@ -6,8 +6,6 @@ from pyramid.view import view_config
 from formencode import Schema, validators
 from pyramid_uniform import Form, FormRenderer
 
-from ... import model
-
 
 class SettingsForm(Schema):
     allow_extra_fields = False

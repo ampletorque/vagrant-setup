@@ -6,6 +6,7 @@ from sqlalchemy import Table, Column, ForeignKey, types, orm
 from . import utils
 from .base import Base
 from .node import Node
+from .address import make_address_columns
 
 
 provider_type_assoc = Table(
@@ -40,8 +41,7 @@ class Provider(Node):
     node_id = Column(None, ForeignKey('nodes.id'), primary_key=True)
     email = Column(types.Unicode(255), nullable=False, default=u'')
     home_url = Column(types.String(255), nullable=True)
-    # XXX
-    # mailing = make_address_columns('mailing')
+    mailing = make_address_columns('mailing')
 
     lat = Column(types.Numeric(9, 6), nullable=True)
     lon = Column(types.Numeric(9, 6), nullable=True)

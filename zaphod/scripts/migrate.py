@@ -343,6 +343,19 @@ def migrate_provider_types(settings, user_map, image_map):
     return provider_type_map
 
 
+def convert_address(old):
+    return model.Address(first_name=old.first_name,
+                         last_name=old.last_name,
+                         company=old.company,
+                         phone=old.phone,
+                         address1=old.address1,
+                         address2=old.address2,
+                         city=old.city,
+                         state=old.state,
+                         postal_code=old.postal_code,
+                         country_code=old.country)
+
+
 def migrate_providers(settings, user_map, image_map, provider_type_map):
     for old_provider in scrappy_meta.Session.query(cs_model.Provider):
         print("  provider %s" % old_provider.name)
@@ -352,6 +365,8 @@ def migrate_providers(settings, user_map, image_map, provider_type_map):
             body=old_provider.body.text,
             published=old_provider.published,
             listed=old_provider.listed,
+            mailing=convert_address(old_provider.mailing),
+            home_url=old_provider.home_url,
             created_by=user_map[old_provider.created_by],
             created_time=old_provider.created_time,
             updated_by=user_map[old_provider.updated_by],
@@ -379,6 +394,7 @@ def migrate_orders(settings, user_map, pledge_level_map, batch_map):
             created_time=old_order.created_time,
             updated_by=user_map[old_order.updated_by],
             updated_time=old_order.updated_time,
+            shipping=convert_address(old_order.shipping),
         )
         model.Session.add(order)
         cart = model.Cart(order=order)

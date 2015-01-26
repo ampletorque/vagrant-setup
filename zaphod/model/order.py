@@ -4,6 +4,7 @@ from __future__ import (absolute_import, division, print_function,
 from sqlalchemy import Table, Column, ForeignKey, types, orm
 
 from . import custom_types
+from .address import make_address_columns
 from .base import Base
 from .user_mixin import UserMixin
 from .comment import CommentMixin
@@ -16,6 +17,7 @@ class Order(Base, UserMixin, CommentMixin):
     cart_id = Column(None, ForeignKey('carts.id'), nullable=False, unique=True)
     user_id = Column(None, ForeignKey('users.id'), nullable=True)
     closed = Column(types.Boolean, nullable=False, default=False)
+    shipping = make_address_columns('shipping')
 
     user = orm.relationship('User', backref='orders', foreign_keys=user_id)
 
@@ -118,6 +120,7 @@ class Shipment(Base, UserMixin):
     tracking_number = Column(types.String(255), nullable=True)
     source = Column(types.CHAR(4), nullable=False)
     cost = Column(custom_types.Money, nullable=True)
+    shipping = make_address_columns('shipping')
 
     order = orm.relationship('Order', backref='shipments')
     items = orm.relationship('CartItem', backref='shipments')

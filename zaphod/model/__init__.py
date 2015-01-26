@@ -1,6 +1,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+from .address import *
 from .article import *
 from .base import *
 from .creator import *

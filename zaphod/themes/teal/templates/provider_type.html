@@ -24,16 +24,15 @@
 % endif
 
 
-<section class="provider-type-info">
+<section class="section-provider-type">
   <div class="container">
     <div class="row">
-      <div class="span10 offset1">
+      <div class="col-md-12">
         <ul class="breadcrumb">
           <li>
-            <a href="${request.route_path('providers')}">
-              <i class="icon-arrow-left"></i> Service Provider Index
-            </a>
+            <a href="${request.route_path('providers')}">Service Provider Index</a>
           </li>
+          <li>${provider_type.plural_name}</li>
         </ul>
 
         <h1>${provider_type.plural_name}</h1>

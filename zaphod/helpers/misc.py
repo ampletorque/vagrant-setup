@@ -250,3 +250,27 @@ def loaded_time():
 def strip_tags(s):
     "Strip any sgml/xml/html tags from input. Might be a bit reckless."
     return re.sub(r'<.+?>|&\w*?;', u'', s)
+
+
+def display_url(url):
+    if not url:
+        return
+    # Strip off http:// or https://
+    url = url.split('//', 1)[-1]
+    # Strip off www also
+    if url.startswith('www.'):
+        url = url[4:]
+    # Strip off trailing slash
+    url = url.rstrip('/')
+    return url
+
+
+def google_static_map_url(addr, zoom=11, width=200, height=200, scale=1):
+    base_url = '//maps.google.com/maps/api/staticmap'
+    params = dict(markers='color:red|%s' % addr.inline,
+                  zoom=zoom,
+                  size='%dx%d' % (width, height),
+                  scale=scale,
+                  maptype='roadmap',
+                  sensor='false')
+    return literal(base_url + '?' + urlencode(params))

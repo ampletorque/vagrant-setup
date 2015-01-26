@@ -8,16 +8,18 @@
         % endif
       </div>
 
-      <div class="col-md-8">
-        <p class="pull-right">
-          ##% if provider.mailing.city:
-          ##  % if provider.mailing.state:
-          ##    ${provider.mailing.city}, ${provider.mailing.state}
-          ##  % elif provider.mailing.country:
-          ##    ${provider.mailing.city}, ${provider.mailing.country.upper()}
-          ##  % endif
-          ##% endif
-          ##<a href="${provider.home_url}">${h.display_url(provider.home_url)}</a>
+      <div class="col-md-10">
+        <p class="pull-right text-right">
+          % if provider.mailing.city:
+            % if provider.mailing.state:
+              ${provider.mailing.city}, ${provider.mailing.state}
+              &nbsp;&middot;&nbsp;
+            % elif provider.mailing.country_code:
+              ${provider.mailing.city}, ${provider.mailing.country_name}
+              &nbsp;&middot;&nbsp;
+            % endif
+          % endif
+          <a href="${provider.home_url}">${h.display_url(provider.home_url)}</a>
         </p>
         <h4>
           <a href="${request.node_url(provider)}">${provider.name}</a>

@@ -52,9 +52,8 @@ def main(global_config, **settings):
 
     config.include('.auth')
     config.include('.themes')
-    config.include('.views')
     config.include('.nodes')
-    config.include('.renderers')
+    config.include('.views')
 
     config.add_subscriber(new_response_subscriber, NewResponse)
     config.add_subscriber(add_renderer_globals, BeforeRender)

@@ -1,7 +1,8 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
-from ..views.browse import ProjectListView
-from .. import model
+
+from ..browse import ProjectListView
+from ... import model
 
 
 class TagListView(ProjectListView):
@@ -19,10 +20,10 @@ class TagListView(ProjectListView):
             filter(model.Project.tags.contains(self.tag))
 
 
-def tag_renderer(tag, system):
+def tag_view(tag, system):
     request = system['request']
     return TagListView(request, tag)()
 
 
 def includeme(config):
-    config.add_node_renderer(tag_renderer, model.Tag)
+    config.add_node_view(tag_view, model.Tag)

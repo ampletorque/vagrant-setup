@@ -2,11 +2,10 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from pyramid.httpexceptions import HTTPFound, HTTPNotFound
-from pyramid.renderers import render
 from formencode import Schema, validators
 from pyramid_uniform import Form, FormRenderer
 
-from .. import model, mail
+from ... import model, mail
 
 
 class AskQuestionForm(Schema):
@@ -15,7 +14,8 @@ class AskQuestionForm(Schema):
     message = validators.UnicodeString(not_empty=True)
 
 
-def ask_question_handler(project, request):
+def ask_question_view(project, system):
+    request = system['request']
     form = Form(request, schema=AskQuestionForm)
     if form.validate():
         email = form.data['email']
@@ -42,14 +42,15 @@ def ask_question_handler(project, request):
 
         return HTTPFound(location=request.node_url(project))
 
-    return render('ask_question.html', {
+    return {
         'renderer': FormRenderer(form),
         'action': 'ask-question',
         'project': project,
-    }, request)
+    }
 
 
-def remind_me_handler(project, request):
+def remind_me_view(project, system):
+    request = system['request']
     if not request.method == 'POST':
         raise HTTPNotFound
     pe = model.ProjectEmail(project=project,
@@ -64,14 +65,14 @@ def remind_me_handler(project, request):
     raise HTTPFound(location=request.node_url(project))
 
 
-def updates_handler(project, request):
-    return render('updates.html', {
+def updates_view(project, system):
+    return {
         'action': 'updates',
         'project': project,
-    }, request)
+    }
 
 
-def backers_handler(project, request):
+def backers_view(project, system):
     q = model.Session.query(model.User).\
         join(model.User.orders).\
         join(model.Order.cart).\
@@ -84,40 +85,31 @@ def backers_handler(project, request):
 
     backers = q.all()
 
-    return render('backers.html', {
+    return {
         'action': 'backers',
         'project': project,
         'backers': backers,
-    }, request)
+    }
 
 
-def project_renderer(project, system):
-    request = system['request']
-    suffix = system['suffix']
-
-    if suffix:
-        if len(suffix) != 1:
-            raise HTTPNotFound
-        action = suffix[0]
-        if action == 'remind-me':
-            return remind_me_handler(project, request)
-        elif action == 'ask-question':
-            return ask_question_handler(project, request)
-        elif action == 'updates':
-            return updates_handler(project, request)
-        elif action == 'backers':
-            return backers_handler(project, request)
-        else:
-            raise HTTPNotFound
-
-        raise NotImplementedError
-
-    return render('project.html', {
+def project_base_view(project, system):
+    return {
         'action': None,
         'project': project,
-    }, request)
+    }
 
 
 def includeme(config):
-    config.add_node_renderer(project_renderer, model.Project,
-                             accept_suffix=True)
+    config.add_node_view(project_base_view, model.Project,
+                         renderer='project.html')
+    config.add_node_view(remind_me_view, model.Project,
+                         suffix='remind-me')
+    config.add_node_view(ask_question_view, model.Project,
+                         suffix='ask-question',
+                         renderer='ask_question.html')
+    config.add_node_view(updates_view, model.Project,
+                         suffix='updates',
+                         renderer='updates.html')
+    config.add_node_view(backers_view, model.Project,
+                         suffix='backers',
+                         renderer='backers.html')

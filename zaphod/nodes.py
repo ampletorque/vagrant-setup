@@ -4,18 +4,19 @@ from __future__ import (absolute_import, division, print_function,
 from pyramid.compat import string_types
 
 
-def add_node_renderer(config, f, cls, accept_suffix=False):
+def add_node_view(config, view, cls, suffix=None, renderer=None):
     def register():
-        lookup = config.registry.setdefault('node_renderers', {})
-        lookup[cls] = (f, accept_suffix)
-    config.action(('node_renderer', cls), register)
+        lookup = config.registry.setdefault('node_views', {})
+        lookup[cls, suffix] = view, renderer
+    config.action(('node_view', cls, suffix), register)
 
 
-def lookup_node_renderer(registry, cls):
-    renderers = registry['node_renderers']
+def lookup_node_view(registry, cls, suffix):
+    views = registry['node_views']
+    key = cls, suffix
     while cls is not None:
-        if cls in renderers:
-            return renderers[cls]
+        if key in views:
+            return views[key]
         cls = cls.__base__
 
 
@@ -35,4 +36,4 @@ def htmlstring_renderer_factory(info):
 
 def includeme(config):
     config.add_renderer(name='htmlstring', factory=htmlstring_renderer_factory)
-    config.add_directive('add_node_renderer', add_node_renderer)
+    config.add_directive('add_node_view', add_node_view)

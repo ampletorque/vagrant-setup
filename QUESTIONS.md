@@ -1,17 +1,6 @@
 Active Open Questions
 =====================
 
-What's a better term for "renderers" for node renderers? It's not good to
-overload that word with Pyramid renderers, which are different.
-
-Ideas:
-    - node plan
-    - formatter
-    - node type
-    - node view
-    - node renderer?
-
-
 What level of granularity is required for international shipping calculation?
 Is just "international fee" enough?
 

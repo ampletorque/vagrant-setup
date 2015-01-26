@@ -1,7 +1,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from sqlalchemy import Table, Column, ForeignKey, types, orm
+from sqlalchemy import Column, ForeignKey, types, orm
 
 from . import custom_types
 from .address import make_address_columns

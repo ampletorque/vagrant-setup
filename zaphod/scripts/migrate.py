@@ -138,7 +138,7 @@ def migrate_creators(settings, user_map, image_map):
 
 def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
     project_map = {}
-    pledge_level_map = {}
+    product_map = {}
     batch_map = {}
     for old_project in scrappy_meta.Session.query(cs_model.Project):
         print("  project %s" % old_project.name)
@@ -198,7 +198,7 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
             migrate_image_associations(settings, image_map, old_update, update)
         for old_pledge_level in old_project.levels:
             print("    pledge level %s" % old_pledge_level.name)
-            pledge_level = model.PledgeLevel(
+            product = model.Product(
                 project=project,
                 name=old_pledge_level.name,
                 non_physical=old_pledge_level.non_physical,
@@ -207,10 +207,10 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
                 price=old_pledge_level.price,
                 accepts_preorders=(old_project.stage in (2, 3)),
             )
-            model.Session.add(pledge_level)
+            model.Session.add(product)
             migrate_image_associations(settings, image_map,
-                                       old_pledge_level, pledge_level)
-            pledge_level_map[old_pledge_level] = pledge_level
+                                       old_pledge_level, product)
+            product_map[old_pledge_level] = product
             for old_option in old_pledge_level.all_options:
                 print("      option %s" % old_option.name)
                 option = model.Option(
@@ -218,7 +218,7 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
                     gravity=old_option.gravity,
                     published=old_option.enabled,
                 )
-                pledge_level.options.append(option)
+                product.options.append(option)
                 for old_value in old_option.all_values:
                     print("        value %s" % old_value.description)
                     value = model.OptionValue(
@@ -229,12 +229,12 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
                     option.values.append(value)
             for old_batch in old_pledge_level.batches:
                 print("      batch %s" % old_batch.id)
-                batch = model.PledgeBatch(
+                batch = model.Batch(
                     qty=old_batch.qty,
                     delivery_date=old_batch.delivery_date
                 )
                 batch_map[old_batch] = batch
-                pledge_level.batches.append(batch)
+                product.batches.append(batch)
         for old_owner in old_project.ownerships:
             print("    ownership %s" % old_owner.account.email)
             new_owner = model.ProjectOwner(
@@ -250,7 +250,7 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
             )
             model.Session.add(new_owner)
         model.Session.flush()
-    return project_map, pledge_level_map, batch_map
+    return project_map, product_map, batch_map
 
 
 def lookup_location(old_user):
@@ -382,7 +382,7 @@ def migrate_providers(settings, user_map, image_map, provider_type_map):
         model.Session.flush()
 
 
-def migrate_orders(settings, user_map, pledge_level_map, batch_map):
+def migrate_orders(settings, user_map, product_map, batch_map):
     for old_order in scrappy_meta.Session.query(scrappy_model.Order):
         print("  order %s" % old_order.id)
         if old_order.account:
@@ -407,7 +407,7 @@ def migrate_orders(settings, user_map, pledge_level_map, batch_map):
             if old_batch:
                 delivery_date = old_ci.batch.delivery_date
             ci = model.CartItem(
-                pledge_level=pledge_level_map[old_ci.product],
+                product=product_map[old_ci.product],
                 price_each=old_ci.price_each,
                 qty_desired=old_ci.qty_desired,
                 crowdfunding=(old_ci.discriminator in ('P', 'E')),
@@ -463,11 +463,11 @@ def main(argv=sys.argv):
         migrate_articles(settings, user_map, image_map)
         tag_map = migrate_tags(settings, user_map)
         creator_map = migrate_creators(settings, user_map, image_map)
-        project_map, pledge_level_map, batch_map = \
+        project_map, product_map, batch_map = \
             migrate_projects(settings, user_map, creator_map,
                              tag_map, image_map)
         migrate_related_projects(settings, project_map)
-        migrate_orders(settings, user_map, pledge_level_map, batch_map)
+        migrate_orders(settings, user_map, product_map, batch_map)
 
         scott_user = model.Session.query(model.User).\
             filter_by(email='scott.torborg@crowdsupply.com').\

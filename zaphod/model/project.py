@@ -14,7 +14,7 @@ from pyramid_es.mixin import ElasticMixin, ESMapping, ESField, ESString
 from . import utils, custom_types
 from .base import Base, Session
 from .order import Cart, CartItem
-from .pledge import PledgeLevel
+from .product import Product
 from .node import Node
 
 
@@ -65,7 +65,7 @@ class Project(Node, ElasticMixin):
     )
 
     levels = orm.relationship(
-        'PledgeLevel',
+        'Product',
         backref='project',
         cascade='all, delete, delete-orphan',
     )
@@ -134,8 +134,8 @@ class Project(Node, ElasticMixin):
                                       CartItem.price_each)).\
             join(CartItem.cart).\
             join(Cart.order).\
-            join(CartItem.pledge_level).\
-            filter(PledgeLevel.project == self).\
+            join(CartItem.product).\
+            filter(Product.project == self).\
             scalar() or 0
         # FIXME XXX
         # elsewhere_amount = self.pledged_elsewhere_amount or 0
@@ -157,8 +157,8 @@ class Project(Node, ElasticMixin):
         return Session.query(func.sum(CartItem.qty_desired)).\
             join(CartItem.cart).\
             join(Cart.order).\
-            join(CartItem.pledge_level).\
-            filter(PledgeLevel.project == self).\
+            join(CartItem.product).\
+            filter(Product.project == self).\
             scalar() or 0
 
     @property

@@ -24,8 +24,7 @@ class VendorOrderItem(Base):
     id = Column(types.Integer, primary_key=True)
     vendor_order_id = Column(None, ForeignKey('vendor_orders.id'),
                              nullable=False)
-    pledge_level_id = Column(None, ForeignKey('pledge_levels.id'),
-                             nullable=False)
+    product_id = Column(None, ForeignKey('products.id'), nullable=False)
 
     order = orm.relationship('VendorOrder', backref='items')
-    pledge_level = orm.relationship('PledgeLevel')
+    product = orm.relationship('Product')

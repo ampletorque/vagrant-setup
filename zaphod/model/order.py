@@ -64,8 +64,8 @@ class CartItem(Base):
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     cart_id = Column(None, ForeignKey('carts.id'), nullable=False)
-    pledge_level_id = Column(None, ForeignKey('pledge_levels.id'),
-                             nullable=False)
+    product_id = Column(None, ForeignKey('products.id'),
+                        nullable=False)
     price_each = Column(custom_types.Money, nullable=False)
     qty_desired = Column(types.Integer, nullable=False, default=1)
     shipping_price = Column(custom_types.Money, nullable=False)
@@ -73,15 +73,15 @@ class CartItem(Base):
     expected_delivery_date = Column(types.DateTime, nullable=True)
     shipped_date = Column(types.DateTime, nullable=True)
     shipment_id = Column(None, ForeignKey('shipments.id'), nullable=True)
-    batch_id = Column(None, ForeignKey('pledge_batches.id'), nullable=True)
+    batch_id = Column(None, ForeignKey('batches.id'), nullable=True)
 
     status = Column(types.CHAR(16), nullable=False)
 
     customer_comments = Column(types.UnicodeText, nullable=False, default=u'')
 
     cart = orm.relationship('Cart', backref='items')
-    pledge_level = orm.relationship('PledgeLevel', backref='cart_items')
-    batch = orm.relationship('PledgeBatch', backref='cart_items')
+    product = orm.relationship('Product', backref='cart_items')
+    batch = orm.relationship('Batch', backref='cart_items')
 
     available_statuses = [
         ('unset', 'Unset'),
@@ -111,7 +111,7 @@ class CartItem(Base):
         """
         Calculate the price of this item, including option values.
         """
-        price = self.pledge_level.price
+        price = self.product.price
         for ov in self.option_values:
             price += ov.price_increase
         return price

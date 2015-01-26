@@ -20,7 +20,7 @@ class AddToCartSchema(Schema):
     "Validates add-to-cart actions."
     allow_extra_fields = False
     pre_validators = [NestedVariables]
-    pledge_level_id = validators.Int(not_empty=True)
+    product_id = validators.Int(not_empty=True)
     qty = validators.Int(not_empty=True, min=1)
     options = ForEach(validators.Int(not_empty=True))
 
@@ -61,12 +61,12 @@ class CartView(object):
 
         form = Form(request, schema=AddToCartSchema)
         if form.validate():
-            pledge_level = model.PledgeLevel.get(form.data['pledge_level_id'])
-            if not pledge_level:
+            product = model.Product.get(form.data['product_id'])
+            if not product:
                 raise HTTPBadRequest
             ci = model.CartItem(
                 qty_desired=form.data['qty'],
-                pledge_level=pledge_level,
+                product=product,
                 cart=cart,
                 # XXX Lots of other columns to add here.
             )

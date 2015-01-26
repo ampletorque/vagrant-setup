@@ -10,19 +10,18 @@ from .image import ImageMixin
 from .order import Cart, CartItem
 
 
-class PledgeBatch(Base):
-    __tablename__ = 'pledge_batches'
+class Batch(Base):
+    __tablename__ = 'batches'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
-    pledge_level_id = Column(None, ForeignKey('pledge_levels.id'),
-                             nullable=False)
+    product_id = Column(None, ForeignKey('products.id'), nullable=False)
     # None for qty means infinite units can be delivered in this batch.
     qty = Column(types.Integer, nullable=True)
     delivery_date = Column(types.DateTime, nullable=False)
 
 
-class PledgeLevel(Base, ImageMixin):
-    __tablename__ = 'pledge_levels'
+class Product(Base, ImageMixin):
+    __tablename__ = 'products'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     project_id = Column(None, ForeignKey('projects.node_id'), nullable=False)
@@ -34,7 +33,7 @@ class PledgeLevel(Base, ImageMixin):
     accepts_preorders = Column(types.Boolean, nullable=False, default=False)
     in_stock = Column(types.Boolean, nullable=False, default=False)
 
-    batches = orm.relationship('PledgeBatch', backref='pledge_level')
+    batches = orm.relationship('Batch', backref='product')
 
     @property
     def current_batch(self):
@@ -75,7 +74,7 @@ class PledgeLevel(Base, ImageMixin):
         return Session.query(func.sum(CartItem.qty_desired)).\
             join(CartItem.cart).\
             join(Cart.order).\
-            filter(CartItem.pledge_level == self).\
+            filter(CartItem.product == self).\
             filter(not_(CartItem.status.in_(['canc', 'frau']))).\
             scalar() or 0
 
@@ -94,13 +93,12 @@ class Option(Base):
     __tablename__ = 'options'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
-    pledge_level_id = Column(None, ForeignKey('pledge_levels.id'),
-                             nullable=False)
+    product_id = Column(None, ForeignKey('products.id'), nullable=False)
     name = Column(types.Unicode(255), nullable=False, default=u'')
     gravity = Column(types.Integer, nullable=False, default=0)
     published = Column(types.Boolean, nullable=False, default=False)
 
-    pledge_level = orm.relationship('PledgeLevel', backref='options')
+    product = orm.relationship('Product', backref='options')
 
     @property
     def published_values(self):

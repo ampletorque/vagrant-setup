@@ -19,8 +19,7 @@ class SKU(Base):
     __tablename__ = 'skus'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
-    pledge_level_id = Column(None, ForeignKey('pledge_levels.id'),
-                             nullable=False)
+    product_id = Column(None, ForeignKey('products.id'), nullable=False)
 
     option_values = orm.relationship('OptionValue',
                                      collection_class=set,

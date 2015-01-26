@@ -9,22 +9,13 @@ Ideas:
     - formatter
     - node type
     - node view
+    - node renderer?
 
 
 What level of granularity is required for international shipping calculation?
 Is just "international fee" enough?
 
     - Yes
-
-
-What's a better word than 'Pledge Level' for the available products that are associated with a project? Should we just go with 'Product'?
-
-Ideas:
-    - product
-    - thing
-    - SKU group
-    - project item
-    - project level
 
 
 How useful is it to be able to sort by table headers in admin interfaces?

@@ -9,7 +9,7 @@ from .image import *
 from .item import *
 from .node import *
 from .order import *
-from .pledge import *
+from .product import *
 from .project import *
 from .provider import *
 from .sku import *

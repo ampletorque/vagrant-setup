@@ -227,20 +227,20 @@
 </%def>
 
 
-<%def name="pledge_level(project, pledge_level)">
+<%def name="product(project, product)">
   <form method="post" action="${request.route_path('cart:add')}">
     <div class="pledge-level">
       <div class="clearfix">
         <div class="pull-left">
-          <h3>${pledge_level.name}</h3>
+          <h3>${product.name}</h3>
           <p class="pledge-level-delivery pledge-level-metadata">
-            % if pledge_level.non_physical:
+            % if product.non_physical:
               Thank you!
-            % elif pledge_level.in_stock:
+            % elif product.in_stock:
               In Stock
-            % elif pledge_level.is_available:
-              Ships ${pledge_level.current_delivery_date.strftime('%B %Y')}
-            % elif not pledge_level.batches:
+            % elif product.is_available:
+              Ships ${product.current_delivery_date.strftime('%B %Y')}
+            % elif not product.batches:
               Preview only: check back soon!
             % else:
               No longer available
@@ -249,9 +249,9 @@
         </div>
         <div class="pull-right text-right">
           <p class="pledge-level-price">
-            <sup>$</sup>${h.commas(int(pledge_level.price))}
+            <sup>$</sup>${h.commas(int(product.price))}
           </p>
-          % if not pledge_level.non_physical:
+          % if not product.non_physical:
             <p class="pledge-level-shipping pledge-level-metadata">
               Free US Shipping!
             </p>
@@ -261,13 +261,13 @@
 
       <div class="row">
         <div class="col-xs-4">
-          ${pledge_level.img(request, 'pledge-icon')}
+          ${product.img(request, 'product-icon')}
         </div>
 
         <div class="col-xs-8">
-          ${h.hidden('pledge_level_id', pledge_level.id)}
+          ${h.hidden('product_id', product.id)}
 
-          % for option in pledge_level.published_options:
+          % for option in product.published_options:
             <div class="form-group">
               <label for="option-${option.id}">${option.name}</label>
               <select id="option-${option.id}" name="option-${loop.index}.value_id" class="form-control">
@@ -282,11 +282,11 @@
             <button type="submit" class="btn btn-block btn-cta">Back This Project</button>
 
             <%
-              qty_claimed = pledge_level.qty_claimed
-              qty_remaining = pledge_level.qty_remaining
+              qty_claimed = product.qty_claimed
+              qty_remaining = product.qty_remaining
             %>
             <p class="pledge-level-supporters pledge-level-metadata text-right">
-              % if pledge_level.non_physical and qty_claimed > 0:
+              % if product.non_physical and qty_claimed > 0:
                 ${h.commas(qty_claimed)}
                 % if qty_claimed == 1:
                   person loves us
@@ -306,9 +306,9 @@
             </p>
 
           % elif project.status == 'available':
-            % if pledge_level.in_stock:
+            % if product.in_stock:
               <button type="submit" class="btn btn-block btn-cta">Add to Cart</button>
-            % elif pledge_level.accepts_preorders:
+            % elif product.accepts_preorders:
               <button type="submit" class="btn btn-block btn-cta">Pre-order</button>
             % endif
           % endif
@@ -320,10 +320,10 @@
 </%def>
 
 
-<%def name="pledge_levels(project)">
+<%def name="products(project)">
   <div class="project-block">
-    % for pledge_level in project.published_levels:
-      ${self.pledge_level(project, pledge_level)}
+    % for product in project.published_levels:
+      ${self.product(project, product)}
       % if not loop.last:
         <hr>
       % endif
@@ -395,7 +395,7 @@
       </div>
       <div class="col-md-4">
         ${self.stats_tile(project)}
-        ${self.pledge_levels(project)}
+        ${self.products(project)}
       </div>
     </div>
 

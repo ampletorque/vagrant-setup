@@ -75,7 +75,7 @@ class CartItem(Base):
     shipment_id = Column(None, ForeignKey('shipments.id'), nullable=True)
     batch_id = Column(None, ForeignKey('pledge_batches.id'), nullable=True)
 
-    status = Column(types.CHAR(8), nullable=False)
+    status = Column(types.CHAR(16), nullable=False)
 
     customer_comments = Column(types.UnicodeText, nullable=False, default=u'')
 
@@ -84,19 +84,24 @@ class CartItem(Base):
     batch = orm.relationship('PledgeBatch', backref='cart_items')
 
     available_statuses = [
-        ('init', 'Initial Value'),
-        ('failed', 'Project Did Not Fund'),
-        ('wait', 'Waiting for Production'),
+        ('unset', 'Unset'),
+        ('unfunded', 'Project Not Yet Funded'),
+        ('failed', 'Project Failed To Fund'),
+        ('waiting', 'Waiting for Items'),
+        ('payment pending', 'Payment Not Yet Processed'),
+        ('payent_failed', 'Payment Failed'),
+        ('cancelled', 'Cancelled'),
         ('shipped', 'Shipped'),
-        ('cancel', 'Cancelled'),
-        # XXX Add more!
+        ('abandoned', 'Abandoned'),
+        ('in process', 'In Process'),
+        ('being packed', 'Being Packed'),
     ]
 
     @property
     def status_description(self):
         return self.available_statuses[self.status]
 
-    def update_status(self):
+    def update_status(self, new_value):
         """
         Update the status of this item.
         """

@@ -76,7 +76,7 @@ class PledgeLevel(Base, ImageMixin):
             join(CartItem.cart).\
             join(Cart.order).\
             filter(CartItem.pledge_level == self).\
-            filter(not_(Order.status.in_(['canc', 'frau']))).\
+            filter(not_(CartItem.status.in_(['canc', 'frau']))).\
             scalar() or 0
 
     @property

@@ -13,6 +13,12 @@
         <h1 class="text-center">Cart</h1>
 
         ## XXX show items
+        % for item in cart.items:
+          <h3><a href="${request.node_path(item.product.project)}">${item.product.name}</a></h3>
+          <p>${h.currency(item.price_each)}</p>
+          <p>x ${item.qty_desired}</p>
+          <p>${item.product.name}</p>
+        % endfor
 
       </div>
     </div>

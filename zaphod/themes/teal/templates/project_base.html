@@ -229,6 +229,7 @@
 
 <%def name="product(project, product)">
   <form method="post" action="${request.route_path('cart:add')}">
+    ${h.auth_token_hidden_field(request)}
     <div class="pledge-level">
       <div class="clearfix">
         <div class="pull-left">
@@ -266,11 +267,12 @@
 
         <div class="col-xs-8">
           ${h.hidden('product_id', product.id)}
+          ${h.hidden('qty', 1)}
 
           % for option in product.published_options:
             <div class="form-group">
               <label for="option-${option.id}">${option.name}</label>
-              <select id="option-${option.id}" name="option-${loop.index}.value_id" class="form-control">
+              <select id="option-${option.id}" name="options-${loop.index}" class="form-control">
                 % for value in option.published_values:
                   <option value="${value.id}">${value.description}</option>
                 % endfor

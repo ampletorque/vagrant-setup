@@ -84,7 +84,7 @@ class CartItem(Base):
     batch = orm.relationship('Batch', backref='cart_items')
 
     available_statuses = [
-        ('unset', 'Unset'),
+        ('cart', 'Pre-checkout'),
         ('unfunded', 'Project Not Yet Funded'),
         ('failed', 'Project Failed To Fund'),
         ('waiting', 'Waiting for Items'),
@@ -112,8 +112,9 @@ class CartItem(Base):
         Calculate the price of this item, including option values.
         """
         price = self.product.price
-        for ov in self.option_values:
-            price += ov.price_increase
+        # XXX
+        #for ov in self.option_values:
+        #    price += ov.price_increase
         return price
 
 

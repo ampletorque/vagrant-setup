@@ -116,7 +116,7 @@ class Project(Node, ElasticMixin):
         elif self.accepts_preorders:
             return 'available'
         else:
-            return 'archive'
+            return 'funded'
 
     @property
     def progress_percent(self):

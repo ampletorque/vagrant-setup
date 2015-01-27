@@ -33,13 +33,21 @@ class CartView(object):
         request = self.request
         cart_id = request.session.get('cart_id')
         if cart_id:
-            cart = model.Cart.get(cart_id)
-        elif create_new:
+            cart = model.Session.query(model.Cart).\
+                filter(model.Cart.id == cart_id).\
+                filter(model.Cart.order == None).\
+                first()
+            if cart:
+                return cart
+            else:
+                request.session['cart_id'] = None
+
+        if create_new:
             cart = model.Cart()
             model.Session.add(cart)
-        else:
-            cart = None
-        return cart
+            model.Session.flush()
+            request.session['cart_id'] = cart.id
+            return cart
 
     @view_config(route_name='cart', renderer='cart.html')
     def cart(self):
@@ -57,27 +65,41 @@ class CartView(object):
     @view_config(route_name='cart:add')
     def add(self):
         request = self.request
-        cart = self.get_cart()
 
         form = Form(request, schema=AddToCartSchema)
         if form.validate():
             product = model.Product.get(form.data['product_id'])
             if not product:
+                assert False, "unknown product"
                 raise HTTPBadRequest
+
+            cart = self.get_cart(create_new=True)
+
+            project = product.project
+            crowdfunding = project.status == 'crowdfunding'
+            batch = product.current_batch
+
+            ov_ids = set(model.OptionValue.get(ov_id) for ov_id in
+                         form.data['options'])
+            # XXX Select SKU based on option values
+
+            assert cart and cart.id
             ci = model.CartItem(
+                cart=cart,
                 qty_desired=form.data['qty'],
                 product=product,
-                cart=cart,
-                # XXX Lots of other columns to add here.
+                shipping_price=0,
+                crowdfunding=crowdfunding,
+                batch=batch,
+                expected_delivery_date=batch.delivery_date,
+                status='cart',
             )
-            for opt_id in form.data['options']:
-                ov = model.OptionValue.get(opt_id)
-                ci.option_values.add(ov)
             ci.price_each = ci.calculate_price()
             model.Session.add(ci)
 
             return HTTPFound(location=request.route_url('cart'))
         else:
+            assert False, "invalid form"
             raise HTTPBadRequest
 
     @view_config(route_name='cart:confirmed', renderer='order.html')

@@ -1,0 +1,18 @@
+digraph finite_state_machine {
+	rankdir=TB;
+
+    node [shape = box];
+
+	node [penwidth = 1];
+
+    Prelaunch -> Crowdfunding;
+
+    Crowdfunding -> Suspended;
+    Crowdfunding -> Failed;
+    Crowdfunding -> Funded;
+    Crowdfunding -> Available;
+
+    Funded -> Available;
+
+    Available -> Funded;
+}

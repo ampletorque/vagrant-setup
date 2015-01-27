@@ -227,7 +227,7 @@
 </%def>
 
 
-<%def name="product(project, product)">
+<%def name="product_level(project, product)">
   <form method="post" action="${request.route_path('cart:add')}">
     ${h.auth_token_hidden_field(request)}
     <div class="pledge-level">
@@ -281,7 +281,11 @@
           % endfor
 
           % if project.status == 'crowdfunding':
-            <button type="submit" class="btn btn-block btn-cta">Back This Project</button>
+            % if product.is_available:
+              <button type="submit" class="btn btn-block btn-cta">Back This Project</button>
+            % else:
+              <button type="submit" class="btn btn-block btn-cta" disabled>All Gone</button>
+            % endif
 
             <%
               qty_claimed = product.qty_claimed
@@ -325,7 +329,7 @@
 <%def name="products(project)">
   <div class="project-block">
     % for product in project.published_levels:
-      ${self.product(project, product)}
+      ${self.product_level(project, product)}
       % if not loop.last:
         <hr>
       % endif

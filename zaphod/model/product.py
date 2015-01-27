@@ -85,8 +85,7 @@ class Product(Base, ImageMixin):
 
     @property
     def is_available(self):
-        # FIXME XXX Implement this
-        return True
+        return self.non_physical or self.in_stock or bool(self.current_batch)
 
 
 class Option(Base):

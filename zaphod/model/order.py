@@ -51,12 +51,27 @@ class Cart(Base):
     order = orm.relationship('Order', uselist=False, backref='cart')
 
     @property
+    def total(self):
+        return sum(ci.total for ci in self.items)
+
+    @property
     def items_total(self):
-        return sum((ci.price_each * ci.qty_desired) for ci in self.cart.items)
+        return sum((ci.price_each * ci.qty_desired) for ci in self.items)
 
     @property
     def shipping_total(self):
-        return sum(ci.shipping_price for ci in self.cart.items)
+        return sum(ci.shipping_price for ci in self.items)
+
+    @property
+    def non_physical(self):
+        return all(ci.product.non_physical for ci in self.items)
+
+    def refresh(self):
+        """
+        Refresh item statuses and reservations.
+        """
+        for item in self.items:
+            item.refresh()
 
 
 class CartItem(Base):
@@ -116,6 +131,17 @@ class CartItem(Base):
         #for ov in self.option_values:
         #    price += ov.price_increase
         return price
+
+    @property
+    def total(self):
+        return (self.price_each + self.shipping_price) * self.qty_desired
+
+    def refresh(self):
+        """
+        Refresh status and reservations.
+        """
+        # XXX Implement this!
+        pass
 
 
 class Shipment(Base, UserMixin):

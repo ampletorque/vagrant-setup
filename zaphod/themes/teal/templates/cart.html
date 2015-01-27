@@ -3,36 +3,146 @@
 <%namespace name="forms" file="common/forms.html"/>
 
 
-<%def name="title()">Cart</%def>
+<%def name="title()">Shopping Cart</%def>
+
+
+<%def name="shipping_text(cart)">
+  <h4>This order qualifies for free ground shipping!</h4>
+</%def>
 
 
 <section class="section-cart">
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        <h1 class="text-center">Cart</h1>
+        <h1 class="text-center">${self.title()}</h1>
+      </div>
+    </div>
 
-        ## XXX show items
-        % for item in cart.items:
-          <h3><a href="${request.node_path(item.product.project)}">${item.product.name}</a></h3>
-          <p>${h.currency(item.price_each)}</p>
-          <p>x ${item.qty_desired}</p>
-          <p>${item.product.name}</p>
-        % endfor
+    <div class="row">
+      <div class="col-lg-12">
+        <form action="${request.route_path('cart:update')}" class="form-wrapped form-cart-table" method="POST">
+          ${h.auth_token_hidden_field(request)}
 
+          <div class="row row-cart-header hidden-xs">
+            <div class="col-sm-6">
+              <h3>Description</h3>
+            </div>
+            <div class="col-sm-2">
+              <h3 class="text-center">Qty</h3>
+            </div>
+            <div class="col-sm-2">
+              <h3 class="text-center">Each</h3>
+            </div>
+            <div class="col-sm-2">
+              <h3 class="text-right">Total</h3>
+            </div>
+          </div>
+
+          % for item in cart.items:
+            <div class="row row-cart-item">
+              <div class="col-sm-6">
+                <div class="row">
+                  <div class="col-xs-3">
+                    ${item.product.img(request, 'product-icon')}
+                  </div>
+                  <div class="col-xs-9">
+                    <h3><a href="${request.node_path(item.product.project)}">${item.product.name}</a></h3>
+                    <h4>${item.product.project.name}</h4>
+                    <p>Ships ${item.expected_delivery_date.strftime('%B %Y')}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-2 text-center">
+                ${h.hidden('items-%d.id' % loop.index, value=item.id)}
+                <input type="number" name="items-${loop.index}.qty" value="${item.qty_desired}" class="form-control" min="0" required>
+                <a href="${request.route_path('cart:remove', _query=dict(id=item.id, **h.auth_token_get_param(request)))}">Remove</a>
+              </div>
+
+              <div class="col-sm-2 text-center">${h.currency(item.price_each)}</div>
+              <div class="col-sm-2 text-right">${h.currency(item.total)}</div>
+            </div>
+          % endfor
+
+          <div class="row row-cart-footer">
+            <div class="col-sm-6">${self.shipping_text(cart)}</div>
+            <div class="col-sm-2 text-center">
+              <button type="submit" class="btn btn-default">Update Qty</button>
+            </div>
+            <div class="col-sm-2 text-center">Order Total</div>
+            <div class="col-sm-2 text-right">${h.currency(cart.total)}</div>
+          </div>
+        </form>
       </div>
     </div>
   </div>
 </section>
 
 
+<%def name="address_fields(renderer, name, addr=None)">
+  ${forms.ltext(renderer, '%s.first_name' % name, addr and addr.first_name, label='First Name')}
+  ${forms.ltext(renderer, '%s.last_name' % name, addr and addr.first_name, label='Last Name')}
+  ${forms.ltext(renderer, '%s.address1' % name, addr and addr.first_name, label='Address 1')}
+  ${forms.ltext(renderer, '%s.address2' % name, addr and addr.first_name, label='Address 2')}
+  ${forms.ltext(renderer, '%s.city' % name, addr and addr.first_name, label='City')}
+  ${forms.ltext(renderer, '%s.state' % name, addr and addr.first_name, label='State')}
+  ${forms.ltext(renderer, '%s.postal_code' % name, addr and addr.first_name, label='Postal Code')}
+  ${forms.ltext(renderer, '%s.phone' % name, addr and addr.first_name, label='Phone')}
+  ${forms.ltext(renderer, '%s.country_code' % name, addr and addr.first_name, label='Country')}
+</%def>
+
+
+<%def name="payment_block(renderer, cart, billing, shipping, masked_card)">
+  ${forms.ltext(renderer, 'cc.number', label='Card Number')}
+  ${forms.ltext(renderer, 'cc.expires_year', label='Expiration Year')}
+  ${forms.ltext(renderer, 'cc.expires_month', label='Expiration Month')}
+  ${forms.ltext(renderer, 'cc.code', label='CVV Code')}
+
+  ${forms.lcheckbox(renderer, 'save_credit_card', True, label='Save credit card information for future use')}
+  ${forms.lcheckbox(renderer, 'billing_same_as_shipping', True, label='Credit card billing address is the same as the shipping address')}
+
+  ${self.address_fields(renderer, 'billing', billing)}
+</%def>
+
+
 <section class="section-checkout">
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        ${renderer.begin(class_='form-horizontal')}
+        <h1 class="text-center">Checkout</h1>
+      </div>
+    </div>
 
-          ## XXX add fields
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        ${renderer.begin(id='checkout-form', class_='form-horizontal form-wrapped')}
+
+        % if not cart.non_physical:
+            <fieldset>
+              <legend>Shipping Information</legend>
+              ${self.address_fields(renderer, 'shipping', None)}
+
+            </fieldset>
+          % endif
+
+          <fieldset>
+            <legend>Payment Information</legend>
+            ${self.payment_block(renderer, cart, billing=None, shipping=None, masked_card=None)}
+          </fieldset>
+
+          <fieldset>
+            <legend>Order Information</legend>
+            ${forms.ltext(renderer, 'email', request.user and request.user.email, label='Email Address', required=True, **{'data-required': 'true'})}
+            ${forms.ltextarea(renderer, 'comments', rows=4)}
+          </fieldset>
+
+          <%forms:actions>
+            <button type="submit" class="btn btn-cta">
+              <i class="fa fa-lock"></i> Place Secure Order
+            </button>
+            <span class="submit-hint">This will place your order immediately.</span>
+          </%forms:actions>
 
         ${renderer.end()}
       </div>

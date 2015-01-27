@@ -175,3 +175,16 @@
     </div>
   </div>
 </%def>
+
+
+<%def name="address_fields(renderer, name, addr=None)">
+  ${self.ltext(renderer, '%s.first_name' % name, addr and addr.first_name, label='First Name')}
+  ${self.ltext(renderer, '%s.last_name' % name, addr and addr.first_name, label='Last Name')}
+  ${self.ltext(renderer, '%s.address1' % name, addr and addr.first_name, label='Address 1')}
+  ${self.ltext(renderer, '%s.address2' % name, addr and addr.first_name, label='Address 2')}
+  ${self.ltext(renderer, '%s.city' % name, addr and addr.first_name, label='City')}
+  ${self.ltext(renderer, '%s.state' % name, addr and addr.first_name, label='State')}
+  ${self.ltext(renderer, '%s.postal_code' % name, addr and addr.first_name, label='Postal Code')}
+  ${self.ltext(renderer, '%s.phone' % name, addr and addr.first_name, label='Phone')}
+  ${self.ltext(renderer, '%s.country_code' % name, addr and addr.first_name, label='Country')}
+</%def>

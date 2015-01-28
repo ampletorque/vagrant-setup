@@ -9,6 +9,7 @@ from .image import *
 from .item import *
 from .node import *
 from .order import *
+from .payment import *
 from .product import *
 from .project import *
 from .provider import *

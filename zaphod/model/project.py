@@ -13,7 +13,7 @@ from pyramid_es.mixin import ElasticMixin, ESMapping, ESField, ESString
 
 from . import utils, custom_types
 from .base import Base, Session
-from .order import Cart, CartItem
+from .cart import Cart, CartItem
 from .product import Product
 from .node import Node
 

@@ -4,6 +4,7 @@ from __future__ import (absolute_import, division, print_function,
 from .address import *
 from .article import *
 from .base import *
+from .cart import *
 from .creator import *
 from .image import *
 from .item import *

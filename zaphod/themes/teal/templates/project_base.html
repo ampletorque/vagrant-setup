@@ -95,19 +95,19 @@
     <div class="progress-bar" style="width: ${project.progress_percent}%"></div>
   </div>
 
-  <div class="factoids row">
-    <div class="fact col-xs-4" data-countdown-to="${project.end_time.isoformat()}">
+  <div class="factoids">
+    <div class="fact" data-countdown-to="${project.end_time.isoformat()}">
       <%
         val, units = project.remaining
       %>
       <p>${val}</p>
       <span>${units} left</span>
     </div>
-    <div class="fact col-xs-4">
+    <div class="fact">
       <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
       <span>funded</span>
     </div>
-    <div class="fact col-xs-4">
+    <div class="fact">
       <p>${h.commas(project.num_pledges)}</p>
       <span>pledges</span>
     </div>
@@ -130,16 +130,16 @@
   <div class="status-bar status-bar-danger">
     <div class="status-bar-left">Campaign Suspended</div>
   </div>
-  <div class="factoids row">
-    <div class="fact col-xs-4">
+  <div class="factoids">
+    <div class="fact">
       <p>${h.format_datetime(request, project.suspended_time, '%b %d')}</p>
       <span>suspended</span>
     </div>
-    <div class="fact col-xs-4">
+    <div class="fact">
       <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
       <span>funded</span>
     </div>
-    <div class="fact col-xs-4">
+    <div class="fact">
       <p>${h.commas(project.num_pledges)}</p>
       <span>pledges</span>
     </div>
@@ -157,16 +157,16 @@
   <div class="status-bar status-bar-primary">
     <span class="status-bar-left">Funded!</span>
   </div>
-  <div class="factoids row">
-    <div class="fact col-xs-4">
+  <div class="factoids">
+    <div class="fact">
       <p>${h.format_datetime(request, project.final_day, '%b %d')}</p>
       <span>Funded on</span>
     </div>
-    <div class="fact col-xs-4">
+    <div class="fact">
       <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
       <span>funded</span>
     </div>
-    <div class="fact col-xs-4">
+    <div class="fact">
       <p>${h.commas(project.num_pledges)}</p>
       <span>pledges</span>
     </div>
@@ -189,16 +189,16 @@
     <span class="status-bar-left">Funded!</span>
     <span class="status-bar-right">Pre-Order Now</span>
   </div>
-  <div class="factoids row">
-    <div class="fact col-xs-4">
+  <div class="factoids">
+    <div class="fact">
       <p>${h.format_datetime(request, project.final_day, '%b %d')}</p>
       <span>Funded on</span>
     </div>
-    <div class="fact col-xs-4">
+    <div class="fact">
       <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
       <span>funded</span>
     </div>
-    <div class="fact col-xs-4">
+    <div class="fact">
       <p>${h.commas(project.num_pledges)}</p>
       <span>pledges</span>
     </div>

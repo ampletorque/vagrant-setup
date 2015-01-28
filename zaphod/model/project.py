@@ -119,8 +119,10 @@ class Project(Node, ElasticMixin):
             return 'crowdfunding'
         elif self.pledged_amount < self.target:
             return 'failed'
-        elif self.accepts_preorders:
+        elif self.accepts_preorders and self.target:
             return 'available'
+        elif self.accepts_preorders:
+            return 'stock-only'
         else:
             return 'funded'
 
@@ -203,6 +205,16 @@ class Project(Node, ElasticMixin):
     def published_ownerships(self):
         # XXX FIXME turn into a relationship
         return [owner for owner in self.ownerships if owner.show_on_campaign]
+
+    @property
+    def price_range_low(self):
+        return min(pl.price for pl in self.levels
+                   if pl.published and not pl.non_physical)
+
+    @property
+    def price_range_high(self):
+        return max(pl.price for pl in self.levels
+                   if pl.published and not pl.non_physical)
 
     @classmethod
     def elastic_mapping(cls):

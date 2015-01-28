@@ -1,5 +1,5 @@
 <%def name="numeric_fact(amount, label, format)">
-  <div class="fact ${'fact-micro' if amount > 1000000 else 'fact-small' if amount > 100000 else ''} col-xs-4">
+  <div class="fact ${'fact-micro' if amount > 1000000 else 'fact-small' if amount > 100000 else ''}">
     % if format == '$':
       <p><sup>$</sup>${h.commas(amount)}</p>
     % elif format == '%':
@@ -11,15 +11,15 @@
   </div>
 </%def>
 
-<%def name="project_metadata(project)">
-  <div class="stats stats-project">
+<%def name="crowdfunding_metadata(project)">
+  <div class="stats stats-crowdfunding">
     <div class="progress">
       <div class="progress-bar" style="width:${project.progress_percent}%"></div>
     </div>
-    <div class="factoids row">
+    <div class="factoids">
       ${self.numeric_fact(project.pledged_amount, 'raised', '$')}
       ${self.numeric_fact(project.progress_percent, 'funded', '%')}
-      <div class="fact col-xs-4" data-countdown-to="${project.end_time.isoformat()}">
+      <div class="fact" data-countdown-to="${project.end_time.isoformat()}">
         <%
           val, units = project.remaining
         %>
@@ -36,10 +36,10 @@
     <div class="status-bar status-bar-danger">
       <div class="status-bar-left">Campaign Suspended</div>
     </div>
-    <div class="factoids row">
+    <div class="factoids">
       ${self.numeric_fact(project.pledged_amount, 'raised', '$')}
       ${self.numeric_fact(project.progress_percent, 'funded', '%')}
-      <div class="fact col-xs-4">
+      <div class="fact">
         <p>${h.format_datetime(request, project.suspended_time, '%b %d')}</p>
         <span>suspended</span>
       </div>
@@ -53,10 +53,10 @@
     <div class="status-bar status-bar-light">
       <div class="status-bar-left">Funding Unsuccessful</div>
     </div>
-    <div class="factoids row">
+    <div class="factoids">
       ${self.numeric_fact(project.pledged_amount, 'raised', '$')}
       ${self.numeric_fact(project.progress_percent, 'funded', '%')}
-      <div class="fact col-xs-4">
+      <div class="fact">
         <p>${h.format_datetime(request, project.end_time, '%b %d')}</p>
         <span>ended</span>
       </div>
@@ -70,9 +70,10 @@
     <div class="status-bar status-bar-light">
       <div class="status-bar-left">Coming Soon</div>
     </div>
-    <div class="factoids row">
-      <div class="fact col-xs-12">
-        <p>Sign up for project updates.</p>
+    <div class="factoids">
+      <div class="fact">
+        <p>Sign up</p>
+        <span>Subscribe for project updates.</span>
       </div>
     </div>
   </div>
@@ -85,10 +86,10 @@
       <div class="status-bar-left">Funded!</div>
       <div class="status-bar-right">No Longer Available</div>
     </div>
-    <div class="factoids row">
+    <div class="factoids">
       ${self.numeric_fact(project.pledged_amount, 'raised', '$')}
       ${self.numeric_fact(project.progress_percent, 'funded', '%')}
-      <div class="fact col-xs-4">
+      <div class="fact">
         <p>${h.commas(project.num_pledges)}</p>
         <span>pledges</span>
       </div>
@@ -103,12 +104,37 @@
       <div class="status-bar-left">Funded!</div>
       <div class="status-bar-right">Order Now</div>
     </div>
-    <div class="factoids row">
+    <div class="factoids">
       ${self.numeric_fact(project.pledged_amount, 'raised', '$')}
       ${self.numeric_fact(project.progress_percent, 'funded', '%')}
-      <div class="fact col-xs-4">
+      <div class="fact">
         <p>${h.commas(project.num_pledges)}</p>
         <span>pledges</span>
+      </div>
+    </div>
+  </div>
+</%def>
+
+
+<%def name="price_range(project)">
+  % if project.price_range_low == project.price_range_high:
+    <sup>$</sup>${h.commas(project.price_range_low)}
+  % else:
+    <sup>$</sup>${h.commas(project.price_range_low)} - <sup>$</sup>${h.commas(project.price_range_high)}
+  % endif
+</%def>
+
+
+<%def name="stock_metadata(project)">
+  <div class="stats stats-pre-order clearfix">
+    <div class="status-bar status-bar-dark">
+      <div class="status-bar-left">In Stock</div>
+      <div class="status-bar-right">Order Now</div>
+    </div>
+    <div class="factoids">
+      <div class="fact">
+        <span>options from</span>
+        <p>${self.price_range(project)}</p>
       </div>
     </div>
   </div>
@@ -130,7 +156,7 @@
 
 <%def name="metadata_inline(project)">
   % if project.status == 'crowdfunding':
-    ${self.project_metadata(project)}
+    ${self.crowdfunding_metadata(project)}
   % elif project.status == 'suspended':
     ${self.suspended_metadata(project)}
   % elif project.status == 'funded':
@@ -139,6 +165,8 @@
     ${self.prelaunch_metadata(project)}
   % elif project.status == 'available':
     ${self.available_metadata(project)}
+  % elif project.status == 'stock-only':
+    ${self.stock_metadata(project)}
   % elif project.status == 'failed':
     ${self.failed_metadata(project)}
   % endif

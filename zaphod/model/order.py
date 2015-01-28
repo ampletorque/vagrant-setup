@@ -128,8 +128,8 @@ class CartItem(Base):
         """
         price = self.product.price
         # XXX
-        #for ov in self.option_values:
-        #    price += ov.price_increase
+        # for ov in self.option_values:
+        #     price += ov.price_increase
         return price
 
     @property

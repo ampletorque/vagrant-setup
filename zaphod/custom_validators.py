@@ -1,9 +1,11 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import re
+import itertools
+
 from formencode import validators, Schema, national
 from formencode.api import FancyValidator
-from formencode.schema import SimpleFormValidator
 from formencode.validators import Invalid, _
 
 
@@ -52,7 +54,6 @@ class WildcardSchema(Schema):
     allow_extra_fields = True
     filter_extra_fields = False
     if_missing = None
-
 
 
 class BetterUSPhoneNumber(FancyValidator):

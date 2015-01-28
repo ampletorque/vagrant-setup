@@ -112,8 +112,8 @@ class CartView(object):
             crowdfunding = project.status == 'crowdfunding'
             batch = product.current_batch
 
-            ov_ids = set(model.OptionValue.get(ov_id) for ov_id in
-                         form.data['options'])
+            # ov_ids = set(model.OptionValue.get(ov_id) for ov_id in
+            #              form.data['options'])
             # XXX Select or generate SKU based on option values
 
             assert cart and cart.id

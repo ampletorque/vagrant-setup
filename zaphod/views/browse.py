@@ -22,14 +22,10 @@ class ProjectListView(object):
 
     def base_q(self):
         return model.Session.query(model.Project).\
+            filter(model.Project.suspended_time == None).\
             filter(model.Project.published == True).\
             filter(model.Project.listed == True).\
             order_by(model.Project.gravity)
-        # return model.Session.query(model.Project).\
-        #     filter(model.Project.suspended_time == None).\
-        #     filter(model.Project.published == True).\
-        #     filter(model.Project.listed == True).\
-        #     order_by(model.Project.gravity)
 
     def render_html(self):
         q = self.base_q()
@@ -102,10 +98,10 @@ class AvailableView(ProjectListView):
 
     def base_q(self):
         utcnow = datetime.utcnow()
-        # XXX Filter out failed projects and projects that don't accept
-        # preorders.
+        # XXX Filter out failed projects in SQL.
         return ProjectListView.base_q(self).\
-            filter(utcnow >= model.Project.end_time)
+            filter(utcnow >= model.Project.end_time).\
+            filter(model.Project.accepts_preorders == True)
 
 
 class ArchiveView(ProjectListView):
@@ -113,10 +109,10 @@ class ArchiveView(ProjectListView):
 
     def base_q(self):
         utcnow = datetime.utcnow()
-        # XXX Filter out projects which aren't available for pre-order or
-        # in-stock.
+        # XXX Filter out failed projects in SQL.
         return ProjectListView.base_q(self).\
-            filter(utcnow >= model.Project.end_time)
+            filter(utcnow >= model.Project.end_time).\
+            filter(model.Project.accepts_preorders == False)
 
 
 def includeme(config):

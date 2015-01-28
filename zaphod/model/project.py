@@ -90,10 +90,16 @@ class Project(Node, ElasticMixin):
         return creator_path + '/' + project_path
 
     def is_live(self):
-        return True
+        """
+        Return True if the project should be available for the public to view
+        (e.g. it's not pre-release).
+        """
+        utcnow = utils.utcnow()
+        return (utcnow > self.start_time) or self.listed
 
     def is_failed(self):
-        return False
+        utcnow = utils.utcnow()
+        return (self.pledged_amount < self.target) and (utcnow > self.end_time)
 
     @property
     def status(self):

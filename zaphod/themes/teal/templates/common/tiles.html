@@ -69,13 +69,17 @@
   <div class="stats stats-prelaunch">
     <div class="status-bar status-bar-light">
       <div class="status-bar-left">Coming Soon</div>
-      <div class="status-bar-right">Signup For Updates</div>
+    </div>
+    <div class="factoids row">
+      <div class="fact col-xs-12">
+        <p>Sign up for project updates.</p>
+      </div>
     </div>
   </div>
 </%def>
 
 
-<%def name="archive_metadata(project)">
+<%def name="funded_metadata(project)">
   <div class="stats stats-pre-order">
     <div class="status-bar status-bar-primary">
       <div class="status-bar-left">Funded!</div>
@@ -129,8 +133,8 @@
     ${self.project_metadata(project)}
   % elif project.status == 'suspended':
     ${self.suspended_metadata(project)}
-  % elif project.status == 'archive':
-    ${self.archive_metadata(project)}
+  % elif project.status == 'funded':
+    ${self.funded_metadata(project)}
   % elif project.status == 'prelaunch':
     ${self.prelaunch_metadata(project)}
   % elif project.status == 'available':

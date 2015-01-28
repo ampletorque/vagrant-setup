@@ -1,6 +1,6 @@
 Pledge
 ======
 
-.. automodule:: zaphod.model.pledge
+.. automodule:: zaphod.model.product
     :members:
     :undoc-members:

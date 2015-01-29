@@ -8,8 +8,7 @@ import time
 
 from six.moves.urllib.parse import urlencode
 
-from webhelpers2.html.tags import (HTML, _make_safe_id_component, literal,
-                                   hidden)
+from webhelpers2.html.tags import HTML, _make_safe_id_component, literal
 
 
 def grouper(n, iterable):
@@ -275,20 +274,3 @@ def google_static_map_url(addr, zoom=11, width=200, height=200, scale=1):
                   maptype='roadmap',
                   sensor='false')
     return literal(base_url + '?' + urlencode(params))
-
-
-token_key = "_authentication_token"
-
-
-def authentication_token(request):
-    """Return current auth token, creating it first if it doesn't exist."""
-    return request.session.get_csrf_token()
-
-
-def auth_token_hidden_field(request):
-    token = hidden(token_key, authentication_token(request))
-    return HTML.div(token, style="display: none;")
-
-
-def auth_token_get_param(request):
-    return {token_key: authentication_token(request)}

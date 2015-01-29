@@ -5,15 +5,23 @@
 </%def>
 
 
-<%def name="element(renderer=None, label=None, name=None, hint=None, label_cols=3, has_error=False)">
-  <div class="form-group ${'has-error' if has_error or (renderer and renderer.is_error(name)) else ''}">
+<%def name="element(renderer=None, label=None, name=None, names=None, hint=None, label_cols=3, has_error=False)">
+  <%
+    assert not (names and name)
+    if name and not names:
+      names = [name]
+      name = names[0]
+  %>
+  <div class="form-group ${'has-error' if has_error or (renderer and names and any(renderer.is_error(name) for name in names)) else ''}">
     % if label or name:
       ${h.HTML.label(label or h.prettify(name), for_=h.make_id_component(name), class_='control-label col-sm-%d' % label_cols)}
     % endif
     <div class="col-sm-${12 - label_cols} ${'' if (label or name) else ('col-sm-offset-%d' % label_cols)}">
       ${caller.body()}
-      % if renderer and name:
-        ${renderer.errorlist(name)}
+      % if renderer and names:
+        % for name in names:
+          ${renderer.errorlist(name)}
+        % endfor
       % endif
       ${self.hint(hint)}
     </div>
@@ -178,13 +186,32 @@
 
 
 <%def name="address_fields(renderer, name, addr=None)">
-  ${self.ltext(renderer, '%s.first_name' % name, addr and addr.first_name, label='First Name')}
-  ${self.ltext(renderer, '%s.last_name' % name, addr and addr.first_name, label='Last Name')}
-  ${self.ltext(renderer, '%s.address1' % name, addr and addr.first_name, label='Address 1')}
-  ${self.ltext(renderer, '%s.address2' % name, addr and addr.first_name, label='Address 2')}
+  <%self:element renderer="${renderer}" name="${'%s.country_code' % name}" label="Country">
+    <div class="row">
+      <div class="col-xs-8">
+        ${renderer.select('%s.country_code' % name, 'us', h.allowed_countries(), class_='form-control')}
+      </div>
+    </div>
+  </%self:element>
+
+  <%self:element renderer="${renderer}" names="${['%s.first_name' % name, '%s.last_name' % name]}" label="Name">
+    <div class="row">
+      <div class="col-xs-6">
+        ${renderer.text('%s.first_name' % name, addr and addr.first_name, placeholder='First', class_='form-control')}
+      </div>
+      <div class="col-xs-6">
+        ${renderer.text('%s.last_name' % name, addr and addr.first_name, placeholder='Last', class_='form-control')}
+      </div>
+    </div>
+  </%self:element>
+
+  <%self:element renderer="${renderer}" names="${['%s.address1', '%s.address2']}" label="Address">
+    ${renderer.text('%s.address1' % name, addr and addr.address1, class_='form-control')}
+    ${renderer.text('%s.address2' % name, addr and addr.address1, class_='form-control')}
+  </%self:element>
+
   ${self.ltext(renderer, '%s.city' % name, addr and addr.first_name, label='City')}
   ${self.ltext(renderer, '%s.state' % name, addr and addr.first_name, label='State')}
   ${self.ltext(renderer, '%s.postal_code' % name, addr and addr.first_name, label='Postal Code')}
   ${self.ltext(renderer, '%s.phone' % name, addr and addr.first_name, label='Phone')}
-  ${self.ltext(renderer, '%s.country_code' % name, addr and addr.first_name, label='Country')}
 </%def>

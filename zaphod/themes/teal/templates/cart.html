@@ -8,10 +8,31 @@
 
 
 <%def name="payment_block(renderer, cart, billing, shipping, masked_card)">
-  ${forms.ltext(renderer, 'cc.number', label='Card Number')}
-  ${forms.ltext(renderer, 'cc.expires_year', label='Expiration Year')}
-  ${forms.ltext(renderer, 'cc.expires_month', label='Expiration Month')}
-  ${forms.ltext(renderer, 'cc.code', label='CVV Code')}
+  <%forms:element renderer="${renderer}" name="cc.number" label="Card Number">
+    <div class="row">
+      <div class="col-sm-8">
+        ${renderer.text('cc.number', class_='form-control')}
+      </div>
+    </div>
+  </%forms:element>
+
+  <%forms:element renderer="${renderer}" names="${['cc.expires_month', 'cc.expires_year']}" label="Expiration">
+    <div class="row">
+      <div class="col-xs-6 col-sm-3">
+        ${h.cc_expires_month_select(renderer, 'cc.expires_month', class_='form-control')}
+      </div>
+      <div class="col-xs-6 col-sm-3">
+        ${h.cc_expires_year_select(renderer, 'cc.expires_year', class_='form-control')}
+      </div>
+    </div>
+  </%forms:element>
+  <%forms:element renderer="${renderer}" name="cc.code" label="CVV Code">
+    <div class="row">
+      <div class="col-sm-4 col-xs-9">
+        ${renderer.text('cc.code', class_='form-control')}
+      </div>
+    </div>
+  </%forms:element>
 
   ${forms.lcheckbox(renderer, 'save_credit_card', True, label='Save credit card information for future use')}
   ${forms.lcheckbox(renderer, 'billing_same_as_shipping', True, label='Credit card billing address is the same as the shipping address')}

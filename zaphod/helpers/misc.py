@@ -1,6 +1,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+from datetime import date
 import re
 import hashlib
 import string
@@ -8,7 +9,10 @@ import time
 
 from six.moves.urllib.parse import urlencode
 
-from webhelpers2.html.tags import HTML, _make_safe_id_component, literal
+from webhelpers2.html.tags import (HTML, _make_safe_id_component, literal,
+                                   select)
+
+from iso3166 import countries
 
 
 def grouper(n, iterable):
@@ -274,3 +278,30 @@ def google_static_map_url(addr, zoom=11, width=200, height=200, scale=1):
                   maptype='roadmap',
                   sensor='false')
     return literal(base_url + '?' + urlencode(params))
+
+
+def cc_expires_month_select(renderer, name, **kwargs):
+    months = ['%02d' % ii for ii in range(1, 13)]
+    if renderer:
+        return renderer.select(name, None, months, **kwargs)
+    else:
+        return select(name, None, months, **kwargs)
+
+
+def cc_expires_year_select(renderer, name, **kwargs):
+    current_year = date.today().year
+    # VISA Gift Cards have very very long expiration times.
+    end_year = current_year + 11
+    years = range(current_year, end_year)
+    if renderer:
+        return renderer.select(name, None, years, **kwargs)
+    else:
+        return select(name, None, years, **kwargs)
+
+
+def allowed_countries():
+    ret = [('us', 'United States'),
+           ('ca', 'Canada')]
+    ret.extend([(c.alpha2.lower(), c.name) for c in countries
+                if (c.alpha2.lower(), c.name) not in ret])
+    return ret

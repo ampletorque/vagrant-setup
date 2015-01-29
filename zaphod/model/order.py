@@ -22,7 +22,7 @@ class Order(Base, UserMixin, CommentMixin):
     user = orm.relationship('User', backref='orders', foreign_keys=user_id)
 
     @property
-    def order_total(self):
+    def total(self):
         """
         Return the total 'price' of this order, including shipping and all
         associated surcharges charged to the customer.

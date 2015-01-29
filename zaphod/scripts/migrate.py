@@ -44,6 +44,7 @@ def migrate_images(settings):
     for old_im in scrappy_meta.Session.query(scrappy_model.ImageMeta):
         print("image %s" % old_im.name)
         new_im = model.ImageMeta(
+            id=old_im.id,
             name=old_im.name,
             alt=old_im.alt,
             title=old_im.title,
@@ -70,6 +71,7 @@ def migrate_articles(settings, user_map, image_map):
     for old_article in scrappy_meta.Session.query(scrappy_model.Article):
         print("article %s" % old_article.name)
         article = model.Article(
+            id=old_article.id,
             name=old_article.name,
             teaser=old_article.teaser,
             body=old_article.body.text,
@@ -94,6 +96,7 @@ def migrate_tags(settings, user_map):
     for old_tag in scrappy_meta.Session.query(cs_model.Tag):
         print("tag %s" % old_tag.name)
         tag = model.Tag(
+            id=old_tag.id,
             name=old_tag.name,
             teaser=old_tag.name,
             body=old_tag.body.text,
@@ -116,6 +119,7 @@ def migrate_creators(settings, user_map, image_map):
     for old_creator in scrappy_meta.Session.query(cs_model.Creator):
         print("creator %s" % old_creator.name)
         creator = model.Creator(
+            id=old_creator.id,
             name=old_creator.name,
             teaser=old_creator.teaser,
             location=old_creator.location,
@@ -143,6 +147,7 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
     for old_project in scrappy_meta.Session.query(cs_model.Project):
         print("  project %s" % old_project.name)
         project = model.Project(
+            id=old_project.id,
             creator=creator_map[old_project.creator],
             name=old_project.name,
 
@@ -182,6 +187,7 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
         for old_update in old_project.updates:
             print("    update %s" % old_update.name)
             update = model.ProjectUpdate(
+                id=old_update.id,
                 project=project,
                 name=old_update.name,
                 teaser=old_update.teaser,
@@ -199,6 +205,7 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
         for old_pledge_level in old_project.levels:
             print("    pledge level %s" % old_pledge_level.name)
             product = model.Product(
+                id=old_pledge_level.id,
                 project=project,
                 name=old_pledge_level.name,
                 non_physical=old_pledge_level.non_physical,
@@ -326,6 +333,7 @@ def migrate_provider_types(settings, user_map, image_map):
             scrappy_meta.Session.query(cs_model.ProviderType):
         print("  provider type %s" % old_provider_type.name)
         provider_type = model.ProviderType(
+            id=old_provider_type.id,
             name=old_provider_type.name,
             teaser=old_provider_type.teaser,
             body=old_provider_type.body.text,
@@ -362,6 +370,7 @@ def migrate_providers(settings, user_map, image_map, provider_type_map):
     for old_provider in scrappy_meta.Session.query(cs_model.Provider):
         print("  provider %s" % old_provider.name)
         provider = model.Provider(
+            id=old_provider.id,
             name=old_provider.name,
             teaser=old_provider.teaser,
             body=old_provider.body.text,

@@ -34,15 +34,16 @@ def dump_locally(settings, msg):
     if not os.path.exists(this_dir):
         os.makedirs(this_dir)
 
-    with open(os.path.join(this_dir, 'headers.txt'), 'w') as f:
+    with open(os.path.join(this_dir, 'raw.txt'), 'w') as f:
         raw_msg = msg.to_message()
         f.write(raw_msg.as_string())
 
     with open(os.path.join(this_dir, 'body.txt'), 'w') as f:
         f.write(msg.body)
 
-    with open(os.path.join(this_dir, 'body.html'), 'w') as f:
-        f.write(msg.html)
+    if msg.html:
+        with open(os.path.join(this_dir, 'body.html'), 'w') as f:
+            f.write(msg.html)
 
 
 def send(request, template_name, vars, to=None, from_=None,
@@ -99,6 +100,21 @@ def send_with_admin(request, template_name, vars, to=None, from_=None,
     """
     admin_emails = [(user.name, user.email) for user in
                     load_admin_users(template_name)]
+    bcc = bcc or []
     bcc.extend(admin_emails)
     return send(request=request, template_name=template_name, vars=vars,
                 to=to, from_=from_, bcc=bcc, cc=cc)
+
+
+def send_order_confirmation(request, order):
+    recipient = [(order.shipping.full_name,
+                  order.user.email)]
+    items_by_project = {}
+    for item in order.cart.items:
+        this_project = items_by_project.setdefault(item.product.project, [])
+        this_project.append(item)
+    vars = {
+        'order': order,
+        'items_by_project': items_by_project,
+    }
+    send_with_admin(request, 'order_confirmation', vars=vars, to=recipient)

@@ -1,0 +1,48 @@
+<%inherit file="base.txt"/>
+
+Your order (${order.id}) on Crowd Supply has been confirmed. On behalf of the team here and all of the project creators on Crowd Supply, we appreciate your support!
+
+Please double-check the shipping information below to make sure it is accurate. If you have any questions or need to make changes to this order, please email us at support@crowdsupply.com or call (800) 554-2014.
+
+% if not order.cart.non_physical:
+When these items ship, you will receive a shipment confirmation email containing tracking information.
+% endif
+
+Shipping Information
+${self.divider('=')}
+${self.address_fields(order.shipping)}
+
+## % if order.customer_comments.strip():
+## Comments
+## ${self.divider('=')}
+## ${order.customer_comments}
+## % endif
+
+Order Items
+${self.divider('=')}
+
+% for project, items in items_by_project.items():
+${project.name}
+${self.divider()}
+
+% if items[0].crowdfunding:
+This is a pledge to a crowdfunding campaign, and may not be processed immediately. Payment for this item will be collected when the project is successful. If the crowdfunding campaign is not successful, you will not be charged.
+% endif
+
+% for item in items:
+  * ${item.product.name} - qty ${item.qty_desired} - ${h.currency(item.price_each)} ea.
+
+  % if not item.crowdfunding:
+    % if item.qty_reserved:
+    This item is currently in stock.
+    % else:
+    This item is a pre-order and will be shipped at a later date. Please not that your transaction will be processed immediately.
+    % endif
+  % endif
+% endfor
+
+% endfor
+
+Items Total             ${h.currency(order.cart.items_total)}
+Shipping Total          ${h.currency(order.cart.shipping_total)}
+Order Total             ${h.currency(order.total)}

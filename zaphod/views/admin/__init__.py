@@ -23,6 +23,7 @@ def includeme(config):
 
     config.add_route('admin:orders', '/orders')
     config.add_route('admin:order', '/order/{id}')
+    config.add_route('admin:order-resend', '/order/{id}/resend')
 
     config.add_route('admin:vendor_orders', '/vendor-orders')
     config.add_route('admin:vendor_order', '/vendor-order/{id}')

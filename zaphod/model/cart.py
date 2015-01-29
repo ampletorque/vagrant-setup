@@ -100,6 +100,11 @@ class CartItem(Base):
     def total(self):
         return (self.price_each + self.shipping_price) * self.qty_desired
 
+    @property
+    def qty_reserved(self):
+        # XXX
+        return 0
+
     def refresh(self):
         """
         Refresh status and reservations.

@@ -103,13 +103,13 @@ def includeme(config):
     config.add_node_view(project_base_view, model.Project,
                          renderer='project.html')
     config.add_node_view(remind_me_view, model.Project,
-                         suffix='remind-me')
+                         suffix=['remind-me'])
     config.add_node_view(ask_question_view, model.Project,
-                         suffix='ask-question',
+                         suffix=['ask-question'],
                          renderer='ask_question.html')
     config.add_node_view(updates_view, model.Project,
-                         suffix='updates',
+                         suffix=['updates'],
                          renderer='updates.html')
     config.add_node_view(backers_view, model.Project,
-                         suffix='backers',
+                         suffix=['backers'],
                          renderer='backers.html')

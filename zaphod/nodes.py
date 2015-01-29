@@ -5,6 +5,7 @@ from pyramid.compat import string_types
 
 
 def add_node_view(config, view, cls, suffix=None, renderer=None):
+    suffix = tuple(suffix) if suffix else None
     def register():
         lookup = config.registry.setdefault('node_views', {})
         lookup[cls, suffix] = view, renderer
@@ -13,10 +14,9 @@ def add_node_view(config, view, cls, suffix=None, renderer=None):
 
 def lookup_node_view(registry, cls, suffix):
     views = registry['node_views']
-    key = cls, suffix
     while cls is not None:
-        if key in views:
-            return views[key]
+        if (cls, suffix) in views:
+            return views[cls, suffix]
         cls = cls.__base__
 
 

@@ -35,6 +35,7 @@
         - run alembic migrations
         - reload uwsgi
         - restart nginx
+        - build docs
 
     - name: link uwsgi config file
       file: src=/var/sw/zaphod/site/conf/uwsgi.conf
@@ -72,3 +73,6 @@
     - name: restart nginx
       sudo: yes
       service: name=nginx state=restarted
+
+    - name: build docs
+      command: /var/sw/pyramid27/bin/sphinx-build -d /var/sw/zaphod/docs/_build/doctrees -b html /var/sw/zaphod/docs/_build/html

@@ -19,6 +19,12 @@ def grouper(n, iterable):
     """
     Return elements from iterable n items at a time.
     e.g. grouper(3,[1,2,3,4,5,6,7]) -> ([1,2,3], [4,5,6], [7])
+
+    :param n: Maximum number of elements in each group
+    :type n: int
+    :param iterable: Input iterable to regroup
+    :returns: Iterator of groups
+    :rtype: generator
     """
     iterable = iter(iterable)
     ret = []
@@ -33,6 +39,27 @@ def grouper(n, iterable):
 
 def gravatar_url(email, size=200, default=None, rating='g',
                  force_default=False):
+    """
+    Return a schemeless URL for the gravatar corresponding to this email
+    address.
+
+    :param email: Email address to use for gravatar
+    :type email: str
+    :param size: Size of resulting image
+    :type size: int
+    :param default: Default image type to use for emails which are not in the
+    gravatar DB. See https://secure.gravatar.com/site/implement/images/ for
+    choices.
+    :type default: str
+    :param rating: Appropriateness rating to use for resulting image.
+    :type rating: str: g, pg, r, or x
+    :param force_default: Force the default image to always load, regardless of
+    whether or not the email exists.
+    :type force_default: bool
+
+    :returns: URL to gravatar image
+    :rtype: literal
+    """
     hash = hashlib.md5(email.encode('utf8').strip().lower()).hexdigest()
     params = {
         's': size,
@@ -48,6 +75,10 @@ def gravatar_url(email, size=200, default=None, rating='g',
 
 def image_or_gravatar(request, obj, chain, title=None, class_=None, id=None,
                       **kwargs):
+    """
+    Try to return an image for the specified object. If one does not exist, try
+    to return a gravatar using the ``obj.email`` address.
+    """
     img = obj.img(request, chain, class_=class_, id=id)
     if img:
         return img
@@ -75,6 +106,14 @@ def prettify(name):
 
 
 def make_id_component(name):
+    """
+    Make the supplied string safe for use as a CSS ID.
+
+    :param name: Input string
+    :type name: str
+    :returns: ID-safe string
+    :rtype: str
+    """
     return _make_safe_id_component(name and name.replace('.', '_'))
 
 
@@ -125,6 +164,10 @@ def commas(n, decimal=False):
 
 
 def format_percent(percent):
+    """
+    Format a numeric type into a human-readable percentage, with an appropriate
+    level of precision.
+    """
     if percent < 1.0:
         return "%0.1f" % percent
     elif percent < 99:
@@ -237,6 +280,9 @@ def pluralize(noun):
 
 
 def abbreviate_name(name):
+    """
+    Abbreviate a typical English name to first name and last initial.
+    """
     words = string.capwords(name).split()
     if len(words) == 0:
         return u''
@@ -257,6 +303,9 @@ def strip_tags(s):
 
 
 def display_url(url):
+    """
+    Make a URL more human-friendly.
+    """
     if not url:
         return
     # Strip off http:// or https://
@@ -270,6 +319,9 @@ def display_url(url):
 
 
 def google_static_map_url(addr, zoom=11, width=200, height=200, scale=1):
+    """
+    Return the URL for a google static map of the supplied address.
+    """
     base_url = '//maps.google.com/maps/api/staticmap'
     params = dict(markers='color:red|%s' % addr.inline,
                   zoom=zoom,
@@ -281,6 +333,10 @@ def google_static_map_url(addr, zoom=11, width=200, height=200, scale=1):
 
 
 def cc_expires_month_select(renderer, name, **kwargs):
+    """
+    Render an HTML select element for use as a credit card expiration date
+    'months' field.
+    """
     months = ['%02d' % ii for ii in range(1, 13)]
     if renderer:
         return renderer.select(name, None, months, **kwargs)
@@ -289,6 +345,10 @@ def cc_expires_month_select(renderer, name, **kwargs):
 
 
 def cc_expires_year_select(renderer, name, **kwargs):
+    """
+    Render an HTML select element for use as a credit card expiration date
+    'year' field.
+    """
     current_year = date.today().year
     # VISA Gift Cards have very very long expiration times.
     end_year = current_year + 11
@@ -300,6 +360,9 @@ def cc_expires_year_select(renderer, name, **kwargs):
 
 
 def allowed_countries():
+    """
+    Return a list of countries for use in a shipping or billing address.
+    """
     ret = [('us', 'United States'),
            ('ca', 'Canada')]
     ret.extend([(c.alpha2.lower(), c.name) for c in countries

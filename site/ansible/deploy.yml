@@ -71,6 +71,7 @@
       service: name=uwsgi state=reloaded
 
     - name: restart nginx
+      # XXX It would be good if we could check the config before doing this. Or maybe we can make reloading work, instead of restarting?
       sudo: yes
       service: name=nginx state=restarted
 

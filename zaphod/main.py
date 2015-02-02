@@ -50,6 +50,7 @@ def main(global_config, **settings):
     config.include('pyramid_mailer')
     config.include('pyramid_cron')
 
+    config.include('.renderers')
     config.include('.auth')
     config.include('.themes')
     config.include('.nodes')

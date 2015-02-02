@@ -75,4 +75,4 @@
       service: name=nginx state=restarted
 
     - name: build docs
-      command: /var/sw/pyramid27/bin/sphinx-build -d /var/sw/zaphod/docs/_build/doctrees -b html /var/sw/zaphod/docs/_build/html
+      command: /var/sw/pyramid27/bin/sphinx-build -d /var/sw/zaphod/docs/_build/doctrees -b html /var/sw/zaphod/docs /var/sw/zaphod/docs/_build/html

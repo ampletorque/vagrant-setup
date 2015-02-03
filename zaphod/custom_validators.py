@@ -151,7 +151,7 @@ class CreditCardValidator(validators.CreditCardValidator):
         number = field_dict[self.cc_number_field].strip()
         number = number.replace(' ', '').replace('-', '')
         try:
-            long(number)
+            int(number)
         except ValueError:
             return {self.cc_number_field: self.message('notANumber', state)}
 

@@ -53,6 +53,7 @@ class CartItem(Base):
     shipped_date = Column(types.DateTime, nullable=True)
     shipment_id = Column(None, ForeignKey('shipments.id'), nullable=True)
     batch_id = Column(None, ForeignKey('batches.id'), nullable=True)
+    sku_id = Column(None, ForeignKey('skus.id'), nullable=False)
 
     status = Column(types.CHAR(16), nullable=False)
 
@@ -61,6 +62,7 @@ class CartItem(Base):
     cart = orm.relationship('Cart', backref='items')
     product = orm.relationship('Product', backref='cart_items')
     batch = orm.relationship('Batch', backref='cart_items')
+    sku = orm.relationship('SKU', backref='cart_items')
 
     available_statuses = [
         ('cart', 'Pre-checkout'),
@@ -68,7 +70,7 @@ class CartItem(Base):
         ('failed', 'Project Failed To Fund'),
         ('waiting', 'Waiting for Items'),
         ('payment pending', 'Payment Not Yet Processed'),
-        ('payent_failed', 'Payment Failed'),
+        ('payent failed', 'Payment Failed'),
         ('cancelled', 'Cancelled'),
         ('shipped', 'Shipped'),
         ('abandoned', 'Abandoned'),

@@ -86,7 +86,8 @@ class CartView(object):
         request = self.request
         cart = self.get_cart()
 
-        cart.refresh()
+        if cart:
+            cart.refresh()
 
         form = Form(request, schema=CheckoutForm)
         if form.validate():
@@ -112,9 +113,7 @@ class CartView(object):
             crowdfunding = project.status == 'crowdfunding'
             batch = product.current_batch
 
-            # ov_ids = set(model.OptionValue.get(ov_id) for ov_id in
-            #              form.data['options'])
-            # XXX Select or generate SKU based on option values
+            sku = model.sku_for_option_value_ids(product, form.data['options'])
 
             assert cart and cart.id
             ci = model.CartItem(
@@ -124,6 +123,7 @@ class CartView(object):
                 shipping_price=0,
                 crowdfunding=crowdfunding,
                 batch=batch,
+                sku=sku,
                 expected_delivery_date=batch.delivery_date,
                 status='cart',
             )

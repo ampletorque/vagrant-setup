@@ -2,8 +2,10 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from sqlalchemy import Table, Column, ForeignKey, types, orm
+from sqlalchemy.orm.exc import NoResultFound
 
-from .base import Base
+from .base import Base, Session
+from .product import OptionValue
 
 
 sku_option_values = Table(
@@ -21,6 +23,47 @@ class SKU(Base):
     id = Column(types.Integer, primary_key=True)
     product_id = Column(None, ForeignKey('products.id'), nullable=False)
 
+    product = orm.relationship('Product', backref='skus')
+
     option_values = orm.relationship('OptionValue',
                                      collection_class=set,
                                      secondary=sku_option_values)
+
+
+def sku_for_option_value_ids(product, ov_ids):
+    """
+    From a list of option value IDs, return the corresponding SKU, or create a
+    new one.
+    """
+    q = Session.query(SKU).filter_by(product=product)
+    assert len(ov_ids) == len(product.options), "not enough ov IDs specified"
+    for ov_id in ov_ids:
+        q = q.filter(SKU.option_values.any(id=ov_id))
+    try:
+        return q.one()
+    except NoResultFound:
+        sku = SKU(product=product)
+        for ov_id in ov_ids:
+            ov = OptionValue.get(ov_id)
+            sku.option_values.add(ov)
+        Session.add(sku)
+        return sku
+
+
+def sku_for_option_value_ids_sloppy(product, ov_ids):
+    """
+    From a list of option value IDs, return the corresponding SKU, or create a
+    new one. This is the 'sloppy version' that allows for loosely specified
+    objects.
+    """
+    q = Session.query(SKU).filter_by(product=product)
+    for ov_id in ov_ids:
+        q = q.filter(SKU.option_values.any(id=ov_id))
+    sku = q.first()
+    if not sku:
+        sku = SKU(product=product)
+        for ov_id in ov_ids:
+            ov = OptionValue.get(ov_id)
+            sku.option_values.add(ov)
+        Session.add(sku)
+    return sku

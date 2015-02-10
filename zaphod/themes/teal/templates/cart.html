@@ -41,6 +41,53 @@
 </%def>
 
 
+<%def name="checkout_form(renderer, cart)">
+  <section class="section-checkout">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <h1 class="text-center page-header">Checkout</h1>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+          ${renderer.begin(id='checkout-form', class_='form-horizontal form-wrapped')}
+
+          % if not cart.non_physical:
+              <fieldset>
+                <legend>Shipping Information</legend>
+                ${forms.address_fields(renderer, 'shipping', None)}
+
+              </fieldset>
+            % endif
+
+            <fieldset>
+              <legend>Payment Information</legend>
+              ${self.payment_block(renderer, cart, billing=None, shipping=None, masked_card=None)}
+            </fieldset>
+
+            <fieldset>
+              <legend>Order Information</legend>
+              ${forms.ltext(renderer, 'email', request.user and request.user.email, label='Email Address', required=True, **{'data-required': 'true'})}
+              ${forms.ltextarea(renderer, 'comments', rows=4)}
+            </fieldset>
+
+            <%forms:actions>
+              <button type="submit" class="btn btn-cta">
+                <i class="fa fa-lock"></i> Place Secure Order
+              </button>
+              <span class="submit-hint">This will place your order immediately.</span>
+            </%forms:actions>
+
+          ${renderer.end()}
+        </div>
+      </div>
+    </div>
+  </section>
+</%def>
+
+
 <section class="section-cart-header">
   <div class="container">
     <div class="row">
@@ -52,50 +99,17 @@
 </section>
 
 
-${cart_table.cart_table(cart)}
-
-
-
-<section class="section-checkout">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-12">
-        <h1 class="text-center page-header">Checkout</h1>
+% if cart and cart.items:
+  ${cart_table.cart_table(cart)}
+  ${self.checkout_form(renderer, cart)}
+% else:
+  <section class="section-cart-empty">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <p class="text-center">Your cart is empty. <a href="${request.route_path('browse')}">Continue browsing</a>.</p>
+        </div>
       </div>
     </div>
-
-    <div class="row">
-      <div class="col-md-8 col-md-offset-2">
-        ${renderer.begin(id='checkout-form', class_='form-horizontal form-wrapped')}
-
-        % if not cart.non_physical:
-            <fieldset>
-              <legend>Shipping Information</legend>
-              ${forms.address_fields(renderer, 'shipping', None)}
-
-            </fieldset>
-          % endif
-
-          <fieldset>
-            <legend>Payment Information</legend>
-            ${self.payment_block(renderer, cart, billing=None, shipping=None, masked_card=None)}
-          </fieldset>
-
-          <fieldset>
-            <legend>Order Information</legend>
-            ${forms.ltext(renderer, 'email', request.user and request.user.email, label='Email Address', required=True, **{'data-required': 'true'})}
-            ${forms.ltextarea(renderer, 'comments', rows=4)}
-          </fieldset>
-
-          <%forms:actions>
-            <button type="submit" class="btn btn-cta">
-              <i class="fa fa-lock"></i> Place Secure Order
-            </button>
-            <span class="submit-hint">This will place your order immediately.</span>
-          </%forms:actions>
-
-        ${renderer.end()}
-      </div>
-    </div>
-  </div>
-</section>
+  </section>
+% endif

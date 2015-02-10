@@ -4,3 +4,8 @@
 <%def name="aliases(renderer, obj)">
   ${forms.ltext(renderer, 'override_path', obj.override_path, label='URL Path', placeholder=obj.generate_path(), hint='Leave blank to use recommended URL path.')}
 </%def>
+
+
+<%def name="markdown_hint()">
+  Use valid Markdown. See <a href="${request.route_path('admin:markdown_guide')}">Markdown tips and recipes</a> for help.
+</%def>

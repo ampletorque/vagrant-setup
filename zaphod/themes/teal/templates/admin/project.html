@@ -31,17 +31,17 @@
           <h2>Prelaunch</h2>
           ${forms.ltext(renderer, 'prelaunch_vimeo_id', obj.prelaunch_vimeo_id, label='Vimeo ID')}
           ${forms.ltextarea(renderer, 'prelaunch_teaser', obj.prelaunch_teaser, rows=3, label='Teaser', hint='Optional summary.')}
-          ${forms.ltextarea(renderer, 'prelaunch_body', obj.prelaunch_body, rows=15, label='Body')}
+          ${forms.ltextarea(renderer, 'prelaunch_body', obj.prelaunch_body, rows=15, label='Body', hint=widgets.markdown_hint)}
 
           <h2>Crowdfunding</h2>
           ${forms.ltext(renderer, 'crowdfunding_vimeo_id', obj.crowdfunding_vimeo_id, label='Vimeo ID')}
           ${forms.ltextarea(renderer, 'teaser', obj.teaser, rows=3, label='Teaser', hint='Optional summary.')}
-          ${forms.ltextarea(renderer, 'body', obj.body, rows=15, label='Body')}
+          ${forms.ltextarea(renderer, 'body', obj.body, rows=15, label='Body', hint=widgets.markdown_hint)}
 
           <h2>Available</h2>
           ${forms.ltext(renderer, 'available_vimeo_id', obj.available_vimeo_id, label='Vimeo ID')}
           ${forms.ltextarea(renderer, 'available_teaser', obj.available_teaser, rows=3, label='Teaser', hint='Optional summary.')}
-          ${forms.ltextarea(renderer, 'available_body', obj.available_body, rows=15, label='Body')}
+          ${forms.ltextarea(renderer, 'available_body', obj.available_body, rows=15, label='Body', hint=widgets.markdown_hint)}
 
           <%forms:actions>
             <button class="btn btn-primary" type="submit">Save</button>

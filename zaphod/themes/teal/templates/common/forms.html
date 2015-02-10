@@ -1,6 +1,12 @@
 <%def name="hint(s)">
   % if s:
-    <p class="help-block no-error">${s}</p>
+    <p class="help-block no-error">
+      % if callable(s):
+        ${s()}
+      % else:
+        ${s}
+      % endif
+    </p>
   % endif
 </%def>
 

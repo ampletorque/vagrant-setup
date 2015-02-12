@@ -48,13 +48,14 @@ def gravatar_url(email, size=200, default=None, rating='g',
     :param size: Size of resulting image
     :type size: int
     :param default: Default image type to use for emails which are not in the
-    gravatar DB. See https://secure.gravatar.com/site/implement/images/ for
-    choices.
+                    gravatar DB. See
+                    https://secure.gravatar.com/site/implement/images/ for
+                    choices.
     :type default: str
     :param rating: Appropriateness rating to use for resulting image.
     :type rating: str: g, pg, r, or x
     :param force_default: Force the default image to always load, regardless of
-    whether or not the email exists.
+                          whether or not the email exists.
     :type force_default: bool
 
     :returns: URL to gravatar image

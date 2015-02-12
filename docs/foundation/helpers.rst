@@ -1,7 +1,7 @@
 Template Helpers
 ================
 
-These functions are available to templates under the ``h.`` namespace, and provide general utilities for use in templates. Add more template utilities here, but obey these rules::
+These functions are available to templates under the ``h.`` namespace, and provide general utilities for use in templates. Add more template utilities here, but obey these rules:
 
 1. No import dependencies on other parts of ``zaphod`` are allowed inside of ``zaphod.helpers``. This ensure that it will always be possible to import ``zaphod.helpers`` from anywhere, and that template helpers will be usable without any prepared DB or module state, which is useful for testing and developing new themes.
 2. Helper modules and functions should be entirely stateless, and their import dependencies should be similarly stateless. For example, do not use ``locale.setlocale()``.

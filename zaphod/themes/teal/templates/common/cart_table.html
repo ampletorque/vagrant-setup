@@ -1,5 +1,5 @@
 <%def name="shipping_text(cart)">
-  <h4>This order qualifies for free ground shipping!</h4>
+  <h4>This order qualifies for free US ground shipping!</h4>
 </%def>
 
 
@@ -9,6 +9,57 @@
       <li>${ov.option.name}: ${ov.description}</li>
     % endfor
   </ul>
+</%def>
+
+
+<%def name="cart_table_row(cart, item, idx)">
+  <div class="row row-cart-item">
+    <div class="col-sm-6">
+      <div class="row">
+        <div class="col-xs-4">
+          ${item.product.img(request, 'product-icon')}
+        </div>
+        <div class="col-xs-8">
+          <h3><a href="${request.node_path(item.product.project)}">${item.product.name}</a></h3>
+          <h4>${item.product.project.name}</h4>
+          % if item.sku and item.sku.option_values:
+            ${self.option_value_list(item.sku)}
+          % endif
+          <p>Ships ${item.expected_delivery_date.strftime('%B %Y')}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-2">
+      <div class="row row-cart-item-field">
+        <div class="col-xs-4 visible-xs"><strong>Qty</strong></div>
+        <div class="col-xs-8">
+          ${h.hidden('items-%d.id' % idx, value=item.id)}
+          <input type="number" name="items-${idx}.qty" value="${item.qty_desired}" class="form-control" min="0" required>
+          <a href="${request.route_path('cart:remove', _query=dict(id=item.id, **h.auth_token_get_param(request)))}">Remove</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-2">
+      <div class="row row-cart-item-field">
+        <div class="col-xs-4 visible-xs"><strong>Each</strong></div>
+        <div class="col-xs-8">
+          ${h.currency(item.price_each)}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-2">
+      <div class="row row-cart-item-field">
+        <div class="col-xs-4 visible-xs"><strong>Total</strong></div>
+        <div class="col-xs-8">
+          ${h.currency(item.total)}
+        </div>
+      </div>
+    </div>
+
+  </div>
 </%def>
 
 
@@ -25,52 +76,29 @@
                 <h3>Description</h3>
               </div>
               <div class="col-sm-2">
-                <h3 class="text-center">Qty</h3>
+                <h3>Qty</h3>
               </div>
               <div class="col-sm-2">
-                <h3 class="text-center">Each</h3>
+                <h3>Each</h3>
               </div>
               <div class="col-sm-2">
-                <h3 class="text-right">Total</h3>
+                <h3>Total</h3>
               </div>
             </div>
 
             % for item in cart.items:
-              <div class="row row-cart-item">
-                <div class="col-sm-6">
-                  <div class="row">
-                    <div class="col-xs-3">
-                      ${item.product.img(request, 'product-icon')}
-                    </div>
-                    <div class="col-xs-9">
-                      <h3><a href="${request.node_path(item.product.project)}">${item.product.name}</a></h3>
-                      <h4>${item.product.project.name}</h4>
-                      % if item.sku and item.sku.option_values:
-                        ${self.option_value_list(item.sku)}
-                      % endif
-                      <p>Ships ${item.expected_delivery_date.strftime('%B %Y')}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-sm-2 text-center">
-                  ${h.hidden('items-%d.id' % loop.index, value=item.id)}
-                  <input type="number" name="items-${loop.index}.qty" value="${item.qty_desired}" class="form-control" min="0" required>
-                  <a href="${request.route_path('cart:remove', _query=dict(id=item.id, **h.auth_token_get_param(request)))}">Remove</a>
-                </div>
-
-                <div class="col-sm-2 text-center">${h.currency(item.price_each)}</div>
-                <div class="col-sm-2 text-right">${h.currency(item.total)}</div>
-              </div>
+              ${self.cart_table_row(cart, item, loop.index)}
             % endfor
 
             <div class="row row-cart-footer">
               <div class="col-sm-6">${self.shipping_text(cart)}</div>
-              <div class="col-sm-2 text-center">
+              <div class="col-sm-2">
                 <button type="submit" class="btn btn-default">Update Qty</button>
               </div>
-              <div class="col-sm-2 text-center">Order Total</div>
-              <div class="col-sm-2 text-right">${h.currency(cart.total)}</div>
+              <div class="cart-total-block">
+                <div class="col-sm-2"><strong>Order Total</strong></div>
+                <div class="col-sm-2"><strong>${h.currency(cart.total)}</strong></div>
+              </div>
             </div>
           </form>
         </div>

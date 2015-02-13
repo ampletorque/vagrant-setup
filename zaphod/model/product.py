@@ -26,6 +26,10 @@ class Product(Base, ImageMixin):
     id = Column(types.Integer, primary_key=True)
     project_id = Column(None, ForeignKey('projects.node_id'), nullable=False)
     name = Column(types.Unicode(255), nullable=False, default=u'')
+    international_available = Column(types.Boolean, nullable=False,
+                                     default=False)
+    international_surcharge = Column(custom_types.Money, nullable=False,
+                                     default=0)
     gravity = Column(types.Integer, nullable=False, default=0)
     non_physical = Column(types.Boolean, nullable=False, default=False)
     published = Column(types.Boolean, nullable=False, default=False)

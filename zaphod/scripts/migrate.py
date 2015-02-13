@@ -209,6 +209,10 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
                 id=old_pledge_level.id,
                 project=project,
                 name=old_pledge_level.name,
+                international_available=
+                old_pledge_level.international_available,
+                international_surcharge=
+                old_pledge_level.international_surcharge,
                 non_physical=old_pledge_level.non_physical,
                 gravity=old_pledge_level.gravity,
                 published=old_pledge_level.published,
@@ -393,6 +397,35 @@ def migrate_providers(settings, user_map, image_map, provider_type_map):
         model.Session.flush()
 
 
+def get_bundled_surcharge(item):
+    pl = item.product
+    if pl.international_surcharge_bundled is None:
+        return pl.international_surcharge
+    else:
+        return pl.international_surcharge_bundled
+
+
+def item_shipping_prices(old_order):
+    old_shipping_price = old_order.shipping_price
+    if not old_shipping_price:
+        return
+    #assert old_order.shipping.country != 'us'
+    projects_seen = set()
+    item_prices = []
+    for ci in old_order.cart.items:
+        project = ci.product.project
+        if project in projects_seen:
+            item_prices.append([ci, get_bundled_surcharge(ci)])
+        else:
+            item_prices.append([ci, ci.product.international_surcharge])
+            projects_seen.add(project)
+    item_price_total = sum(fee for ci, fee in item_prices)
+    diff = old_shipping_price - item_price_total
+    if diff > 0:
+        item_prices[-1][1] += diff
+    return dict(item_prices)
+
+
 def migrate_orders(settings, user_map, product_map, option_value_map,
                    batch_map):
     for old_order in scrappy_meta.Session.query(scrappy_model.Order):
@@ -413,6 +446,7 @@ def migrate_orders(settings, user_map, product_map, option_value_map,
         model.Session.add(order)
         cart = model.Cart(order=order)
         model.Session.add(cart)
+        shipping_prices = item_shipping_prices(old_order)
         for old_ci in old_order.cart.items:
             delivery_date = None
             old_batch = getattr(old_ci, 'batch', None)
@@ -431,8 +465,8 @@ def migrate_orders(settings, user_map, product_map, option_value_map,
                 crowdfunding=(old_ci.discriminator in ('P', 'E')),
                 status='init',
                 sku=sku,
-                # XXX
-                shipping_price=0,
+                shipping_price=(shipping_prices[old_ci]
+                                if shipping_prices else 0),
                 shipped_date=old_ci.shipped_date,
                 expected_delivery_date=delivery_date,
             )
@@ -440,6 +474,14 @@ def migrate_orders(settings, user_map, product_map, option_value_map,
                 ci.batch = batch_map[old_batch]
             order.cart.items.append(ci)
             model.Session.flush()
+        for old_shipment in old_order.shipments:
+            shipment = model.Shipment(
+                order=order,
+                tracking_number=','.join(list(old_shipment.tracking_num)),
+                source=old_shipment.source,
+                cost=old_shipment.cost,
+            )
+            model.Session.add(shipment)
 
 
 def migrate_related_projects(settings, project_map):

@@ -53,7 +53,7 @@ class Provider(Node):
                              collection_class=set,
                              backref='providers')
 
-    def generate_path(self, site_id):
+    def generate_path(self):
         name = self.name or u'provider-%s' % self.id
         provider_path = utils.to_url_name(name)
 

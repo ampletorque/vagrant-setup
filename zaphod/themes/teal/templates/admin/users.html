@@ -1,12 +1,19 @@
 <%inherit file="base.html"/>
 
+
+<%namespace name="pagination" file="/common/pagination.html"/>
+
+
 <%def name="title()">List Users</%def>
 
 
 <section class="section-users">
   <div class="container">
     <div class="row">
-      <h1 class="page-header">Users <small>${len(objs)} total</small></h1>
+      <h1 class="page-header">Users <small>${page.item_count} total</small></h1>
+
+      ${pagination.pagination(page)}
+
       <table class="table">
         <thead>
           <tr>
@@ -14,10 +21,11 @@
             <th>ID</th>
             <th>Name</th>
             <th>Email</th>
+            <th>Created</th>
           </tr>
         </thead>
         <tbody>
-          % for user in objs:
+          % for user in page:
             <tr>
               <td>
                 <a href="${request.route_path('admin:user', id=user.id)}">Edit</a>
@@ -25,6 +33,7 @@
               <td>${user.id}</td>
               <td>${user.name}</td>
               <td>${user.email}</td>
+              <td>${h.format_datetime(request, user.created_time)}</td>
             </tr>
           % endfor
         </tbody>

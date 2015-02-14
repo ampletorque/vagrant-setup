@@ -8,6 +8,7 @@ from pyramid.view import view_config, view_defaults
 from pyramid_uniform import Form, FormRenderer
 
 from ... import model, custom_validators
+from ...helpers.paginate import Page
 
 
 @view_defaults(route_name='admin:base_edit', renderer='admin/base_edit.html')
@@ -31,13 +32,28 @@ class BaseEditView(object):
 
 @view_defaults(route_name='admin:base_list', renderer='admin/base_list.html')
 class BaseListView(object):
+    paginate = False
+
     def __init__(self, request):
         self.request = request
 
     @view_config(permission='authenticated')
     def index(self):
+        request = self.request
+
         q = model.Session.query(self.cls)
-        return dict(objs=q.all())
+        if self.paginate:
+            final_q = q.order_by(self.cls.id.desc())
+            item_count = final_q.count()
+
+            page = Page(request, final_q,
+                        page=int(request.params.get('page', 1)),
+                        items_per_page=20,
+                        item_count=item_count)
+
+            return dict(page=page)
+        else:
+            return dict(objs=q.all())
 
 
 class NodeUpdateForm(Schema):

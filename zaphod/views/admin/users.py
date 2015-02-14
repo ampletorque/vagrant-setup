@@ -25,3 +25,4 @@ class UserEditView(BaseEditView):
 @lift()
 class UserListView(BaseListView):
     cls = model.User
+    paginate = True

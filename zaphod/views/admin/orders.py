@@ -37,3 +37,4 @@ class OrderEditView(BaseEditView):
 @lift()
 class OrderListView(BaseListView):
     cls = model.Order
+    paginate = True

@@ -1,0 +1,107 @@
+<%inherit file="base.html"/>
+
+
+<%self:container>
+  <div class="content">
+    <table>
+      <tr>
+        <td>
+          Your Crowd Supply order has been confirmed. On behalf of the team here and all of the project creators on Crowd Supply, we appreciate your support!
+          <br /><br />
+
+          Please double-check the shipping information below to make sure it is accurate. If you have any questions or need to make changes to this order, please email us at <a href="mailto:support@crowdsupply.com">support@crowdsupply.com</a> or call (800) 554-2014.
+          <br /><br />
+
+          For reference, your order ID is <span class="bold">${order.id}</span>.
+          <br /><br />
+
+          % if not order.cart.non_physical:
+            When these items ship, you will receive a shipment confirmation email containing tracking information.
+            <br /><br />
+          % endif
+        </td>
+      </tr>
+    </table>
+    <table>
+      <tr>
+        <td width="50%">
+          <span class="bold">Shipping Information</span><br />
+          ${self.address_fields(order.shipping)}
+        </td>
+
+        <td width="50%">
+          % if order.any_billing:
+            <span class="bold">Billing Information</span><br />
+            ${self.address_fields(order.any_billing)}
+          % endif
+        </td>
+      </tr>
+    </table>
+  </div>
+</%self:container>
+
+
+<%self:container cls="bordered">
+  <div class="content">
+    <table>
+      <tr>
+        <td>
+          <span class="h3">Order Contents</span>
+          <br />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          % for project, items in items_by_project.items():
+            <br />
+            <span class="h4">
+              <a href="${request.node_url(project)}">${project.name}</a>
+            </span>
+            <br />
+
+            % if items[0].crowdfunding:
+              This is a pledge to a crowdfunding campaign, and may not be processed immediately. Payment for this item will be collected when the project is successful. If the crowdfunding campaign is not successful, you will not be charged.
+              <br /><br />
+            % endif
+
+            <table>
+              % for item in items:
+                <tr>
+                  <td rowspan="2">
+                    <a href="${request.node_url(project)}">
+                      ${item.product.img(request, 'product-icon', qualified=True)}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="${request.node_url(project)}">
+                      ${item.product.name}
+                    </a>
+                  </td>
+                  <td>
+                    qty ${item.qty_desired}
+                  </td>
+                  <td>
+                    ${h.currency(item.price_each)} ea.
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="3">
+                    % if not item.crowdfunding:
+                      % if item.qty_reserved:
+                        This item is currently in stock.
+                      % else:
+                        This item is a pre-order and will be shipped at a later date. Please not that your transaction will be processed immediately.
+                      % endif
+                    % endif
+                  </td>
+                </tr>
+              % endfor
+            </table>
+
+          % endfor
+
+        </td>
+      </tr>
+    </table>
+  </div>
+</%self:container>

@@ -9,11 +9,9 @@ ${request.registry.settings['address.address1']}
 % endif
 ${request.registry.settings['address.city']}, ${request.registry.settings['address.state']} ${request.registry.settings['address.postal_code']}
 ${request.registry.settings['address.phone']}
-
-<%def name="divider(char='-')">
-${char * 80}
-</%def>
-
+\
+<%def name="divider(char='-')">${char * 79}</%def>\
+\
 <%def name="address_fields(addr)">
 Name    ${addr.full_name}
 % if addr.company != '':
@@ -24,4 +22,4 @@ Address ${addr.address1}
         ${addr.address2}
         ${addr.city}, ${addr.state} ${addr.postal_code}
         ${addr.country_name}
-</%def>
+</%def>\

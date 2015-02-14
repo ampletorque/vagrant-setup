@@ -4,6 +4,7 @@ from __future__ import (absolute_import, division, print_function,
 import os
 import os.path
 import email.utils
+import textwrap
 from datetime import datetime
 
 import six
@@ -23,6 +24,18 @@ def process_html(body):
     return Premailer(body,
                      keep_style_tags=True,
                      include_star_selectors=True).transform()
+
+
+def process_text(body):
+    out_lines = []
+    for line in body.split('\n'):
+        if line:
+            out_lines.extend(textwrap.wrap(line, 79,
+                                           break_long_words=False,
+                                           break_on_hyphens=False))
+        else:
+            out_lines.append('')
+    return '\n'.join(out_lines)
 
 
 def dump_locally(settings, msg):
@@ -77,8 +90,8 @@ def send(request, template_name, vars, to=None, from_=None,
     else:
         msg.html = process_html(html_body)
 
-    msg.body = render('emails/%s.txt' % template_name,
-                      vars, request)
+    msg.body = process_text(render('emails/%s.txt' % template_name,
+                                   vars, request))
 
     if asbool(settings.get('mailer.debug')):
         dump_locally(settings, msg)

@@ -29,6 +29,13 @@ class Order(Base, UserMixin, CommentMixin):
         """
         return self.cart.items_total + self.cart.shipping_total
 
+    @property
+    def any_billing(self):
+        return None
+        for payment in self.payments:
+            if hasattr(payment, 'method'):
+                return payment.method.billing
+
     def update_status(self):
         """
         Update the .closed status of this order. It is 'closed' if and only if

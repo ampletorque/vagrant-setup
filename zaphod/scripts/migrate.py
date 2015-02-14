@@ -205,14 +205,14 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
             migrate_image_associations(settings, image_map, old_update, update)
         for old_pledge_level in old_project.levels:
             print("    pledge level %s" % old_pledge_level.name)
+            intl_available = old_pledge_level.international_available
+            intl_surcharge = old_pledge_level.international_surcharge
             product = model.Product(
                 id=old_pledge_level.id,
                 project=project,
                 name=old_pledge_level.name,
-                international_available=
-                old_pledge_level.international_available,
-                international_surcharge=
-                old_pledge_level.international_surcharge,
+                international_available=intl_available,
+                international_surcharge=intl_surcharge,
                 non_physical=old_pledge_level.non_physical,
                 gravity=old_pledge_level.gravity,
                 published=old_pledge_level.published,
@@ -409,7 +409,7 @@ def item_shipping_prices(old_order):
     old_shipping_price = old_order.shipping_price
     if not old_shipping_price:
         return
-    #assert old_order.shipping.country != 'us'
+    # assert old_order.shipping.country != 'us'
     projects_seen = set()
     item_prices = []
     for ci in old_order.cart.items:

@@ -398,7 +398,8 @@ def migrate_providers(settings, user_map, image_map, provider_type_map):
 
 
 def migrate_payment_gateways():
-    for old_gateway in scrappy_meta.Session.query(scrappy_model.PaymentGateway):
+    for old_gateway in \
+            scrappy_meta.Session.query(scrappy_model.PaymentGateway):
         print("  gateway %s" % old_gateway.comment)
         gateway = model.PaymentGateway(
             id=old_gateway.id,

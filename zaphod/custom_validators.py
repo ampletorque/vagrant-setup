@@ -11,10 +11,17 @@ from formencode.validators import Invalid, _
 
 class URLString(validators.Regex):
     """
-    Custom FormEncode validator to check if a field is a URLString (e.g. only
-    alphanumeric characters, slashes, and hyphens).
+    Check if a string is a valid ('valid' for use in our URL conventions) URL
+    slug.
     """
     regex = '^[a-z0-9\-\/]+$'
+
+
+class TwitterUsername(validators.Regex):
+    """
+    Check if a string is a valid Twitter username.
+    """
+    regex = '^[a-zA-Z0-9\_]+$'
 
 
 class SelectValidator(validators.FancyValidator):

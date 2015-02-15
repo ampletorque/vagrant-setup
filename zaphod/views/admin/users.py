@@ -5,7 +5,7 @@ from pyramid.view import view_defaults
 from venusian import lift
 from formencode import Schema, validators
 
-from ... import model
+from ... import model, custom_validators
 
 from .base import BaseEditView, BaseListView
 
@@ -19,6 +19,18 @@ class UserEditView(BaseEditView):
         allow_extra_fields = False
         name = validators.UnicodeString(not_empty=True)
         email = validators.Email(not_empty=True)
+        password = validators.UnicodeString()
+        password2 = validators.UnicodeString()
+        enabled = validators.Bool()
+        admin = validators.Bool()
+        show_admin_bars = validators.Bool()
+        show_location = validators.Bool()
+        show_in_backers = validators.Bool()
+        show_name = validators.Bool()
+        timezone = validators.String()
+        url_path = custom_validators.URLString()
+        twitter_username = custom_validators.TwitterUsername()
+        chained_validators = [validators.FieldsMatch('password', 'password2')]
 
 
 @view_defaults(route_name='admin:users', renderer='admin/users.html')

@@ -9,11 +9,31 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        <h1>${self.title()}</h1>
+        <h1>
+          ${self.title()}
+          % if obj == request.user:
+            <small>This is you!</small>
+          % endif
+        </h1>
 
-        ${renderer.begin(id='update-form', class_='form-horizontal')}
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
           ${forms.ltext(renderer, 'name', obj.name)}
           ${forms.ltext(renderer, 'email', obj.email, prefix='@')}
+
+          ${forms.lpassword(renderer, 'password')}
+          ${forms.lpassword(renderer, 'password2', label='Confirm Password', hint="To update this user's password, enter a new one here.")}
+
+          ${forms.ltext(renderer, 'url_path', obj.url_path, label='Profile Path', hint='If supplied, a profile page for this user will be published at %s.' % request.route_path('profile', path='...path...'))}
+          ${forms.lselect(renderer, 'timezone', obj.timezone, h.timezones_for_select())}
+          ${forms.ltext(renderer, 'twitter_username', obj.twitter_username)}
+
+          ${forms.lcheckbox(renderer, 'show_in_backers', obj.show_in_backers, hint='Show this user in lists of project backers.')}
+          ${forms.lcheckbox(renderer, 'show_name', obj.show_name, hint="Show this user's name in backers lists.")}
+          ${forms.lcheckbox(renderer, 'show_location', obj.show_location, hint="Show this user's location in backers lists.")}
+
+          ${forms.lcheckbox(renderer, 'show_admin_bars', checked=obj.show_admin_bars, hint='Show shortcut admin toolbars on public site.')}
+          ${forms.lcheckbox(renderer, 'enabled', checked=obj.enabled, hint='If this is unchecked, the user will not be able to login, and will be logged out if they are currently logged in.')}
+          ${forms.lcheckbox(renderer, 'admin', checked=obj.admin, hint='Grant this user admin permissions.')}
 
           <%forms:actions>
             <button class="btn btn-primary" type="submit">Save</button>

@@ -102,14 +102,22 @@ class User(Base, ImageMixin, UserMixin, CommentMixin):
         self.password_reset_token = ''
         self.password_reset_time = utils.utcnow()
 
-    def update_password(self, password):
+    def update_password(self, value):
         """
         Given a new plaintext password, hash it and update the password field.
 
-        :param password:
+        :param value:
           Plaintext password, as a unicode string.
         """
-        self.hashed_password = User.hash_password(password)
+        self.hashed_password = User.hash_password(value)
+
+    @property
+    def password(self):
+        return ''
+
+    @password.setter
+    def password(self, value):
+        self.update_password(value)
 
     def check_password(self, password):
         """

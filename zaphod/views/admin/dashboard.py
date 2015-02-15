@@ -20,10 +20,12 @@ class DashboardView(object):
         active_crowdfunding_q = model.Session.query(model.Project).\
             filter(model.Project.start_time < utcnow,
                    model.Project.end_time >= utcnow,
-                   model.Project.published == True)
+                   model.Project.published == True,
+                   model.Project.listed == True)
 
         available_q = model.Session.query(model.Project).\
             filter(model.Project.published == True,
+                   model.Project.listed == True,
                    model.Project.accepts_preorders == True)
 
         order_q = model.Session.query(model.Order)

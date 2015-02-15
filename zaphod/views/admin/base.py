@@ -2,7 +2,7 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from formencode import Schema, NestedVariables, validators
-from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPFound, HTTPNotFound
 from pyramid.view import view_config, view_defaults
 
 from pyramid_uniform import Form, FormRenderer
@@ -16,10 +16,17 @@ class BaseEditView(object):
     def __init__(self, request):
         self.request = request
 
+    def _get_object(self):
+        request = self.request
+        obj = self.cls.get(request.matchdict['id'])
+        if not obj:
+            raise HTTPNotFound
+        return obj
+
     @view_config(permission='authenticated')
     def edit(self):
         request = self.request
-        obj = self.cls.get(request.matchdict['id'])
+        obj = self._get_object()
 
         form = Form(request, schema=self.UpdateForm)
         if form.validate():

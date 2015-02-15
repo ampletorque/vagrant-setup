@@ -1,0 +1,39 @@
+<%inherit file="base.html"/>
+
+
+<%def name="title()">Crowd Supply Invoice - Order ${order.id}</%def>
+
+
+<%self:page_letter>
+  <h1>Crowd Supply Order ${order.id}</h1>
+
+  <h3>Placed</h3>
+  <p>${h.format_datetime(request, order.created_time, '%B %d, %Y')}</p>
+
+  <h3>Shipping Information</h3>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th colspan="2">Item</th>
+        <th>Price Each</th>
+        <th>Qty</th>
+        <th>Subtotal</th>
+      </tr>
+    </thead>
+    <tbody>
+      % for item in items:
+        <tr>
+          <td>${item.product.img(request, 'product-icon')}</td>
+          <td>
+            <strong>${item.product.name}</strong><br>
+            ${item.product.project.name}
+          </td>
+          <td>${h.currency(item.price_each)}</td>
+          <td>${item.qty_desired}</td>
+          <td>${h.currency(item.total)}</td>
+        </tr>
+      % endfor
+    </tbody>
+  </table>
+</%self:page_letter>

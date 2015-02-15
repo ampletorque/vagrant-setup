@@ -21,14 +21,39 @@ class OrderEditView(BaseEditView):
         pre_validators = [NestedVariables()]
         loaded_time = validators.Number(not_empty=True)
 
-    @view_config(route_name='admin:order-resend')
+    @view_config(route_name='admin:order:resend')
     def resend(self):
         request = self.request
-        order_id = request.matchdict['id']
-        order = model.Order.get(order_id)
+        order = self._get_object()
         mail.send_order_confirmation(request, order)
         request.flash("Resent order confirmation to %s." % order.user.email,
                       'success')
+        return HTTPFound(location=request.route_url('admin:order',
+                                                    id=order.id))
+
+    @view_config(route_name='admin:order:print',
+                 renderer='paper/invoice.html')
+    def print(self):
+        order = self._get_object()
+        assert order.unauthorized_amount == 0, \
+            "cannot print an invoice for an unpaid order"
+        # FIXME We want to be able to print partial invoices.
+        items = order.cart.items
+        return {'order': order, 'items': items}
+
+    @view_config(route_name='admin:order:cancel')
+    def cancel(self):
+        request = self.request
+        order = self._get_object()
+        # XXX
+        return HTTPFound(location=request.route_url('admin:order',
+                                                    id=order.id))
+
+    @view_config(route_name='admin:order:hold')
+    def hold(self):
+        request = self.request
+        order = self._get_object()
+        # XXX
         return HTTPFound(location=request.route_url('admin:order',
                                                     id=order.id))
 

@@ -30,6 +30,11 @@ class Order(Base, UserMixin, CommentMixin):
         return self.cart.items_total + self.cart.shipping_total
 
     @property
+    def unauthorized_amount(self):
+        # FIXME XXX
+        return 0
+
+    @property
     def any_billing(self):
         return None
         for payment in self.payments:

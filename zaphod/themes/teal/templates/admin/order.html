@@ -30,3 +30,70 @@
     </div>
   </div>
 </section>
+
+
+<%def name="address_debug(addr)">
+  ${addr.full_name}<br>
+  % if addr.company != '':
+    ${addr.company}<br>
+  % endif
+  ${addr.phone}<br>
+  ${addr.address1}<br>
+  % if addr.address2:
+    ${addr.address2}<br>
+  % endif
+  ${addr.city}, ${addr.state} ${addr.postal_code}<br>
+  ${addr.country_name}
+</%def>
+
+
+<section class="section-admin-order-debug">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h3>Order Information</h3>
+        <p>User: <a href="${request.route_path('admin:user', id=obj.user.id)}">${obj.user_id}</a></p>
+        ##<p>Customer Comments: ${obj.customer_comments}</p>
+
+        <h3>Shipping</h3>
+        <p>${self.address_debug(obj.shipping)}</p>
+
+        <h3>Items</h3>
+        <table>
+          % for item in obj.cart.items:
+            <tr>
+              <td>${item.id}</td>
+              <td>${item.product.name} (${item.product.project.name})</td>
+              <td>${item.qty_desired}</td>
+              <td>${h.currency(item.price_each)}</td>
+            </tr>
+          % endfor
+        </table>
+
+        <h3>Payments</h3>
+        % for payment in obj.payments:
+          <p>
+            ${payment.id}<br>
+            ${payment.amount}<br>
+            ${payment.created_time}<br>
+            % if hasattr(payment, 'method'):
+              Method ${payment.method.id}<br>
+              Reference ${payment.method.reference}<br>
+              ${self.address_debug(payment.method.billing)}
+            % endif
+          </p>
+        % endfor
+
+        <h3>Shipments</h3>
+        % for shipment in obj.shipments:
+          <p>
+            ${shipment.id}<br>
+            ${shipment.tracking_num}<br>
+            ${h.currency(shipment.cost)}<br>
+            ${shipment.created_time}
+          </p>
+        % endfor
+      </div>
+    </div>
+  </div>
+</section>

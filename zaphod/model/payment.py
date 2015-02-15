@@ -87,7 +87,7 @@ class Payment(Base, StateMixin):
     discriminator = Column(types.String(4), nullable=False)
     __mapper_args__ = {'polymorphic_on': discriminator}
 
-    order = orm.relationship('Order')
+    order = orm.relationship('Order', backref='payments')
     created_by = orm.relationship(
         'User',
         primaryjoin='User.id == Payment.created_by_id')
@@ -106,8 +106,8 @@ class Payment(Base, StateMixin):
         void_time = self.created_time + timedelta(hours=1)
         return self.valid and utils.utcnow() < void_time
 
-    def mark_as_void(self, account):
-        self.transition('voided', self.can_be_voided, account)
+    def mark_as_void(self, user):
+        self.transition('voided', self.can_be_voided, user)
 
     @property
     def refundable_amount(self):
@@ -148,8 +148,8 @@ class CheckPayment(Payment):
     def can_be_bounced(self):
         return self.valid
 
-    def mark_as_bounced(self, account):
-        self.transition('bounced', self.can_be_bounced, account)
+    def mark_as_bounced(self, user):
+        self.transition('bounced', self.can_be_bounced, user)
 
 
 class CreditCardPayment(Payment):
@@ -171,7 +171,6 @@ class CreditCardPayment(Payment):
     # decoded with the method below.
     avs_result = Column(types.String(1), nullable=False, default='')
     ccv_result = Column(types.String(1), nullable=False, default='')
-    approval_code = Column(types.String(6), nullable=True)
     captured_time = Column(types.DateTime, nullable=True)
     captured_state = Column(types.String(2), nullable=False, default='un')
     transaction_error_time = Column(types.DateTime, nullable=True)
@@ -211,113 +210,8 @@ class CreditCardPayment(Payment):
                 (self.voided_time == None))
 
     @property
-    def avs_description(self):
-        """
-        Decode values of the AVS result character. These values are documented
-        in a variety of places, e.g.:
-
-            http://apps.cybersource.com/library/documentation/
-            sbc/SB_Reporting_UG/html/appd_avs_factor_codes.htm
-        """
-        codes = {'': 'No AVS Information',
-                 'A': 'Street address matches, ZIP does not',
-                 'E': 'AVS error',
-                 'N': 'No match on address (street) or ZIP',
-                 'P': 'AVS not applicable for this transaction',
-                 'R': 'Retry - system unavailable or timed out',
-                 'S': 'Service not supported by issuer',
-                 'U': 'Address information is unavailable',
-                 'W': '9 digit ZIP matches, address (street) does not',
-                 'Y': 'Address (street) and 5 digit ZIP match',
-                 'X': 'Address (street) and 9 digit ZIP match',
-                 'Z': '5 digit ZIP matches, address (street) does not',
-                 # International response codes.
-                 'G': 'Non-US issuing bank does not support AVS',
-                 'B': 'Street address matches, postal code not verified',
-                 'C': 'No Match on address (street) or postal code',
-                 'D': 'Street address and postal code match',
-                 'F': 'Postal code matches, cardholder name does not',
-                 'I': 'Address not verified for international transaction',
-                 'M': 'Address and postal code match',
-                 'P': 'Postal code match only'}
-        return codes.get(self.avs_result, "Unknown code '%s'." %
-                         self.avs_result)
-
-    @property
-    def avs_with_status(self):
-        codes = {'': ('No AVS Information', None),
-                 'A': ('Street address matches, ZIP does not', 'warning'),
-                 'E': ('AVS error', 'important'),
-                 'N': ('No match on address (street) or ZIP', 'important'),
-                 'P': ('AVS not applicable for this transaction', 'warning'),
-                 'R': ('Retry - AVS unavailable or timed out', 'warning'),
-                 'S': ('AVS not supported by issuer', 'warning'),
-                 'U': ('Address information is unavailable', 'warning'),
-                 'W': ('9 digit ZIP matches, address (street) does not',
-                       'warning'),
-                 'Y': ('Address (street) and 5 digit ZIP match', None),
-                 'X': ('Address (street) and 9 digit ZIP match', None),
-                 'Z': ('5 digit ZIP matches, address (street) does not',
-                       'important'),
-                 # International response codes.
-                 'G': ('Non-US issuing bank does not support AVS',
-                       'important'),
-                 'B': ('Street address matches, postal code not verified',
-                       'warning'),
-                 'C': ('No Match on address (street) or postal code',
-                       'important'),
-                 'D': ('Street address and postal code match', None),
-                 'F': ('Postal code matches, cardholder name does not',
-                       'warning'),
-                 'I': ('Address not verified for international transaction',
-                       'warning'),
-                 'M': ('Address and postal code match', None),
-                 'P': ('Postal code match only', 'warning')}
-        return codes[self.avs_result]
-
-    ccv_descriptions = {
-        '': 'No CCV Information',
-        'M': 'CCV Match',
-        'N': 'CCV Mismatch',
-        'P': 'CCV Not Processed',
-        'S': 'CCV Should have been present',
-        'U': 'Issuer unable to process CCV request',
-        'I': 'CCV Check not available',
-    }
-
-    ccv_severities = {
-        '': None,
-        'M': None,
-        'N': 'important',
-        'P': 'important',
-        'S': 'warning',
-        'U': 'warning',
-        'I': None,
-    }
-
-    @property
-    def ccv_description(self):
-        """
-        Decode values of the CCV result character, as documented on page 31 of
-        the AIM integration guide.
-        """
-        return self.ccv_descriptions.get(self.ccv_result,
-                                         "Unknown code '%s'." %
-                                         self.ccv_result)
-
-    @property
-    def ccv_with_status(self):
-        return (self.ccv_descriptions[self.ccv_result],
-                self.ccv_severities[self.ccv_result])
-
-    @property
     def is_first_payment(self):
         return self.method.first_payment == self
-
-    @property
-    def first_payment_ccv_with_status(self):
-        result = self.method.first_payment.ccv_result
-        return self.ccv_descriptions[result], self.ccv_severities[result]
 
     card_type_codes = [('A', 'American Express'),
                        ('M', 'MasterCard'),
@@ -351,12 +245,12 @@ class CreditCardPayment(Payment):
     def can_be_voided(self):
         return self.valid and not self.captured_time
 
-    def mark_for_voiding(self, account):
-        self.transition('pending_action', self.can_be_voided, account)
+    def mark_for_voiding(self, user):
+        self.transition('pending_action', self.can_be_voided, user)
         self.pending_action = 'void'
 
-    def mark_as_void(self, account):
-        self.transition('voided', self.can_be_marked_as_void, account)
+    def mark_as_void(self, user):
+        self.transition('voided', self.can_be_marked_as_void, user)
 
     def can_be_marked_as_void(self):
         return (not self.voided_time and not self.chargeback_time and
@@ -367,15 +261,15 @@ class CreditCardPayment(Payment):
                 not self.voided_time and
                 not self.expired)
 
-    def mark_for_capture(self, account):
+    def mark_for_capture(self, user):
         "Flags a payment for pending capture."
         self.transition('pending_action', self.can_be_marked_as_captured,
-                        account)
+                        user)
         self.pending_action = 'capt'
 
-    def mark_as_captured(self, account, amount):
+    def mark_as_captured(self, user, amount):
         "Marks a payment as captured."
-        self.transition('captured', self.can_be_marked_as_captured, account)
+        self.transition('captured', self.can_be_marked_as_captured, user)
         self.amount = amount
         self.captured_state = 'ca'
 
@@ -383,8 +277,8 @@ class CreditCardPayment(Payment):
         return (self.captured_state in ('ca', 'er') and
                 not self.chargeback_time)
 
-    def mark_as_chargeback(self, account):
-        self.transition('chargeback', self.can_be_charged_back, account)
+    def mark_as_chargeback(self, user):
+        self.transition('chargeback', self.can_be_charged_back, user)
         self.chargeback_state = 'open'
 
     def can_be_marked_as_expired(self):
@@ -475,21 +369,21 @@ class CreditCardRefund(Refund):
             return True
         return False
 
-    def mark_as_void(self, account):
-        self.transition('voided', self.can_be_voided, account)
+    def mark_as_void(self, user):
+        self.transition('voided', self.can_be_voided, user)
 
     def can_be_processed(self):
         return self.valid and not self.processed_time
 
-    def mark_for_processing(self, account, amount):
+    def mark_for_processing(self, user, amount):
         "Flags a refund for pending action"
-        self.transition('pending_action', self.can_be_processed, account)
+        self.transition('pending_action', self.can_be_processed, user)
         self.pending_action = 'rfnd'
         self.refund_amount = amount
 
-    def mark_as_processed(self, account, amount):
+    def mark_as_processed(self, user, amount):
         "Marks refund as processed."
-        self.transition('processed', self.can_be_processed, account)
+        self.transition('processed', self.can_be_processed, user)
         self.amount = amount
 
     __mapper_args__ = {'polymorphic_identity': 'ccrf'}

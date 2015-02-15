@@ -14,6 +14,10 @@ def includeme(config):
 
     config.add_route('admin:projects', '/projects')
     config.add_route('admin:project', '/project/{id}')
+    config.add_route('admin:project:products', '/project/{id}/products')
+    config.add_route('admin:project:owners', '/project/{id}/owners')
+    config.add_route('admin:project:updates', '/project/{id}/updates')
+    config.add_route('admin:update', '/update/{id}')
 
     config.add_route('admin:users', '/users')
     config.add_route('admin:user', '/user/{id}')

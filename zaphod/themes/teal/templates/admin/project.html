@@ -2,17 +2,18 @@
 
 <%namespace name="forms" file="/common/forms.html"/>
 <%namespace name="widgets" file="/admin/common/widgets.html"/>
+<%namespace name="project_header" file="/admin/common/project_header.html"/>
 
 <%def name="title()">Edit Project ${obj.id}</%def>
+
+
+${project_header.project_header(obj)}
 
 
 <section class="section-admin-project">
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        <a class="pull-right" href="${request.node_path(obj)}">View Public Page</a>
-        <h1 class="page-header">${self.title()}</h1>
-
         ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
           ${forms.ltext(renderer, 'name', obj.name)}
 

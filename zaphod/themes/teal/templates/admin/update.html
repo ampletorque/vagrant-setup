@@ -1,0 +1,40 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="widgets" file="/admin/common/widgets.html"/>
+<%namespace name="project_header" file="/admin/common/project_header.html"/>
+
+<%def name="title()">Edit Update ${obj.id}</%def>
+
+
+${project_header.project_header(obj.project)}
+
+
+<section class="section-admin-project">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <a class="pull-right" href="${request.node_path(obj)}">View Public Page</a>
+        <h1 class="page-header">Update ${obj.id}</h1>
+
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
+          ${forms.ltext(renderer, 'name', obj.name)}
+
+          ${widgets.aliases(renderer, obj)}
+
+          ${forms.ltextarea(renderer, 'teaser', obj.teaser, rows=3, hint='Optional summary.')}
+          ${forms.ltextarea(renderer, 'keywords', obj.keywords, rows=3, hint='Included in a keywords meta tag and used for search.')}
+          ${forms.ltextarea(renderer, 'body', obj.body, rows=15, hint=widgets.markdown_hint)}
+
+          ${forms.lcheckbox(renderer, 'listed', obj.listed)}
+          ${forms.lcheckbox(renderer, 'published', obj.published)}
+
+          <%forms:actions>
+            <button class="btn btn-primary" type="submit">Save</button>
+            <button class="btn btn-default" type="reset">Cancel</button>
+          </%forms:actions>
+        ${renderer.end()}
+      </div>
+    </div>
+  </div>
+</section>

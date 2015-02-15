@@ -1,7 +1,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from pyramid.view import view_defaults
+from pyramid.view import view_defaults, view_config
 from venusian import lift
 from formencode import validators
 
@@ -33,6 +33,24 @@ class ProjectEditView(NodeEditView):
         # Remember we probably want to add a day to this value.
         end_time = validators.DateConverter()
         gravity = validators.Int(not_empty=True)
+
+    @view_config(route_name='admin:project:products',
+                 renderer='admin/project_products.html')
+    def products(self):
+        project = self._get_object()
+        return {'obj': project}
+
+    @view_config(route_name='admin:project:owners',
+                 renderer='admin/project_owners.html')
+    def owners(self):
+        project = self._get_object()
+        return {'obj': project}
+
+    @view_config(route_name='admin:project:updates',
+                 renderer='admin/project_updates.html')
+    def updates(self):
+        project = self._get_object()
+        return {'obj': project}
 
 
 @view_defaults(route_name='admin:projects', renderer='admin/projects.html')

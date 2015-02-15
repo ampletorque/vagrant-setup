@@ -78,7 +78,7 @@ class NodeUpdateForm(Schema):
 
 
 class NodeEditView(BaseEditView):
-    pass
+    UpdateForm = NodeUpdateForm
 
 
 class NodeListView(BaseListView):

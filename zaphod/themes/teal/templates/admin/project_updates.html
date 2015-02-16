@@ -14,32 +14,34 @@ ${project_header.project_header(obj)}
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        <table class="table">
-          <thead>
-            <tr>
-              <th></th>
-              <th>Title</th>
-              <th>Published</th>
-              <th>Posted Time</th>
-              <th>Author</th>
-            </tr>
-          </thead>
-          <tbody>
-            % for update in obj.updates:
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
               <tr>
-                <td><a href="${request.route_path('admin:update', id=update.id)}">Edit</a></td>
-                <td>${update.name}</td>
-                <td>
-                  % if update.published:
-                    Yes
-                  % endif
-                </td>
-                <td>${h.format_datetime(request, update.created_time)}</td>
-                <td>${update.created_by.name}</td>
+                <th></th>
+                <th>Title</th>
+                <th>Published</th>
+                <th>Posted Time</th>
+                <th>Author</th>
               </tr>
-            % endfor
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              % for update in obj.updates:
+                <tr>
+                  <td><a href="${request.route_path('admin:update', id=update.id)}">Edit</a></td>
+                  <td>${update.name}</td>
+                  <td>
+                    % if update.published:
+                      Yes
+                    % endif
+                  </td>
+                  <td>${h.format_datetime(request, update.created_time)}</td>
+                  <td>${update.created_by.name}</td>
+                </tr>
+              % endfor
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>

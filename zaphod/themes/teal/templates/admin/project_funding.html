@@ -1,0 +1,22 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="widgets" file="/admin/common/widgets.html"/>
+<%namespace name="project_header" file="/admin/common/project_header.html"/>
+
+<%def name="title()">Project ${obj.id} Funding History</%def>
+
+
+${project_header.project_header(obj)}
+
+
+<section class="section-admin-project">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">Funding History</h1>
+
+      </div>
+    </div>
+  </div>
+</section>

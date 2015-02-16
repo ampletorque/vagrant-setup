@@ -1,0 +1,63 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="blocks" file="/common/blocks.html"/>
+<%namespace name="widgets" file="/admin/common/widgets.html"/>
+<%namespace name="project_header" file="/admin/common/project_header.html"/>
+
+<%def name="title()">Project ${obj.id} SKU Breakdown</%def>
+
+
+${project_header.project_header(obj)}
+
+
+<section class="section-admin-project">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">SKU Breakdown</h1>
+
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>SKU ID</th>
+                <th>Description</th>
+                <th>Qty Ordered</th>
+                <th>Qty Delivered</th>
+                <th>Qty Remaining</th>
+                <th>Next Due Delivery</th>
+              </tr>
+            </thead>
+            <tbody>
+              % for product in obj.levels:
+                % if not product.non_physical:
+                  <tr>
+                    <td colspan="6">${product.name}</td>
+                  </tr>
+                  % for sku in product.skus:
+                    <tr>
+                      <td>${sku.id}</td>
+                      <td>${blocks.option_value_list(sku)}</td>
+                      <td>${qty_ordered.get(sku, '-')}</td>
+                      <td>${qty_delivered.get(sku, '-')}</td>
+                      <td>${qty_ordered.get(sku, 0) - qty_delivered.get(sku, 0)}</td>
+                      <td>
+                        % if earliest_due_date.get(sku):
+                          ${h.format_datetime(request, earliest_due_date[sku])}
+                        % else:
+                          -
+                        % endif
+                      </td>
+                    </tr>
+                  % endfor
+                % endif
+              % endfor
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>

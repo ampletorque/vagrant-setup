@@ -1,0 +1,26 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="widgets" file="/admin/common/widgets.html"/>
+<%namespace name="project_header" file="/admin/common/project_header.html"/>
+
+<%def name="title()">Project ${obj.id} Reports</%def>
+
+
+${project_header.project_header(obj)}
+
+
+<section class="section-admin-project">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">Reports</h1>
+
+        <p><a href="${request.route_path('admin:project:reports:funding', id=obj.id)}">Funding History</a></p>
+        <p><a href="${request.route_path('admin:project:reports:status', id=obj.id)}">Order Status</a></p>
+        <p><a href="${request.route_path('admin:project:reports:balance', id=obj.id)}">Balance Sheet</a></p>
+        <p><a href="${request.route_path('admin:project:reports:skus', id=obj.id)}">SKU Breakdown</a></p>
+      </div>
+    </div>
+  </div>
+</section>

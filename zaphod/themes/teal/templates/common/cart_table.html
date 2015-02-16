@@ -1,14 +1,8 @@
+<%namespace name="blocks" file="blocks.html"/>
+
+
 <%def name="shipping_text(cart)">
   <h4>This order qualifies for free US ground shipping!</h4>
-</%def>
-
-
-<%def name="option_value_list(obj)">
-  <ul>
-    % for ov in sorted(obj.option_values, key=lambda ov: ov.option.gravity):
-      <li>${ov.option.name}: ${ov.description}</li>
-    % endfor
-  </ul>
 </%def>
 
 
@@ -23,7 +17,7 @@
           <h3><a href="${request.node_path(item.product.project)}">${item.product.name}</a></h3>
           <h4>${item.product.project.name}</h4>
           % if item.sku and item.sku.option_values:
-            ${self.option_value_list(item.sku)}
+            ${blocks.option_value_list(item.sku)}
           % endif
           <p>Ships ${item.expected_delivery_date.strftime('%B %Y')}</p>
         </div>

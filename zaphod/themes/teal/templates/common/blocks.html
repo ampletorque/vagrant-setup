@@ -25,3 +25,12 @@
     </section>
   % endif
 </%def>
+
+
+<%def name="option_value_list(obj)">
+  <ul>
+    % for ov in sorted(obj.option_values, key=lambda ov: ov.option.gravity):
+      <li>${ov.option.name}: ${ov.description}</li>
+    % endfor
+  </ul>
+</%def>

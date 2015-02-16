@@ -14,28 +14,30 @@ ${project_header.project_header(obj)}
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Published</th>
-              <th>Price</th>
-            </tr>
-          </thead>
-          <tbody>
-            % for product in obj.levels:
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
               <tr>
-                <td>${product.name}</td>
-                <td>
-                  % if product.published:
-                    Yes
-                  % endif
-                </td>
-                <td>${h.currency(product.price)}</td>
+                <th>Name</th>
+                <th>Published</th>
+                <th>Price</th>
               </tr>
-            % endfor
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              % for product in obj.levels:
+                <tr>
+                  <td>${product.name}</td>
+                  <td>
+                    % if product.published:
+                      Yes
+                    % endif
+                  </td>
+                  <td>${h.currency(product.price)}</td>
+                </tr>
+              % endfor
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>

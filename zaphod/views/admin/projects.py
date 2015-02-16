@@ -3,11 +3,18 @@ from __future__ import (absolute_import, division, print_function,
 
 from pyramid.view import view_defaults, view_config
 from venusian import lift
+from sqlalchemy.sql import func, not_
 from formencode import validators
 
 from ... import model
 
 from .base import NodeEditView, NodeListView, NodeUpdateForm
+
+
+@view_defaults(route_name='admin:projects', renderer='admin/projects.html')
+@lift()
+class ProjectListView(NodeListView):
+    cls = model.Project
 
 
 @view_defaults(route_name='admin:project', renderer='admin/project.html')
@@ -52,8 +59,67 @@ class ProjectEditView(NodeEditView):
         project = self._get_object()
         return {'obj': project}
 
+    @view_config(route_name='admin:project:reports',
+                 renderer='admin/project_reports.html')
+    def reports(self):
+        project = self._get_object()
+        return {'obj': project}
 
-@view_defaults(route_name='admin:projects', renderer='admin/projects.html')
-@lift()
-class ProjectListView(NodeListView):
-    cls = model.Project
+    @view_config(route_name='admin:project:reports:funding',
+                 renderer='admin/project_funding.html')
+    def funding(self):
+        project = self._get_object()
+        return {'obj': project}
+
+    @view_config(route_name='admin:project:reports:status',
+                 renderer='admin/project_status.html')
+    def status(self):
+        project = self._get_object()
+        return {'obj': project}
+
+    @view_config(route_name='admin:project:reports:balance',
+                 renderer='admin/project_balance.html')
+    def balance(self):
+        project = self._get_object()
+        return {'obj': project}
+
+    @view_config(route_name='admin:project:reports:skus',
+                 renderer='admin/project_skus.html')
+    def skus(self):
+        project = self._get_object()
+
+        base_q = model.Session.query(model.SKU,
+                                     func.count('*')).\
+            join(model.SKU.cart_items).\
+            join(model.CartItem.cart).\
+            join(model.Cart.order).\
+            join(model.SKU.product).\
+            filter(model.Product.project_id == project.id).\
+            group_by(model.SKU.id)
+
+        ordered_q = base_q.\
+            filter(not_(model.CartItem.status.in_(
+                ['cancelled', 'shipped', 'abandoned'])))
+        qty_ordered = dict(ordered_q.all())
+
+        delivered_q = base_q.\
+            filter(model.CartItem.status == 'shipped')
+        qty_delivered = dict(delivered_q.all())
+
+        due_q = model.Session.query(
+            model.SKU,
+            func.min(model.CartItem.expected_delivery_date)).\
+            join(model.SKU.cart_items).\
+            join(model.CartItem.cart).\
+            join(model.Cart.order).\
+            join(model.SKU.product).\
+            filter(model.Product.project_id == project.id).\
+            group_by(model.SKU.id)
+        earliest_due_date = dict(due_q.all())
+
+        return {
+            'obj': project,
+            'qty_ordered': qty_ordered,
+            'qty_delivered': qty_delivered,
+            'earliest_due_date': earliest_due_date,
+        }

@@ -6,15 +6,16 @@ from sqlalchemy.sql import func
 
 from .... import model
 
+from .base import BaseReportsView
 
-class SalesView(object):
-    def __init__(self, request):
-        self.request = request
 
+class PerformanceReportsView(BaseReportsView):
     @view_config(route_name='admin:reports:sales',
                  renderer='admin/reports/sales.html',
                  permission='authenticated')
     def sales(self):
+        # over time range
+
         utcnow = model.utcnow()
 
         base_q = model.Session.query(
@@ -68,15 +69,31 @@ class SalesView(object):
             'total': total,
         }
 
+    @view_config(route_name='admin:reports:project-launches',
+                 renderer='admin/reports/project_launches.html',
+                 permission='authenticated')
+    def project_launches(self):
+        # over time range
+        # ideally show a graph
 
-class UserBehaviorView(object):
-    def __init__(self, request):
-        self.request = request
+        utcnow = model.utcnow()
+
+        q = model.Session.query(model.Project).\
+            filter(model.Project.published == True,
+                   model.Project.start_time < utcnow)
+
+        num_projects_launched = q.count()
+
+        return {
+            'num_projects_launched': num_projects_launched,
+        }
 
     @view_config(route_name='admin:reports:user-behavior',
                  renderer='admin/reports/user_behavior.html',
                  permission='authenticated')
     def user_behavior(self):
+        # 'up to now', not time range or time specific
+
         user_q = model.Session.query(
             model.User.id,
             func.count(model.Project.id.distinct()).label('num_projects')).\
@@ -121,11 +138,6 @@ class UserBehaviorView(object):
             'top_users': top_user_q.all(),
             'top_projects': top_projects_q.all(),
         }
-
-
-class FundingSuccessView(object):
-    def __init__(self, request):
-        self.request = request
 
     @view_config(route_name='admin:reports:funding-success',
                  renderer='admin/reports/funding_success.html',

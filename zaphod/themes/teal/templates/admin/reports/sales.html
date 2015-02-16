@@ -4,10 +4,13 @@
 <%def name="title()">Sales Report</%def>
 
 
-<%def name="columns(data)">
-  <td>${h.currency(data[0])}</td>
-  <td>${h.currency(data[1])}</td>
-  <td>${h.currency(data[0] + data[1])}</td>
+<%def name="columns(value, total)">
+  <td>${h.currency(value[0])}</td>
+  <td>${'%0.1f' % (100 * value[0] / total[0])}%</td>
+  <td>${h.currency(value[1])}</td>
+  <td>${'%0.1f' % (100 * value[1] / total[1])}%</td>
+  <td>${h.currency(value[0] + value[1])}</td>
+  <td>${'%0.1f' % (100 * (value[0] + value[1]) / (total[0] + total[1]))}%</td>
 </%def>
 
 
@@ -20,9 +23,9 @@
             <thead>
               <tr>
                 <th></th>
-                <th>Items</th>
-                <th>Shipping</th>
-                <th>Total</th>
+                <th colspan="2">Items</th>
+                <th colspan="2">Shipping</th>
+                <th colspan="2">Total</th>
               </tr>
             </thead>
             <tbody>
@@ -31,28 +34,28 @@
               </tr>
               <tr>
                 <td>To Pending Campaigns</td>
-                ${self.columns(pending)}
+                ${self.columns(pending, total)}
               </tr>
               <tr>
                 <td>To Funded Campaigns</td>
-                ${self.columns(funded)}
+                ${self.columns(funded, total)}
               </tr>
               <tr>
                 <td>To Failed Campaigns</td>
-                ${self.columns(failed)}
+                ${self.columns(failed, total)}
               </tr>
               <tr>
                 <td><strong>Pre-Order Sales</strong></td>
-                ${self.columns(preorder)}
+                ${self.columns(preorder, total)}
               </tr>
               <tr>
                 <td><strong>Stock Sales</strong></td>
-                ${self.columns(stock)}
+                ${self.columns(stock, total)}
               </tr>
               <tr class="divider"><td colspan="4"></td></tr>
               <tr>
                 <td><strong>Total Non-Failed Orders</strong></td>
-                ${self.columns(total)}
+                ${self.columns(total, total)}
               </tr>
             </tbody>
           </table>

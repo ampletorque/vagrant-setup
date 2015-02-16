@@ -2,9 +2,6 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from pyramid.view import view_config
-from sqlalchemy.sql import func
-
-from .... import model
 
 from .base import BaseReportsView
 
@@ -14,8 +11,6 @@ class AccountingReportsView(BaseReportsView):
                  renderer='admin/reports/revenue.html',
                  permission='authenticated')
     def revenue(self):
-        utcnow = model.utcnow()
-
         # crowdfunding fees, recognized at the time the project is successful
 
         # preorder commission, recognized at the time of order??
@@ -33,7 +28,7 @@ class AccountingReportsView(BaseReportsView):
                  renderer='admin/reports/cogs.html',
                  permission='authenticated')
     def cogs(self):
-        utcnow = model.utcnow()
+        # for a time range
 
         # in-stock product cost
         # fulfillment cost
@@ -46,9 +41,8 @@ class AccountingReportsView(BaseReportsView):
                  renderer='admin/reports/inventory.html',
                  permission='authenticated')
     def inventory(self):
-        utcnow = model.utcnow()
+        # for a certain date, show:
 
-        # as of a certain date, show:
         # confirmed inventory value
         # unconfirmed inventory value
 
@@ -73,5 +67,8 @@ class AccountingReportsView(BaseReportsView):
                  renderer='admin/reports/payments.html',
                  permission='authenticated')
     def payments(self):
+        # for a time range, show:
+        # payments by cc type
+        # payments by gateway
         return {
         }

@@ -3,8 +3,6 @@ from __future__ import (absolute_import, division, print_function,
 
 from pyramid.view import view_config
 
-from .... import model
-
 from .base import BaseReportsView
 
 
@@ -13,7 +11,7 @@ class LeadsReportsView(BaseReportsView):
                  renderer='admin/reports/funnel_analysis.html',
                  permission='authenticated')
     def funnel_analysis(self):
-        utcnow = model.utcnow()
+        # for a time range
 
         return {
         }
@@ -22,7 +20,7 @@ class LeadsReportsView(BaseReportsView):
                  renderer='admin/reports/lead_activity.html',
                  permission='authenticated')
     def lead_activity(self):
-        utcnow = model.utcnow()
+        # for a time range
 
         return {
         }
@@ -31,7 +29,7 @@ class LeadsReportsView(BaseReportsView):
                  renderer='admin/reports/pipeline.html',
                  permission='authenticated')
     def pipeline(self):
-        utcnow = model.utcnow()
+        # as of now
 
         return {
         }
@@ -40,6 +38,7 @@ class LeadsReportsView(BaseReportsView):
                  renderer='admin/reports/lead_sources.html',
                  permission='authenticated')
     def lead_sources(self):
+        # as of now
 
         return {
         }

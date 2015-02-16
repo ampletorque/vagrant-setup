@@ -3,8 +3,6 @@ from __future__ import (absolute_import, division, print_function,
 
 from pyramid.view import view_config
 
-from .... import model
-
 from .base import BaseReportsView
 
 
@@ -13,8 +11,6 @@ class OperationsReportsView(BaseReportsView):
                  renderer='admin/reports/warehouse_transactions.html',
                  permission='authenticated')
     def warehouse_transactions(self):
-        utcnow = model.utcnow()
-
         return {
         }
 
@@ -22,7 +18,5 @@ class OperationsReportsView(BaseReportsView):
                  renderer='admin/reports/delays.html',
                  permission='authenticated')
     def delays(self):
-        utcnow = model.utcnow()
-
         return {
         }

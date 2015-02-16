@@ -80,9 +80,9 @@ class Address(MutableComposite):
         self.changed()
 
     def __eq__(self, other):
-        return (isinstance(other, Address)
-                and all((getattr(self, c) == getattr(other, c)
-                         for c in self.column_ordering)))
+        return (isinstance(other, Address) and
+                all((getattr(self, c) == getattr(other, c)
+                     for c in self.column_ordering)))
 
     def __ne__(self, other):
         return not self.__eq__(other)

@@ -185,8 +185,8 @@ class CreditCardSecurityCode(validators.CreditCardSecurityCode):
     __unpackargs__ = ('cc_number_field', 'cc_code_field')
 
     def validate_partial(self, field_dict, state):
-        if (not field_dict.get(self.cc_type_field, None)
-                or not field_dict.get(self.cc_number_field, None)):
+        if (not field_dict.get(self.cc_type_field, None) or
+                (not field_dict.get(self.cc_number_field, None))):
             return None
         self.validate_python(field_dict, state)
 

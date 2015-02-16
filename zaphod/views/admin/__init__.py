@@ -54,5 +54,6 @@ def includeme(config):
 
     config.add_route('admin:mail_template', '/mail-template/{template_name}')
 
-    config.add_route('admin:reports', '/reports')
     config.add_route('admin:markdown_guide', '/markdown-guide')
+
+    config.include('.reports', route_prefix='/reports')

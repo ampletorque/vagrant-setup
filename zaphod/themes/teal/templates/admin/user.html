@@ -40,6 +40,45 @@
             <button class="btn btn-default" type="reset">Cancel</button>
           </%forms:actions>
         ${renderer.end()}
+
+        <h3>Order History</h3>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Order ID</th>
+                <th>First Item</th>
+                <th>Total</th>
+                <th>Placed</th>
+                <th>Closed</th>
+              </tr>
+            </thead>
+            <tbody>
+              % for order in obj.orders:
+                <tr>
+                  <td><a href="${request.route_path('admin:order', id=order.id)}">Edit</a></td>
+                  <td>${order.id}</td>
+                  <td>
+                    % if order.cart.items:
+                      ${order.cart.items[0].product.name}
+                    % endif
+                  </td>
+                  <td>${h.currency(order.total)}</td>
+                  <td>${h.format_datetime(request, order.created_time)}</td>
+                  <td>
+                    % if order.closed:
+                      Closed
+                    % else:
+                      Open
+                    % endif
+                  </td>
+                </tr>
+              % endfor
+            </tbody>
+          </table>
+        </div>
+
       </div>
     </div>
   </div>

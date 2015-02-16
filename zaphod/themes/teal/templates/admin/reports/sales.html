@@ -1,0 +1,63 @@
+<%inherit file="base.html"/>
+
+
+<%def name="title()">Sales Report</%def>
+
+
+<%def name="columns(data)">
+  <td>${h.currency(data[0])}</td>
+  <td>${h.currency(data[1])}</td>
+  <td>${h.currency(data[0] + data[1])}</td>
+</%def>
+
+
+<section class="section-report-sales">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Items</th>
+                <th>Shipping</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Total Crowdfunding Pledges</strong></td>
+              </tr>
+              <tr>
+                <td>To Pending Campaigns</td>
+                ${self.columns(pending)}
+              </tr>
+              <tr>
+                <td>To Funded Campaigns</td>
+                ${self.columns(funded)}
+              </tr>
+              <tr>
+                <td>To Failed Campaigns</td>
+                ${self.columns(failed)}
+              </tr>
+              <tr>
+                <td><strong>Pre-Order Sales</strong></td>
+                ${self.columns(preorder)}
+              </tr>
+              <tr>
+                <td><strong>Stock Sales</strong></td>
+                ${self.columns(stock)}
+              </tr>
+              <tr class="divider"><td colspan="4"></td></tr>
+              <tr>
+                <td><strong>Total Non-Failed Orders</strong></td>
+                ${self.columns(total)}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

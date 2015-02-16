@@ -38,6 +38,11 @@ class Cart(Base):
             item.refresh()
 
 
+CROWDFUNDING = 0
+PREORDER = 1
+STOCK = 2
+
+
 class CartItem(Base):
     __tablename__ = 'cart_items'
     __table_args__ = {'mysql_engine': 'InnoDB'}
@@ -48,7 +53,8 @@ class CartItem(Base):
     price_each = Column(custom_types.Money, nullable=False)
     qty_desired = Column(types.Integer, nullable=False, default=1)
     shipping_price = Column(custom_types.Money, nullable=False)
-    crowdfunding = Column(types.Boolean, nullable=False)
+    stage = Column(types.Integer, nullable=False)
+
     expected_delivery_date = Column(types.DateTime, nullable=True)
     shipped_date = Column(types.DateTime, nullable=True)
     shipment_id = Column(None, ForeignKey('shipments.id'), nullable=True)

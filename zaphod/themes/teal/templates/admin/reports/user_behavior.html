@@ -1,0 +1,61 @@
+<%inherit file="base.html"/>
+
+
+<%def name="title()">Cross-Project User Behavior Report</%def>
+
+
+<section class="section-report-user-behavior">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h3>Number of Cross-Project Users</h3>
+        <p>${cross_project_user_count}</p>
+
+        <h3>Top Projects</h3>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Project</th>
+                <th>Number of Cross-Project Users</th>
+              </tr>
+            </thead>
+            <tbody>
+              % for project, num_users in top_projects:
+                <tr>
+                  <td>
+                    <a href="${request.route_path('admin:project', id=project.id)}">${project.name}</a>
+                  </td>
+                  <td>${num_users}</td>
+                </tr>
+              % endfor
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Top Users</h3>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Projects Backed</th>
+              </tr>
+            </thead>
+            <tbody>
+              % for user, num_projects in top_users:
+                <tr>
+                  <td>
+                    <a href="${request.route_path('admin:user', id=user.id)}">${user.name}</a>
+                  </td>
+                  <td>${num_projects}</td>
+                </tr>
+              % endfor
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>

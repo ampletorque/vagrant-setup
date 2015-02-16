@@ -110,10 +110,19 @@ class CartView(object):
             cart = self.get_cart(create_new=True)
 
             project = product.project
-            crowdfunding = project.status == 'crowdfunding'
-            batch = product.current_batch
 
             sku = model.sku_for_option_value_ids(product, form.data['options'])
+
+            # XXX The stage/batch/SKU stuff should be moved into a
+            # cart_item.update_reservation() method.
+            if project.status == 'crowdfunding':
+                stage = model.CROWDFUNDING
+            elif sku.in_stock:
+                stage = model.STOCK
+            else:
+                stage = model.PREORDER
+
+            batch = product.current_batch
 
             assert cart and cart.id
             ci = model.CartItem(
@@ -121,7 +130,7 @@ class CartView(object):
                 qty_desired=form.data['qty'],
                 product=product,
                 shipping_price=0,
-                crowdfunding=crowdfunding,
+                stage=stage,
                 batch=batch,
                 sku=sku,
                 expected_delivery_date=batch.delivery_date,

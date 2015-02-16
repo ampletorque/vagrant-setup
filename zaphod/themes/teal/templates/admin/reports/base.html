@@ -1,0 +1,18 @@
+<%inherit file="../base.html"/>
+
+
+<section class="section-admin-report-header">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="breadcrumb">
+          <li><a href="${request.route_path('admin:reports')}">Reports</a></li>
+          <li>${self.title()}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+${next.body()}

@@ -9,7 +9,7 @@ class ReportsView(object):
         self.request = request
 
     @view_config(route_name='admin:reports',
-                 renderer='admin/reports.html',
+                 renderer='admin/reports/list.html',
                  permission='authenticated')
-    def index(self):
+    def list(self):
         return {}

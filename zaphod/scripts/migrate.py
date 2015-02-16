@@ -595,7 +595,7 @@ def migrate_orders(settings, user_map, product_map, option_value_map,
                 product=product,
                 price_each=old_ci.price_each,
                 qty_desired=old_ci.qty_desired,
-                crowdfunding=(old_ci.discriminator in ('P', 'E')),
+                stage=['P', 'E', 'C'].index(old_ci.discriminator),
                 status='init',
                 sku=sku,
                 shipping_price=(shipping_prices[old_ci]
@@ -678,3 +678,6 @@ def main(argv=sys.argv):
         scott_user.url_path = 'storborg'
         scott_user.location = 'Portland, OR'
         scott_user.twitter_username = 'storborg'
+
+        for project in model.Session.query(model.Project):
+            project.update_successful()

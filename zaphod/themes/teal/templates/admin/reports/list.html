@@ -1,0 +1,42 @@
+<%inherit file="../base.html"/>
+
+<%def name="title()">Reports</%def>
+
+
+<section class="section-admin-reports">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        <h1 class="page-header">Reports</h1>
+
+        <h3>Performance</h3>
+
+        <p><a href="${request.route_path('admin:reports:sales')}">Sales</a></p>
+        <p><a href="${request.route_path('admin:reports:project-launches')}">Project Launches</a></p>
+        <p><a href="${request.route_path('admin:reports:user-behavior')}">Cross-Project User Behavior</a></p>
+        <p><a href="${request.route_path('admin:reports:funding-success')}">Funding Success</a></p>
+
+        <h3>Leads</h3>
+
+        <p><a href="${request.route_path('admin:reports:funnel-analysis')}">Funnel Analysis</a></p>
+        <p><a href="${request.route_path('admin:reports:lead-activity')}">Activity</a></p>
+        <p><a href="${request.route_path('admin:reports:pipeline')}">Pipeline</a></p>
+        <p><a href="${request.route_path('admin:reports:lead-sources')}">Sources</a></p>
+
+        <h3>Accounting</h3>
+
+        <p><a href="${request.route_path('admin:reports:revenue')}">Revenue</a></p>
+        <p><a href="${request.route_path('admin:reports:cogs')}">COGS</a></p>
+        <p><a href="${request.route_path('admin:reports:cashflow')}">Cashflow</a></p>
+        <p><a href="${request.route_path('admin:reports:inventory')}">Inventory</a></p>
+        <p><a href="${request.route_path('admin:reports:payments')}">Payments</a></p>
+
+        <h3>Operations</h3>
+
+        <p><a href="${request.route_path('admin:reports:warehouse-transactions')}">Warehouse Transactions</a></p>
+        <p><a href="${request.route_path('admin:reports:delays')}">Delays</a></p>
+
+      </div>
+    </div>
+  </div>
+</section>

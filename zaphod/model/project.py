@@ -36,6 +36,7 @@ class Project(Node, ElasticMixin):
     creator_id = Column(None, ForeignKey('creators.node_id'), nullable=False)
     target = Column(custom_types.Money, nullable=False, default=0)
     accepts_preorders = Column(types.Boolean, nullable=False, default=False)
+    successful = Column(types.Boolean, nullable=False, default=False)
 
     start_time = Column(types.DateTime, nullable=True)
     end_time = Column(types.DateTime, nullable=True)
@@ -100,6 +101,9 @@ class Project(Node, ElasticMixin):
     def is_failed(self):
         utcnow = utils.utcnow()
         return (self.pledged_amount < self.target) and (utcnow > self.end_time)
+
+    def update_successful(self):
+        self.successful = self.pledged_amount >= self.target
 
     @property
     def status(self):

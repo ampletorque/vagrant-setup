@@ -90,7 +90,7 @@ class UserBehaviorView(object):
         user_subq = user_q.subquery()
 
         # number of users that have backed multiple projects.
-        cross_project_user_count = model.Session.query(user_subq).\
+        num_cross_project_users = model.Session.query(user_subq).\
             filter(user_subq.c.num_projects > 1).\
             count()
 
@@ -117,7 +117,46 @@ class UserBehaviorView(object):
             order_by(num_users_col.desc())
 
         return {
-            'cross_project_user_count': cross_project_user_count,
+            'num_cross_project_users': num_cross_project_users,
             'top_users': top_user_q.all(),
             'top_projects': top_projects_q.all(),
+        }
+
+
+class FundingSuccessView(object):
+    def __init__(self, request):
+        self.request = request
+
+    @view_config(route_name='admin:reports:funding-success',
+                 renderer='admin/reports/funding_success.html',
+                 permission='authenticated')
+    def funding_success(self):
+        utcnow = model.utcnow()
+
+        q = model.Session.query(model.Project).\
+            filter(model.Project.published == True,
+                   model.Project.start_time < utcnow)
+
+        num_projects_launched = q.count()
+
+        pending_q = q.filter(model.Project.end_time > utcnow,
+                             model.Project.successful == False)
+        num_projects_pending = pending_q.count()
+
+        suspended_q = q.filter(model.Project.suspended_time != None)
+        num_projects_suspended = suspended_q.count()
+
+        successful_q = q.filter(model.Project.successful == True)
+        num_projects_successful = successful_q.count()
+
+        num_projects_completed = (num_projects_launched -
+                                  (num_projects_pending +
+                                   num_projects_suspended))
+
+        return {
+            'num_projects_launched': num_projects_launched,
+            'num_projects_pending': num_projects_pending,
+            'num_projects_suspended': num_projects_suspended,
+            'num_projects_completed': num_projects_completed,
+            'num_projects_successful': num_projects_successful,
         }

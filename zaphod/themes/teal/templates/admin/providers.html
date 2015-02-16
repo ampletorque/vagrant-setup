@@ -7,38 +7,40 @@
   <div class="container">
     <div class="row">
       <h1 class="page-header">Providers <small>${len(objs)} total</small></h1>
-      <table class="table">
-        <thead>
-          <tr>
-            <th></th>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Published</th>
-            <th>Listed</th>
-          </tr>
-        </thead>
-        <tbody>
-          % for provider in objs:
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
             <tr>
-              <td>
-                <a href="${request.route_path('admin:provider', id=provider.id)}">Edit</a>
-              </td>
-              <td>${provider.id}</td>
-              <td>${provider.name}</td>
-              <td>
-                % if provider.published:
-                  Yes
-                % endif
-              </td>
-              <td>
-                % if provider.listed:
-                  Yes
-                % endif
-              </td>
+              <th></th>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Published</th>
+              <th>Listed</th>
             </tr>
-          % endfor
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            % for provider in objs:
+              <tr>
+                <td>
+                  <a href="${request.route_path('admin:provider', id=provider.id)}">Edit</a>
+                </td>
+                <td>${provider.id}</td>
+                <td>${provider.name}</td>
+                <td>
+                  % if provider.published:
+                    Yes
+                  % endif
+                </td>
+                <td>
+                  % if provider.listed:
+                    Yes
+                  % endif
+                </td>
+              </tr>
+            % endfor
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </section>

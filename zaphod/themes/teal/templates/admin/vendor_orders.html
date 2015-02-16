@@ -7,24 +7,26 @@
   <div class="container">
     <div class="row">
       <h1 class="page-header">Vendor Orders <small>${len(objs)} total</small></h1>
-      <table class="table">
-        <thead>
-          <tr>
-            <th></th>
-            <th>ID</th>
-          </tr>
-        </thead>
-        <tbody>
-          % for vendor_order in objs:
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
             <tr>
-              <td>
-                <a href="${request.route_path('admin:vendor_order', id=vendor_order.id)}">Edit</a>
-              </td>
-              <td>${vendor_order.id}</td>
+              <th></th>
+              <th>ID</th>
             </tr>
-          % endfor
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            % for vendor_order in objs:
+              <tr>
+                <td>
+                  <a href="${request.route_path('admin:vendor_order', id=vendor_order.id)}">Edit</a>
+                </td>
+                <td>${vendor_order.id}</td>
+              </tr>
+            % endfor
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </section>

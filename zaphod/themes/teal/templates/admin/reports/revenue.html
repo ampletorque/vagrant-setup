@@ -1,0 +1,45 @@
+<%inherit file="base.html"/>
+
+
+<%def name="title()">Revenue Report</%def>
+
+
+<section class="section-report-revenue">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="table-responsive">
+          <table class="table">
+            <tbody>
+              <tr>
+                <td><strong>Crowdfunding Fees</strong></td>
+                <td>${h.currency(crowdfunding_fees)}</td>
+              </tr>
+              <tr>
+                <td><strong>Fulfillment Fees</strong></td>
+                <td>${h.currency(fulfillment_fees)}</td>
+              </tr>
+              <tr>
+                <td><strong>Pre-Order Fees</strong></td>
+                <td>${h.currency(preorder_fees)}</td>
+              </tr>
+              <tr>
+                <td><strong>Stock Items</strong></td>
+                <td>${h.currency(stock_items)}</td>
+              </tr>
+              <tr>
+                <td><strong>Stock Shipping</strong></td>
+                <td>${h.currency(stock_shipping)}</td>
+              </tr>
+              <tr class="table-divider"><td colspan="2"></td></tr>
+              <tr>
+                <td><strong>Total</strong></td>
+                <td>${h.currency(total)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

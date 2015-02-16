@@ -14,28 +14,30 @@
 
       ${pagination.pagination(page)}
 
-      <table class="table">
-        <thead>
-          <tr>
-            <th></th>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Placed</th>
-          </tr>
-        </thead>
-        <tbody>
-          % for order in page:
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
             <tr>
-              <td>
-                <a href="${request.route_path('admin:order', id=order.id)}">Edit</a>
-              </td>
-              <td>${order.id}</td>
-              <td>${order.shipping.full_name}</td>
-              <td>${h.format_datetime(request, order.created_time)}</td>
+              <th></th>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Placed</th>
             </tr>
-          % endfor
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            % for order in page:
+              <tr>
+                <td>
+                  <a href="${request.route_path('admin:order', id=order.id)}">Edit</a>
+                </td>
+                <td>${order.id}</td>
+                <td>${order.shipping.full_name}</td>
+                <td>${h.format_datetime(request, order.created_time)}</td>
+              </tr>
+            % endfor
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </section>

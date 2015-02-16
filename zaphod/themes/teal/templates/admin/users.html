@@ -14,30 +14,32 @@
 
       ${pagination.pagination(page)}
 
-      <table class="table">
-        <thead>
-          <tr>
-            <th></th>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Created</th>
-          </tr>
-        </thead>
-        <tbody>
-          % for user in page:
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
             <tr>
-              <td>
-                <a href="${request.route_path('admin:user', id=user.id)}">Edit</a>
-              </td>
-              <td>${user.id}</td>
-              <td>${user.name}</td>
-              <td>${user.email}</td>
-              <td>${h.format_datetime(request, user.created_time)}</td>
+              <th></th>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Created</th>
             </tr>
-          % endfor
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            % for user in page:
+              <tr>
+                <td>
+                  <a href="${request.route_path('admin:user', id=user.id)}">Edit</a>
+                </td>
+                <td>${user.id}</td>
+                <td>${user.name}</td>
+                <td>${user.email}</td>
+                <td>${h.format_datetime(request, user.created_time)}</td>
+              </tr>
+            % endfor
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </section>

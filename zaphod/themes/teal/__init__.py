@@ -52,6 +52,16 @@ class TealTheme(Theme):
     # XXX All of these may need size tweaking
     image_filters = [
         FilterChain(
+            'admin-thumb', width=250, height=250,
+            crop=False, pad=True,
+            extension='jpg', quality=65),
+
+        FilterChain(
+            'admin-tiny', width=64, height=64,
+            crop=False, pad=True,
+            extension='jpg', quality=65),
+
+        FilterChain(
             'project-main', width=749, height=421,
             crop_whitespace=True, pad=True, crop='nonwhite',
             extension='jpg', quality=85),

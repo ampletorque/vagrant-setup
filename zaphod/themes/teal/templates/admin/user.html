@@ -35,6 +35,8 @@
           ${forms.lcheckbox(renderer, 'enabled', checked=obj.enabled, hint='If this is unchecked, the user will not be able to login, and will be logged out if they are currently logged in.')}
           ${forms.lcheckbox(renderer, 'admin', checked=obj.admin, hint='Grant this user admin permissions.')}
 
+          ${widgets.images(renderer, obj)}
+
           <%forms:actions>
             <button class="btn btn-primary" type="submit">Save</button>
             <button class="btn btn-default" type="reset">Cancel</button>

@@ -44,6 +44,8 @@ ${project_header.project_header(obj)}
           ${forms.ltextarea(renderer, 'available_teaser', obj.available_teaser, rows=3, label='Teaser', hint='Optional summary.')}
           ${forms.ltextarea(renderer, 'available_body', obj.available_body, rows=15, label='Body', hint=widgets.markdown_hint)}
 
+          ${widgets.images(renderer, obj)}
+
           <%forms:actions>
             <button class="btn btn-primary" type="submit">Save</button>
             <button class="btn btn-default" type="reset">Cancel</button>

@@ -9,3 +9,61 @@
 <%def name="markdown_hint()">
   Use valid Markdown. See <a href="${request.route_path('admin:markdown_guide')}">Markdown tips and recipes</a> for help.
 </%def>
+
+
+<%def name="images(renderer, obj)">
+  <%forms:element label="Images">
+    <div class="row">
+      % for im in obj.image_metas:
+        <div class="col-xs-6 col-sm-3">
+          <div class="thumbnail">
+            ${request.image_tag(im.name, im.original_ext, 'admin-thumb')}
+            <div class="caption">
+              <h5><a href="${request.route_path('admin:image', id=im.id)}">${im.name}<small>.${im.original_ext}</small></a></h5>
+              <p>Title: ${im.title}</p>
+              <p>Alt: ${im.alt}</p>
+              <p>${im.width} x ${im.height}</p>
+            </div>
+          </div>
+        </div>
+      % endfor
+    </div>
+  </%forms:element>
+</%def>
+
+
+<%def name="images(renderer, obj)">
+  <%forms:element label="Images">
+    <div class="table-responsive">
+      <table class="table table-images">
+        <tbody>
+          % for im in obj.image_metas:
+            <tr>
+              <td><i class="fa fa-minus"></i></td>
+              <td>${request.image_tag(im.name, im.original_ext, 'admin-tiny')}</td>
+              <td>
+                ${im.name}.${im.original_ext}<br>
+                ${im.width} x ${im.height}<br>
+                <a href="${request.image_url(im.name, im.original_ext, None)}">View Original</a>
+              </td>
+              <td>
+                ##${renderer.text('images-%d.title' % im.id, im.title, class_='form-control', placeholder='Title')}
+                ##${renderer.text('images-%d.alt' % im.id, im.alt, class_='form-control', placeholder='Alt')}
+              </td>
+            </tr>
+          % endfor
+        </tbody>
+        <tfoot>
+          <tr>
+            <td>
+              <i class="fa fa-plus"></i>
+            </td>
+            <td colspan="3">
+              Add new images
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </%forms:element>
+</%def>

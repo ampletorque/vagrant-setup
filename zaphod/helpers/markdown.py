@@ -1,7 +1,11 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from .helpers import markdown
+import re
+
+from webhelpers2.html.tags import literal
+from markdown import markdown
+from pyramid_frontend.images.files import filter_sep, prefix_for_name
 
 
 def _images_html_filter_replace(m):
@@ -31,7 +35,7 @@ def images_html_filter(s):
     return re.compile(r, re.I | re.X).sub(_images_html_filter_replace, s)
 
 
-def render_markdown(request, obj, s, safe=False):
+def markdown_extended(s, safe=False):
     extensions = [
         'markdown.extensions.smarty',
         'markdown.extensions.tables',

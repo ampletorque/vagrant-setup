@@ -41,6 +41,11 @@ class ProjectEditView(NodeEditView):
         end_time = validators.DateConverter()
         gravity = validators.Int(not_empty=True)
 
+        accepts_preorders = validators.Bool()
+        pledged_elsewhere_count = validators.Int()
+        pledged_elsewhere_amount = validators.Number()
+        launched_elsewhere = validators.Bool()
+
     @view_config(route_name='admin:project:products',
                  renderer='admin/project_products.html')
     def products(self):

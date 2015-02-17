@@ -14,20 +14,28 @@ ${project_header.project_header(obj)}
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
+        <div class="well">
+          <a class="btn btn-danger" href="#">Suspend Project</a>
+        </div>
+
         ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
           ${forms.ltext(renderer, 'name', obj.name)}
 
           ${widgets.aliases(renderer, obj)}
 
-          ${forms.ltext(renderer, 'target', obj.target, label='Funding Target')}
-          ${forms.ltext(renderer, 'gravity', obj.gravity, hint='Determines sort order of project in list views.', type='number')}
-
           ${forms.ldaterange(renderer, 'start_time', 'end_time', obj.start_time, obj.end_time)}
+          ${forms.lvalue('Yes' if obj.successful else 'No', label='Successful')}
+          ${forms.ltext(renderer, 'target', obj.target, label='Funding Target', prefix='$')}
+          ${forms.ltext(renderer, 'gravity', obj.gravity, hint='Determines sort order of project in list views.', type='number')}
+          ${forms.lcheckbox(renderer, 'accepts_preorders', obj.accepts_preorders, label='Accepts Pre-Orders', hint='Check if the project will continue to accept orders after the crowdfunding campaign is over.')}
+          ${forms.ltext(renderer, 'pledged_elsewhere_amount', obj.pledged_elsewhere_amount, label='Amount Pledged Elsewhere', prefix='$')}
+          ${forms.ltext(renderer, 'pledged_elsewhere_count', obj.pledged_elsewhere_count, label='Count Pledged Elsewhere')}
+          ${forms.lcheckbox(renderer, 'launched_elsewhere', obj.launched_elsewhere, label='Launched Elsewhere', hint='Check if this project originally launched on a different crowdfunding site or did not crowdfund.')}
+
+          ${forms.ltextarea(renderer, 'keywords', obj.keywords, rows=3, hint='Included in a keywords meta tag and used for search.')}
 
           ${forms.lcheckbox(renderer, 'listed', obj.listed)}
           ${forms.lcheckbox(renderer, 'published', obj.published)}
-
-          ${forms.ltextarea(renderer, 'keywords', obj.keywords, rows=3, hint='Included in a keywords meta tag and used for search.')}
 
           <h2>Prelaunch</h2>
           ${forms.ltext(renderer, 'prelaunch_vimeo_id', obj.prelaunch_vimeo_id, label='Vimeo ID')}

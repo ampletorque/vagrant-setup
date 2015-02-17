@@ -140,10 +140,17 @@ def migrate_creators(settings, user_map, image_map):
     return creator_map
 
 
-def has_pledge_items(old_project):
-    q = scrappy_meta.Session.query(cs_model.Project).\
-        join(cs_model.Project.levels).\
-        join(cs_model.PledgeLevel.cart_items.of_type(cs_model.PledgeCartItem))
+def launched_on_crowd_supply(old_project):
+    whitelist_ids = [
+        610,  # Essential System
+        365,  # PF Solution Insole
+    ]
+    if old_project.id in whitelist_ids:
+        return True
+    q = scrappy_meta.Session.query(cs_model.PledgeLevel).\
+        join(cs_model.PledgeLevel.cart_items.of_type(
+            cs_model.PledgeCartItem)).\
+        filter(cs_model.PledgeLevel.project_id == old_project.id)
     return bool(q.first())
 
 
@@ -184,7 +191,7 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
             updated_time=old_project.updated_time,
 
             accepts_preorders=(old_project.stage in (2, 3)),
-            launched_elsewhere=(not has_pledge_items(old_project)),
+            launched_elsewhere=(not launched_on_crowd_supply(old_project)),
             pledged_elsewhere_amount=old_project.pledged_elsewhere_amount,
             pledged_elsewhere_count=old_project.pledged_elsewhere_count,
 

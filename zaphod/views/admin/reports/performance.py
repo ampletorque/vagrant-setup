@@ -80,6 +80,7 @@ class PerformanceReportsView(BaseReportsView):
 
         q = model.Session.query(model.Project).\
             filter(model.Project.published == True,
+                   model.Project.launched_elsewhere == False,
                    model.Project.start_time < utcnow)
 
         num_projects_launched = q.count()
@@ -147,7 +148,13 @@ class PerformanceReportsView(BaseReportsView):
 
         q = model.Session.query(model.Project).\
             filter(model.Project.published == True,
+                   model.Project.launched_elsewhere == False,
                    model.Project.start_time < utcnow)
+
+        # actual_projects_launched = q.with_entities(model.Project.id,
+        #                                            model.Project.name).\
+        #     order_by(model.Project.name).\
+        #     all()
 
         num_projects_launched = q.count()
 
@@ -166,6 +173,7 @@ class PerformanceReportsView(BaseReportsView):
                                    num_projects_suspended))
 
         return {
+            # 'actual_projects_launched': actual_projects_launched,
             'num_projects_launched': num_projects_launched,
             'num_projects_pending': num_projects_pending,
             'num_projects_suspended': num_projects_suspended,

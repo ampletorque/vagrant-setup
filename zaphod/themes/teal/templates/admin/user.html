@@ -1,6 +1,7 @@
 <%inherit file="base.html"/>
 
 <%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="widgets" file="common/widgets.html"/>
 
 <%def name="title()">Edit User ${obj.id}</%def>
 
@@ -23,9 +24,9 @@
           ${forms.lpassword(renderer, 'password')}
           ${forms.lpassword(renderer, 'password2', label='Confirm Password', hint="To update this user's password, enter a new one here.")}
 
-          ${forms.ltext(renderer, 'url_path', obj.url_path, label='Profile Path', hint='If supplied, a profile page for this user will be published at %s.' % request.route_path('profile', path='...path...'))}
+          ${forms.ltext(renderer, 'url_path', obj.url_path, label='Profile URL', hint='If supplied, a profile page for this user will be published.', prefix='crowdsupply.com' + request.route_path('profile', path=''))}
           ${forms.lselect(renderer, 'timezone', obj.timezone, h.timezones_for_select())}
-          ${forms.ltext(renderer, 'twitter_username', obj.twitter_username)}
+          ${forms.ltext(renderer, 'twitter_username', obj.twitter_username, prefix='@')}
 
           ${forms.lcheckbox(renderer, 'show_in_backers', obj.show_in_backers, hint='Show this user in lists of project backers.')}
           ${forms.lcheckbox(renderer, 'show_name', obj.show_name, hint="Show this user's name in backers lists.")}

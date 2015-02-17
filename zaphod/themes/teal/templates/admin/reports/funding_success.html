@@ -13,7 +13,14 @@
           <table class="table">
             <tbody>
               <tr>
-                <td><strong>Projects Launched</strong></td>
+                <td>
+                  <strong>Projects Launched</strong>
+                  ##<p>
+                  ##  % for project_id, name in actual_projects_launched:
+                  ##    <a href="${request.route_path('admin:project', id=project_id)}">${name}</a><br>
+                  ##  % endfor
+                  ##</p>
+                </td>
                 <td>${num_projects_launched}</td>
                 <td></td>
               </tr>

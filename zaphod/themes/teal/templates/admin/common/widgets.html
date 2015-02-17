@@ -2,7 +2,7 @@
 
 
 <%def name="aliases(renderer, obj)">
-  ${forms.ltext(renderer, 'override_path', obj.override_path, label='URL Path', placeholder=obj.generate_path(), hint='Leave blank to use recommended URL path.')}
+  ${forms.ltext(renderer, 'override_path', obj.override_path, label='URL', placeholder=obj.generate_path(), hint='Leave blank to use recommended URL. Changes will leave behind a redirect from the old URL to the new one.', prefix='crowdsupply.com/')}
 </%def>
 
 

@@ -140,6 +140,13 @@ def migrate_creators(settings, user_map, image_map):
     return creator_map
 
 
+def has_pledge_items(old_project):
+    q = scrappy_meta.Session.query(cs_model.Project).\
+        join(cs_model.Project.levels).\
+        join(cs_model.PledgeLevel.cart_items.of_type(cs_model.PledgeCartItem))
+    return bool(q.first())
+
+
 def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
     project_map = {}
     product_map = {}
@@ -177,6 +184,12 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
             updated_time=old_project.updated_time,
 
             accepts_preorders=(old_project.stage in (2, 3)),
+            launched_elsewhere=(not has_pledge_items(old_project)),
+            pledged_elsewhere_amount=old_project.pledged_elsewhere_amount,
+            pledged_elsewhere_count=old_project.pledged_elsewhere_count,
+
+            direct_transactions=old_project.direct_transactions,
+            fee_percent=old_project.fee_percent,
         )
         model.Session.add(project)
         migrate_aliases(settings, old_project, project)

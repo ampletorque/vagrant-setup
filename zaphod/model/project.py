@@ -3,6 +3,7 @@ from __future__ import (absolute_import, division, print_function,
 
 from operator import attrgetter
 from datetime import datetime
+from decimal import Decimal
 
 import pytz
 
@@ -38,6 +39,11 @@ class Project(Node, ElasticMixin):
     accepts_preorders = Column(types.Boolean, nullable=False, default=False)
     successful = Column(types.Boolean, nullable=False, default=False)
 
+    launched_elsewhere = Column(types.Boolean, nullable=False, default=False)
+    pledged_elsewhere_amount = Column(custom_types.Money, nullable=False,
+                                      default=0)
+    pledged_elsewhere_count = Column(types.Integer, nullable=False, default=0)
+
     start_time = Column(types.DateTime, nullable=True)
     end_time = Column(types.DateTime, nullable=True)
     suspended_time = Column(types.DateTime, nullable=True)
@@ -58,6 +64,10 @@ class Project(Node, ElasticMixin):
 
     homepage_url = Column(types.String(255), nullable=False, default=u'')
     open_source_url = Column(types.String(255), nullable=False, default=u'')
+
+    direct_transactions = Column(types.Boolean, nullable=False, default=False)
+    fee_percent = Column(types.Numeric(6, 4), nullable=False,
+                         default=Decimal('5.0000'))
 
     updates = orm.relationship(
         'ProjectUpdate',

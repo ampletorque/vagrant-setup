@@ -195,7 +195,7 @@
   <%self:element renderer="${renderer}" name="${'%s.country_code' % name}" label="Country">
     <div class="row">
       <div class="col-xs-8">
-        ${renderer.select('%s.country_code' % name, 'us', h.allowed_countries(), class_='form-control')}
+        ${renderer.select('%s.country_code' % name, addr and addr.country_code, h.allowed_countries(), class_='form-control')}
       </div>
     </div>
   </%self:element>
@@ -206,18 +206,20 @@
         ${renderer.text('%s.first_name' % name, addr and addr.first_name, placeholder='First', class_='form-control')}
       </div>
       <div class="col-xs-6">
-        ${renderer.text('%s.last_name' % name, addr and addr.first_name, placeholder='Last', class_='form-control')}
+        ${renderer.text('%s.last_name' % name, addr and addr.last_name, placeholder='Last', class_='form-control')}
       </div>
     </div>
   </%self:element>
 
+  ${self.ltext(renderer, '%s.company' % name, addr and addr.company, label='Company')}
+
   <%self:element renderer="${renderer}" names="${['%s.address1', '%s.address2']}" label="Address">
     ${renderer.text('%s.address1' % name, addr and addr.address1, class_='form-control')}
-    ${renderer.text('%s.address2' % name, addr and addr.address1, class_='form-control')}
+    ${renderer.text('%s.address2' % name, addr and addr.address2, class_='form-control')}
   </%self:element>
 
-  ${self.ltext(renderer, '%s.city' % name, addr and addr.first_name, label='City')}
-  ${self.ltext(renderer, '%s.state' % name, addr and addr.first_name, label='State')}
-  ${self.ltext(renderer, '%s.postal_code' % name, addr and addr.first_name, label='Postal Code')}
-  ${self.ltext(renderer, '%s.phone' % name, addr and addr.first_name, label='Phone')}
+  ${self.ltext(renderer, '%s.city' % name, addr and addr.city, label='City')}
+  ${self.ltext(renderer, '%s.state' % name, addr and addr.state, label='State')}
+  ${self.ltext(renderer, '%s.postal_code' % name, addr and addr.postal_code, label='Postal Code')}
+  ${self.ltext(renderer, '%s.phone' % name, addr and addr.phone, label='Phone')}
 </%def>

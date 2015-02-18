@@ -1,6 +1,7 @@
 <%inherit file="base.html"/>
 
 <%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="blocks" file="/common/blocks.html"/>
 
 <%def name="title()">Edit Order ${obj.id}</%def>
 
@@ -14,89 +15,106 @@
         <div class="well">
           <a class="btn btn-primary" href="${request.route_path('admin:order:print', id=obj.id)}">Print Invoice</a>
           ##<a class="btn btn-primary" href="${request.route_path('admin:order:fill', id=obj.id)}">Fill Order</a>
+          <a class="btn btn-primary" href="${request.route_path('admin:order:hold', id=obj.id)}">Place Hold</a>
+          <a class="btn btn-danger" href="${request.route_path('admin:order:cancel', id=obj.id)}">Cancel Order</a>
           <a class="btn btn-default" href="${request.route_path('admin:order:resend', id=obj.id)}">Resend Order Confirmation</a>
-          <a class="btn btn-default" href="${request.route_path('admin:order:cancel', id=obj.id)}">Cancel Order</a>
-          <a class="btn btn-default" href="${request.route_path('admin:order:hold', id=obj.id)}">Place Hold</a>
+        </div>
+
+        <div class="well">
+          <div class="row">
+            <div class="col-sm-4">
+              <h4>Shipping Address</h4>
+              <p>${blocks.address(obj.shipping)}</p>
+              <p><a href="${request.route_path('admin:order:address', id=obj.id)}">Change Address</a></p>
+            </div>
+            <div class="col-sm-4">
+              <h4>User</h4>
+              <p>${obj.user.name}</p>
+              <p>${obj.user.email}</p>
+              <p><a href="${request.route_path('admin:order:user', id=obj.id)}">Change User</a></p>
+            </div>
+            <div class="col-sm-4">
+              <h4>Schedule</h4>
+              <p>----</p>
+            </div>
+          </div>
         </div>
 
         ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
 
-          ${forms.ltext(renderer, 'user_id', obj.user_id)}
-
           ## XXX FIXME
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Description</th>
+                <th>SKU</th>
+                <th>Price Each</th>
+                <th>Qty</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              % for item in obj.cart.items:
+                <tr>
+                  <td></td>
+                  <td>
+                    <strong>${item.product.name}</strong><br>
+                    <a href="${request.route_path('admin:project', id=item.product.project.id)}">${item.product.project.name}</a>
+                    ${blocks.option_value_list(item.sku)}
+                  </td>
+                  <td>${item.sku.id}</td>
+                  <td>${renderer.text('items-%d.price_each' % item.id, item.price_each, class_='form-control', style='width:100px')}</td>
+                  <td>${renderer.text('items-%d.qty_desired' % item.id, item.qty_desired, class_='form-control', style='width:80px', type='number')}</td>
+                  <td>${h.currency(item.total)}</td>
+                </tr>
+              % endfor
+            </tbody>
+            <tbody>
+              <tr>
+                <td colspan="5">Shipping Total</td>
+                <td>${h.currency(obj.cart.shipping_total)}</td>
+              </tr>
+              <tr>
+                <td colspan="5"><strong>Total</strong></td>
+                <td>${h.currency(obj.total)}</td>
+              </tr>
+            </tbody>
+            <tbody>
+              % for payment in obj.payments:
+                <tr>
+                  <td></td>
+                  <td>
+                    % if hasattr(payment, 'method'):
+                      Method ${payment.method.id}<br>
+                      ## Reference ${payment.method.reference}<br>
+                      ${blocks.address(payment.method.billing)}
+                    % endif
+                  </td>
+                  <td colspan="3">
+                    ## FIXME payment info here
+                  </td>
+                  <td>${h.currency(payment.amount)}</td>
+                </tr>
+              % endfor
+            </tbody>
+            <tfoot>
+              <tr>
+                <td></td>
+                <td colspan="3">
+                  <a href="#">Add Payment</a> / <a href="#">Add Refund</a>
+                </td>
+                <td>Balance Due</td>
+                <td>${h.currency(obj.unauthorized_amount)}</td>
+              </tr>
+            </tfoot>
+          </table>
 
-          <%forms:actions>
+          <%forms:actions label_cols="${0}">
             <button class="btn btn-primary" type="submit">Save</button>
             <button class="btn btn-default" type="reset">Cancel</button>
           </%forms:actions>
         ${renderer.end()}
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<%def name="address_debug(addr)">
-  ${addr.full_name}<br>
-  % if addr.company != '':
-    ${addr.company}<br>
-  % endif
-  ${addr.phone}<br>
-  ${addr.address1}<br>
-  % if addr.address2:
-    ${addr.address2}<br>
-  % endif
-  ${addr.city}, ${addr.state} ${addr.postal_code}<br>
-  ${addr.country_name}
-</%def>
-
-
-<section class="section-admin-order-debug">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-12">
-        <h3>Order Information</h3>
-        <p>User: <a href="${request.route_path('admin:user', id=obj.user.id)}">${obj.user_id}</a></p>
-        ##<p>Customer Comments: ${obj.customer_comments}</p>
-
-        <h3>Shipping</h3>
-        <p>${self.address_debug(obj.shipping)}</p>
-
-        <h3>Items</h3>
-        <table>
-          % for item in obj.cart.items:
-            <tr>
-              <td>${item.id}</td>
-              <td>${item.product.name} (${item.product.project.name})</td>
-              <td>${item.qty_desired}</td>
-              <td>${h.currency(item.price_each)}</td>
-            </tr>
-          % endfor
-        </table>
-
-        <h3>Payments</h3>
-        % for payment in obj.payments:
-          <p>
-            ${payment.id}<br>
-            ${payment.amount}<br>
-            ${payment.created_time}<br>
-            % if hasattr(payment, 'method'):
-              Method ${payment.method.id}<br>
-              Reference ${payment.method.reference}<br>
-              ${self.address_debug(payment.method.billing)}
-            % endif
-          </p>
-        % endfor
-
-        <h3>Shipments</h3>
-        % for shipment in obj.shipments:
-          <p>
-            ${shipment.id}<br>
-            ${shipment.tracking_number}<br>
-            ${h.currency(shipment.cost)}<br>
-            ${shipment.created_time}
-          </p>
-        % endfor
       </div>
     </div>
   </div>

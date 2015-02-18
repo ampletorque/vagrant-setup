@@ -6,9 +6,22 @@ from pyramid.view import view_defaults, view_config
 from venusian import lift
 from formencode import Schema, NestedVariables, validators
 
-from ... import model, mail
+from pyramid_uniform import Form, FormRenderer
+
+from ... import model, mail, custom_validators
 
 from .base import BaseEditView, BaseListView
+
+
+class EditAddressForm(Schema):
+    allow_extra_fields = False
+    pre_validators = [NestedVariables()]
+    shipping = custom_validators.AddressSchema
+
+
+class EditUserForm(Schema):
+    allow_extra_fields = False
+    user_id = validators.Int(not_empty=True)
 
 
 @view_defaults(route_name='admin:order', renderer='admin/order.html')
@@ -56,6 +69,36 @@ class OrderEditView(BaseEditView):
         # XXX
         return HTTPFound(location=request.route_url('admin:order',
                                                     id=order.id))
+
+    @view_config(route_name='admin:order:address',
+                 renderer='admin/order_address.html')
+    def address(self):
+        request = self.request
+        order = self._get_object()
+
+        form = Form(request, schema=EditAddressForm)
+        if form.validate():
+            form.bind(order)
+            request.flash("Updated address.", 'success')
+            return HTTPFound(location=request.route_url('admin:order',
+                                                        id=order.id))
+
+        return {'obj': order, 'renderer': FormRenderer(form)}
+
+    @view_config(route_name='admin:order:user',
+                 renderer='admin/order_user.html')
+    def user(self):
+        request = self.request
+        order = self._get_object()
+
+        form = Form(request, schema=EditUserForm)
+        if form.validate():
+            form.bind(order)
+            request.flash("Updated user.", 'success')
+            return HTTPFound(location=request.route_url('admin:order',
+                                                        id=order.id))
+
+        return {'obj': order, 'renderer': FormRenderer(form)}
 
 
 @view_defaults(route_name='admin:orders', renderer='admin/orders.html')

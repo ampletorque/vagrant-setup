@@ -34,3 +34,18 @@
     % endfor
   </ul>
 </%def>
+
+
+<%def name="address(addr)">
+  ${addr.full_name}<br>
+  % if addr.company != '':
+    ${addr.company}<br>
+  % endif
+  ${addr.phone}<br>
+  ${addr.address1}<br>
+  % if addr.address2:
+    ${addr.address2}<br>
+  % endif
+  ${addr.city}, ${addr.state} ${addr.postal_code}<br>
+  ${addr.country_name}
+</%def>

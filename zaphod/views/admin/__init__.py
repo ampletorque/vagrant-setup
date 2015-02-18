@@ -36,6 +36,8 @@ def includeme(config):
     config.add_route('admin:order:print', '/order/{id}/print')
     config.add_route('admin:order:cancel', '/order/{id}/cancel')
     config.add_route('admin:order:hold', '/order/{id}/hold')
+    config.add_route('admin:order:address', '/order/{id}/address')
+    config.add_route('admin:order:user', '/order/{id}/user')
 
     config.add_route('admin:vendor_orders', '/vendor-orders')
     config.add_route('admin:vendor_order', '/vendor-order/{id}')

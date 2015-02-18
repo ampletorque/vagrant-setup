@@ -126,8 +126,8 @@ class AddressSchema(Schema):
     "Validates a standard set of address fields."
     allow_extra_fields = True
     chained_validators = [
-        national.PostalCodeInCountryFormat('country', 'postal_code'),
-        PhoneNumberInCountryFormat('country', 'phone')]
+        national.PostalCodeInCountryFormat('country_code', 'postal_code'),
+        PhoneNumberInCountryFormat('country_code', 'phone')]
 
     first_name = validators.UnicodeString(not_empty=True)
     last_name = validators.UnicodeString(not_empty=True)
@@ -138,7 +138,7 @@ class AddressSchema(Schema):
     city = validators.UnicodeString(not_empty=True)
     state = validators.UnicodeString(not_empty=True)
     postal_code = validators.UnicodeString(not_empty=True)
-    country = validators.UnicodeString(not_empty=True)
+    country_code = validators.UnicodeString(not_empty=True)
 
 
 class CreditCardValidator(validators.CreditCardValidator):

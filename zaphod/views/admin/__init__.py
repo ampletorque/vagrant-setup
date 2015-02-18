@@ -38,6 +38,8 @@ def includeme(config):
     config.add_route('admin:order:hold', '/order/{id}/hold')
     config.add_route('admin:order:address', '/order/{id}/address')
     config.add_route('admin:order:user', '/order/{id}/user')
+    config.add_route('admin:order:payment', '/order/{id}/payment')
+    config.add_route('admin:order:refund', '/order/{id}/refund')
 
     config.add_route('admin:vendor_orders', '/vendor-orders')
     config.add_route('admin:vendor_order', '/vendor-order/{id}')

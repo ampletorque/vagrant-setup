@@ -102,7 +102,9 @@
               <tr>
                 <td></td>
                 <td colspan="3">
-                  <a href="#">Add Payment</a> / <a href="#">Add Refund</a>
+                  <a href="${request.route_path('admin:order:payment', id=obj.id)}">Add Payment</a>
+                  /
+                  <a href="${request.route_path('admin:order:refund', id=obj.id)}">Add Refund</a>
                 </td>
                 <td>Balance Due</td>
                 <td>${h.currency(obj.unauthorized_amount)}</td>

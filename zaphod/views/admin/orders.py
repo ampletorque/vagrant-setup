@@ -24,6 +24,18 @@ class EditUserForm(Schema):
     user_id = validators.Int(not_empty=True)
 
 
+class AddPaymentForm(Schema):
+    allow_extra_fields = False
+
+
+class AddRefundForm(Schema):
+    allow_extra_fields = False
+
+
+class CancelForm(Schema):
+    allow_extra_fields = False
+
+
 @view_defaults(route_name='admin:order', renderer='admin/order.html')
 @lift()
 class OrderEditView(BaseEditView):
@@ -54,13 +66,21 @@ class OrderEditView(BaseEditView):
         items = order.cart.items
         return {'order': order, 'items': items}
 
-    @view_config(route_name='admin:order:cancel')
+    @view_config(route_name='admin:order:cancel',
+                 renderer='admin/order_cancel.html')
     def cancel(self):
         request = self.request
         order = self._get_object()
         # XXX
-        return HTTPFound(location=request.route_url('admin:order',
-                                                    id=order.id))
+
+        form = Form(request, schema=CancelForm)
+        if form.validate():
+            form.bind(order)
+            request.flash("Order cancelled.", 'warning')
+            return HTTPFound(location=request.route_url('admin:order',
+                                                        id=order.id))
+
+        return {'obj': order, 'renderer': FormRenderer(form)}
 
     @view_config(route_name='admin:order:hold')
     def hold(self):
@@ -95,6 +115,34 @@ class OrderEditView(BaseEditView):
         if form.validate():
             form.bind(order)
             request.flash("Updated user.", 'success')
+            return HTTPFound(location=request.route_url('admin:order',
+                                                        id=order.id))
+
+        return {'obj': order, 'renderer': FormRenderer(form)}
+
+    @view_config(route_name='admin:order:payment',
+                 renderer='admin/order_payment.html')
+    def payment(self):
+        request = self.request
+        order = self._get_object()
+
+        form = Form(request, schema=AddPaymentForm)
+        if form.validate():
+            # XXX do stuff
+            return HTTPFound(location=request.route_url('admin:order',
+                                                        id=order.id))
+
+        return {'obj': order, 'renderer': FormRenderer(form)}
+
+    @view_config(route_name='admin:order:refund',
+                 renderer='admin/order_refund.html')
+    def payment(self):
+        request = self.request
+        order = self._get_object()
+
+        form = Form(request, schema=AddRefundForm)
+        if form.validate():
+            # XXX do stuff
             return HTTPFound(location=request.route_url('admin:order',
                                                         id=order.id))
 

@@ -19,6 +19,8 @@ class Order(Base, UserMixin, CommentMixin):
     closed = Column(types.Boolean, nullable=False, default=False)
     shipping = make_address_columns('shipping')
 
+    customer_comments = Column(types.UnicodeText, nullable=False, default=u'')
+
     user = orm.relationship('User', backref='orders', foreign_keys=user_id)
 
     @property

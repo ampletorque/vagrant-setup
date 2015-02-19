@@ -63,8 +63,6 @@ class CartItem(Base):
 
     status = Column(types.CHAR(16), nullable=False)
 
-    customer_comments = Column(types.UnicodeText, nullable=False, default=u'')
-
     cart = orm.relationship('Cart', backref='items')
     product = orm.relationship('Product', backref='cart_items')
     batch = orm.relationship('Batch', backref='cart_items')

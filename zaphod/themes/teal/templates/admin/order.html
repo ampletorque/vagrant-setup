@@ -6,6 +6,82 @@
 <%def name="title()">Edit Order ${obj.id}</%def>
 
 
+<%def name="item_row(item)">
+  ## XXX Add status
+  ## XXX Add shipping price
+  <tr>
+    <td></td>
+    <td>
+      ## XXX Add crowdfunding / preorder / stock status
+      ## XXX Add expected delivery date / current expectation / overdue indicator
+      <strong>${item.product.name}</strong><br>
+      <a href="${request.route_path('admin:project', id=item.product.project.id)}">${item.product.project.name}</a>
+      ${blocks.option_value_list(item.sku)}
+    </td>
+    <td>
+      ${item.sku.id}
+      ## XXX Add stock reservation status here or next to qty
+    </td>
+    <td>${renderer.text('items-%d.price_each' % item.id, item.price_each, class_='form-control', style='width:100px')}</td>
+    <td>${renderer.text('items-%d.qty_desired' % item.id, item.qty_desired, class_='form-control', style='width:80px', type='number')}</td>
+    <td>${h.currency(item.total)}</td>
+  </tr>
+</%def>
+
+
+<%def name="payment_description(payment)">
+  % if payment.discriminator == 'cc':
+    Transaction ${payment.transaction_id}
+    % if not payment.captured_time:
+      - Authorized for ${h.currency(payment.authorized_amount)} on ${h.format_datetime(request, payment.created_time)}
+    % else:
+      - Captured on ${h.format_datetime(request, payment.captured_time)}
+    % endif
+  % elif payment.discriminator == 'cash':
+    Cash
+  % elif payment.discriminator == 'chck':
+    Check ${payment.reference}
+  % elif payment.discriminator == 'gift':
+    Gift Code <a href="${request.admin_url(payment.gift_code)}">${payment.gift_code.code}</a>
+  % elif payment.discriminator == 'carf':
+    Cash Refund: ${payment.comments}
+  % elif payment.discriminator == 'chrf':
+    Check Refund(${payment.reference}): ${payment.comments}
+  % elif payment.discriminator == 'gcrf':
+    Refund: Gift Code <a href="${request.admin_url(payment.gift_code)}">${payment.gift_code.code}</a> - ${payment.comments}
+  % elif payment.discriminator == 'ccrf':
+    % if not payment.processed_time and payment.pending_action == 'rfnd' and payment.valid:
+      <span class='label label-info'>Refund Pending</span>
+    % endif
+    Refund: Credit Card
+    % if payment.credit_card_payment:
+      (Transaction ${payment.credit_card_payment.transaction_id})
+    % endif
+    - ${payment.comments}
+  % endif
+</%def>
+
+
+<%def name="payment_row(payment)">
+  <tr>
+    <td></td>
+    <td>
+      % if payment.discriminator == 'cc':
+        Method ${payment.method.id} - ${payment.method.reference['customer_id']}<br>
+        ${blocks.address(payment.method.billing)}
+      % endif
+    </td>
+    <td colspan="3">
+      ${self.payment_description(payment)}<br>
+      % if payment.discriminator == 'cc':
+        CCV: ${payment.ccv_result} - AVS: ${payment.avs_result}
+      % endif
+    </td>
+    <td>${h.currency(payment.amount)}</td>
+  </tr>
+</%def>
+
+
 <section class="section-admin-order">
   <div class="container">
     <div class="row">
@@ -56,46 +132,24 @@
             </thead>
             <tbody>
               % for item in obj.cart.items:
-                <tr>
-                  <td></td>
-                  <td>
-                    <strong>${item.product.name}</strong><br>
-                    <a href="${request.route_path('admin:project', id=item.product.project.id)}">${item.product.project.name}</a>
-                    ${blocks.option_value_list(item.sku)}
-                  </td>
-                  <td>${item.sku.id}</td>
-                  <td>${renderer.text('items-%d.price_each' % item.id, item.price_each, class_='form-control', style='width:100px')}</td>
-                  <td>${renderer.text('items-%d.qty_desired' % item.id, item.qty_desired, class_='form-control', style='width:80px', type='number')}</td>
-                  <td>${h.currency(item.total)}</td>
-                </tr>
+                ${self.item_row(item)}
               % endfor
             </tbody>
             <tbody>
               <tr>
-                <td colspan="5">Shipping Total</td>
+                <td></td>
+                <td colspan="4">Shipping Total</td>
                 <td>${h.currency(obj.cart.shipping_total)}</td>
               </tr>
               <tr>
-                <td colspan="5"><strong>Total</strong></td>
+                <td></td>
+                <td colspan="4"><strong>Total</strong></td>
                 <td>${h.currency(obj.total)}</td>
               </tr>
             </tbody>
             <tbody>
               % for payment in obj.payments:
-                <tr>
-                  <td></td>
-                  <td>
-                    % if hasattr(payment, 'method'):
-                      Method ${payment.method.id}<br>
-                      ## Reference ${payment.method.reference}<br>
-                      ${blocks.address(payment.method.billing)}
-                    % endif
-                  </td>
-                  <td colspan="3">
-                    ## FIXME payment info here
-                  </td>
-                  <td>${h.currency(payment.amount)}</td>
-                </tr>
+                ${self.payment_row(payment)}
               % endfor
             </tbody>
             <tfoot>

@@ -39,6 +39,15 @@ def migrate_aliases(settings, old_node, new_node):
         new_node.update_path(canonical_path)
 
 
+def migrate_comments(old_obj, new_obj):
+    for old_comment in old_obj.comments:
+        new_obj.comments.append(new_obj.Comment(
+            created_time=old_comment.created_time,
+            created_by_id=old_comment.created_by_id,
+            body=old_comment.body,
+        ))
+
+
 def migrate_images(settings):
     image_map = {}
     for old_im in scrappy_meta.Session.query(scrappy_model.ImageMeta):
@@ -344,6 +353,7 @@ def migrate_users(settings, image_map):
         new_user = user_map[old_user]
         new_user.updated_by = user_map[old_user.updated_by]
         new_user.created_by = user_map[old_user.created_by]
+        migrate_comments(old_user, new_user)
 
     # Set image updated by / created by.
     for old_image, new_image in image_map.items():
@@ -595,8 +605,10 @@ def migrate_orders(settings, user_map, product_map, option_value_map,
             updated_by=user_map[old_order.updated_by],
             updated_time=old_order.updated_time,
             shipping=convert_address(old_order.shipping),
+            customer_comments=old_order.customer_comments,
         )
         model.Session.add(order)
+        migrate_comments(old_order, order)
         cart = model.Cart(order=order)
         model.Session.add(cart)
         shipping_prices = item_shipping_prices(old_order)

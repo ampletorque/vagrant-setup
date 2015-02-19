@@ -1,0 +1,19 @@
+<%inherit file="base.html"/>
+
+<%def name="title()">Help Topics</%def>
+
+
+<section class="section-help">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Help Topics</h1>
+
+        <ul>
+          <li><a href="${request.route_path('admin:help:markdown')}">Markdown Guide</a></li>
+          <li><a href="${request.route_path('admin:help:image-tags')}">Image Tag Guide</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

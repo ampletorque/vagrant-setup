@@ -7,7 +7,7 @@
 
 
 <%def name="markdown_hint()">
-  Use valid Markdown. See <a href="${request.route_path('admin:markdown_guide')}">Markdown tips and recipes</a> for help.
+  Use valid Markdown. See <a href="${request.route_path('admin:help:markdown')}">Markdown tips and recipes</a> for help.
 </%def>
 
 
@@ -30,6 +30,11 @@
     </div>
   % endfor
   ${forms.ltextarea(renderer, 'new_comment')}
+</%def>
+
+
+<%def name="image_hint()">
+  Be sure that you have used the correct image metadata tags and filled in as many as appropriate. See <a href="${request.route_path('admin:help:image-tags')}">image tag usage and tips</a> for help.
 </%def>
 
 
@@ -65,6 +70,7 @@
           </tr>
         </tfoot>
       </table>
+      ${forms.hint(self.image_hint())}
     </div>
   </%forms:element>
 </%def>

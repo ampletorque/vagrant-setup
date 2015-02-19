@@ -31,6 +31,7 @@ class UserEditView(BaseEditView):
         url_path = custom_validators.URLString()
         twitter_username = custom_validators.TwitterUsername()
         chained_validators = [validators.FieldsMatch('password', 'password2')]
+        new_comment = custom_validators.CommentBody()
 
 
 @view_defaults(route_name='admin:users', renderer='admin/users.html')

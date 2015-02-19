@@ -45,6 +45,7 @@ class OrderEditView(BaseEditView):
         "Schema for validating order update form."
         pre_validators = [NestedVariables()]
         loaded_time = validators.Number(not_empty=True)
+        new_comment = custom_validators.CommentBody()
 
     @view_config(route_name='admin:order:resend')
     def resend(self):
@@ -136,7 +137,7 @@ class OrderEditView(BaseEditView):
 
     @view_config(route_name='admin:order:refund',
                  renderer='admin/order_refund.html')
-    def payment(self):
+    def refund(self):
         request = self.request
         order = self._get_object()
 

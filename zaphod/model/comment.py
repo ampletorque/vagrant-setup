@@ -45,7 +45,15 @@ class CommentMixin(object):
                                 foreign_keys=[cls.Comment.source_id],
                                 order_by=cls.Comment.id)
 
-    def add_comment(self, request, body):
-        self.comments.append(self.Comment(
-            created_by=request.user,
-            body=body))
+    @property
+    def new_comment(self):
+        return u''
+
+    @new_comment.setter
+    def new_comment(self, value):
+        if value:
+            user, body = value
+            self.comments.append(self.Comment(
+                created_by=user,
+                body=body,
+            ))

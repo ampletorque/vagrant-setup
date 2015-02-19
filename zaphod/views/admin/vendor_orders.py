@@ -5,7 +5,7 @@ from pyramid.view import view_defaults
 from venusian import lift
 from formencode import Schema, validators
 
-from ... import model
+from ... import model, custom_validators
 
 from .base import BaseEditView, BaseListView
 
@@ -19,6 +19,7 @@ class VendorOrderEditView(BaseEditView):
     class UpdateForm(Schema):
         "Schema for validating vendor order update form."
         loaded_time = validators.Number(not_empty=True)
+        new_comment = custom_validators.CommentBody()
 
 
 @view_defaults(route_name='admin:vendor_orders',

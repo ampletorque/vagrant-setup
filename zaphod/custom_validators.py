@@ -276,3 +276,11 @@ class CreditCardSchema(Schema):
                              messages={
                                  'empty': "Security code required"
                              })
+
+
+class CommentBody(validators.FancyValidator):
+    def _to_python(self, value, state):
+        s = value.strip()
+        if not s:
+            return
+        return (state.request.user, s)

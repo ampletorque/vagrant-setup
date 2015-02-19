@@ -76,6 +76,8 @@ class NodeUpdateForm(Schema):
     listed = validators.Bool()
     published = validators.Bool()
 
+    new_comment = custom_validators.CommentBody()
+
 
 class NodeEditView(BaseEditView):
     UpdateForm = NodeUpdateForm

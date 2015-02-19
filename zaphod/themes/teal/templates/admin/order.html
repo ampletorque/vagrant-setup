@@ -2,6 +2,7 @@
 
 <%namespace name="forms" file="/common/forms.html"/>
 <%namespace name="blocks" file="/common/blocks.html"/>
+<%namespace name="widgets" file="common/widgets.html"/>
 
 <%def name="title()">Edit Order ${obj.id}</%def>
 
@@ -166,7 +167,9 @@
             </tfoot>
           </table>
 
-          <%forms:actions label_cols="${0}">
+          ${widgets.comments(renderer, obj)}
+
+          <%forms:actions>
             <button class="btn btn-primary" type="submit">Save</button>
             <button class="btn btn-default" type="reset">Cancel</button>
           </%forms:actions>

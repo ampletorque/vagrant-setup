@@ -37,6 +37,7 @@
           ${forms.lcheckbox(renderer, 'admin', checked=obj.admin, hint='Grant this user admin permissions.')}
 
           ${widgets.images(renderer, obj)}
+          ${widgets.comments(renderer, obj)}
 
           <%forms:actions>
             <button class="btn btn-primary" type="submit">Save</button>

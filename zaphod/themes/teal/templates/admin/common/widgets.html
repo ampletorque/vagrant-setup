@@ -11,24 +11,25 @@
 </%def>
 
 
-<%def name="images(renderer, obj)">
-  <%forms:element label="Images">
+<%def name="comments(renderer, obj)">
+  <legend>Admin Comments</legend>
+  % for comment in obj.comments:
     <div class="row">
-      % for im in obj.image_metas:
-        <div class="col-xs-6 col-sm-3">
-          <div class="thumbnail">
-            ${request.image_tag(im.name, im.original_ext, 'admin-thumb')}
-            <div class="caption">
-              <h5><a href="${request.route_path('admin:image', id=im.id)}">${im.name}<small>.${im.original_ext}</small></a></h5>
-              <p>Title: ${im.title}</p>
-              <p>Alt: ${im.alt}</p>
-              <p>${im.width} x ${im.height}</p>
-            </div>
-          </div>
-        </div>
-      % endfor
+      <div class="col-sm-3">
+        <strong>${comment.created_by.name if comment.created_by_id != 1 else 'System Message'}</strong>
+        <p class="comment-time">${h.format_datetime(request, comment.created_time)}</p>
+        <p class="comment-time-ago">${h.time_ago_in_words(comment.created_time, granularity='hour')}</p>
+      </div>
+      <div class="col-sm-9">
+        <p>
+          % for line in comment.body.split('\n'):
+            ${line}<br>
+          % endfor
+        </p>
+      </div>
     </div>
-  </%forms:element>
+  % endfor
+  ${forms.ltextarea(renderer, 'new_comment')}
 </%def>
 
 

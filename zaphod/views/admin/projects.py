@@ -4,11 +4,20 @@ from __future__ import (absolute_import, division, print_function,
 from pyramid.view import view_defaults, view_config
 from venusian import lift
 from sqlalchemy.sql import func, not_
-from formencode import validators
+from formencode import Schema, validators
+from pyramid.httpexceptions import HTTPFound
+
+from pyramid_uniform import Form, FormRenderer
 
 from ... import model
 
-from .base import NodeEditView, NodeListView, NodeUpdateForm, NodeCreateView
+from .base import (NodeEditView, NodeListView, NodeUpdateForm, NodeCreateView,
+                   NodeCreateForm)
+
+
+class ProductCreateForm(Schema):
+    allow_extra_fields = False
+    name = validators.UnicodeString(not_empty=True)
 
 
 @view_defaults(route_name='admin:projects', renderer='admin/projects.html')
@@ -52,6 +61,23 @@ class ProjectEditView(NodeEditView):
         project = self._get_object()
         return {'obj': project}
 
+    @view_config(route_name='admin:project:products:new',
+                 renderer='admin/project_products_new.html')
+    def create_product(self):
+        request = self.request
+        project = self._get_object()
+
+        form = Form(request, schema=ProductCreateForm)
+        if form.validate():
+            product = model.Product(project=project)
+            form.bind(product)
+            model.Session.flush()
+            request.flash("Product created.", 'success')
+            return HTTPFound(location=request.route_url('admin:product',
+                                                        id=product.id))
+
+        return {'obj': project, 'renderer': FormRenderer(form)}
+
     @view_config(route_name='admin:project:owners',
                  renderer='admin/project_owners.html')
     def owners(self):
@@ -63,6 +89,23 @@ class ProjectEditView(NodeEditView):
     def updates(self):
         project = self._get_object()
         return {'obj': project}
+
+    @view_config(route_name='admin:project:updates:new',
+                 renderer='admin/project_updates_new.html')
+    def create_update(self):
+        request = self.request
+        project = self._get_object()
+
+        form = Form(request, schema=NodeCreateForm)
+        if form.validate():
+            update = model.ProjectUpdate(project=project)
+            form.bind(update)
+            model.Session.flush()
+            request.flash("Project update created.", 'success')
+            return HTTPFound(location=request.route_url('admin:update',
+                                                        id=update.id))
+
+        return {'obj': project, 'renderer': FormRenderer(form)}
 
     @view_config(route_name='admin:project:reports',
                  renderer='admin/project_reports.html')

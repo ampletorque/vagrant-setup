@@ -51,6 +51,8 @@ ${project_header.project_header(obj)}
           <p>This project has no updates.</p>
 
         % endif
+
+        <a class="btn btn-default" href="${request.route_path('admin:project:updates:new', id=obj.id)}">Create New Update</a>
       </div>
     </div>
   </div>

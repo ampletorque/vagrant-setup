@@ -88,7 +88,8 @@ class PerformanceReportsView(BaseReportsView):
 
         q = model.Session.query(model.Project).\
             filter(model.Project.include_in_launch_stats == True,
-                   model.Project.start_time < utcnow)
+                   model.Project.start_time >= start,
+                   model.Project.start_time < end)
 
         num_projects_launched = q.count()
 

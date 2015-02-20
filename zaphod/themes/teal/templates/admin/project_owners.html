@@ -14,38 +14,48 @@ ${project_header.project_header(obj)}
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th></th>
-                <th>User</th>
-                <th>Title</th>
-                <th>Change Content</th>
-                <th>Manage Payment</th>
-                <th>Post Updates</th>
-                <th>Receive Questions</th>
-                <th>Manage Owners</th>
-                <th>Show on Campaign</th>
-              </tr>
-            </thead>
-            <tbody>
-              % for ownership in obj.ownerships:
+
+        % if obj.ownerships:
+
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
                 <tr>
-                  <td>remove</td>
-                  <td>${ownership.user.name}</td>
-                  <td>${ownership.title}</td>
-                  <td>${ownership.can_change_content}</td>
-                  <td>${ownership.can_manage_payments}</td>
-                  <td>${ownership.can_post_updates}</td>
-                  <td>${ownership.can_receive_questions}</td>
-                  <td>${ownership.can_manage_owners}</td>
-                  <td>${ownership.show_on_campaign}</td>
+                  <th></th>
+                  <th>User</th>
+                  <th>Title</th>
+                  <th>Change Content</th>
+                  <th>Manage Payment</th>
+                  <th>Post Updates</th>
+                  <th>Receive Questions</th>
+                  <th>Manage Owners</th>
+                  <th>Show on Campaign</th>
                 </tr>
-              % endfor
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                % for ownership in obj.ownerships:
+                  <tr>
+                    <td><i class="fa fa-minus"></i></td>
+                    <td>${ownership.user.name}</td>
+                    <td>${ownership.title}</td>
+                    <td>${ownership.can_change_content}</td>
+                    <td>${ownership.can_manage_payments}</td>
+                    <td>${ownership.can_post_updates}</td>
+                    <td>${ownership.can_receive_questions}</td>
+                    <td>${ownership.can_manage_owners}</td>
+                    <td>${ownership.show_on_campaign}</td>
+                  </tr>
+                % endfor
+              </tbody>
+            </table>
+          </div>
+
+        % else:
+
+          <p>This project has no owners.</p>
+
+        % endif
+
       </div>
     </div>
   </div>

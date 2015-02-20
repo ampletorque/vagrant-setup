@@ -8,6 +8,8 @@ from datetime import timedelta
 from cryptacular.bcrypt import BCRYPTPasswordManager
 from sqlalchemy import Column, types
 
+from pyramid_es.mixin import ElasticMixin, ESMapping, ESField, ESString
+
 from . import utils
 from .base import Base
 from .image import ImageMixin
@@ -17,7 +19,7 @@ from .comment import CommentMixin
 __all__ = ['User']
 
 
-class User(Base, ImageMixin, UserMixin, CommentMixin):
+class User(Base, ImageMixin, UserMixin, CommentMixin, ElasticMixin):
     __tablename__ = 'users'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
@@ -137,3 +139,13 @@ class User(Base, ImageMixin, UserMixin, CommentMixin):
     def has_permission(self, permission_name):
         # XXX Implement this, obviously.
         return True
+
+    @classmethod
+    def elastic_mapping(cls):
+        return ESMapping(
+            analyzer='content',
+            properties=ESMapping(
+                ESField('id'),
+                ESString('name'),
+                ESString('email'),
+            ))

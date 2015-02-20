@@ -25,6 +25,11 @@
     ${blocks.flash(msg, category)}
   % endfor
   ${next.body()}
+  <section class="footer-admin">
+    <div class="container">
+      <p><a href="#">Back to top</a></p>
+    </div>
+  </section>
   ${request.asset_tag('admin-js')}
   ${self.additional_footer()}
 </body>
@@ -38,7 +43,7 @@
 
 <%def name="admin_tab(label, path)">
   % if request.path.startswith(path):
-    <li class="active"><a href="#">${label}</a></li>
+    <li class="active"><a href="${path}">${label}</a></li>
   % else:
     <li><a href="${path}">${label}</a></li>
   % endif

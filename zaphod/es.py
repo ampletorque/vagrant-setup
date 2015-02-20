@@ -8,6 +8,8 @@ from . import model
 
 default_doc_types = (
     model.Project,
+    model.Order,
+    model.User,
 )
 
 

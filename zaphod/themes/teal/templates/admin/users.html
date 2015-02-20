@@ -15,9 +15,26 @@
           <a class="btn btn-default" href="${request.route_path('admin:users:new')}"><i class="fa fa-plus"></i> New User</a>
         </div>
 
-        <h1 class="page-header">Users <small>${page.item_count} total</small></h1>
+        <h1 class="page-header">
+          Users
+          % if page:
+            <small>${page.item_count} total</small>
+          % endif
+        </h1>
 
-        ${pagination.pagination(page)}
+        <div class="clearfix">
+          % if page:
+            <div class="pull-right">
+              ${pagination.pagination(page)}
+            </div>
+          % endif
+          <form class="form-inline form-search" method="GET">
+            <div class="form-group">
+              <input type="text" name="q" placeholder="Search users..." value="${request.params.get('q')}" class="form-control">
+              <button class="btn btn-default" type="submit">Search</button>
+            </div>
+          </form>
+        </div>
 
         <div class="table-responsive">
           <table class="table">
@@ -31,17 +48,31 @@
               </tr>
             </thead>
             <tbody>
-              % for user in page:
-                <tr>
-                  <td>
-                    <a href="${request.route_path('admin:user', id=user.id)}">Edit</a>
-                  </td>
-                  <td>${user.id}</td>
-                  <td>${user.name}</td>
-                  <td>${user.email}</td>
-                  <td>${h.format_datetime(request, user.created_time)}</td>
-                </tr>
-              % endfor
+              % if page:
+                % for user in page:
+                  <tr>
+                    <td>
+                      <a href="${request.route_path('admin:user', id=user.id)}">Edit</a>
+                    </td>
+                    <td>${user.id}</td>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>${h.format_datetime(request, user.created_time)}</td>
+                  </tr>
+                % endfor
+              % else:
+                % for record in results:
+                  <tr>
+                    <td>
+                      <a href="${request.route_path('admin:user', id=record.id)}">Edit</a>
+                    </td>
+                    <td>${record.id}</td>
+                    <td>${record.name}</td>
+                    <td>${record.email}</td>
+                    <td></td>
+                  </tr>
+                % endfor
+              % endif
             </tbody>
           </table>
         </div>

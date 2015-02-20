@@ -6,6 +6,7 @@ from pyramid.httpexceptions import HTTPFound, HTTPNotFound
 from pyramid.view import view_config, view_defaults
 
 from pyramid_uniform import Form, FormRenderer
+from pyramid_es import get_client
 
 from ... import model, custom_validators
 from ...helpers.paginate import Page
@@ -54,8 +55,13 @@ class BaseListView(object):
     def index(self):
         request = self.request
 
-        q = model.Session.query(self.cls)
-        final_q = q.order_by(self.cls.id.desc())
+        if 'q' in request.params:
+            client = get_client(request)
+            results = client.query(self.cls, q=request.params['q']).execute()
+            return dict(results=results)
+        else:
+            q = model.Session.query(self.cls)
+            final_q = q.order_by(self.cls.id.desc())
         if self.paginate:
             item_count = final_q.count()
 

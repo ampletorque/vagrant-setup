@@ -15,9 +15,26 @@
           <a class="btn btn-default" href="${request.route_path('admin:orders:new')}"><i class="fa fa-plus"></i> New Order</a>
         </div>
 
-        <h1 class="page-header">Orders <small>${page.item_count} total</small></h1>
+        <h1 class="page-header">
+          Orders
+          % if page:
+            <small>${page.item_count} total</small>
+          % endif
+        </h1>
 
-        ${pagination.pagination(page)}
+        <div class="clearfix">
+          % if page:
+            <div class="pull-right">
+              ${pagination.pagination(page)}
+            </div>
+          % endif
+          <form class="form-inline form-search" method="GET">
+            <div class="form-group">
+              <input type="text" name="q" placeholder="Search orders..." value="${request.params.get('q')}" class="form-control">
+              <button class="btn btn-default" type="submit">Search</button>
+            </div>
+          </form>
+        </div>
 
         <div class="table-responsive">
           <table class="table">
@@ -30,16 +47,29 @@
               </tr>
             </thead>
             <tbody>
-              % for order in page:
-                <tr>
-                  <td>
-                    <a href="${request.route_path('admin:order', id=order.id)}">Edit</a>
-                  </td>
-                  <td>${order.id}</td>
-                  <td>${order.shipping.full_name}</td>
-                  <td>${h.format_datetime(request, order.created_time)}</td>
-                </tr>
-              % endfor
+              % if page:
+                % for order in page:
+                  <tr>
+                    <td>
+                      <a href="${request.route_path('admin:order', id=order.id)}">Edit</a>
+                    </td>
+                    <td>${order.id}</td>
+                    <td>${order.shipping.full_name}</td>
+                    <td>${h.format_datetime(request, order.created_time)}</td>
+                  </tr>
+                % endfor
+              % else:
+                % for record in results:
+                  <tr>
+                    <td>
+                      <a href="${request.route_path('admin:order', id=record.id)}">Edit</a>
+                    </td>
+                    <td>${record.id}</td>
+                    <td>${record.shipping.full_name}</td>
+                    <td></td>
+                  </tr>
+                % endfor
+              % endif
             </tbody>
           </table>
         </div>

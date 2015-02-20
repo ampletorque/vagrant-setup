@@ -3,6 +3,8 @@ from __future__ import (absolute_import, division, print_function,
 
 from sqlalchemy import Column, ForeignKey, types, orm
 
+from pyramid_es.mixin import ElasticMixin, ESMapping, ESField
+
 from . import custom_types
 from .address import make_address_columns
 from .base import Base
@@ -10,7 +12,7 @@ from .user_mixin import UserMixin
 from .comment import CommentMixin
 
 
-class Order(Base, UserMixin, CommentMixin):
+class Order(Base, UserMixin, CommentMixin, ElasticMixin):
     __tablename__ = 'orders'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
@@ -55,6 +57,29 @@ class Order(Base, UserMixin, CommentMixin):
         Add a new shipment to an order, marking the supplied items as shipped.
         """
         raise NotImplementedError
+
+    @classmethod
+    def elastic_mapping(cls):
+        return ESMapping(
+            analyzer='content',
+            properties=ESMapping(
+                ESField('id'),
+                ESField('user',
+                        filter=lambda user: {
+                            'name': user.name,
+                            'email': user.email
+                        } if user else {}),
+                ESField('shipping', filter=lambda addr: {
+                    'full_name': addr.full_name,
+                    'address1': addr.address1,
+                    'address2': addr.address2,
+                    'phone': addr.phone,
+                    'company': addr.company,
+                    'city': addr.city,
+                    'postal_code': addr.postal_code,
+                    'country_name': addr.country_name,
+                }),
+            ))
 
 
 class Shipment(Base, UserMixin):

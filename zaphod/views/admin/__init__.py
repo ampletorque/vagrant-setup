@@ -45,6 +45,7 @@ def includeme(config):
     config.add_route('admin:vendor_order', '/vendor-order/{id}')
 
     config.add_route('admin:images', '/images')
+    config.add_route('admin:images:upload', '/images/upload')
     config.add_route('admin:image', '/image/{id}')
 
     config.add_route('admin:provider_types', '/provider-types')

@@ -53,7 +53,7 @@ class ProjectEditView(NodeEditView):
         accepts_preorders = validators.Bool()
         pledged_elsewhere_count = validators.Int()
         pledged_elsewhere_amount = validators.Number()
-        launched_elsewhere = validators.Bool()
+        include_in_launch_stats = validators.Bool()
 
     @view_config(route_name='admin:project:products',
                  renderer='admin/project_products.html')

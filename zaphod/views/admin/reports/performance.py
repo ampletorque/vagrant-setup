@@ -79,8 +79,7 @@ class PerformanceReportsView(BaseReportsView):
         utcnow = model.utcnow()
 
         q = model.Session.query(model.Project).\
-            filter(model.Project.published == True,
-                   model.Project.launched_elsewhere == False,
+            filter(model.Project.include_in_launch_stats == True,
                    model.Project.start_time < utcnow)
 
         num_projects_launched = q.count()
@@ -147,8 +146,7 @@ class PerformanceReportsView(BaseReportsView):
         utcnow = model.utcnow()
 
         q = model.Session.query(model.Project).\
-            filter(model.Project.published == True,
-                   model.Project.launched_elsewhere == False,
+            filter(model.Project.include_in_launch_stats == True,
                    model.Project.start_time < utcnow)
 
         # actual_projects_launched = q.with_entities(model.Project.id,

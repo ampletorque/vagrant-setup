@@ -39,7 +39,8 @@ class Project(Node, ElasticMixin):
     accepts_preorders = Column(types.Boolean, nullable=False, default=False)
     successful = Column(types.Boolean, nullable=False, default=False)
 
-    launched_elsewhere = Column(types.Boolean, nullable=False, default=False)
+    include_in_launch_stats = Column(types.Boolean, nullable=False,
+                                     default=True)
     pledged_elsewhere_amount = Column(custom_types.Money, nullable=False,
                                       default=0)
     pledged_elsewhere_count = Column(types.Integer, nullable=False, default=0)

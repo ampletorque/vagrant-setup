@@ -30,7 +30,7 @@ ${project_header.project_header(obj)}
           ${forms.lcheckbox(renderer, 'accepts_preorders', obj.accepts_preorders, label='Accepts Pre-Orders', hint='Check if the project will continue to accept orders after the crowdfunding campaign is over.')}
           ${forms.ltext(renderer, 'pledged_elsewhere_amount', obj.pledged_elsewhere_amount, label='Amount Pledged Elsewhere', prefix='$')}
           ${forms.ltext(renderer, 'pledged_elsewhere_count', obj.pledged_elsewhere_count, label='Count Pledged Elsewhere')}
-          ${forms.lcheckbox(renderer, 'launched_elsewhere', obj.launched_elsewhere, label='Launched Elsewhere', hint='Check if this project originally launched on a different crowdfunding site or did not crowdfund.')}
+          ${forms.lcheckbox(renderer, 'include_in_launch_stats', obj.include_in_launch_stats, label='Include in Launch Stats', hint='Check if this project launched or will launch as a crowdfunding campaign on Crowd Supply.')}
 
           ${forms.ltextarea(renderer, 'keywords', obj.keywords, rows=3, hint='Included in a keywords meta tag and used for search.')}
 

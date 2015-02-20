@@ -200,7 +200,7 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
             updated_time=old_project.updated_time,
 
             accepts_preorders=(old_project.stage in (2, 3)),
-            launched_elsewhere=(not launched_on_crowd_supply(old_project)),
+            include_in_launch_stats=launched_on_crowd_supply(old_project),
             pledged_elsewhere_amount=old_project.pledged_elsewhere_amount,
             pledged_elsewhere_count=old_project.pledged_elsewhere_count,
 

@@ -63,7 +63,19 @@ class AccountingReportsView(BaseReportsView):
 
         # fulfillment fees, recognized at the time of shipment
         # XXX
-        fulfillment_fees = 0
+        q = model.Session.query(
+            model.Product.fulfillment_fee,
+            func.count(model.Shipment.id).label('num_shipments')).\
+            join(model.Shipment.items).\
+            join(model.CartItem.product).\
+            filter(model.Shipment.created_time >= start,
+                   model.Shipment.created_time < end)
+
+        subq = q.subquery()
+        q = model.Session.query(
+            func.sum(subq.c.fulfillment_fee * subq.c.num_shipments))
+
+        fulfillment_fees = q.scalar() or 0
 
         total = (crowdfunding_fees + fulfillment_fees + preorder_fees +
                  stock_items + stock_shipping)

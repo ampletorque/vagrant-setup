@@ -55,8 +55,8 @@ class BaseListView(object):
         request = self.request
 
         q = model.Session.query(self.cls)
+        final_q = q.order_by(self.cls.id.desc())
         if self.paginate:
-            final_q = q.order_by(self.cls.id.desc())
             item_count = final_q.count()
 
             page = Page(request, final_q,
@@ -66,7 +66,7 @@ class BaseListView(object):
 
             return dict(page=page)
         else:
-            return dict(objs=q.all())
+            return dict(objs=final_q.all())
 
 
 class NodeUpdateForm(Schema):

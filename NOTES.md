@@ -15,13 +15,7 @@ serve to maintain the script(s) to migrate data from the old site.
 Browser Support
 ---------------
 
-Ditching IE8 and below enables a lot of interesting features and saves dev time. The experience for those browsers would probably be "crappy but usable" and they account for around 0.4% of sessions. ???
-
-Example features include:
-
-- SVG
-- HTML5 form features (date pickers, sliders, validation) (IE9+)
-- requestAnimationFrame
+Support IE9+, modern FF and Chrome. IE8 support is nice but don't sweat it.
 
 
 Workflows / Model
@@ -33,11 +27,15 @@ Should there be an admin tool for managing homepage state? This might be more
 tricky than it's worth, but it would be really convenient to be able to
 schedule changes in advance.
 
+-- Don't do it for now.
+
 ### Browse Page(s) Management
 
 Mostly we're just talking about ordering and listing here. I think listing
 works fine with the listed/unlisted toggle. Ordering could be improved for
 sure.
+
+-- Fine for now.
 
 ### Project State
 

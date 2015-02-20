@@ -84,8 +84,6 @@ class PerformanceReportsView(BaseReportsView):
         # over time range
         # ideally show a graph
 
-        utcnow = model.utcnow()
-
         q = model.Session.query(model.Project).\
             filter(model.Project.include_in_launch_stats == True,
                    model.Project.start_time >= start,

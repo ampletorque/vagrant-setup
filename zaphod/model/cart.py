@@ -68,7 +68,12 @@ class CartItem(Base):
     batch = orm.relationship('Batch', backref='cart_items')
     sku = orm.relationship('SKU', backref='cart_items')
 
+    CROWDFUNDING = 0
+    PREORDER = 1
+    STOCK = 2
+
     available_statuses = [
+        ('init', 'Unset'),
         ('cart', 'Pre-checkout'),
         ('unfunded', 'Project Not Yet Funded'),
         ('failed', 'Project Failed To Fund'),
@@ -84,7 +89,7 @@ class CartItem(Base):
 
     @property
     def status_description(self):
-        return self.available_statuses[self.status]
+        return dict(self.available_statuses)[self.status]
 
     def update_status(self, new_value):
         """

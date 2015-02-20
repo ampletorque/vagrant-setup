@@ -67,8 +67,10 @@ class Project(Node, ElasticMixin):
     open_source_url = Column(types.String(255), nullable=False, default=u'')
 
     direct_transactions = Column(types.Boolean, nullable=False, default=False)
-    fee_percent = Column(types.Numeric(6, 4), nullable=False,
-                         default=Decimal('5.0000'))
+    crowdfunding_fee_percent = Column(types.Numeric(6, 4), nullable=False,
+                                      default=Decimal('5.0000'))
+    preorder_fee_percent = Column(types.Numeric(6, 4), nullable=False,
+                                  default=Decimal('10.0000'))
 
     updates = orm.relationship(
         'ProjectUpdate',

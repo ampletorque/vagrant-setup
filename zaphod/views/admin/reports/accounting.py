@@ -22,7 +22,7 @@ class AccountingReportsView(BaseReportsView):
         q = model.Session.query(
             func.sum((model.CartItem.price_each * model.CartItem.qty_desired) +
                      model.CartItem.shipping_price) *
-            model.Project.fee_percent / 100).\
+            model.Project.crowdfunding_fee_percent / 100).\
             join(model.CartItem.product).\
             join(model.Product.project).\
             filter(model.Project.end_time >= start,
@@ -32,7 +32,16 @@ class AccountingReportsView(BaseReportsView):
 
         # preorder commission, recognized at the time of order??
         # XXX
-        preorder_fees = 0
+        q = model.Session.query(
+            func.sum((model.CartItem.price_each * model.CartItem.qty_desired) +
+                     model.CartItem.shipping_price) *
+            model.Project.preorder_fee_percent / 100).\
+            join(model.CartItem.product).\
+            join(model.Product.project).\
+            filter(model.Project.end_time >= start,
+                   model.Project.end_time < end)
+
+        preorder_fees = q.scalar() or 0
 
         # in-stock sales, recognized at the time of shipment
         # XXX

@@ -205,7 +205,7 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
             pledged_elsewhere_count=old_project.pledged_elsewhere_count,
 
             direct_transactions=old_project.direct_transactions,
-            fee_percent=old_project.fee_percent,
+            crowdfunding_fee_percent=old_project.fee_percent,
         )
         model.Session.add(project)
         migrate_aliases(settings, old_project, project)

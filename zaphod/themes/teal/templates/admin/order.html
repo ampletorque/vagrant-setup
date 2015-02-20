@@ -8,23 +8,31 @@
 
 
 <%def name="item_row(item)">
-  ## XXX Add status
-  ## XXX Add shipping price
   <tr>
     <td></td>
     <td>
-      ## XXX Add crowdfunding / preorder / stock status
-      ## XXX Add expected delivery date / current expectation / overdue indicator
+      % if item.stage == item.CROWDFUNDING:
+        <span class="label label-success">Crowdfunding</span>
+      % elif item.stage == item.PREORDER:
+        <span class="label label-info">Pre-Order</span>
+      % else:
+        <span class="label label-default">Stock</span>
+      % endif
+      <br>
       <strong>${item.product.name}</strong><br>
       <a href="${request.route_path('admin:project', id=item.product.project.id)}">${item.product.project.name}</a>
       ${blocks.option_value_list(item.sku)}
     </td>
     <td>
-      ${item.sku.id}
-      ## XXX Add stock reservation status here or next to qty
+      ${item.status_description}<br>
+      SKU: ${item.sku.id}<br>
+      Reserved: ${item.qty_reserved}<br>
+      Original Delivery: ${item.expected_delivery_date}<br>
+      Current: ${item.batch.delivery_date}
     </td>
     <td>${renderer.text('items-%d.price_each' % item.id, item.price_each, class_='form-control', style='width:100px')}</td>
     <td>${renderer.text('items-%d.qty_desired' % item.id, item.qty_desired, class_='form-control', style='width:80px', type='number')}</td>
+    <td>${renderer.text('items-%d.shipping_price' % item.id, item.shipping_price, class_='form-control', style='width:100px')}</td>
     <td>${h.currency(item.total)}</td>
   </tr>
 </%def>
@@ -72,7 +80,7 @@
         ${blocks.address(payment.method.billing)}
       % endif
     </td>
-    <td colspan="3">
+    <td colspan="4">
       ${self.payment_description(payment)}<br>
       % if payment.discriminator == 'cc':
         CCV: ${payment.ccv_result} - AVS: ${payment.avs_result}
@@ -125,9 +133,10 @@
               <tr>
                 <th></th>
                 <th>Description</th>
-                <th>SKU</th>
+                <th>Status</th>
                 <th>Price Each</th>
                 <th>Qty</th>
+                <th>Shipping Price</th>
                 <th>Subtotal</th>
               </tr>
             </thead>
@@ -139,12 +148,7 @@
             <tbody>
               <tr>
                 <td></td>
-                <td colspan="4">Shipping Total</td>
-                <td>${h.currency(obj.cart.shipping_total)}</td>
-              </tr>
-              <tr>
-                <td></td>
-                <td colspan="4"><strong>Total</strong></td>
+                <td colspan="5"><strong>Total</strong></td>
                 <td>${h.currency(obj.total)}</td>
               </tr>
             </tbody>
@@ -156,7 +160,7 @@
             <tfoot>
               <tr>
                 <td></td>
-                <td colspan="3">
+                <td colspan="4">
                   <a href="${request.route_path('admin:order:payment', id=obj.id)}">Add Payment</a>
                   /
                   <a href="${request.route_path('admin:order:refund', id=obj.id)}">Add Refund</a>

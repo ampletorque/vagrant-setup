@@ -1,6 +1,8 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+from decimal import Decimal
+
 from sqlalchemy import Column, ForeignKey, types, orm
 from sqlalchemy.sql import func, not_
 
@@ -36,6 +38,8 @@ class Product(Base, ImageMixin):
     price = Column(custom_types.Money, nullable=False, default=0)
     accepts_preorders = Column(types.Boolean, nullable=False, default=False)
     in_stock = Column(types.Boolean, nullable=False, default=False)
+    fulfillment_fee = Column(custom_types.Money, nullable=False,
+                             default=Decimal('2.50'))
 
     batches = orm.relationship('Batch', backref='product')
 

@@ -10,7 +10,7 @@ from pyramid_uniform import Form, FormRenderer
 
 from ... import model, mail, custom_validators
 
-from .base import BaseEditView, BaseListView
+from .base import BaseEditView, BaseListView, BaseCreateView
 
 
 class EditAddressForm(Schema):
@@ -155,3 +155,16 @@ class OrderEditView(BaseEditView):
 class OrderListView(BaseListView):
     cls = model.Order
     paginate = True
+
+
+@view_defaults(route_name='admin:orders:new',
+               renderer='admin/orders_new.html')
+@lift()
+class OrderCreateView(BaseCreateView):
+    cls = model.Order
+    obj_route_name = 'admin:order'
+
+    class CreateForm(Schema):
+        allow_extra_fields = False
+        pre_validators = [NestedVariables()]
+        # XXX add lots here

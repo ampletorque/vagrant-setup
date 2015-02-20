@@ -8,7 +8,7 @@ from formencode import validators
 
 from ... import model
 
-from .base import NodeEditView, NodeListView, NodeUpdateForm
+from .base import NodeEditView, NodeListView, NodeUpdateForm, NodeCreateView
 
 
 @view_defaults(route_name='admin:projects', renderer='admin/projects.html')
@@ -128,3 +128,11 @@ class ProjectEditView(NodeEditView):
             'qty_delivered': qty_delivered,
             'earliest_due_date': earliest_due_date,
         }
+
+
+@view_defaults(route_name='admin:projects:new',
+               renderer='admin/projects_new.html')
+@lift()
+class ProjectCreateView(NodeCreateView):
+    cls = model.Project
+    obj_route_name = 'admin:project'

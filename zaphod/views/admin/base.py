@@ -69,7 +69,31 @@ class BaseListView(object):
             return dict(objs=final_q.all())
 
 
+@view_defaults(route_name='admin:base_create',
+               renderer='admin/base_create.html')
+class BaseCreateView(object):
+
+    def __init__(self, request):
+        self.request = request
+
+    @view_config(permission='authenticated')
+    def create(self):
+        request = self.request
+
+        form = Form(request, schema=self.CreateForm)
+        if form.validate():
+            obj = self.cls(**form.data)
+            model.Session.add(obj)
+            model.Session.flush()
+            request.flash("Created.", 'success')
+            return HTTPFound(location=request.route_url(self.obj_route_name,
+                                                        id=obj.id))
+
+        return {'renderer': FormRenderer(form)}
+
+
 class NodeUpdateForm(Schema):
+    allow_extra_fields = False
     pre_validators = [NestedVariables()]
 
     name = validators.UnicodeString(max=255, not_empty=True)
@@ -92,3 +116,12 @@ class NodeEditView(BaseEditView):
 
 class NodeListView(BaseListView):
     pass
+
+
+class NodeCreateForm(Schema):
+    allow_extra_fields = False
+    name = validators.UnicodeString(max=255, not_empty=True)
+
+
+class NodeCreateView(BaseCreateView):
+    CreateForm = NodeCreateForm

@@ -7,7 +7,7 @@ from formencode import validators
 
 from ... import model
 
-from .base import NodeListView, NodeEditView, NodeUpdateForm
+from .base import NodeListView, NodeEditView, NodeUpdateForm, NodeCreateView
 
 
 @view_defaults(route_name='admin:article', renderer='admin/article.html')
@@ -26,3 +26,11 @@ class ArticleEditView(NodeEditView):
 @lift()
 class ArticleListView(NodeListView):
     cls = model.Article
+
+
+@view_defaults(route_name='admin:articles:new',
+               renderer='admin/articles_new.html')
+@lift()
+class ArticleCreateView(NodeCreateView):
+    cls = model.Article
+    obj_route_name = 'admin:article'

@@ -6,7 +6,7 @@ from venusian import lift
 
 from ... import model
 
-from .base import NodeEditView, NodeListView, NodeUpdateForm
+from .base import NodeEditView, NodeListView, NodeUpdateForm, NodeCreateView
 
 
 @view_defaults(route_name='admin:tag', renderer='admin/tag.html')
@@ -21,3 +21,11 @@ class TagEditView(NodeEditView):
 @lift()
 class TagListView(NodeListView):
     cls = model.Tag
+
+
+@view_defaults(route_name='admin:tags:new',
+               renderer='admin/tags_new.html')
+@lift()
+class TagCreateView(NodeCreateView):
+    cls = model.Tag
+    obj_route_name = 'admin:tag'

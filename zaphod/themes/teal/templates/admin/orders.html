@@ -10,33 +10,39 @@
 <section class="section-admin-orders">
   <div class="container">
     <div class="row">
-      <h1 class="page-header">Orders <small>${page.item_count} total</small></h1>
+      <div class="col-lg-12">
+        <div class="pull-right">
+          <a class="btn btn-default" href="${request.route_path('admin:orders:new')}"><i class="fa fa-plus"></i> New Order</a>
+        </div>
 
-      ${pagination.pagination(page)}
+        <h1 class="page-header">Orders <small>${page.item_count} total</small></h1>
 
-      <div class="table-responsive">
-        <table class="table">
-          <thead>
-            <tr>
-              <th></th>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Placed</th>
-            </tr>
-          </thead>
-          <tbody>
-            % for order in page:
+        ${pagination.pagination(page)}
+
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
               <tr>
-                <td>
-                  <a href="${request.route_path('admin:order', id=order.id)}">Edit</a>
-                </td>
-                <td>${order.id}</td>
-                <td>${order.shipping.full_name}</td>
-                <td>${h.format_datetime(request, order.created_time)}</td>
+                <th></th>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Placed</th>
               </tr>
-            % endfor
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              % for order in page:
+                <tr>
+                  <td>
+                    <a href="${request.route_path('admin:order', id=order.id)}">Edit</a>
+                  </td>
+                  <td>${order.id}</td>
+                  <td>${order.shipping.full_name}</td>
+                  <td>${h.format_datetime(request, order.created_time)}</td>
+                </tr>
+              % endfor
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>

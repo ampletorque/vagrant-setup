@@ -7,7 +7,7 @@ from formencode import Schema, validators
 
 from ... import model, custom_validators
 
-from .base import BaseEditView, BaseListView
+from .base import BaseEditView, BaseListView, BaseCreateView
 
 
 @view_defaults(route_name='admin:user', renderer='admin/user.html')
@@ -39,3 +39,15 @@ class UserEditView(BaseEditView):
 class UserListView(BaseListView):
     cls = model.User
     paginate = True
+
+
+@view_defaults(route_name='admin:users:new',
+               renderer='admin/users_new.html')
+@lift()
+class UserCreateView(BaseCreateView):
+    cls = model.User
+    obj_route_name = 'admin:user'
+
+    class CreateForm(Schema):
+        allow_extra_fields = False
+        name = validators.UnicodeString(not_empty=True)

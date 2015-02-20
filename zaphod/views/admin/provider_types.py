@@ -6,7 +6,7 @@ from venusian import lift
 
 from ... import model
 
-from .base import NodeEditView, NodeListView, NodeUpdateForm
+from .base import NodeEditView, NodeListView, NodeUpdateForm, NodeCreateView
 
 
 @view_defaults(route_name='admin:provider_type',
@@ -23,3 +23,11 @@ class ProviderTypeEditView(NodeEditView):
 @lift()
 class ProviderTypeListView(NodeListView):
     cls = model.ProviderType
+
+
+@view_defaults(route_name='admin:provider_types:new',
+               renderer='admin/provider_types_new.html')
+@lift()
+class ProviderTypeCreateView(NodeCreateView):
+    cls = model.ProviderType
+    obj_route_name = 'admin:provider_type'

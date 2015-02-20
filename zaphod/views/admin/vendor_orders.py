@@ -7,7 +7,7 @@ from formencode import Schema, validators
 
 from ... import model, custom_validators
 
-from .base import BaseEditView, BaseListView
+from .base import BaseEditView, BaseListView, BaseCreateView
 
 
 @view_defaults(route_name='admin:vendor_order',
@@ -27,3 +27,11 @@ class VendorOrderEditView(BaseEditView):
 @lift()
 class VendorOrderListView(BaseListView):
     cls = model.VendorOrder
+
+
+@view_defaults(route_name='admin:vendor_orders:new',
+               renderer='admin/vendor_orders_new.html')
+@lift()
+class VendorOrderCreateView(BaseCreateView):
+    cls = model.VendorOrder
+    obj_route_name = 'admin:vendor_order'

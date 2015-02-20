@@ -56,6 +56,11 @@ class Node(Base, ImageMixin, UserMixin, CommentMixin):
 
     aliases = orm.relationship('Alias', cascade='all, delete, delete-orphan')
 
+    def __init__(self, *args, **kwargs):
+        override_path = kwargs.pop('override_path', None)
+        Base.__init__(self, *args, **kwargs)
+        self.override_path = override_path
+
     def generate_path(self):
         name = self.name or u'node-%s' % self.id
         return utils.to_url_name(name)

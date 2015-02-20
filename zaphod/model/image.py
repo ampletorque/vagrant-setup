@@ -18,7 +18,7 @@ __all__ = ['ImageMixin', 'ImageMeta']
 class ImageMixin(object):
 
     @declared_attr
-    def _image_associations(cls):
+    def image_associations(cls):
         if not issubclass(cls, Base):
             return
 
@@ -54,7 +54,7 @@ class ImageMixin(object):
 
         cls.ImageAssociation = ImageAssociation
 
-        cls.image_metas = association_proxy('_image_associations',
+        cls.image_metas = association_proxy('image_associations',
                                             'image_meta',
                                             creator=creator)
 

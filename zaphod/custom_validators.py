@@ -284,3 +284,12 @@ class CommentBody(validators.FancyValidator):
         if not s:
             return
         return (state.request.user, s)
+
+
+class ImageAssociation(Schema):
+    allow_extra_fields = False
+    image_id = validators.Int(not_empty=True)
+    published = validators.Bool()
+    caption = validators.UnicodeString(if_missing='')
+    image_alt = validators.UnicodeString(if_missing='')
+    image_title = validators.UnicodeString(if_missing='')

@@ -43,29 +43,49 @@
     <div class="table-responsive">
       <table class="table table-images">
         <tbody>
-          % for im in obj.image_metas:
+          % for assoc in obj.image_associations:
             <tr>
               <td><i class="fa fa-minus"></i></td>
-              <td>${request.image_tag(im.name, im.original_ext, 'admin-tiny')}</td>
+              <td>${request.image_tag(assoc.image_meta.name, assoc.image_meta.original_ext, 'admin-tiny')}</td>
               <td>
-                ${im.name}.${im.original_ext}<br>
-                ${im.width} x ${im.height}<br>
-                <a href="${request.image_url(im.name, im.original_ext, None)}">View Original</a>
+                ${assoc.image_meta.name}.${assoc.image_meta.original_ext}<br>
+                ${assoc.image_meta.width} x ${assoc.image_meta.height}<br>
+                <a href="${request.image_url(assoc.image_meta.name, assoc.image_meta.original_ext, None)}">View Original</a><br>
+                <label>
+                  ${renderer.checkbox('images-%d.published' % assoc.image_meta.id, checked=assoc.published)}
+                  Published
+                </label>
               </td>
               <td>
-                ##${renderer.text('images-%d.title' % im.id, im.title, class_='form-control', placeholder='Title')}
-                ##${renderer.text('images-%d.alt' % im.id, im.alt, class_='form-control', placeholder='Alt')}
+                ${renderer.hidden('images-%d.id' % assoc.image_meta.id, assoc.image_meta.id)}
+                <label for="images-${assoc.image_meta.id}.caption">Caption</label>
+                ${renderer.text('images-%d.caption' % assoc.image_meta.id, assoc.caption, class_='form-control')}
+              </td>
+              <td>
+                ${renderer.text('images-%d.image_title' % assoc.image_meta.id, assoc.image_meta.title, class_='form-control', placeholder='Title')}
+                ${renderer.text('images-%d.image_alt' % assoc.image_meta.id, assoc.image_meta.alt, class_='form-control', placeholder='Alt')}
               </td>
             </tr>
           % endfor
+        </tbody>
+        <tbody>
+          <tr>
+            <td>
+              <i class="fa fa-plus"></i>
+            </td>
+            <td colspan="4">
+              Associate existing images
+            </td>
+          </tr>
         </tbody>
         <tfoot>
           <tr>
             <td>
               <i class="fa fa-plus"></i>
             </td>
-            <td colspan="3">
-              Add new images
+            <td colspan="4">
+              <input type="file" multiple>
+              Upload new images
             </td>
           </tr>
         </tfoot>

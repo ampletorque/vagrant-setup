@@ -1,7 +1,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from formencode import Schema, NestedVariables, validators
+from formencode import Schema, NestedVariables, ForEach, validators
 from pyramid.httpexceptions import HTTPFound, HTTPNotFound
 from pyramid.view import view_config, view_defaults
 
@@ -23,6 +23,10 @@ class BaseEditView(object):
             raise HTTPNotFound
         return obj
 
+    def _handle_images(self, form, obj):
+        for image_params in form.data.pop('images'):
+            pass
+
     @view_config(permission='authenticated')
     def edit(self):
         request = self.request
@@ -30,6 +34,8 @@ class BaseEditView(object):
 
         form = Form(request, schema=self.UpdateForm)
         if form.validate():
+            if 'images' in form.data:
+                self._handle_images(form, obj)
             form.bind(obj)
             request.flash('Saved changes.', 'success')
             return HTTPFound(location=request.current_route_url())
@@ -77,6 +83,7 @@ class NodeUpdateForm(Schema):
     published = validators.Bool()
 
     new_comment = custom_validators.CommentBody()
+    images = ForEach(custom_validators.ImageAssociation())
 
 
 class NodeEditView(BaseEditView):

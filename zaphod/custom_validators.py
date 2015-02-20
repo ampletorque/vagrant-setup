@@ -3,7 +3,9 @@ from __future__ import (absolute_import, division, print_function,
 
 import re
 import itertools
+from datetime import datetime, timedelta, time
 
+import pytz
 from formencode import validators, Schema, national
 from formencode.api import FancyValidator
 from formencode.validators import Invalid, _
@@ -293,3 +295,24 @@ class ImageAssociation(Schema):
     caption = validators.UnicodeString(if_missing='')
     image_alt = validators.UnicodeString(if_missing='')
     image_title = validators.UnicodeString(if_missing='')
+
+
+class UTCDateConverter(validators.DateConverter):
+
+    def __init__(self, add_day=False, *args, **kwargs):
+        self.add_day = add_day
+        validators.DateConverter.__init__(self, *args, **kwargs)
+
+    def _to_python(self, value, state):
+        request = state.request
+        value = validators.DateConverter._to_python(self, value, state)
+        if value:
+            user_tz = pytz.timezone(request.user.timezone)
+            dt = datetime.combine(value, time())
+            dt = user_tz.localize(dt)
+            dt_utc = dt.astimezone(pytz.utc).replace(tzinfo=None)
+
+        if self.add_day:
+            dt_utc += timedelta(days=1)
+
+        return dt_utc

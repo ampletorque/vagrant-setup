@@ -1,13 +1,41 @@
 <%inherit file="base.html"/>
 
-<%def name="title()">Project Leads</%def>
+<%def name="title()">List Leads</%def>
 
 
-<section class="section-leads">
+<section class="section-admin-leads">
   <div class="container">
     <div class="row">
-      <h1 class="page-header">${self.title()}</h1>
-      <p>This section coming after launch...</p>
+      <div class="col-lg-12">
+        <div class="pull-right">
+          <a class="btn btn-default" href="${request.route_path('admin:leads:new')}"><i class="fa fa-plus"></i> New Lead</a>
+        </div>
+
+        <h1 class="page-header">Leads <small>${len(objs)} total</small></h1>
+
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>ID</th>
+                <th>Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              % for lead in objs:
+                <tr>
+                  <td>
+                    <a href="${request.route_path('admin:lead', id=lead.id)}">Edit</a>
+                  </td>
+                  <td>${lead.id}</td>
+                  <td>${lead.name}</td>
+                </tr>
+              % endfor
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </section>

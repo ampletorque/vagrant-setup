@@ -6,6 +6,7 @@ from .article import *
 from .base import *
 from .cart import *
 from .creator import *
+from .lead import *
 from .image import *
 from .item import *
 from .node import *

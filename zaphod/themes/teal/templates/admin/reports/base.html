@@ -1,14 +1,29 @@
 <%inherit file="../base.html"/>
 
+<%namespace name="widgets" file="../common/widgets.html"/>
+
 
 <section class="section-admin-report-header">
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        <ul class="breadcrumb">
-          <li><a href="${request.route_path('admin:reports')}">Reports</a></li>
-          <li>${self.title()}</li>
-        </ul>
+
+        <div class="clearfix">
+          % if start_date and end_date:
+            <div class="pull-right">
+              <form action="${request.url}" method="GET" class="js-date-range-form">
+                ${widgets.daterange(None, 'start_date', 'end_date', start_date, end_date)}
+              </form>
+              <br>
+            </div>
+          % endif
+
+          <ul class="breadcrumb">
+            <li><a href="${request.route_path('admin:reports')}">Reports</a></li>
+            <li>${self.title()}</li>
+          </ul>
+        </div>
+
       </div>
     </div>
   </div>

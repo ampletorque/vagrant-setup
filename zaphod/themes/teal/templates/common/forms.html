@@ -65,8 +65,8 @@
 </%def>
 
 
-<%def name="datepicker(name, value)">
-  <input type="text" name="${name}" value="${value and value.strftime('%m/%d/%Y')}" class="form-control" data-datepicker="datepicker">
+<%def name="datepicker(name, value, class_='')">
+  <input type="text" name="${name}" value="${value and value.strftime('%m/%d/%Y')}" class="form-control ${class_}" data-datepicker="datepicker">
 </%def>
 
 

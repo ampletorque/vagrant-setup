@@ -101,3 +101,24 @@
     </div>
   </%forms:element>
 </%def>
+
+
+<%def name="daterange(renderer, name_start, name_end, value_start, value_end)">
+  <div class="btn-group js-date-range-friendly">
+    <a class="dropdown-toggle" data-toggle="dropdown">
+      <div class="js-date-range-pickers">
+        ${forms.datepicker(name_start, value_start, class_='js-date-range-start')}
+        -
+        ${forms.datepicker(name_end, value_end, class_='js-date-range-end')}
+        <button class="btn btn-default" href="#">Go</button>
+      </div>
+      <div class="js-date-range-current"></div>
+      <div class="js-date-range-text"></div>
+      <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu js-date-range-menu">
+      <li><a href="#" class="js-custom-range">Custom Date Range</a></li>
+      <li class="divider"></li>
+    </ul>
+  </div>
+</%def>

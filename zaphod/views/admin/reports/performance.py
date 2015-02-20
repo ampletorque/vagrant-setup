@@ -14,40 +14,45 @@ class PerformanceReportsView(BaseReportsView):
                  renderer='admin/reports/sales.html',
                  permission='authenticated')
     def sales(self):
+        utcnow, start_date, end_date, start, end = self._range()
         # over time range
-
-        utcnow = model.utcnow()
 
         base_q = model.Session.query(
             func.sum(model.CartItem.price_each * model.CartItem.qty_desired),
-            func.sum(model.CartItem.shipping_price))
+            func.sum(model.CartItem.shipping_price)).\
+            join(model.CartItem.cart).\
+            join(model.Cart.order).\
+            filter(model.Order.created_time >= start,
+                   model.Order.created_time < end)
 
-        preorder = base_q.\
-            filter(model.CartItem.stage == model.PREORDER).\
-            first() or (0, 0)
+        def scalars(q):
+            value = q.first()
+            if value:
+                return (value[0] or 0, value[1] or 0)
+            else:
+                return 0, 0
 
-        stock = base_q.\
-            filter(model.CartItem.stage == model.STOCK).\
-            first() or (0, 0)
+        preorder = scalars(base_q.
+                           filter(model.CartItem.stage == model.PREORDER))
+
+        stock = scalars(base_q.
+                        filter(model.CartItem.stage == model.STOCK))
 
         crowdfunding_q = base_q.\
             filter(model.CartItem.stage == model.CROWDFUNDING).\
             join(model.CartItem.product).\
             join(model.Product.project)
 
-        funded = crowdfunding_q.\
-            filter(model.Project.successful == True).\
-            first() or (0, 0)
+        funded = scalars(crowdfunding_q.
+                         filter(model.Project.successful == True))
 
-        pending = crowdfunding_q.\
-            filter(model.Project.successful == False,
-                   model.Project.end_time >= utcnow).\
-            first() or (0, 0)
+        pending = scalars(crowdfunding_q.
+                          filter(model.Project.successful == False,
+                                 model.Project.end_time >= utcnow))
 
-        failed = crowdfunding_q.\
-            filter(model.Project.successful == False,
-                   model.Project.end_time < utcnow).\
-            first() or (0, 0)
+        failed = scalars(crowdfunding_q.
+                         filter(model.Project.successful == False,
+                                model.Project.end_time < utcnow))
 
         total = (
             (stock[0] +
@@ -67,12 +72,15 @@ class PerformanceReportsView(BaseReportsView):
             'failed': failed,
             'funded': funded,
             'total': total,
+            'start_date': start_date,
+            'end_date': end_date,
         }
 
     @view_config(route_name='admin:reports:project-launches',
                  renderer='admin/reports/project_launches.html',
                  permission='authenticated')
     def project_launches(self):
+        utcnow, start_date, end_date, start, end = self._range()
         # over time range
         # ideally show a graph
 
@@ -86,6 +94,8 @@ class PerformanceReportsView(BaseReportsView):
 
         return {
             'num_projects_launched': num_projects_launched,
+            'start_date': start_date,
+            'end_date': end_date,
         }
 
     @view_config(route_name='admin:reports:user-behavior',
@@ -143,11 +153,12 @@ class PerformanceReportsView(BaseReportsView):
                  renderer='admin/reports/funding_success.html',
                  permission='authenticated')
     def funding_success(self):
-        utcnow = model.utcnow()
+        utcnow, start_date, end_date, start, end = self._range()
 
         q = model.Session.query(model.Project).\
             filter(model.Project.include_in_launch_stats == True,
-                   model.Project.start_time < utcnow)
+                   model.Project.start_time >= start,
+                   model.Project.start_time < end)
 
         # actual_projects_launched = q.with_entities(model.Project.id,
         #                                            model.Project.name).\
@@ -177,4 +188,6 @@ class PerformanceReportsView(BaseReportsView):
             'num_projects_suspended': num_projects_suspended,
             'num_projects_completed': num_projects_completed,
             'num_projects_successful': num_projects_successful,
+            'start_date': start_date,
+            'end_date': end_date,
         }

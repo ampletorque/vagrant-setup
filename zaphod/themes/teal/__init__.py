@@ -92,6 +92,15 @@ class TealTheme(Theme):
             extension='png'),
 
         FilterChain(
+            'project-mega', width=1200, extension='jpg',
+            filters=[
+                ThumbFilter((1200, 400), crop_whitespace=True, pad=True,
+                            crop='nonwhite'),
+                VignetteFilter(),
+            ],
+            quality=85),
+
+        FilterChain(
             'project-body', width=749, extension='jpg',
             quality=85),
 

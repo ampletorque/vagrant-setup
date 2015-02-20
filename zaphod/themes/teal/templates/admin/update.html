@@ -24,7 +24,7 @@ ${project_header.project_header(obj.project)}
 
           ${forms.ltextarea(renderer, 'teaser', obj.teaser, rows=3, hint='Optional summary.')}
           ${forms.ltextarea(renderer, 'keywords', obj.keywords, rows=3, hint='Included in a keywords meta tag and used for search.')}
-          ${forms.ltextarea(renderer, 'body', obj.body, rows=15, hint=widgets.markdown_hint)}
+          ${widgets.lcontent(renderer, 'body', obj.body)}
 
           ${forms.lcheckbox(renderer, 'listed', obj.listed)}
           ${forms.lcheckbox(renderer, 'published', obj.published)}

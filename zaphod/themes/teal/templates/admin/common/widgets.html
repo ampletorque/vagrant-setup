@@ -11,6 +11,11 @@
 </%def>
 
 
+<%def name="lcontent(renderer, name, value)">
+  ${forms.ltextarea(renderer, name, value, rows=15, class_='form-monospace', hint=self.markdown_hint)}
+</%def>
+
+
 <%def name="comments(renderer, obj)">
   <legend>Admin Comments</legend>
   % for comment in obj.comments:

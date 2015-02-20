@@ -111,12 +111,12 @@
 </%def>
 
 
-<%def name="ltextarea(renderer, name, value=None, label=None, hint=None, label_cols=3, **kwargs)">
+<%def name="ltextarea(renderer, name, value=None, label=None, hint=None, label_cols=3, class_='', **kwargs)">
   <%self:element renderer="${renderer}" label="${label}" name="${name}" hint="${hint}" label_cols="${label_cols}">
     % if renderer:
-      ${renderer.textarea(name, value, class_='form-control', **kwargs)}
+      ${renderer.textarea(name, value, class_='form-control ' + class_, **kwargs)}
     % else:
-      ${h.textarea(name, value, class_='form-control', **kwargs)}
+      ${h.textarea(name, value, class_='form-control ' + class_, **kwargs)}
     % endif
   </%self:element>
 </%def>

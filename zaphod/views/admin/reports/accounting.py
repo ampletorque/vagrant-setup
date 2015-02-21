@@ -25,7 +25,8 @@ class AccountingReportsView(BaseReportsView):
             model.Project.crowdfunding_fee_percent / 100).\
             join(model.CartItem.product).\
             join(model.Product.project).\
-            filter(model.Project.end_time >= start,
+            filter(model.CartItem.stage == model.CartItem.CROWDFUNDING,
+                   model.Project.end_time >= start,
                    model.Project.end_time < end)
 
         crowdfunding_fees = q.scalar() or 0
@@ -38,7 +39,8 @@ class AccountingReportsView(BaseReportsView):
             model.Project.preorder_fee_percent / 100).\
             join(model.CartItem.product).\
             join(model.Product.project).\
-            filter(model.Project.end_time >= start,
+            filter(model.CartItem.stage == model.CartItem.PREORDER,
+                   model.Project.end_time >= start,
                    model.Project.end_time < end)
 
         preorder_fees = q.scalar() or 0
@@ -47,7 +49,8 @@ class AccountingReportsView(BaseReportsView):
         # XXX
         q = model.Session.query(
             func.sum(model.CartItem.price_each * model.CartItem.qty_desired)).\
-            filter(model.CartItem.shipped_date >= start,
+            filter(model.CartItem.stage == model.CartItem.STOCK,
+                   model.CartItem.shipped_date >= start,
                    model.CartItem.shipped_date < end)
 
         stock_items = q.scalar() or 0
@@ -56,7 +59,8 @@ class AccountingReportsView(BaseReportsView):
         # XXX
         q = model.Session.query(
             func.sum(model.CartItem.shipping_price)).\
-            filter(model.CartItem.shipped_date >= start,
+            filter(model.CartItem.stage == model.CartItem.STOCK,
+                   model.CartItem.shipped_date >= start,
                    model.CartItem.shipped_date < end)
 
         stock_shipping = q.scalar()
@@ -68,7 +72,8 @@ class AccountingReportsView(BaseReportsView):
             func.count(model.Shipment.id).label('num_shipments')).\
             join(model.Shipment.items).\
             join(model.CartItem.product).\
-            filter(model.Shipment.created_time >= start,
+            filter(model.CartItem.stage != model.CartItem.STOCK,
+                   model.Shipment.created_time >= start,
                    model.Shipment.created_time < end)
 
         subq = q.subquery()

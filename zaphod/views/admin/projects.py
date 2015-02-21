@@ -147,7 +147,7 @@ class ProjectEditView(NodeEditView):
 
         ordered_q = base_q.\
             filter(not_(model.CartItem.status.in_(
-                ['cancelled', 'shipped', 'abandoned'])))
+                ['cancelled', 'abandoned'])))
         qty_ordered = dict(ordered_q.all())
 
         delivered_q = base_q.\

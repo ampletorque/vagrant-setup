@@ -50,7 +50,7 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
         Update the .closed status of this order. It is 'closed' if and only if
         all of the cart items are closed and the order is fully paid.
         """
-        raise NotImplementedError
+        self.closed = all(ci.closed for ci in self.cart.items)
 
     def ship_items(self, items, tracking_num, source, cost):
         """

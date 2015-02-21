@@ -116,6 +116,10 @@ class CartItem(Base):
         # XXX
         return 0
 
+    @property
+    def closed(self):
+        return self.status in ('cancelled', 'shipped', 'abandoned', 'failed')
+
     def refresh(self):
         """
         Refresh status and reservations.

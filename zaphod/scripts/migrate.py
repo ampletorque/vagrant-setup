@@ -206,6 +206,7 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
 
             direct_transactions=old_project.direct_transactions,
             crowdfunding_fee_percent=old_project.fee_percent,
+            successful=old_project.pledged_amount > old_project.target,
         )
         model.Session.add(project)
         migrate_aliases(settings, old_project, project)
@@ -589,8 +590,39 @@ def migrate_payment(payment_map, old_payment):
         )
 
 
+def status_for_item(utcnow, product_map, old_order, old_ci):
+    if old_ci.shipped_date:
+        return 'shipped'
+    if old_order.status in ('canc', 'frau'):
+        return 'cancelled'
+    product = product_map[old_ci.product]
+    project = product.project
+    if not project.successful:
+        if project.end_time < utcnow:
+            return 'failed'
+        else:
+            return 'unfunded'
+
+    if hasattr(old_ci, 'payment_status'):
+        if old_ci.payment_status == 'failed':
+            return 'payment failed'
+        if old_ci.payment_status == 'dead':
+            return 'abandoned'
+        if old_ci.payment_status == 'paid':
+            return 'waiting'
+
+    if project.successful:
+        return 'payment pending'
+
+    if old_ci.status == 'bpak':
+        return 'being packed'
+
+    return 'init'
+
+
 def migrate_orders(settings, user_map, product_map, option_value_map,
                    batch_map):
+    utcnow = model.utcnow()
     for old_order in scrappy_meta.Session.query(scrappy_model.Order):
         print("  order %s" % old_order.id)
         if old_order.account:
@@ -612,6 +644,7 @@ def migrate_orders(settings, user_map, product_map, option_value_map,
         cart = model.Cart(order=order)
         model.Session.add(cart)
         shipping_prices = item_shipping_prices(old_order)
+        item_map = {}
         for old_ci in old_order.cart.items:
             delivery_date = None
             old_batch = getattr(old_ci, 'batch', None)
@@ -628,13 +661,14 @@ def migrate_orders(settings, user_map, product_map, option_value_map,
                 price_each=old_ci.price_each,
                 qty_desired=old_ci.qty_desired,
                 stage=['P', 'E', 'C'].index(old_ci.discriminator),
-                status='init',
+                status=status_for_item(utcnow, product_map, old_order, old_ci),
                 sku=sku,
                 shipping_price=(shipping_prices[old_ci]
                                 if shipping_prices else 0),
                 shipped_date=old_ci.shipped_date,
                 expected_delivery_date=delivery_date,
             )
+            item_map[old_ci] = ci
             if old_batch:
                 ci.batch = batch_map[old_batch]
             order.cart.items.append(ci)
@@ -646,12 +680,16 @@ def migrate_orders(settings, user_map, product_map, option_value_map,
                 source=old_shipment.source,
                 cost=old_shipment.cost,
             )
+            for old_ci in old_shipment.items:
+                shipment.items.append(item_map[old_ci])
             model.Session.add(shipment)
         payment_map = {}
         for old_payment in old_order.payments:
             payment = migrate_payment(payment_map, old_payment)
             payment_map[old_payment] = payment
             order.payments.append(payment)
+        model.Session.flush()
+        order.update_status()
 
 
 def migrate_related_projects(settings, project_map):
@@ -710,6 +748,3 @@ def main(argv=sys.argv):
         scott_user.url_path = 'storborg'
         scott_user.location = 'Portland, OR'
         scott_user.twitter_username = 'storborg'
-
-        for project in model.Session.query(model.Project):
-            project.update_successful()

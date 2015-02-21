@@ -38,6 +38,11 @@ requires = [
     'Sphinx>=1.2',
     'sphinx-rtd-theme>=0.1.6',
 
+    # WebHelpers2 is pinned to avoid this error
+    # ("lists/tuples are no longer allowed ..."):
+    # https://github.com/mikeorr/WebHelpers2/commit/f714de46659528ac9407ca4cad68f5126530760a#diff-997cb0bb56d9fe607914da326380552bR366
+    'WebHelpers2==2.0b5',
+
     # Keep repoze.sendmail pinned at 4.1 to deal with this bug:
     # https://github.com/repoze/repoze.sendmail/issues/31
     'repoze.sendmail==4.1',

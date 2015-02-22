@@ -29,6 +29,24 @@ class SKU(Base):
                                      collection_class=set,
                                      secondary=sku_option_values)
 
+    @property
+    def qty(self):
+        """
+        Total quantity of unshipped stock, including stock associated with
+        unshipped orders.
+        """
+        # XXX
+        return 0
+
+    @property
+    def qty_available(self):
+        """
+        Quantity of unreserved stock. This query excludes stock associated with
+        unshipped orders and active carts.
+        """
+        # XXX
+        return 0
+
 
 def sku_for_option_value_ids(product, ov_ids):
     """

@@ -1,6 +1,7 @@
 <%inherit file="base.html"/>
 
 <%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="blocks" file="/common/blocks.html"/>
 <%namespace name="widgets" file="/admin/common/widgets.html"/>
 <%namespace name="project_header" file="/admin/common/project_header.html"/>
 
@@ -29,6 +30,52 @@ ${project_header.project_header(obj.project)}
 
           ${forms.lcheckbox(renderer, 'accepts_preorders', obj.accepts_preorders, hint='Check if this product will be available for pre-order or stock orders after crowdfunding.')}
           ${forms.lcheckbox(renderer, 'published', obj.published)}
+
+          <%forms:element label="Production Schedule">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Delivery Date</th>
+                  <th>Qty</th>
+                </tr>
+              </thead>
+              <tbody>
+                % for batch in obj.batches:
+                  <tr>
+                    <td>${batch.delivery_date}</td>
+                    <td>
+                      % if batch.qty:
+                        ${batch.qty}
+                      % else:
+                        Infinite
+                      % endif
+                    </td>
+                  </tr>
+                % endfor
+              </tbody>
+            </table>
+          </%forms:element>
+
+          <%forms:element label="SKUS">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>SKU ID</th>
+                  <th>Options</th>
+                  <th>Qty In Stock</th>
+                </tr>
+              </thead>
+              <tbody>
+                % for sku in obj.skus:
+                  <tr>
+                    <td>${sku.id}</td>
+                    <td>${blocks.option_value_list(sku)}</td>
+                    <td>${sku.qty}</td>
+                  </tr>
+                % endfor
+              </tbody>
+            </table>
+          </%forms:element>
 
           ${widgets.images(renderer, obj)}
 

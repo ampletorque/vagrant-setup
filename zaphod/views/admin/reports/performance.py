@@ -81,8 +81,10 @@ class PerformanceReportsView(BaseReportsView):
                  permission='authenticated')
     def project_launches(self):
         utcnow, start_date, end_date, start, end = self._range()
+
         # over time range
         # ideally show a graph
+        # show breakdown by tag?
 
         q = model.Session.query(model.Project).\
             filter(model.Project.include_in_launch_stats == True,

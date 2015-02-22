@@ -111,6 +111,8 @@ class AccountingReportsView(BaseReportsView):
         # XXX
         shipping = 0
 
+        # we want to show fulfillment cost on this report
+
         total = stock_items + shipping
 
         return {

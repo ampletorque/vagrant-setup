@@ -177,6 +177,14 @@ class ProjectEditView(NodeEditView):
                  renderer='admin/project_status.html')
     def status(self):
         project = self._get_object()
+
+        # show
+        # - # of orders that are open
+        # - # of orders that are currently late
+        # - earliest open delivery date
+        # - age of latest project update
+        # - warn if an update is "needed"
+
         return {'obj': project}
 
     @view_config(route_name='admin:project:reports:balance',

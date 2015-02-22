@@ -4,10 +4,10 @@ from __future__ import (absolute_import, division, print_function,
 from pyramid.view import view_defaults, view_config
 from venusian import lift
 from sqlalchemy.sql import func, not_
-from formencode import Schema, validators
+from formencode import Schema, NestedVariables, ForEach, validators
 from pyramid.httpexceptions import HTTPFound
 
-from pyramid_uniform import Form, FormRenderer
+from pyramid_uniform import Form, FormRenderer, crud_update
 
 from ... import model
 
@@ -18,6 +18,30 @@ from .base import (NodeEditView, NodeListView, NodeUpdateForm, NodeCreateView,
 class ProductCreateForm(Schema):
     allow_extra_fields = False
     name = validators.UnicodeString(not_empty=True)
+
+
+class OwnerSchema(Schema):
+    allow_extra_fields = False
+    user_id = validators.Int(not_empty=True)
+    title = validators.UnicodeString()
+    gravity = validators.Int(if_empty=0)
+    can_change_content = validators.Bool()
+    can_post_updates = validators.Bool()
+    can_receive_questions = validators.Bool()
+    can_manage_payments = validators.Bool()
+    can_manage_owners = validators.Bool()
+    show_on_campaign = validators.Bool()
+
+
+class OwnersForm(Schema):
+    allow_extra_fields = False
+    pre_validators = [NestedVariables()]
+    owners = ForEach(OwnerSchema)
+
+
+class OwnerCreateForm(Schema):
+    allow_extra_fields = False
+    user_id = validators.Int(not_empty=True)
 
 
 @view_defaults(route_name='admin:projects', renderer='admin/projects.html')
@@ -81,8 +105,38 @@ class ProjectEditView(NodeEditView):
     @view_config(route_name='admin:project:owners',
                  renderer='admin/project_owners.html')
     def owners(self):
+        request = self.request
         project = self._get_object()
-        return {'obj': project}
+
+        form = Form(request, schema=OwnersForm)
+        if form.validate():
+            for owner_params in form.data['owners']:
+                po = model.Session.query(model.ProjectOwner).\
+                    filter_by(project_id=project.id,
+                              user_id=owner_params['user_id']).\
+                    one()
+                crud_update(po, owner_params)
+            request.flash("Updated owners.", 'success')
+            return HTTPFound(location=request.current_route_url())
+
+        return {'obj': project, 'renderer': FormRenderer(form)}
+
+    @view_config(route_name='admin:project:owners:new',
+                 renderer='admin/project_owners_new.html')
+    def create_owner(self):
+        request = self.request
+        project = self._get_object()
+
+        form = Form(request, schema=OwnerCreateForm)
+        if form.validate():
+            po = model.ProjectOwner(project=project)
+            form.bind(po)
+            request.flash("Project owner added.", 'success')
+            return HTTPFound(
+                location=request.route_url('admin:project:owners',
+                                           id=project.id))
+
+        return {'obj': project, 'renderer': FormRenderer(form)}
 
     @view_config(route_name='admin:project:updates',
                  renderer='admin/project_updates.html')

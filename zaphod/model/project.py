@@ -283,6 +283,7 @@ class ProjectOwner(Base):
     project_id = Column(None, ForeignKey('projects.node_id'), primary_key=True)
     user_id = Column(None, ForeignKey('users.id'), primary_key=True)
     title = Column(types.Unicode(255), nullable=False, default=u'')
+    gravity = Column(types.Integer, nullable=False, default=0)
     can_change_content = Column(types.Boolean, nullable=False, default=False)
     can_post_updates = Column(types.Boolean, nullable=False, default=False)
     can_receive_questions = Column(types.Boolean, nullable=False,

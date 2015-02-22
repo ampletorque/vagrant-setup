@@ -13,7 +13,7 @@ from ... import model
 from . import utils
 
 
-def migrate_articles(settings, user_map, image_map):
+def migrate_articles(settings, image_map):
     for old_article in scrappy_meta.Session.query(scrappy_model.Article):
         print("article %s" % old_article.name)
         article = model.Article(
@@ -26,9 +26,9 @@ def migrate_articles(settings, user_map, image_map):
             show_heading=old_article.show_heading,
             show_article_list=old_article.show_article_list,
             category=old_article.category,
-            created_by=user_map[old_article.created_by],
+            created_by_id=old_article.created_by_id,
             created_time=old_article.created_time,
-            updated_by=user_map[old_article.updated_by],
+            updated_by_id=old_article.updated_by_id,
             updated_time=old_article.updated_time,
         )
         model.Session.add(article)
@@ -38,7 +38,7 @@ def migrate_articles(settings, user_map, image_map):
         model.Session.flush()
 
 
-def migrate_tags(settings, user_map):
+def migrate_tags(settings):
     tag_map = {}
     for old_tag in scrappy_meta.Session.query(cs_model.Tag):
         print("tag %s" % old_tag.name)
@@ -49,9 +49,9 @@ def migrate_tags(settings, user_map):
             body=old_tag.body.text,
             published=old_tag.published,
             listed=old_tag.listed,
-            created_by=user_map[old_tag.created_by],
+            created_by_id=old_tag.created_by_id,
             created_time=old_tag.created_time,
-            updated_by=user_map[old_tag.updated_by],
+            updated_by_id=old_tag.updated_by_id,
             updated_time=old_tag.updated_time,
         )
         model.Session.add(tag)
@@ -61,7 +61,7 @@ def migrate_tags(settings, user_map):
     return tag_map
 
 
-def migrate_creators(settings, user_map, image_map):
+def migrate_creators(settings, image_map):
     creator_map = {}
     for old_creator in scrappy_meta.Session.query(cs_model.Creator):
         print("creator %s" % old_creator.name)
@@ -74,9 +74,9 @@ def migrate_creators(settings, user_map, image_map):
             body=old_creator.body.text,
             published=old_creator.published,
             listed=old_creator.listed,
-            created_by=user_map[old_creator.created_by],
+            created_by_id=old_creator.created_by_id,
             created_time=old_creator.created_time,
-            updated_by=user_map[old_creator.updated_by],
+            updated_by_id=old_creator.updated_by_id,
             updated_time=old_creator.updated_time,
         )
         model.Session.add(creator)
@@ -102,7 +102,7 @@ def launched_on_crowd_supply(old_project):
     return bool(q.first())
 
 
-def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
+def migrate_projects(settings, creator_map, tag_map, image_map):
     project_map = {}
     product_map = {}
     option_value_map = {}
@@ -133,9 +133,9 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
             start_time=old_project.start_time,
             end_time=old_project.end_time,
             suspended_time=old_project.suspended_time,
-            created_by=user_map[old_project.created_by],
+            created_by_id=old_project.created_by_id,
             created_time=old_project.created_time,
-            updated_by=user_map[old_project.updated_by],
+            updated_by_id=old_project.updated_by_id,
             updated_time=old_project.updated_time,
 
             accepts_preorders=(old_project.stage in (2, 3)),
@@ -165,9 +165,9 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
                 body=old_update.body.text,
                 published=old_update.published,
                 listed=old_update.listed,
-                created_by=user_map[old_update.created_by],
+                created_by_id=old_update.created_by_id,
                 created_time=old_update.created_time,
-                updated_by=user_map[old_update.updated_by],
+                updated_by_id=old_update.updated_by_id,
                 updated_time=old_update.updated_time,
             )
             model.Session.add(update)
@@ -223,7 +223,7 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
             print("    ownership %s" % old_owner.account.email)
             new_owner = model.ProjectOwner(
                 project=project,
-                user=user_map[old_owner.account],
+                user_id=old_owner.account_id,
                 title=old_owner.title,
                 can_change_content=old_owner.can_change_content,
                 can_post_updates=old_owner.can_post_updates,
@@ -237,7 +237,7 @@ def migrate_projects(settings, user_map, creator_map, tag_map, image_map):
     return project_map, product_map, option_value_map, batch_map
 
 
-def migrate_provider_types(settings, user_map, image_map):
+def migrate_provider_types(settings, image_map):
     provider_type_map = {}
     for old_provider_type in \
             scrappy_meta.Session.query(cs_model.ProviderType):
@@ -249,9 +249,9 @@ def migrate_provider_types(settings, user_map, image_map):
             body=old_provider_type.body.text,
             published=old_provider_type.published,
             listed=old_provider_type.listed,
-            created_by=user_map[old_provider_type.created_by],
+            created_by_id=old_provider_type.created_by_id,
             created_time=old_provider_type.created_time,
-            updated_by=user_map[old_provider_type.updated_by],
+            updated_by_id=old_provider_type.updated_by_id,
             updated_time=old_provider_type.updated_time,
         )
         model.Session.add(provider_type)
@@ -263,7 +263,7 @@ def migrate_provider_types(settings, user_map, image_map):
     return provider_type_map
 
 
-def migrate_providers(settings, user_map, image_map, provider_type_map):
+def migrate_providers(settings, image_map, provider_type_map):
     for old_provider in scrappy_meta.Session.query(cs_model.Provider):
         print("  provider %s" % old_provider.name)
         provider = model.Provider(
@@ -275,9 +275,9 @@ def migrate_providers(settings, user_map, image_map, provider_type_map):
             listed=old_provider.listed,
             mailing=utils.convert_address(old_provider.mailing),
             home_url=old_provider.home_url,
-            created_by=user_map[old_provider.created_by],
+            created_by_id=old_provider.created_by_id,
             created_time=old_provider.created_time,
-            updated_by=user_map[old_provider.updated_by],
+            updated_by_id=old_provider.updated_by_id,
             updated_time=old_provider.updated_time,
         )
         model.Session.add(provider)

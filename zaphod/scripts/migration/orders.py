@@ -205,21 +205,17 @@ def status_for_item(utcnow, product_map, old_order, old_ci):
     return 'init'
 
 
-def migrate_orders(settings, user_map, product_map, option_value_map,
+def migrate_orders(settings, product_map, option_value_map,
                    batch_map):
     utcnow = model.utcnow()
     for old_order in scrappy_meta.Session.query(scrappy_model.Order):
         print("  order %s" % old_order.id)
-        if old_order.account:
-            user = user_map[old_order.account]
-        else:
-            user = None
         order = model.Order(
             id=old_order.id,
-            user=user,
-            created_by=user_map[old_order.created_by],
+            user_id=old_order.account_id,
+            created_by_id=old_order.created_by_id,
             created_time=old_order.created_time,
-            updated_by=user_map[old_order.updated_by],
+            updated_by_id=old_order.updated_by_id,
             updated_time=old_order.updated_time,
             shipping=utils.convert_address(old_order.shipping),
             customer_comments=old_order.customer_comments,

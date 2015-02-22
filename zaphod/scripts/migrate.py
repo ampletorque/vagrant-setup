@@ -53,23 +53,22 @@ def main(argv=sys.argv):
         model.Session.flush()
 
         image_map = images.migrate_images(settings)
-        user_map = users.migrate_users(settings, image_map)
+        users.migrate_users(settings, image_map)
 
-        provider_type_map = content.migrate_provider_types(settings, user_map,
-                                                           image_map)
-        content.migrate_providers(settings, user_map, image_map,
+        provider_type_map = content.migrate_provider_types(settings, image_map)
+        content.migrate_providers(settings, image_map,
                                   provider_type_map)
-        content.migrate_articles(settings, user_map, image_map)
-        tag_map = content.migrate_tags(settings, user_map)
-        creator_map = content.migrate_creators(settings, user_map, image_map)
+        content.migrate_articles(settings, image_map)
+        tag_map = content.migrate_tags(settings)
+        creator_map = content.migrate_creators(settings, image_map)
         project_map, product_map, option_value_map, batch_map = \
-            content.migrate_projects(settings, user_map, creator_map,
+            content.migrate_projects(settings, creator_map,
                                      tag_map, image_map)
         content.migrate_related_projects(settings, project_map)
 
         orders.migrate_payment_gateways()
         orders.migrate_payment_methods()
-        orders.migrate_orders(settings, user_map, product_map,
+        orders.migrate_orders(settings, product_map,
                               option_value_map, batch_map)
 
         scott_user = model.Session.query(model.User).\

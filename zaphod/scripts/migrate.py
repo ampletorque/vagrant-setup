@@ -48,7 +48,7 @@ def main(argv=sys.argv):
             name=u'Root User',
             email='root@crowdsupply.com',
         )
-        root_user.update_password('root')
+        root_user.update_password(None)
         model.Session.add(root_user)
         model.Session.flush()
 
@@ -56,15 +56,13 @@ def main(argv=sys.argv):
         images.migrate_images(settings)
         users.migrate_user_data(settings)
 
-        provider_type_map = content.migrate_provider_types(settings)
-        content.migrate_providers(settings, provider_type_map)
+        content.migrate_providers(settings)
         content.migrate_articles(settings)
         tag_map = content.migrate_tags(settings)
         creator_map = content.migrate_creators(settings)
         project_map, product_map, option_value_map, batch_map = \
             content.migrate_projects(settings, creator_map,
                                      tag_map)
-        content.migrate_related_projects(settings, project_map)
 
         orders.migrate_payment_gateways()
         orders.migrate_payment_methods()

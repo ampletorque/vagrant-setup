@@ -230,6 +230,11 @@ def migrate_projects(settings, creator_map, tag_map):
             )
             model.Session.add(new_owner)
         model.Session.flush()
+
+    for old_project, new_project in project_map.items():
+        new_project.related_projects[:] = [project_map[old_rel] for old_rel in
+                                           old_project.related_projects]
+
     return project_map, product_map, option_value_map, batch_map
 
 
@@ -259,7 +264,8 @@ def migrate_provider_types(settings):
     return provider_type_map
 
 
-def migrate_providers(settings, provider_type_map):
+def migrate_providers(settings):
+    provider_type_map = migrate_provider_types(settings)
     for old_provider in scrappy_meta.Session.query(cs_model.Provider):
         print("  provider %s" % old_provider.name)
         provider = model.Provider(
@@ -282,9 +288,3 @@ def migrate_providers(settings, provider_type_map):
         utils.migrate_aliases(settings, old_provider, provider)
         utils.migrate_image_associations(settings, old_provider, provider)
         model.Session.flush()
-
-
-def migrate_related_projects(settings, project_map):
-    for old_project, new_project in project_map.items():
-        new_project.related_projects[:] = [project_map[old_rel] for old_rel in
-                                           old_project.related_projects]

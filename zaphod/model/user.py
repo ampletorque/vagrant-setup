@@ -107,11 +107,16 @@ class User(Base, ImageMixin, UserMixin, CommentMixin, ElasticMixin):
     def update_password(self, value):
         """
         Given a new plaintext password, hash it and update the password field.
+        Passing ``None`` for the plaintext password will clear the hashed
+        password field, and make it impossible for that user to login.
 
         :param value:
           Plaintext password, as a unicode string.
         """
-        self.hashed_password = User.hash_password(value)
+        if value is None:
+            self.hashed_password = None
+        else:
+            self.hashed_password = User.hash_password(value)
 
     @property
     def password(self):

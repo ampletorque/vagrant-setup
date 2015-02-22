@@ -162,9 +162,7 @@ class Project(Node, ElasticMixin):
             join(CartItem.product).\
             filter(Product.project == self).\
             scalar() or 0
-        # FIXME XXX
-        # elsewhere_amount = self.pledged_elsewhere_amount or 0
-        elsewhere_amount = 0
+        elsewhere_amount = self.pledged_elsewhere_amount or 0
         return base + elsewhere_amount
 
     @property
@@ -175,9 +173,9 @@ class Project(Node, ElasticMixin):
     @property
     def num_pledges(self):
         # XXX Performance
-        # if (self.status != 'fundraising' and
-        #         self.pledged_elsewhere_count > 0):
-        #     return self.pledged_elsewhere_count
+        if (self.status != 'fundraising' and
+                self.pledged_elsewhere_count > 0):
+            return self.pledged_elsewhere_count
         # XXX FIXME Filter out cancelled orders.
         return Session.query(func.sum(CartItem.qty_desired)).\
             join(CartItem.cart).\

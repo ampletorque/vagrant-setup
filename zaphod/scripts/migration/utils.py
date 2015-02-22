@@ -31,10 +31,15 @@ def migrate_comments(old_obj, new_obj):
         ))
 
 
-def migrate_image_associations(settings, image_map, old_obj, new_obj):
-    for old_im in old_obj.image_metas:
-        print("  image assoc %s" % old_im.name)
-        new_obj.image_metas.append(image_map[old_im])
+def migrate_image_associations(settings, old_obj, new_obj):
+    for old_assoc in old_obj._image_associations:
+        print("  image assoc %s" % old_assoc.image_meta_id)
+        new_obj.image_associations.append(new_obj.ImageAssociation(
+            image_meta_id=old_assoc.image_meta_id,
+            gravity=old_assoc.gravity,
+            published=old_assoc.published,
+            caption=old_assoc.caption,
+        ))
 
 
 def convert_address(old):

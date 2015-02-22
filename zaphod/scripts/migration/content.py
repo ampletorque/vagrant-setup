@@ -13,7 +13,7 @@ from ... import model
 from . import utils
 
 
-def migrate_articles(settings, image_map):
+def migrate_articles(settings):
     for old_article in scrappy_meta.Session.query(scrappy_model.Article):
         print("article %s" % old_article.name)
         article = model.Article(
@@ -33,8 +33,7 @@ def migrate_articles(settings, image_map):
         )
         model.Session.add(article)
         utils.migrate_aliases(settings, old_article, article)
-        utils.migrate_image_associations(settings, image_map, old_article,
-                                         article)
+        utils.migrate_image_associations(settings, old_article, article)
         model.Session.flush()
 
 
@@ -61,7 +60,7 @@ def migrate_tags(settings):
     return tag_map
 
 
-def migrate_creators(settings, image_map):
+def migrate_creators(settings):
     creator_map = {}
     for old_creator in scrappy_meta.Session.query(cs_model.Creator):
         print("creator %s" % old_creator.name)
@@ -81,8 +80,7 @@ def migrate_creators(settings, image_map):
         )
         model.Session.add(creator)
         utils.migrate_aliases(settings, old_creator, creator)
-        utils.migrate_image_associations(settings, image_map, old_creator,
-                                         creator)
+        utils.migrate_image_associations(settings, old_creator, creator)
         creator_map[old_creator] = creator
         model.Session.flush()
     return creator_map
@@ -102,7 +100,7 @@ def launched_on_crowd_supply(old_project):
     return bool(q.first())
 
 
-def migrate_projects(settings, creator_map, tag_map, image_map):
+def migrate_projects(settings, creator_map, tag_map):
     project_map = {}
     product_map = {}
     option_value_map = {}
@@ -149,8 +147,7 @@ def migrate_projects(settings, creator_map, tag_map, image_map):
         )
         model.Session.add(project)
         utils.migrate_aliases(settings, old_project, project)
-        utils.migrate_image_associations(settings, image_map, old_project,
-                                         project)
+        utils.migrate_image_associations(settings, old_project, project)
         project_map[old_project] = project
         for old_tag in old_project.tags:
             print("    assoc tag %s" % old_tag.name)
@@ -172,8 +169,7 @@ def migrate_projects(settings, creator_map, tag_map, image_map):
             )
             model.Session.add(update)
             utils.migrate_aliases(settings, old_update, update)
-            utils.migrate_image_associations(settings, image_map, old_update,
-                                             update)
+            utils.migrate_image_associations(settings, old_update, update)
         for old_pledge_level in old_project.levels:
             print("    pledge level %s" % old_pledge_level.name)
             intl_available = old_pledge_level.international_available
@@ -191,8 +187,8 @@ def migrate_projects(settings, creator_map, tag_map, image_map):
                 accepts_preorders=(old_project.stage in (2, 3)),
             )
             model.Session.add(product)
-            utils.migrate_image_associations(settings, image_map,
-                                             old_pledge_level, product)
+            utils.migrate_image_associations(settings, old_pledge_level,
+                                             product)
             product_map[old_pledge_level] = product
             for old_option in old_pledge_level.all_options:
                 print("      option %s" % old_option.name)
@@ -237,7 +233,7 @@ def migrate_projects(settings, creator_map, tag_map, image_map):
     return project_map, product_map, option_value_map, batch_map
 
 
-def migrate_provider_types(settings, image_map):
+def migrate_provider_types(settings):
     provider_type_map = {}
     for old_provider_type in \
             scrappy_meta.Session.query(cs_model.ProviderType):
@@ -256,14 +252,14 @@ def migrate_provider_types(settings, image_map):
         )
         model.Session.add(provider_type)
         utils.migrate_aliases(settings, old_provider_type, provider_type)
-        utils.migrate_image_associations(settings, image_map,
-                                         old_provider_type, provider_type)
+        utils.migrate_image_associations(settings, old_provider_type,
+                                         provider_type)
         provider_type_map[old_provider_type] = provider_type
         model.Session.flush()
     return provider_type_map
 
 
-def migrate_providers(settings, image_map, provider_type_map):
+def migrate_providers(settings, provider_type_map):
     for old_provider in scrappy_meta.Session.query(cs_model.Provider):
         print("  provider %s" % old_provider.name)
         provider = model.Provider(
@@ -284,8 +280,7 @@ def migrate_providers(settings, image_map, provider_type_map):
         for old_type in old_provider.types:
             provider.types.add(provider_type_map[old_type])
         utils.migrate_aliases(settings, old_provider, provider)
-        utils.migrate_image_associations(settings, image_map, old_provider,
-                                         provider)
+        utils.migrate_image_associations(settings, old_provider, provider)
         model.Session.flush()
 
 

@@ -28,7 +28,7 @@ def lookup_location(old_user):
     return ''
 
 
-def migrate_users(settings, image_map):
+def migrate_users(settings):
     user_map = {}
     user_emails = set()
     for old_user in scrappy_meta.Session.query(scrappy_model.Account).\
@@ -61,21 +61,19 @@ def migrate_users(settings, image_map):
             show_location=lookup_location(old_user),
         )
         model.Session.add(user)
-        utils.migrate_image_associations(settings, image_map, old_user, user)
         user_map[old_user] = user
         model.Session.flush()
 
-    # Take a second pass through to set the updated by / created by.
+    return user_map
+
+
+def migrate_user_data(settings):
+    # Take a second pass through to set the updated by / created by and images,
+    # after the images are migrated.
     for old_user in scrappy_meta.Session.query(scrappy_model.Account).\
             order_by(scrappy_model.Account.id.desc()):
-        new_user = user_map[old_user]
-        new_user.updated_by = user_map[old_user.updated_by]
-        new_user.created_by = user_map[old_user.created_by]
+        new_user = model.User.get(old_user.id)
+        new_user.updated_by_id = old_user.updated_by_id
+        new_user.created_by_id = old_user.created_by_id
         utils.migrate_comments(old_user, new_user)
-
-    # Set image updated by / created by.
-    for old_image, new_image in image_map.items():
-        new_image.updated_by = user_map[old_image.updated_by]
-        new_image.created_by = user_map[old_image.created_by]
-
-    return user_map
+        utils.migrate_image_associations(settings, old_user, new_user)

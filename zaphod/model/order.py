@@ -26,7 +26,7 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
     user = orm.relationship('User', backref='orders', foreign_keys=user_id)
 
     @property
-    def total(self):
+    def total_amount(self):
         """
         Return the total 'price' of this order, including shipping and all
         associated surcharges charged to the customer.
@@ -34,9 +34,32 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
         return self.cart.items_total + self.cart.shipping_total
 
     @property
+    def paid_amount(self):
+        "The amount currently paid, *not* including authorizes."
+        return sum(p.amount for p in self.payments if p.valid)
+
+    @property
+    def unpaid_amount(self):
+        "The amount currently unpaid. Authorizes don't count as paid."
+        return self.total_amount - self.paid_amount
+
+    @property
+    def authorized_amount(self):
+        "The amount that could be paid if we captured all payments."
+        tot = 0
+        for p in (pp for pp in self.payments if pp.valid):
+            if (hasattr(p, 'authorized_amount') and
+                    (not p.captured_time)):
+                # An uncaptured, unvoided credit card payment.
+                tot += p.authorized_amount
+            else:
+                tot += p.amount
+        return tot
+
+    @property
     def unauthorized_amount(self):
-        # FIXME XXX
-        return 0
+        "The amount we need to get from the customer."
+        return max(0, self.total_amount - self.authorized_amount)
 
     @property
     def any_billing(self):

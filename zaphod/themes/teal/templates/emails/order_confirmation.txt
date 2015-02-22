@@ -52,4 +52,4 @@ This is a pledge to a crowdfunding campaign, and may not be processed immediatel
 
 Items Total             ${h.currency(order.cart.items_total)}
 Shipping Total          ${h.currency(order.cart.shipping_total)}
-Order Total             ${h.currency(order.total)}
+Order Total             ${h.currency(order.total_amount)}

@@ -37,7 +37,7 @@ requires = [
     'iso3166',
     'Sphinx>=1.2',
     'sphinx-rtd-theme>=0.1.6',
-    'WebHelpers2>=2.0',
+    'WebHelpers2==2.0',
 
     # Keep repoze.sendmail pinned at 4.1 to deal with this bug:
     # https://github.com/repoze/repoze.sendmail/issues/31

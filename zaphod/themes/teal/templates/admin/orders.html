@@ -18,7 +18,7 @@
         <h1 class="page-header">
           Orders
           % if page:
-            <small>${page.item_count} total</small>
+            <small>${page.item_count} total, ${num_open} open</small>
           % endif
         </h1>
 
@@ -43,6 +43,7 @@
                 <th></th>
                 <th>ID</th>
                 <th>Name</th>
+                <th>Status</th>
                 <th>Placed</th>
               </tr>
             </thead>
@@ -55,6 +56,13 @@
                     </td>
                     <td>${order.id}</td>
                     <td>${order.shipping.full_name}</td>
+                    <td>
+                      % if order.closed:
+                        Closed
+                      % else:
+                        <strong>Open</strong>
+                      % endif
+                    </td>
                     <td>${h.format_datetime(request, order.created_time)}</td>
                   </tr>
                 % endfor

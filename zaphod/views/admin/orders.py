@@ -156,6 +156,14 @@ class OrderListView(BaseListView):
     cls = model.Order
     paginate = True
 
+    @view_config(route_name='admin:orders',
+                 renderer='admin/orders.html')
+    def index(self):
+        vars = BaseListView.index(self)
+        q = model.Session.query(model.Order).filter_by(closed=False)
+        vars['num_open'] = q.count()
+        return vars
+
 
 @view_defaults(route_name='admin:orders:new',
                renderer='admin/orders_new.html')

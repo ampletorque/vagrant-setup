@@ -17,7 +17,7 @@ requires = [
     'pyramid_tm>=0.7',
     'pyramid_debugtoolbar>=2.2',
     'pyramid_frontend>=0.4.1',
-    'pyramid_uniform>=0.3.1',
+    'pyramid_uniform>=0.3.2',
     'pyramid_es>=0.3.0',
     'pyramid_mailer>=0.13',
     'pyramid_exclog>=0.7',
@@ -37,7 +37,7 @@ requires = [
     'iso3166',
     'Sphinx>=1.2',
     'sphinx-rtd-theme>=0.1.6',
-    'WebHelpers2==2.0',
+    'WebHelpers2>=2.0',
 
     # Keep repoze.sendmail pinned at 4.1 to deal with this bug:
     # https://github.com/repoze/repoze.sendmail/issues/31

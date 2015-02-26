@@ -144,6 +144,9 @@ class PerformanceReportsView(BaseReportsView):
             group_by(model.Project.id).\
             order_by(num_users_col.desc())
 
+        # XXX for performance it would be good to grab a 'total backers by
+        # project' list here.
+
         return {
             'num_cross_project_users': num_cross_project_users,
             'top_users': top_user_q.all(),

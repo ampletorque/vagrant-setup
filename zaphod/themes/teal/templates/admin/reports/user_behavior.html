@@ -18,15 +18,22 @@
               <tr>
                 <th>Project</th>
                 <th>Number of Cross-Project Users</th>
+                <th>% Of Total</th>
+                <th>Total Backers</th>
               </tr>
             </thead>
             <tbody>
               % for project, num_users in top_projects:
+                <%
+                  num_backers = project.num_backers
+                %>
                 <tr>
                   <td>
                     <a href="${request.route_path('admin:project', id=project.id)}">${project.name}</a>
                   </td>
                   <td>${num_users}</td>
+                  <td>${'%0.1f' % (100. * num_users / num_backers)}%</td>
+                  <td>${num_backers}</td>
                 </tr>
               % endfor
             </tbody>

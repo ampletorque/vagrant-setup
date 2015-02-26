@@ -14,6 +14,8 @@ from pyramid_es.mixin import ElasticMixin, ESMapping, ESField, ESString
 
 from . import utils, custom_types
 from .base import Base, Session
+from .user import User
+from .order import Order
 from .cart import Cart, CartItem
 from .product import Product
 from .node import Node
@@ -167,8 +169,13 @@ class Project(Node, ElasticMixin):
 
     @property
     def num_backers(self):
-        # XXX Performance
-        return sum(level.num_backers for level in self.levels)
+        q = Session.query(func.count(User.id.distinct())).\
+            join(User.orders).\
+            join(Order.cart).\
+            join(Cart.items).\
+            join(CartItem.product).\
+            filter(Product.project == self)
+        return q.scalar() or 0
 
     @property
     def num_pledges(self):

@@ -59,7 +59,7 @@ setup(name='zaphod',
       long_description='',
       # Using this invalid trove classifier prevents accidentally uploading
       # something to pypi.
-      classifier=['Private :: Do Not Upload'],
+      classifiers=['Private :: Do Not Upload'],
       url='http://github.com/crowdsupply/zaphod',
       keywords='',
       author='Scott Torborg, Joshua Lifton',

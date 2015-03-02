@@ -1,6 +1,8 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+from decimal import Decimal
+
 try:
     from scrappy import model as scrappy_model
     from crowdsupply import model as cs_model
@@ -119,6 +121,7 @@ def migrate_payment(payment_map, old_payment):
             comments=old_payment.comments,
         )
     elif isinstance(old_payment, scrappy_model.CreditCardPayment):
+        fee = (old_payment.amount * Decimal('0.029')) + Decimal('0.30')
         return model.CreditCardPayment(
             payment_method_id=old_payment.payment_method_id,
             transaction_id=old_payment.transaction_id,
@@ -137,6 +140,7 @@ def migrate_payment(payment_map, old_payment):
             chargeback_state=old_payment.chargeback_state,
             created_by_id=old_payment.created_by_id,
             amount=old_payment.amount,
+            transaction_fee=fee,
             created_time=old_payment.created_time,
             voided_time=old_payment.voided_time,
             voided_by_id=old_payment.voided_by_id,

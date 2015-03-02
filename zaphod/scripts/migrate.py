@@ -69,7 +69,8 @@ def main(argv=sys.argv):
         orders.migrate_orders(settings, product_map,
                               option_value_map, batch_map)
 
-        vendor_orders.migrate_vendor_orders()
+        vendor_orders.migrate_vendor_orders(settings, product_map,
+                                            option_value_map)
 
         scott_user = model.Session.query(model.User).\
             filter_by(email='scott.torborg@crowdsupply.com').\

@@ -37,12 +37,8 @@ class VendorOrderItem(Base):
 
     sku_id = Column(None, ForeignKey('skus.id'), nullable=False)
 
-    cart_item_id = Column(None, ForeignKey('cart_items.id'),
-                          nullable=True, unique=True)
-
     order = orm.relationship('VendorOrder', backref='items')
     sku = orm.relationship('SKU')
-    cart_item = orm.relationship('CartItem')
 
 
 class VendorInvoice(Base, UserMixin, CommentMixin):

@@ -75,6 +75,7 @@ class Payment(Base, StateMixin):
     order_id = Column(None, ForeignKey('orders.id'), nullable=False)
     created_by_id = Column(None, ForeignKey('users.id'), nullable=False)
     amount = Column(custom_types.Money, nullable=False)
+    transaction_fee = Column(custom_types.Money, nullable=False, default=0)
     created_time = Column(types.DateTime, nullable=False,
                           default=utils.utcnow)
     voided_time = Column(types.DateTime, nullable=True)

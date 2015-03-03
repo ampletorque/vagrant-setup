@@ -59,8 +59,13 @@ def dump_locally(settings, msg):
             f.write(msg.html)
 
 
+def format_address_list(addrs):
+    return [addr if isinstance(addr, six.string_types) else
+            email.utils.formataddr(addr) for addr in addrs]
+
+
 def send(request, template_name, vars, to=None, from_=None,
-         bcc=None, cc=None):
+         bcc=None, cc=None, reply_to=None):
     settings = request.registry.settings
 
     subject = render('emails/%s.subject.txt' % template_name,
@@ -70,16 +75,19 @@ def send(request, template_name, vars, to=None, from_=None,
     # headers.
     subject = subject.strip().replace('\n', ' ').replace('\r', '')
 
-    recipients = to or [settings['mailer.from']]
-    recipients = [recipient
-                  if isinstance(recipient, six.string_types) else
-                  email.utils.formataddr(recipient)
-                  for recipient in recipients]
+    recipients = format_address_list(to or [settings['mailer.from']])
+
+    extra_headers = {}
+    if reply_to:
+        extra_headers['Reply-To'] = reply_to
 
     msg = Message(
         subject=subject,
         sender=from_ or settings['mailer.from'],
         recipients=recipients,
+        cc=cc and format_address_list(cc),
+        bcc=bcc and format_address_list(bcc),
+        extra_headers=extra_headers,
     )
 
     try:
@@ -115,8 +123,9 @@ def send_with_admin(request, template_name, vars, to=None, from_=None,
                     load_admin_users(template_name)]
     bcc = bcc or []
     bcc.extend(admin_emails)
-    return send(request=request, template_name=template_name, vars=vars,
-                to=to, from_=from_, bcc=bcc, cc=cc)
+    return send(request=request, template_name=template_name,
+                vars=vars,
+                to=to, from_=from_, bcc=bcc, cc=cc, reply_to=reply_to)
 
 
 def send_order_confirmation(request, order):

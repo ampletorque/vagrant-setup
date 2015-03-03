@@ -1,0 +1,38 @@
+<%inherit file="base.html"/>
+
+
+<%self:container>
+  <div class="content">
+    <table>
+      <tr>
+        <td>
+
+          <span class="h3">Your payment on Crowd Supply has been rejected.</span>
+          <br /><br />
+
+          Your payment to the <strong>${project.name}</strong> campaign on Crowd Supply was declined by your credit card company. This payment was for order ${order.id}.
+          <br /><br />
+
+          The <strong>${project.name}</strong> team is counting on these funds to deliver their product. Please resolve this issue by ${h.format_datetime(request, due_date, 'calendar')} to prevent your shipment from being delayed.
+          <br /><br />
+
+          Please click the button below to submit the payment again or provide new payment information:
+        </td>
+      </tr>
+      <tr>
+        <td class="cta-callout">
+          <a class="btn" href="${link}">Submit Payment</a>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          You will receive a separate shipping confirmation e-mail with a tracking number once the order actually ships.
+          <br /><br />
+          Thank You,
+          <br />
+          Crowd Supply Support
+        </td>
+      </tr>
+    </table>
+  </div>
+</%self:container>

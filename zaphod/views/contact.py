@@ -23,11 +23,12 @@ def contact_view(request):
 
     if form.validate():
         vars = dict(
-            body=form.data['message'],
             user_agent=request.user_agent,
+            email=form.data['email'],
+            body=form.data['message'],
+            subject=form.data['subject'],
         )
         mail.send_with_admin(request, 'contact', vars,
-                             to=form.data['email'],
                              reply_to=form.data['email'])
 
         request.flash(

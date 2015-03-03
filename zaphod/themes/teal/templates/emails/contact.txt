@@ -1,0 +1,6 @@
+<%inherit file="base.txt"/>\
+${email} submitted a website inquiry from ${request.remote_addr}:
+
+${body | n}
+
+Browser: ${user_agent}

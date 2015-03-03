@@ -28,6 +28,7 @@ def load_projects(rows):
 def index_view(request):
     recently_launched = [
         [
+            'Vinny by Plywerk: A Handcrafted Suite of Record Displays',
             'Quiet Linear Mechanical Keyboard Switch',
         ],
     ]

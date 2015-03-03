@@ -71,7 +71,7 @@
           ${tiles.tile_row(projects[:feature_count])}
         % endif
         % for row in h.grouper(3, projects[feature_count:]):
-          ${tiles.tile_row(row)}
+          ${tiles.tile_row(row, cols=3)}
         % endfor
 
         % if request.matched_route.name == 'crowdfunding':

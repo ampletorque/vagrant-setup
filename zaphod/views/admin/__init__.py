@@ -55,6 +55,17 @@ def includeme(config):
     config.add_route('admin:vendor_orders', '/vendor-orders')
     config.add_route('admin:vendor_orders:new', '/vendor-orders/new')
     config.add_route('admin:vendor_order', '/vendor-order/{id}')
+    config.add_route('admin:vendor_order:mark-sent',
+                     '/vendor-order/{id}/mark-sent')
+    config.add_route('admin:vendor_order:mark-confirmed',
+                     '/vendor-order/{id}/mark-confirmed')
+    config.add_route('admin:vendor_order:receive-invoice',
+                     '/vendor-order/{id}/receive-invoice')
+    config.add_route('admin:vendor_order:receive-shipment',
+                     '/vendor-order/{id}/receive-shipment')
+
+    config.add_route('admin:vendor_shipment', '/vendor-shipment/{id}')
+    config.add_route('admin:vendor_invoice', '/vendor-invoice/{id}')
 
     config.add_route('admin:images', '/images')
     config.add_route('admin:images:upload', '/images/upload')

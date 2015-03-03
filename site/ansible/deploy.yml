@@ -40,7 +40,7 @@
     # XXX Might need a step in here that flushes old .pyc or __pycache__ files.
 
     - name: link uwsgi config file
-      file: src=/var/sw/zaphod/site/conf/uwsgi.conf
+      file: src=/var/sw/zaphod/site/conf/uwsgi-staging.conf
             path=/etc/uwsgi/vassals/zaphod.ini
             owner=deploy
             group=deploy

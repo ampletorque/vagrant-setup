@@ -17,6 +17,20 @@ define(['jquery', 'underscore', 'text!teal/images-row.erb.html'], function ($, _
     return text;
   }
 
+  function loadThumbnail(file, $el) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      console.log("setting image", escape(file.name));
+      $el.find('.js-image-placeholder').append(
+        $('<img>')
+          .attr('width', 64)
+          .attr('height', 64)
+          .attr('src', e.target.result)
+      );
+    }
+    reader.readAsDataURL(file);
+  }
+
   function handleNewFile(file) {
     var uploadPath = $('.js-image-widget').data('upload-path'),
         xsrf = $('#_authentication_token').val();
@@ -57,8 +71,9 @@ define(['jquery', 'underscore', 'text!teal/images-row.erb.html'], function ($, _
         id: imageID,
         name: file.name
       });
-      $('.js-image-widget-images').append(s);
-
+      var $el = $(s);
+      $('.js-image-widget-images').append($el);
+      loadThumbnail(file, $el);
     }
   }
 
@@ -186,12 +201,16 @@ define(['jquery', 'underscore', 'text!teal/images-row.erb.html'], function ($, _
   }
 
   $(function () {
-    $('.js-image-widget')
-      .on('dragover', handleFileDragOver)
-      .on('drop', handleFileDrop);
-    $('.js-image-widget input[type=file]').on('change', handleFileSelect);
+    if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
+      alert('Browser unsupported!');
+    } else {
+      $('.js-image-widget')
+        .on('dragover', handleFileDragOver)
+        .on('drop', handleFileDrop);
+      $('.js-image-widget input[type=file]').on('change', handleFileSelect);
 
-    $('.js-image-drag-handle').on('mousedown', grabHandler);
-    $('.js-image-remove').on('click', removeHandler);
+      $('.js-image-drag-handle').on('mousedown', grabHandler);
+      $('.js-image-remove').on('click', removeHandler);
+    }
   });
 });

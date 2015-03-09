@@ -28,20 +28,41 @@ class BaseEditView(object):
         for image_params in form.data.pop('images'):
             pass
 
-    @view_config(permission='authenticated')
+    def _update_obj(self, form, obj):
+        if 'images' in form.data:
+            self._handle_images(form, obj)
+        form.bind(obj)
+        request.flash('Saved changes.', 'success')
+
+    @view_config(permission='authenticated', xhr=False)
     def edit(self):
         request = self.request
         obj = self._get_object()
-
         form = Form(request, schema=self.UpdateForm)
         if form.validate():
-            if 'images' in form.data:
-                self._handle_images(form, obj)
-            form.bind(obj)
-            request.flash('Saved changes.', 'success')
+            self._update_obj(form, obj)
             return HTTPFound(location=request.current_route_url())
+        return {
+            'obj': obj,
+            'renderer': FormRenderer(form),
+        }
 
-        return dict(obj=obj, renderer=FormRenderer(form))
+    @view_config(permission='authenticated', xhr=True, renderer='json')
+    def edit_ajax(self):
+        request = self.request
+        obj = self._get_object()
+        form = Form(request, schema=self.UpdateForm)
+        if form.validate():
+            self._update_obj(form, obj)
+            return {
+                'status': 'ok',
+                'location': request.current_route_url(),
+            }
+        else:
+            return {
+                'status': 'fail',
+                'errors': form.errors,
+            }
 
 
 @view_defaults(route_name='admin:base_list', renderer='admin/base_list.html')

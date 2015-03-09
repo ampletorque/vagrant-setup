@@ -51,7 +51,11 @@
 
           % for assoc in obj.image_associations:
             <tr>
-              <td><i class="fa fa-minus"></i></td>
+              <td class="js-image-drag-handle table-drag-handle"></td>
+              <td class="table-remove">
+                <a class="js-image-remove" href="#">
+                  <i class="fa fa-minus-circle"></i>
+                </td>
               <td>${request.image_tag(assoc.image_meta.name, assoc.image_meta.original_ext, 'admin-tiny')}</td>
               <td>
                 ${assoc.image_meta.name}.${assoc.image_meta.original_ext}<br>
@@ -77,8 +81,9 @@
         </tbody>
         <tbody>
           <tr>
-            <td>
-              <i class="fa fa-plus"></i>
+            <td></td>
+            <td class="table-add">
+              <i class="fa fa-plus-circle"></i>
             </td>
             <td colspan="4">
               Associate existing images
@@ -87,8 +92,9 @@
         </tbody>
         <tfoot>
           <tr>
-            <td>
-              <i class="fa fa-plus"></i>
+            <td></td>
+            <td class="table-add">
+              <i class="fa fa-plus-circle"></i>
             </td>
             <td colspan="4">
               <input type="file" multiple>
@@ -97,8 +103,8 @@
           </tr>
         </tfoot>
       </table>
-      ${forms.hint(self.image_hint())}
     </div>
+    <p class="help-block no-error">${forms.hint(self.image_hint())}</p>
   </%forms:element>
 </%def>
 

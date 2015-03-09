@@ -79,11 +79,24 @@ define(['jquery', 'underscore', 'text!teal/images-row.erb.html'], function ($, _
     e.originalEvent.dataTransfer.dropEffect = 'copy';
   }
 
+  function dragStartHandler(e) {
+
+  }
+
+  function removeHandler(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var $row = $(this).closest('tr').remove();
+  }
+
   $(function () {
     console.log("setting up image admin handlers");
     $('.js-image-widget')
       .on('dragover', handleDragOver)
       .on('drop', handleFileDrop);
     $('.js-image-widget input[type=file]').on('change', handleFileSelect);
+
+    $('.js-image-drag-handle').on('mousedown', dragStartHandler);
+    $('.js-image-remove').on('click', removeHandler);
   });
 });

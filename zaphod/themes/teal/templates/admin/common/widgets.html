@@ -55,25 +55,27 @@
               <td class="table-remove">
                 <a class="js-image-remove" href="#">
                   <i class="fa fa-minus-circle"></i>
-                </td>
+                </a>
+              </td>
               <td>${request.image_tag(assoc.image_meta.name, assoc.image_meta.original_ext, 'admin-tiny')}</td>
               <td>
                 ${assoc.image_meta.name}.${assoc.image_meta.original_ext}<br>
                 ${assoc.image_meta.width} x ${assoc.image_meta.height}<br>
                 <a href="${request.image_url(assoc.image_meta.name, assoc.image_meta.original_ext, None)}">View Original</a><br>
                 <label>
-                  ${renderer.checkbox('images-%d.published' % assoc.image_meta.id, checked=assoc.published)}
+                  ${renderer.checkbox('images-%d.published' % loop.index, checked=assoc.published)}
                   Published
                 </label>
               </td>
               <td>
-                ${renderer.hidden('images-%d.id' % assoc.image_meta.id, assoc.image_meta.id)}
-                <label for="images-${assoc.image_meta.id}.caption">Caption</label>
-                ${renderer.text('images-%d.caption' % assoc.image_meta.id, assoc.caption, class_='form-control')}
+                ${renderer.hidden('images-%d.id' % loop.index, assoc.image_meta.id)}
+                ${renderer.hidden('images-%d.gravity' % loop.index, loop.index, class_='js-image-gravity')}
+                <label for="images-${loop.index}.caption">Caption</label>
+                ${renderer.text('images-%d.caption' % loop.index, assoc.caption, class_='form-control')}
               </td>
               <td>
-                ${renderer.text('images-%d.image_title' % assoc.image_meta.id, assoc.image_meta.title, class_='form-control', placeholder='Title')}
-                ${renderer.text('images-%d.image_alt' % assoc.image_meta.id, assoc.image_meta.alt, class_='form-control', placeholder='Alt')}
+                ${renderer.text('images-%d.title' % loop.index, assoc.image_meta.title, class_='form-control', placeholder='Title')}
+                ${renderer.text('images-%d.alt' % loop.index, assoc.image_meta.alt, class_='form-control', placeholder='Alt')}
               </td>
             </tr>
           % endfor

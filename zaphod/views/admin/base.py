@@ -1,15 +1,20 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import os.path
+
 from formencode import Schema, NestedVariables, ForEach, validators
 from pyramid.httpexceptions import HTTPFound, HTTPNotFound
 from pyramid.view import view_config, view_defaults
+from pyramid_frontend.images.files import check_and_save_image
 
 from pyramid_uniform import Form, FormRenderer
 from pyramid_es import get_client
 
 from ... import model, custom_validators
 from ...helpers.paginate import Page
+
+from pprint import pprint
 
 
 @view_defaults(route_name='admin:base_edit', renderer='admin/base_edit.html')
@@ -24,11 +29,42 @@ class BaseEditView(object):
             raise HTTPNotFound
         return obj
 
+    def _handle_new_image(self, image_params):
+        request = self.request
+        settings = request.registry.settings
+        base_path = settings['images.upload_dir']
+
+        orig_name = image_params['name']
+        name = model.to_url_name(orig_name.rsplit('.', 1)[0])
+        with open(os.path.join(base_path, image_params['id']), 'rb') as f:
+            info = check_and_save_image(settings, name, f)
+        im = model.ImageMeta(
+            name=name,
+            original_ext=info['ext'],
+        )
+        im.width, im.height = info['size']
+        model.Session.add(im)
+        return im
+
     def _handle_images(self, form, obj):
+        pprint(form.data)
+        obj.image_associations[:] = []
         for image_params in form.data.pop('images'):
-            pass
+            if image_params['fresh']:
+                im = self._handle_new_image(image_params)
+            else:
+                im = model.ImageMeta.get(image_params['id'])
+            im.title = image_params['title']
+            im.alt = image_params['alt']
+            obj.image_associations.append(obj.ImageAssociation(
+                image_meta=im,
+                gravity=image_params['gravity'],
+                published=image_params['published'],
+                caption=image_params['caption'],
+            ))
 
     def _update_obj(self, form, obj):
+        request = self.request
         if 'images' in form.data:
             self._handle_images(form, obj)
         form.bind(obj)

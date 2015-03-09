@@ -6,7 +6,6 @@ define(['jquery'], function ($) {
   function submitHandler(e) {
     e.stopPropagation();
     e.preventDefault();
-    alert('blocked');
 
     var $form = $(this);
 
@@ -24,7 +23,7 @@ define(['jquery'], function ($) {
 
   $(function () {
     console.log("initialized");
-    $('.js-ajax-validate').on('submit', submitHandler);
+    //$('.js-ajax-validate').on('submit', submitHandler);
   });
 
 });

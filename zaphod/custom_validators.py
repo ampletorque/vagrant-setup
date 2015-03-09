@@ -6,7 +6,7 @@ import itertools
 from datetime import datetime, timedelta, time
 
 import pytz
-from formencode import validators, Schema, national
+from formencode import validators, Schema, national, compound
 from formencode.api import FancyValidator
 from formencode.validators import Invalid, _
 
@@ -290,11 +290,15 @@ class CommentBody(validators.FancyValidator):
 
 class ImageAssociation(Schema):
     allow_extra_fields = False
-    image_id = validators.Int(not_empty=True)
+    id = compound.Any(validators.Int(not_empty=True),
+                      validators.Regex('^[a-z0-9]+$', not_empty=True))
+    name = validators.UnicodeString(if_missing=None)
+    fresh = validators.Bool()
     published = validators.Bool()
-    caption = validators.UnicodeString(if_missing='')
-    image_alt = validators.UnicodeString(if_missing='')
-    image_title = validators.UnicodeString(if_missing='')
+    gravity = validators.Int(not_empty=True)
+    caption = validators.UnicodeString()
+    alt = validators.UnicodeString()
+    title = validators.UnicodeString()
 
 
 class UTCDateConverter(validators.DateConverter):

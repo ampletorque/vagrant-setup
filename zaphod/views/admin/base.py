@@ -14,8 +14,6 @@ from pyramid_es import get_client
 from ... import model, custom_validators
 from ...helpers.paginate import Page
 
-from pprint import pprint
-
 
 @view_defaults(route_name='admin:base_edit', renderer='admin/base_edit.html')
 class BaseEditView(object):
@@ -36,6 +34,7 @@ class BaseEditView(object):
 
         orig_name = image_params['name']
         name = model.to_url_name(orig_name.rsplit('.', 1)[0])
+        name = model.dedupe_name(model.ImageMeta, 'name', name)
         with open(os.path.join(base_path, image_params['id']), 'rb') as f:
             info = check_and_save_image(settings, name, f)
         im = model.ImageMeta(
@@ -47,7 +46,6 @@ class BaseEditView(object):
         return im
 
     def _handle_images(self, form, obj):
-        pprint(form.data)
         obj.image_associations[:] = []
         for image_params in form.data.pop('images'):
             if image_params['fresh']:

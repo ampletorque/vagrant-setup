@@ -6,8 +6,10 @@ import datetime
 
 from unidecode import unidecode
 
+from .base import Session
 
-__all__ = ['is_url_name', 'to_url_name', 'utcnow']
+
+__all__ = ['is_url_name', 'to_url_name', 'utcnow', 'dedupe_name']
 
 
 def is_url_name(s):
@@ -47,3 +49,41 @@ def utcnow():
     a convenient access point for mocking all ``utcnow()`` calls.
     """
     return datetime.datetime.utcnow()
+
+
+def dedupe_name(cls, attr, name):
+    """
+    Given a SQLAlchemy mapped class, an attribute key, and a base name, find a
+    name (which may be just the supplied base name) which is unique for that
+    class.  Works by adding an integer suffix which is incremented until a
+    unique name was found, e.g.::
+
+        basename
+        basename-1
+        basename-2
+        ...
+
+    :param cls:
+        SQLAlchemy mapped class to find a name for.
+    :param attr:
+        Attribute key.
+    :type attr:
+        str
+    :param name:
+        Base for name.
+    :type name:
+        str
+    :return:
+        Name which is known to be unique.
+    :rtype:
+        str
+    """
+    obj = getattr(cls, attr)
+    q = Session.query(obj)
+    current = name
+    for ii in range(1, 100):
+        if q.filter(obj == current).count() == 0:
+            return current
+        else:
+            current = u"%s-%d" % (name, ii)
+    raise ValueError("Failed to find non-duplicate name.")

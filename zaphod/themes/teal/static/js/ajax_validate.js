@@ -41,6 +41,10 @@ define(['jquery'], function ($) {
         } else {
           clearErrors($form);
           renderErrors($form, data.errors);
+          // Defocus any focused form fields and scroll to the top of the
+          // bottom, to try to 'feel' like a page reload.
+          $(':focus').blur();
+          $(document).scrollTop(0);
         }
       }
     });

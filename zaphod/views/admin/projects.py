@@ -177,15 +177,46 @@ class ProjectEditView(NodeEditView):
                  renderer='admin/project_status.html')
     def status(self):
         project = self._get_object()
+        utcnow = model.utcnow()
 
-        # show
+        orders_q = model.Session.query(model.Order).\
+            join(model.Order.cart).\
+            join(model.Cart.items).\
+            join(model.CartItem.product).\
+            filter(model.Product.project == project)
+
         # - # of orders that are open
+        open_orders_q = orders_q.\
+            filter(not_(model.CartItem.status.in_(['failed', 'cancelled',
+                                                   'shipped', 'abandoned'])))
+        open_orders_count = open_orders_q.count()
+
         # - # of orders that are currently late
+        late_orders_q = open_orders_q.\
+            filter(model.CartItem.expected_delivery_date < utcnow)
+        late_orders_count = late_orders_q.count()
+
         # - earliest open delivery date
+        earliest_open_delivery_date = open_orders_q.with_entities(
+            func.min(model.CartItem.expected_delivery_date)).\
+            scalar()
+
         # - age of latest project update
+        last_update_time = \
+            model.Session.query(model.ProjectUpdate.created_time).\
+            filter(model.ProjectUpdate.project == project).\
+            order_by(model.ProjectUpdate.id.desc()).\
+            scalar()
+
         # - warn if an update is "needed"
 
-        return {'obj': project}
+        return {
+            'obj': project,
+            'open_orders_count': open_orders_count,
+            'late_orders_count': late_orders_count,
+            'earliest_open_delivery_date': earliest_open_delivery_date,
+            'last_update_time': last_update_time,
+        }
 
     @view_config(route_name='admin:project:reports:balance',
                  renderer='admin/project_balance.html')

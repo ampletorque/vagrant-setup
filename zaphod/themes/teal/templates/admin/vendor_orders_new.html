@@ -13,7 +13,8 @@
         <h1 class="page-header">${self.title()}</h1>
 
         ${renderer.begin(id='create-form', class_='form-horizontal form-wrapped')}
-          ${forms.ltext(renderer, 'name')}
+
+          ${forms.lselect(renderer, 'creator_id', None, creators, label='Creator', prompt='Select Creator')}
 
           <%forms:actions>
             <button class="btn btn-primary" type="submit">Save</button>

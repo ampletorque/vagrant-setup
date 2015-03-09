@@ -1,7 +1,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from pyramid.view import view_defaults
+from pyramid.view import view_defaults, view_config
 from venusian import lift
 from formencode import Schema, validators
 
@@ -35,3 +35,16 @@ class VendorOrderListView(BaseListView):
 class VendorOrderCreateView(BaseCreateView):
     cls = model.VendorOrder
     obj_route_name = 'admin:vendor_order'
+
+    class CreateForm(Schema):
+        allow_extra_fields = False
+        creator_id = validators.Int(not_empty=True)
+
+    @view_config(permission='authenticated')
+    def create(self):
+        vars = BaseCreateView.create(self)
+        vars['creators'] = \
+            model.Session.query(model.Creator.id,
+                                model.Creator.name).\
+            order_by(model.Creator.name.desc())
+        return vars

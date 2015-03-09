@@ -17,7 +17,7 @@ ${project_header.project_header(obj.project)}
       <div class="col-lg-12">
         <h1 class="page-header">Product ${obj.id}</h1>
 
-        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped js-ajax-validate')}
           ${forms.ltext(renderer, 'name', obj.name)}
 
           ${forms.ltext(renderer, 'price', obj.price, prefix='$')}

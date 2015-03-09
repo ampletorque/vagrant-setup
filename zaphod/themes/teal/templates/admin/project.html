@@ -18,7 +18,7 @@ ${project_header.project_header(obj)}
         ##  <a class="btn btn-danger" href="#">Suspend Project</a>
         ##</div>
 
-        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped js-ajax-validate')}
           ${forms.ltext(renderer, 'name', obj.name)}
 
           ${widgets.aliases(renderer, obj)}

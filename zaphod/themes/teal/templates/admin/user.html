@@ -17,7 +17,7 @@
           % endif
         </h1>
 
-        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped js-ajax-validate')}
           ${forms.ltext(renderer, 'name', obj.name)}
           ${forms.ltext(renderer, 'email', obj.email, prefix='@')}
 

@@ -13,7 +13,7 @@
         <a class="view-public-link pull-right" href="${request.node_path(obj)}">View Public Page</a>
         <h1 class="page-header">${self.title()}</h1>
 
-        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped js-ajax-validate')}
           ${forms.ltext(renderer, 'name', obj.name)}
 
           ${widgets.aliases(renderer, obj)}

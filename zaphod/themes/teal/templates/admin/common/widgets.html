@@ -39,7 +39,7 @@
 
 
 <%def name="image_hint()">
-  Be sure that you have used the correct image metadata tags and filled in as many as appropriate. See <a href="${request.route_path('admin:help:image-tags')}">image tag usage and tips</a> for help.
+  Images may also be dragged and dropped onto this table. Be sure that you have used the correct image metadata tags and filled in as many as appropriate. See <a href="${request.route_path('admin:help:image-tags')}">image tag usage and tips</a> for help.
 </%def>
 
 
@@ -88,7 +88,7 @@
               <i class="fa fa-plus-circle"></i>
             </td>
             <td colspan="4">
-              Associate existing images
+              <a class="js-images-existing-link" href="#">Associate existing images</a>
             </td>
           </tr>
         </tbody>

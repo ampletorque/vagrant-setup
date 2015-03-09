@@ -18,6 +18,8 @@
               <tr>
                 <th></th>
                 <th>ID</th>
+                <th>Creator</th>
+                <th>Placed</th>
               </tr>
             </thead>
             <tbody>
@@ -27,6 +29,14 @@
                     <a href="${request.route_path('admin:vendor_order', id=vendor_order.id)}">Edit</a>
                   </td>
                   <td>${vendor_order.id}</td>
+                  <td>${vendor_order.creator.name}</td>
+                  <td>
+                    % if vendor_order.placed_time:
+                      ${h.format_datetime(request, vendor_order.placed_time)}
+                    % else:
+                      Not placed
+                    % endif
+                  </td>
                 </tr>
               % endfor
             </tbody>

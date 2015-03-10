@@ -40,25 +40,6 @@ define(['jquery', 'underscore', 'text!teal/images-row.erb.html'], function ($, _
       // Make a new random ID to refer to it.
       var imageID = makeID();
 
-      // Upload the file via ajax, get back an ID reference to it
-      var formData = new FormData();
-      formData.append("file", file);
-      formData.append("id", imageID);
-      formData.append("_authentication_token", xsrf);
-
-      console.log("uploading image via ajax");
-      // FIXME The form submission should collect these and block if any are not complete
-      $.ajax({
-        type: 'POST',
-        contentType: false,
-        processData: false,
-        url: uploadPath,
-        data: formData,
-        error: function (request, status, error) {
-          alert(request.responseText);
-        }
-      });
-
       console.log("counting existing rows");
       var nextIndex = $('.js-image-widget-images > tr').length;
 
@@ -74,6 +55,30 @@ define(['jquery', 'underscore', 'text!teal/images-row.erb.html'], function ($, _
       var $el = $(s);
       $('.js-image-widget-images').append($el);
       loadThumbnail(file, $el);
+
+      var $progress = $el.find('.js-image-progress'),
+          $status = $el.find('.js-image-status');
+
+      // Upload the file via ajax, get back an ID reference to it
+      var formData = new FormData();
+      formData.append("file", file);
+      formData.append("id", imageID);
+      formData.append("_authentication_token", xsrf);
+
+      console.log("uploading image via ajax");
+      // FIXME The form submission should collect these and block if any are not complete
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', uploadPath, true);
+      xhr.upload.onprogress = function (e) {
+        if (e.lengthComputable) {
+          if (e.loaded === e.total) {
+            $status.text('Unsaved');
+          } else{
+            $progress.text(e.loaded / e.total * 100);
+          }
+        }
+      };
+      xhr.send(formData);
     }
   }
 

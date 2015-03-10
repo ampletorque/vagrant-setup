@@ -35,6 +35,7 @@
         - run alembic migrations
         - reload uwsgi
         - restart nginx
+        - flush redis
         - build docs
 
     # XXX Might need a step in here that flushes old .pyc or __pycache__ files.
@@ -76,6 +77,9 @@
       # XXX It would be good if we could check the config before doing this. Or maybe we can make reloading work, instead of restarting?
       sudo: yes
       service: name=nginx state=restarted
+
+    - name: flush redis
+      command: redis-cli flushall
 
     - name: build docs
       command: /var/sw/pyramid27/bin/sphinx-build -d /var/sw/zaphod/docs/_build/doctrees -b html /var/sw/zaphod/docs /var/sw/zaphod/docs/_build/html

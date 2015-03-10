@@ -185,8 +185,13 @@ def migrate_projects(settings, creator_map, tag_map):
                 published=old_pledge_level.published,
                 price=old_pledge_level.price,
                 accepts_preorders=(old_project.stage in (2, 3)),
+                shipping_weight=old_pledge_level.shipping_weight.as_units('kg'),
+                box_length=old_pledge_level.box_length.as_units('cm'),
+                box_width=old_pledge_level.box_width.as_units('cm'),
+                box_height=old_pledge_level.box_height.as_units('cm'),
             )
             model.Session.add(product)
+            model.Session.flush()
             utils.migrate_image_associations(settings, old_pledge_level,
                                              product)
             product_map[old_pledge_level] = product

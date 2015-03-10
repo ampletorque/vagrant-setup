@@ -41,6 +41,14 @@ class Product(Base, ImageMixin):
     fulfillment_fee = Column(custom_types.Money, nullable=False,
                              default=Decimal('2.50'))
 
+    hs_code = Column(types.String(255), nullable=False, default=u'')
+    # In kg
+    shipping_weight = Column(types.Float, nullable=False, default=0)
+    # In cm
+    box_length = Column(types.Float, nullable=False, default=0)
+    box_width = Column(types.Float, nullable=False, default=0)
+    box_height = Column(types.Float, nullable=False, default=0)
+
     batches = orm.relationship('Batch', backref='product')
 
     @property

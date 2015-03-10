@@ -112,7 +112,7 @@ def migrate_projects(settings, creator_map, tag_map):
             creator=creator_map[old_project.creator],
             name=old_project.name,
 
-            prelaunch_vimeo_id=None,
+            prelaunch_vimeo_id=old_project.preview_vimeo_id,
             prelaunch_teaser=old_project.teaser,
             prelaunch_body=u'',
 

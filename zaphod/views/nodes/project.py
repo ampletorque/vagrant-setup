@@ -57,12 +57,26 @@ def remind_me_view(project, system):
                             email=request.params['email'],
                             source='remind')
     model.Session.add(pe)
-    model.Session.commit()
 
     request.flash(
         "Thanks, we'll remind you when this project is nearing the end of its "
         "campaign.", 'success')
-    raise HTTPFound(location=request.node_url(project))
+    return HTTPFound(location=request.node_url(project))
+
+
+def prelaunch_signup_view(project, system):
+    request = system['request']
+    if not request.method == 'POST':
+        raise HTTPNotFound
+    pe = model.ProjectEmail(project=project,
+                            email=request.params['email'],
+                            source='signup')
+    model.Session.add(pe)
+
+    request.flash(
+        "Thanks, we'll keep you updated and notify you when this project "
+        "campaign launches.", 'success')
+    return HTTPFound(location=request.node_url(project))
 
 
 def updates_view(project, system):
@@ -113,3 +127,5 @@ def includeme(config):
     config.add_node_view(backers_view, model.Project,
                          suffix=['backers'],
                          renderer='backers.html')
+    config.add_node_view(prelaunch_signup_view, model.Project,
+                         suffix=['prelaunch-signup'])

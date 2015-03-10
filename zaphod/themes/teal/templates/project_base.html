@@ -376,6 +376,41 @@
 </%def>
 
 
+<%def name="creator_info(creator)">
+  <h4>${creator.name}</h4>
+  <p class="creator-block-teaser">${creator.teaser}</p>
+  <p class="creator-block-metadata">
+    <i class="fa fa-map-marker"></i>&nbsp;${creator.location}
+    % if creator.home_url:
+      &nbsp;&middot;&nbsp;
+      <a href="${creator.home_url}">${creator.display_url}</a>
+    % endif
+  </p>
+</%def>
+
+
+<%def name="owners(project)">
+  % if project.published_ownerships:
+    <div class="row">
+      <div class="col-lg-12">
+        <hr>
+      </div>
+    </div>
+    <div class="row">
+      % for owner in project.published_ownerships:
+        <div class="col-xs-6 col-sm-3">
+          <div class="project-owner">
+            ${h.image_or_gravatar(request, owner.user, 'project-avatar', default='mm', title=owner.user.name, class_='img-avatar')}
+            <h4>${owner.user.name}</h4>
+            <p>${owner.title}</p>
+          </div>
+        </div>
+      % endfor
+    </div>
+  % endif
+</%def>
+
+
 <%blocks:admin_bar>
   <p>
     <a href="${request.route_path('admin:project', id=project.id)}">
@@ -385,80 +420,91 @@
 </%blocks:admin_bar>
 
 
-<section class="section-project">
-  <div class="container">
-    ${self.leader(project)}
+% if project.status == 'prelaunch':
+  <section class="section-project-prelaunch">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2 text-center">
+          <h1>${project.name}</h1>
+          <hr>
 
-    <div class="row">
-      <div class="col-lg-12">
-        <ul class="nav nav-tabs">
-          <%self:tab suffix="${None}">
-            Home
-          </%self:tab>
-          <%self:tab suffix="updates">
-            Updates
-            <span class="badge">${len(project.published_updates)}</span>
-          </%self:tab>
-          <%self:tab suffix="backers">
-            Backers
-          </%self:tab>
-        </ul>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-md-8">
-        ${next.body()}
-      </div>
-      <div class="col-md-4">
-        ${self.sidebar(project)}
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-lg-12">
-        <div class="project-block">
-          <div class="row">
-            <div class="col-sm-3">
-              ${project.creator.img(request, 'creator-profile')}
+          % if project.prelaunch_body:
+            <div class="rendered-content">
+              ${request.render_content(project, project.prelaunch_body)}
             </div>
-
-            <div class="col-sm-9">
-              <h4>${project.creator.name}</h4>
-              <p class="creator-block-teaser">${project.creator.teaser}</p>
-              <p class="creator-block-metadata">
-                <i class="fa fa-map-marker"></i>&nbsp;${project.creator.location}
-                % if project.creator.home_url:
-                  &nbsp;&middot;&nbsp;
-                  <a href="${project.creator.home_url}">${project.creator.display_url}</a>
-                % endif
-              </p>
-            </div>
-          </div>
-
-          % if project.published_ownerships:
-            <div class="row">
-              <div class="col-lg-12">
-                <hr>
-              </div>
-            </div>
-            <div class="row">
-              % for owner in project.published_ownerships:
-                <div class="col-xs-6 col-sm-3">
-                  <div class="project-owner">
-                    ${h.image_or_gravatar(request, owner.user, 'project-avatar', default='mm', title=owner.user.name, class_='img-avatar')}
-                    <h4>${owner.user.name}</h4>
-                    <p>${owner.title}</p>
-                  </div>
-                </div>
-              % endfor
-            </div>
+          % else:
+            <p>This project is coming soon. Sign up to receive updates and be notified when this project launches:</p>
           % endif
+
+          <form method="POST" action="${request.node_path(project, suffix=['prelaunch-signup'])}" id="project-signup-form" class="form-inline">
+            <div>
+              ${h.text('email', placeholder='email@example.com', class_='form-control input-lg', type='email')}
+              <button type="submit" class="btn btn-lg btn-primary">Subscribe</button>
+            </div>
+          </form>
+
+          <div class="project-prelaunch-media">
+            % if project.prelaunch_vimeo_id:
+              ${blocks.vimeo_embed(project.prelaunch_vimeo_id)}
+            % else:
+              ${project.img(request, 'project-main')}
+            % endif
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+% else:
+  <section class="section-project">
+    <div class="container">
+      ${self.leader(project)}
+
+      <div class="row">
+        <div class="col-lg-12">
+          <ul class="nav nav-tabs">
+            <%self:tab suffix="${None}">
+              Home
+            </%self:tab>
+            <%self:tab suffix="updates">
+              Updates
+              <span class="badge">${len(project.published_updates)}</span>
+            </%self:tab>
+            <%self:tab suffix="backers">
+              Backers
+            </%self:tab>
+          </ul>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-8">
+          ${next.body()}
+        </div>
+        <div class="col-md-4">
+          ${self.sidebar(project)}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="project-block">
+            <div class="row">
+              <div class="col-sm-3">
+                ${project.creator.img(request, 'creator-profile')}
+              </div>
+
+              <div class="col-sm-9">
+                ${self.creator_info(project.creator)}
+              </div>
+            </div>
+
+            ${self.owners(project)}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+% endif
 
 
 % if project.related_projects:

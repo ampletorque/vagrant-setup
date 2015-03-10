@@ -238,7 +238,7 @@ def migrate_projects(settings, creator_map, tag_map):
             print("    email %s" % old_email.email)
             new_email = model.ProjectEmail(
                 project=project,
-                email=old_email.email,
+                email=old_email.email.encode('ascii', 'replace'),
                 source=old_email.source,
                 subscribed_time=old_email.subscribed_time,
             )

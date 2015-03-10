@@ -174,6 +174,7 @@ def migrate_projects(settings, creator_map, tag_map):
             print("    pledge level %s" % old_pledge_level.name)
             intl_available = old_pledge_level.international_available
             intl_surcharge = old_pledge_level.international_surcharge
+            shipping_weight = old_pledge_level.shipping_weight.as_units('kg')
             product = model.Product(
                 id=old_pledge_level.id,
                 project=project,
@@ -185,7 +186,7 @@ def migrate_projects(settings, creator_map, tag_map):
                 published=old_pledge_level.published,
                 price=old_pledge_level.price,
                 accepts_preorders=(old_project.stage in (2, 3)),
-                shipping_weight=old_pledge_level.shipping_weight.as_units('kg'),
+                shipping_weight=shipping_weight,
                 box_length=old_pledge_level.box_length.as_units('cm'),
                 box_width=old_pledge_level.box_width.as_units('cm'),
                 box_height=old_pledge_level.box_height.as_units('cm'),

@@ -101,7 +101,7 @@ class ProjectEditView(NodeEditView):
             form.bind(product)
             model.Session.flush()
             request.flash("Product created.", 'success')
-            request.theme.invalidate_project(obj.id)
+            request.theme.invalidate_project(project.id)
             return HTTPFound(location=request.route_url('admin:product',
                                                         id=product.id))
 
@@ -122,7 +122,7 @@ class ProjectEditView(NodeEditView):
                     one()
                 crud_update(po, owner_params)
             request.flash("Updated owners.", 'success')
-            request.theme.invalidate_project(obj.id)
+            request.theme.invalidate_project(project.id)
             return HTTPFound(location=request.current_route_url())
 
         return {'obj': project, 'renderer': FormRenderer(form)}
@@ -138,7 +138,7 @@ class ProjectEditView(NodeEditView):
             po = model.ProjectOwner(project=project)
             form.bind(po)
             request.flash("Project owner added.", 'success')
-            request.theme.invalidate_project(obj.id)
+            request.theme.invalidate_project(project.id)
             return HTTPFound(
                 location=request.route_url('admin:project:owners',
                                            id=project.id))
@@ -163,7 +163,7 @@ class ProjectEditView(NodeEditView):
             form.bind(update)
             model.Session.flush()
             request.flash("Project update created.", 'success')
-            request.theme.invalidate_project(obj.id)
+            request.theme.invalidate_project(project.id)
             return HTTPFound(location=request.route_url('admin:update',
                                                         id=update.id))
 

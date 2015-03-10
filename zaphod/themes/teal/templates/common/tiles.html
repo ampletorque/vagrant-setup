@@ -154,7 +154,7 @@
 </%def>
 
 
-<%def name="metadata_inline(project)">
+<%def name="metadata_inline(project)" cached="True" cache_region="default" cache_key="project-${str(project.id)}-tile">
   % if project.status == 'crowdfunding':
     ${self.crowdfunding_metadata(project)}
   % elif project.status == 'suspended':

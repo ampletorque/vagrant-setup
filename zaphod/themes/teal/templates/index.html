@@ -1,6 +1,9 @@
 <%inherit file="base.html"/>
 
 
+<%page cached="True" cache_key="index" cache_region="default"/>
+
+
 <%namespace name="tiles" file="common/tiles.html"/>
 
 
@@ -17,7 +20,7 @@
 </section>
 
 
-% for title, rows in groups:
+% for title, rows in get_groups():
   <section class="section-${title.lower().replace(' ', '-')}">
     <div class="container">
 

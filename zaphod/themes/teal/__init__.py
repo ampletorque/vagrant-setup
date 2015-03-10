@@ -1,7 +1,11 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import logging
 import socket
+
+from dogpile.cache import make_region
+from dogpile.cache.proxy import ProxyBackend
 
 from pyramid_frontend.images.filters import ThumbFilter, VignetteFilter
 from pyramid_frontend.images.chain import FilterChain
@@ -11,11 +15,39 @@ from pyramid_frontend.assets.requirejs import RequireJSAsset
 
 from .imagefilters import CreatorProfileFilter
 
+log = logging.getLogger(__name__)
+
 
 if socket.gethostname().startswith('janus.'):
     lessc_path = '/var/sw/less-1.7.0/node_modules/less/bin/lessc'
 else:
     lessc_path = 'lessc'
+
+
+class LoggingProxy(ProxyBackend):
+    def set(self, key, value):
+        log.debug("cache set: %r -> %r", key, value)
+        self.proxied.set(key, value)
+
+    def get(self, key):
+        log.debug("cache get: %r", key)
+        return self.proxied.get(key)
+
+
+cache_regions = {
+    'default': make_region().configure(
+        'dogpile.cache.redis',
+        arguments={
+            'host': 'localhost',
+            'port': 6379,
+            'db': 0,
+            'redis_expiration_time': 60 * 60 * 2,
+            'distributed_lock': True,
+        },
+        # XXX Enable this to log cache accesses.
+        # wrap=[LoggingProxy],
+    ),
+}
 
 
 class TealTheme(Theme):
@@ -148,3 +180,20 @@ class TealTheme(Theme):
             crop_whitespace=True, pad=True,
             extension='png'),
     ]
+
+    cache_impl = 'dogpile.cache'
+    cache_args = {
+        'regions': cache_regions,
+    }
+
+    def invalidate_index(self):
+        cache = cache_regions['default']
+        cache.invalidate('index')
+
+    def invalidate_project(self, project_id):
+        cache = cache_regions['default']
+        cache.invalidate('project-%d-tile' % project_id)
+        cache.invalidate('project-%d-body' % project_id)
+        cache.invalidate('project-%d-sidebar' % project_id)
+        cache.invalidate('project-%d-leader' % project_id)
+        self.invalidate_index()

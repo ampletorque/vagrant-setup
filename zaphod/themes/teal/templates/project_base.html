@@ -338,6 +338,44 @@
 </%def>
 
 
+<%def name="leader(project)" cached="True" cache_region="default" cache_key="project-${str(project.id)}-leader">
+  <div class="row">
+    <div class="col-lg-12">
+      ${self.breadcrumbs(project)}
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <ul class="list-unstyled list-tags pull-right text-right">
+        % if project.creator.location:
+          <li>
+            <i class="fa fa-map-marker"></i>&nbsp;
+            ${project.creator.location}
+          </li>
+        % endif
+        % for tag in list(project.tags)[:2]:
+          % if tag.published:
+            <li>
+              <i class="fa fa-tag"></i>
+              <a href="${request.node_url(tag)}">${tag.name}</a>
+            </li>
+          % endif
+        % endfor
+      </ul>
+
+      <h1>${project.name}</h1>
+    </div>
+  </div>
+</%def>
+
+
+<%def name="sidebar(project)" cached="True" cache_region="default" cache_key="project-${str(project.id)}-sidebar">
+  ${self.stats_tile(project)}
+  ${self.products(project)}
+</%def>
+
+
 <%blocks:admin_bar>
   <p>
     <a href="${request.route_path('admin:project', id=project.id)}">
@@ -349,34 +387,7 @@
 
 <section class="section-project">
   <div class="container">
-    <div class="row">
-      <div class="col-lg-12">
-        ${self.breadcrumbs(project)}
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-lg-12">
-        <ul class="list-unstyled list-tags pull-right text-right">
-          % if project.creator.location:
-            <li>
-              <i class="fa fa-map-marker"></i>&nbsp;
-              ${project.creator.location}
-            </li>
-          % endif
-          % for tag in list(project.tags)[:2]:
-            % if tag.published:
-              <li>
-                <i class="fa fa-tag"></i>
-                <a href="${request.node_url(tag)}">${tag.name}</a>
-              </li>
-            % endif
-          % endfor
-        </ul>
-
-        <h1>${project.name}</h1>
-      </div>
-    </div>
+    ${self.leader(project)}
 
     <div class="row">
       <div class="col-lg-12">
@@ -400,8 +411,7 @@
         ${next.body()}
       </div>
       <div class="col-md-4">
-        ${self.stats_tile(project)}
-        ${self.products(project)}
+        ${self.sidebar(project)}
       </div>
     </div>
 

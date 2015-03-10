@@ -26,42 +26,44 @@ def load_projects(rows):
 
 @view_config(route_name='index', renderer='index.html')
 def index_view(request):
-    recently_launched = [
-        [
-            'Vinny by Plywerk: A Handcrafted Suite of Record Displays',
-            'Quiet Linear Mechanical Keyboard Switch',
-        ],
-    ]
+    def get_groups():
+        recently_launched = [
+            [
+                'Vinny by Plywerk',
+                'Quiet Linear Mechanical Keyboard Switch',
+            ],
+        ]
 
-    recently_funded = [
-        [
-            'Librem 15: A Free/Libre Software Laptop That '
-            'Respects Your Essential Freedoms',
-            'USB Armory: Open Source USB Stick Computer',
-        ],
-        [
-            'A Weather Walked In',
-            'Goodwell: Open Source Modern Toothbrush',
-        ],
-        [
-            'Hydrogen: Next-Generation Supercapacitor-Powered '
-            'Portable Speaker',
-            'Hack-E-Bot: affordable + open source robot for all',
-            'Handmade Cedar SUP Paddles, Boards and DIY Kits',
-        ],
-    ]
+        recently_funded = [
+            [
+                'Librem 15: A Free/Libre Software Laptop That '
+                'Respects Your Essential Freedoms',
+                'USB Armory: Open Source USB Stick Computer',
+            ],
+            [
+                'A Weather Walked In',
+                'Goodwell: Open Source Modern Toothbrush',
+            ],
+            [
+                'Hydrogen: Next-Generation Supercapacitor-Powered '
+                'Portable Speaker',
+                'Hack-E-Bot: affordable + open source robot for all',
+                'Handmade Cedar SUP Paddles, Boards and DIY Kits',
+            ],
+        ]
 
-    crowd_favorites = [
-        [
-            'The Portland Press',
-            'Circuit Stickers',
-            'Novena',
-        ],
-    ]
+        crowd_favorites = [
+            [
+                'The Portland Press',
+                'Circuit Stickers',
+                'Novena',
+            ],
+        ]
 
-    groups = [
-        ('Recently Launched', load_projects(recently_launched)),
-        ('Recently Funded', load_projects(recently_funded)),
-        ('Crowd Favorites', load_projects(crowd_favorites)),
-    ]
-    return dict(groups=groups)
+        return [
+            ('Recently Launched', load_projects(recently_launched)),
+            ('Recently Funded', load_projects(recently_funded)),
+            ('Crowd Favorites', load_projects(crowd_favorites)),
+        ]
+
+    return dict(widget='blue', get_groups=get_groups)

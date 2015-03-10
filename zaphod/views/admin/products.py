@@ -25,3 +25,7 @@ class ProductEditView(BaseEditView):
         published = validators.Bool()
         price = validators.Number()
         accepts_preorders = validators.Bool()
+
+    def _update_obj(self, form, obj):
+        BaseEditView._update_obj(self, form, obj)
+        self.request.theme.invalidate_project(obj.project.id)

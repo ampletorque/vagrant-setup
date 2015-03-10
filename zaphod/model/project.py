@@ -298,3 +298,16 @@ class ProjectOwner(Base):
     show_on_campaign = Column(types.Boolean, nullable=False, default=False)
 
     user = orm.relationship('User', backref='project_ownerships')
+
+
+class ProjectEmail(Base):
+    __tablename__ = 'project_emails'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+    id = Column(types.Integer, primary_key=True)
+    project_id = Column(None, ForeignKey('projects.node_id'), nullable=False)
+    email = Column(types.String(255), nullable=False)
+    source = Column(types.String(8), nullable=False, default='')
+    subscribed_time = Column(types.DateTime, nullable=False,
+                             default=utils.utcnow)
+
+    project = orm.relationship('Project', backref='emails')

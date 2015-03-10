@@ -229,6 +229,15 @@ def migrate_projects(settings, creator_map, tag_map):
                 show_on_campaign=old_owner.show_on_campaign,
             )
             model.Session.add(new_owner)
+        for old_email in old_project.emails:
+            print("    email %s" % old_email.email)
+            new_email = model.ProjectEmail(
+                project=project,
+                email=old_email.email,
+                source=old_email.source,
+                subscribed_time=old_email.subscribed_time,
+            )
+            model.Session.add(new_email)
         model.Session.flush()
 
     for old_project, new_project in project_map.items():

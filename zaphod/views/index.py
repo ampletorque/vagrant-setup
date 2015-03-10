@@ -6,18 +6,12 @@ from pyramid.view import view_config
 from .. import model
 
 
-def get_project(name):
-    return model.Session.query(model.Project).\
-        filter_by(name=name, published=True).\
-        first()
-
-
 def load_projects(rows):
     all = []
     for row in rows:
         these = []
-        for name in row:
-            project = get_project(name)
+        for project_id in row:
+            project = model.Project.get(project_id)
             if project:
                 these.append(project)
         all.append(these)
@@ -29,34 +23,28 @@ def index_view(request):
     def get_groups():
         recently_launched = [
             [
-                'Vinny by Plywerk',
-                'Quiet Linear Mechanical Keyboard Switch',
+                1490,  # plywerk
+                1492,  # key switches
             ],
         ]
 
         recently_funded = [
             [
-                'Librem 15: A Free/Libre Software Laptop That '
-                'Respects Your Essential Freedoms',
-                'USB Armory: Open Source USB Stick Computer',
+                1364,  # librem
+                1329,  # usb armory
             ],
             [
-                'A Weather Walked In',
-                'Goodwell: Open Source Modern Toothbrush',
-            ],
-            [
-                'Hydrogen: Next-Generation Supercapacitor-Powered '
-                'Portable Speaker',
-                'Hack-E-Bot: affordable + open source robot for all',
-                'Handmade Cedar SUP Paddles, Boards and DIY Kits',
+                1430,  # a weather walked in
+                1224,  # goodwell
+                1259,  # hydrogen
             ],
         ]
 
         crowd_favorites = [
             [
-                'The Portland Press',
-                'Circuit Stickers',
-                'Novena',
+                236,  # portland press
+                746,  # circuit stickers
+                962,  # novena
             ],
         ]
 
@@ -66,4 +54,4 @@ def index_view(request):
             ('Crowd Favorites', load_projects(crowd_favorites)),
         ]
 
-    return dict(widget='blue', get_groups=get_groups)
+    return dict(get_groups=get_groups)

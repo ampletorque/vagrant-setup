@@ -169,6 +169,27 @@ class ProjectEditView(NodeEditView):
 
         return {'obj': project, 'renderer': FormRenderer(form)}
 
+    @view_config(route_name='admin:project:emails',
+                 renderer='admin/project_emails.html')
+    def emails(self):
+        project = self._get_object()
+
+        counts = dict(model.Session.query(model.ProjectEmail.source,
+                                          func.count('*')).\
+                      filter(model.ProjectEmail.project == project).\
+                      group_by(model.ProjectEmail.source).\
+                      all())
+
+        emails = model.Session.query(model.ProjectEmail).\
+            filter(model.ProjectEmail.project == project).\
+            order_by(model.ProjectEmail.id.desc())
+
+        return {
+            'obj': project,
+            'counts': counts,
+            'emails': emails,
+        }
+
     @view_config(route_name='admin:project:reports',
                  renderer='admin/project_reports.html')
     def reports(self):

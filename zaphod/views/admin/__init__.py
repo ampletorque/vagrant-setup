@@ -24,6 +24,7 @@ def includeme(config):
     config.add_route('admin:project:owners:new', '/project/{id}/owners/new')
     config.add_route('admin:project:updates', '/project/{id}/updates')
     config.add_route('admin:project:updates:new', '/project/{id}/updates/new')
+    config.add_route('admin:project:emails', '/project/{id}/emails')
     config.add_route('admin:project:reports', '/project/{id}/reports')
     config.add_route('admin:project:reports:funding', '/project/{id}/funding')
     config.add_route('admin:project:reports:status', '/project/{id}/status')

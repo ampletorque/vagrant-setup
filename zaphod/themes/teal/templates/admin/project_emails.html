@@ -1,0 +1,51 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="widgets" file="/admin/common/widgets.html"/>
+<%namespace name="project_header" file="/admin/common/project_header.html"/>
+
+<%def name="title()">Project ${obj.id} Emails</%def>
+
+
+${project_header.project_header(obj)}
+
+
+<section class="section-admin-project">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">Email Signups</h1>
+
+        <table class="table">
+          <tr>
+            <td><strong>Pre-launch</strong></td>
+            <td>${counts.get('pre', 0)}</td>
+          </tr>
+          <tr>
+            <td><strong>Reminders</strong></td>
+            <td>${counts.get('remind', 0)}</td>
+          </tr>
+        </table>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Source</th>
+              <th>Subscribed Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            % for pe in emails:
+              <tr>
+                <td>${pe.email}</td>
+                <td>${pe.source}</td>
+                <td>${h.format_datetime(request, pe.subscribed_time)}</td>
+              </tr>
+            % endfor
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>

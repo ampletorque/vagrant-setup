@@ -41,7 +41,7 @@
     # XXX Might need a step in here that flushes old .pyc or __pycache__ files.
 
     - name: link uwsgi config file
-      file: src=/var/sw/zaphod/site/conf/uwsgi-staging.conf
+      file: src=/var/sw/zaphod/site/conf/uwsgi-{{ environment }}.conf
             path=/etc/uwsgi/vassals/zaphod.ini
             owner=deploy
             group=deploy
@@ -50,7 +50,7 @@
         - reload uwsgi
 
     - name: link nginx config file
-      file: src=/var/sw/zaphod/site/conf/nginx-staging.conf
+      file: src=/var/sw/zaphod/site/conf/nginx-{{ environment }}.conf
             path=/etc/nginx/sites-enabled/100-crowdsupply.com
             owner=deploy
             group=deploy

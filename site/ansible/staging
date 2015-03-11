@@ -1,2 +1,2 @@
 [webservers]
-drax.crowdsupply.com ansible_ssh_user=deploy
+drax.crowdsupply.com ansible_ssh_user=deploy environment=staging

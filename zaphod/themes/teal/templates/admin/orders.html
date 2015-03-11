@@ -42,6 +42,7 @@
               <tr>
                 <th></th>
                 <th>ID</th>
+                <th>Items</th>
                 <th>Name</th>
                 <th>Status</th>
                 <th>Placed</th>
@@ -55,12 +56,17 @@
                       <a href="${request.route_path('admin:order', id=order.id)}">Edit</a>
                     </td>
                     <td>${order.id}</td>
+                    <td>
+                      % for item in order.cart.items:
+                        ${item.product.name}<br>
+                      % endfor
+                    </td>
                     <td>${order.shipping.full_name}</td>
                     <td>
                       % if order.closed:
-                        Closed
+                        <span class="label label-success">Closed</span>
                       % else:
-                        <strong>Open</strong>
+                        <span class="label label-danger">Open</span>
                       % endif
                     </td>
                     <td>${h.format_datetime(request, order.created_time)}</td>

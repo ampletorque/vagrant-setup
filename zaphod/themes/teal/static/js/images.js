@@ -1,7 +1,6 @@
 /*globals define*/
 define(['jquery', 'underscore', 'text!teal/images-row.erb.html'], function ($, _, rowTemplateRaw) {
-  // Admin image interface handling.
-  "use strict";
+  // This module handles the admin interface's image association widget.
 
   var rowTemplate = _.template(rowTemplateRaw);
 
@@ -27,7 +26,7 @@ define(['jquery', 'underscore', 'text!teal/images-row.erb.html'], function ($, _
           .attr('height', 64)
           .attr('src', e.target.result)
       );
-    }
+    };
     reader.readAsDataURL(file);
   }
 

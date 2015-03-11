@@ -1,5 +1,9 @@
 define(['jquery'], function ($) {
 
+  // This module powers the datepicker widget.
+
+  "use strict";
+
   var selector = '[data-datepicker]',
       all = [];
 
@@ -28,78 +32,78 @@ define(['jquery'], function ($) {
 
   DatePicker.prototype = {
 
-      detectNative: function(el) {
-        // Attempt to activate the native datepicker, if there is a known good
-        // one. If successful, return true. Note that input type="date"
-        // requires that the string be RFC3339, so if the format/parse methods
-        // have been overridden, this won't be used.
-        if(navigator.userAgent.match(/(iPad|iPhone); CPU(\ iPhone)? OS 5_\d/i)) {
-          // jQuery will only change the input type of a detached element.
-          var $marker = $('<span>').insertBefore(this.$el);
-          this.$el.detach().attr('type', 'date').insertAfter($marker);
-          $marker.remove();
-          return true;
-        }
-        return false;
+    detectNative: function(el) {
+      // Attempt to activate the native datepicker, if there is a known good
+      // one. If successful, return true. Note that input type="date"
+      // requires that the string be RFC3339, so if the format/parse methods
+      // have been overridden, this won't be used.
+      if(navigator.userAgent.match(/(iPad|iPhone); CPU(\ iPhone)? OS 5_\d/i)) {
+        // jQuery will only change the input type of a detached element.
+        var $marker = $('<span>').insertBefore(this.$el);
+        this.$el.detach().attr('type', 'date').insertAfter($marker);
+        $marker.remove();
+        return true;
+      }
+      return false;
+    },
+
+    init: function() {
+      var $months = this.nav('months', 1);
+      var $years = this.nav('years', 12);
+
+      var $nav = $('<div>').addClass('nav').append($months, $years);
+
+      var i;
+
+      this.$month = $('.name', $months);
+      this.$year = $('.name', $years);
+
+      $calendar = $("<div>").addClass('calendar');
+
+      // Populate day of week headers, realigned by startOfWeek.
+      for (i = 0; i < this.shortDayNames.length; i++) {
+        $calendar.append('<div class="dow">' + this.shortDayNames[(i + this.startOfWeek) % 7] + '</div>');
       }
 
-    , init: function() {
-        var $months = this.nav('months', 1);
-        var $years = this.nav('years', 12);
+      this.$days = $('<div>').addClass('days');
+      $calendar.append(this.$days);
 
-        var $nav = $('<div>').addClass('nav').append($months, $years);
+      this.$picker = $('<div>')
+        .click(function(e) { e.stopPropagation(); })
+        // Use this to prevent accidental text selection.
+        .mousedown(function(e) { e.preventDefault(); })
+        .addClass('datepicker')
+        .append($nav, $calendar)
+        .insertAfter(this.$el);
 
-        var i;
+      this.$el
+        .focus(this.show)
+        .click(this.show)
+        .change($.proxy(function() { this.selectDate(); }, this))
+        .closest('form')
+          .bind('reset', $.proxy(function() { this.reset(); }, this));
 
-        this.$month = $('.name', $months);
-        this.$year = $('.name', $years);
+      this.selectDate();
+      this.hide();
+    },
 
-        $calendar = $("<div>").addClass('calendar');
+    nav: function( c, months ) {
+      var $subnav = $('<div>' +
+                        '<span class="prev button">' +
+                          '<i class="fa fa-arrow-left"></i>' +
+                        '</span>' +
+                        '<span class="name"></span>' +
+                        '<span class="next button">' +
+                          '<i class="fa fa-arrow-right"></i>' +
+                        '</span>' +
+                      '</div>').addClass(c);
+      $('.prev', $subnav).click($.proxy(function() { this.ahead(-months, 0); }, this));
+      $('.next', $subnav).click($.proxy(function() { this.ahead(months, 0); }, this));
+      return $subnav;
 
-        // Populate day of week headers, realigned by startOfWeek.
-        for (i = 0; i < this.shortDayNames.length; i++) {
-          $calendar.append('<div class="dow">' + this.shortDayNames[(i + this.startOfWeek) % 7] + '</div>');
-        }
+    },
 
-        this.$days = $('<div>').addClass('days');
-        $calendar.append(this.$days);
-
-        this.$picker = $('<div>')
-          .click(function(e) { e.stopPropagation(); })
-          // Use this to prevent accidental text selection.
-          .mousedown(function(e) { e.preventDefault(); })
-          .addClass('datepicker')
-          .append($nav, $calendar)
-          .insertAfter(this.$el);
-
-        this.$el
-          .focus(this.show)
-          .click(this.show)
-          .change($.proxy(function() { this.selectDate(); }, this))
-          .closest('form')
-            .bind('reset', $.proxy(function() { this.reset(); }, this));
-
-        this.selectDate();
-        this.hide();
-      }
-
-    , nav: function( c, months ) {
-        var $subnav = $('<div>' +
-                          '<span class="prev button">' +
-                            '<i class="fa fa-arrow-left"></i>' +
-                          '</span>' +
-                          '<span class="name"></span>' +
-                          '<span class="next button">' +
-                            '<i class="fa fa-arrow-right"></i>' +
-                          '</span>' +
-                        '</div>').addClass(c);
-        $('.prev', $subnav).click($.proxy(function() { this.ahead(-months, 0); }, this));
-        $('.next', $subnav).click($.proxy(function() { this.ahead(months, 0); }, this));
-        return $subnav;
-
-    }
-
-    , updateName: function($area, s) {
+    updateName: function($area, s) {
         // Update either the month or year field, with a background flash
         // animation.
         var cur = $area.find('.fg').text(),
@@ -114,218 +118,218 @@ define(['jquery'], function ($) {
         } else {
           $area.append($fg);
         }
-    }
+    },
 
-    , selectMonth: function(date) {
-        var newMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-        var ii;
+    selectMonth: function(date) {
+      var newMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+      var ii;
 
-        if (!this.curMonth || !(this.curMonth.getFullYear() === newMonth.getFullYear() &&
-                                this.curMonth.getMonth() === newMonth.getMonth())) {
+      if (!this.curMonth || !(this.curMonth.getFullYear() === newMonth.getFullYear() &&
+                              this.curMonth.getMonth() === newMonth.getMonth())) {
 
-          this.curMonth = newMonth;
+        this.curMonth = newMonth;
 
-          var rangeStart = this.rangeStart(date), rangeEnd = this.rangeEnd(date);
-          var num_days = this.daysBetween(rangeStart, rangeEnd);
-          this.$days.empty();
+        var rangeStart = this.rangeStart(date), rangeEnd = this.rangeEnd(date);
+        var num_days = this.daysBetween(rangeStart, rangeEnd);
+        this.$days.empty();
 
-          for (ii = 0; ii <= num_days; ii++) {
-            var thisDay = new Date(rangeStart.getFullYear(), rangeStart.getMonth(), rangeStart.getDate() + ii, 12, 0);
-            var $day = $('<div>').attr('date', this.format(thisDay));
-            $day.text(thisDay.getDate());
+        for (ii = 0; ii <= num_days; ii++) {
+          var thisDay = new Date(rangeStart.getFullYear(), rangeStart.getMonth(), rangeStart.getDate() + ii, 12, 0);
+          var $day = $('<div>').attr('date', this.format(thisDay));
+          $day.text(thisDay.getDate());
 
-            if (thisDay.getMonth() !== date.getMonth()) {
-              $day.addClass('overlap');
-            }
-
-            this.$days.append($day);
+          if (thisDay.getMonth() !== date.getMonth()) {
+            $day.addClass('overlap');
           }
 
-          this.updateName(this.$month, this.monthNames[date.getMonth()]);
-          this.updateName(this.$year, this.curMonth.getFullYear());
-
-          $('div', this.$days).click($.proxy(function(e) {
-            var $targ = $(e.target);
-
-            // The date= attribute is used here to provide relatively fast
-            // selectors for setting certain date cells.
-            this.update($targ.attr("date"));
-
-            // Don't consider this selection final if we're just going to an
-            // adjacent month.
-            if(!$targ.hasClass('overlap')) {
-              this.hide();
-            }
-
-          }, this));
-
-          $("[date='" + this.format(new Date()) + "']", this.$days).addClass('today');
-
+          this.$days.append($day);
         }
 
-        $('.selected', this.$days).removeClass('selected');
-        $('[date="' + this.selectedDateStr + '"]', this.$days).addClass('selected');
+        this.updateName(this.$month, this.monthNames[date.getMonth()]);
+        this.updateName(this.$year, this.curMonth.getFullYear());
+
+        $('div', this.$days).click($.proxy(function(e) {
+          var $targ = $(e.target);
+
+          // The date= attribute is used here to provide relatively fast
+          // selectors for setting certain date cells.
+          this.update($targ.attr("date"));
+
+          // Don't consider this selection final if we're just going to an
+          // adjacent month.
+          if(!$targ.hasClass('overlap')) {
+            this.hide();
+          }
+
+        }, this));
+
+        $("[date='" + this.format(new Date()) + "']", this.$days).addClass('today');
+
       }
 
-    , selectDate: function(date) {
-        if (date === undefined) {
-          date = this.parse(this.$el.val());
-        }
-        if (!date) {
-          date = new Date();
-        }
+      $('.selected', this.$days).removeClass('selected');
+      $('[date="' + this.selectedDateStr + '"]', this.$days).addClass('selected');
+    },
 
-        this.selectedDate = date;
-        this.selectedDateStr = this.format(this.selectedDate);
-        this.selectMonth(this.selectedDate);
+    selectDate: function(date) {
+      if (date === undefined) {
+        date = this.parse(this.$el.val());
+      }
+      if (!date) {
+        date = new Date();
       }
 
-    , update: function(s) {
-        this.$el.val(s).change();
-      }
+      this.selectedDate = date;
+      this.selectedDateStr = this.format(this.selectedDate);
+      this.selectMonth(this.selectedDate);
+    },
 
-    , reset: function() {
+    update: function(s) {
+      this.$el.val(s).change();
+    },
+
+    reset: function() {
         setTimeout($.proxy(function() { this.selectDate(); }, this), 0);
+    },
+
+    show: function(e) {
+      if(e) {
+        e.stopPropagation();
       }
 
-    , show: function(e) {
-        if(e) {
-          e.stopPropagation();
-        }
+      // Hide all other datepickers.
+      clearDatePickers(this);
 
-        // Hide all other datepickers.
-        clearDatePickers(this);
+      var position = this.$el.position(),
+          offset = this.$el.offset(),
+          window_width = $(window).width();
 
-        var position = this.$el.position(),
-            offset = this.$el.offset(),
-            window_width = $(window).width();
-
-        // Check to see if the datepicker will be displayed outside the
-        // viewport. If so, adjust the positioning so it will be displayed
-        // properly.
-        if (offset.left > (window_width - 220)) {
-          position.left = position.left + this.$el.innerWidth() - 220;
-          this.$picker.addClass('datepicker-right');
-        } else {
-          this.$picker.removeClass('datepicker-right');
-        }
-
-        this.$picker.css({
-          top: position.top + this.$el.innerHeight() + 4,
-          left: position.left
-        }).show();
-
-        $('html').on('keydown', this.keyHandler);
+      // Check to see if the datepicker will be displayed outside the
+      // viewport. If so, adjust the positioning so it will be displayed
+      // properly.
+      if (offset.left > (window_width - 220)) {
+        position.left = position.left + this.$el.innerWidth() - 220;
+        this.$picker.addClass('datepicker-right');
+      } else {
+        this.$picker.removeClass('datepicker-right');
       }
 
-    , hide: function() {
-        this.$picker.hide();
-        $('html').off('keydown', this.keyHandler);
-      }
+      this.$picker.css({
+        top: position.top + this.$el.innerHeight() + 4,
+        left: position.left
+      }).show();
 
-    , keyHandler: function(e) {
-        // Keyboard navigation shortcuts.
-        switch (e.keyCode)
-        {
-          case 9: 
-          case 27: 
-            // Tab or escape hides the datepicker. In this case, just return
-            // instead of breaking, so that the e doesn't get stopped.
-            this.hide(); return;
-          case 13: 
-            // Enter selects the currently highlighted date.
-            this.update(this.selectedDateStr); this.hide(); break;
-          case 38: 
-            // Arrow up goes to prev week.
-            this.ahead(0, -7); break;
-          case 40: 
-            // Arrow down goes to next week.
-            this.ahead(0, 7); break;
-          case 37: 
-            // Arrow left goes to prev day.
-            this.ahead(0, -1); break;
-          case 39: 
-            // Arrow right goes to next day.
-            this.ahead(0, 1); break;
-          default:
-            return;
-        }
-        e.preventDefault();
-      }
+      $('html').on('keydown', this.keyHandler);
+    },
 
-    , parse: function(s) {
-        // Parse a partial RFC 3339 string into a Date.
-        var m = s.match(/^(\d{4,4})-(\d{2,2})-(\d{2,2})$/);
-        if (m) {
-          return new Date(m[1], m[2] - 1, m[3]);
-        } else {
-          return null;
-        }
-      }
+    hide: function() {
+      this.$picker.hide();
+      $('html').off('keydown', this.keyHandler);
+    },
 
-    , format: function(date) {
-        // Format a Date into a string as specified by RFC 3339.
-        var month = (date.getMonth() + 1).toString(),
-            dom = date.getDate().toString();
-        if (month.length === 1) {
-          month = '0' + month;
-        }
-        if (dom.length === 1) {
-          dom = '0' + dom;
-        }
-        return date.getFullYear() + '-' + month + "-" + dom;
+    keyHandler: function(e) {
+      // Keyboard navigation shortcuts.
+      switch (e.keyCode)
+      {
+        case 9: 
+        case 27: 
+          // Tab or escape hides the datepicker. In this case, just return
+          // instead of breaking, so that the e doesn't get stopped.
+          this.hide(); return;
+        case 13: 
+          // Enter selects the currently highlighted date.
+          this.update(this.selectedDateStr); this.hide(); break;
+        case 38: 
+          // Arrow up goes to prev week.
+          this.ahead(0, -7); break;
+        case 40: 
+          // Arrow down goes to next week.
+          this.ahead(0, 7); break;
+        case 37: 
+          // Arrow left goes to prev day.
+          this.ahead(0, -1); break;
+        case 39: 
+          // Arrow right goes to next day.
+          this.ahead(0, 1); break;
+        default:
+          return;
       }
+      e.preventDefault();
+    },
 
-    , ahead: function(months, days) {
-        // Move ahead ``months`` months and ``days`` days, both integers, can be
-        // negative.
-        var next_date, last_day;
-        next_date = new Date(this.selectedDate.getFullYear(),
-                             this.selectedDate.getMonth(),
-                             this.selectedDate.getDate() + days);
-        last_day = new Date(next_date.getFullYear(),
-                            next_date.getMonth() + months + 1,
-                            0).getDate();
-
-        this.selectDate(new Date(next_date.getFullYear(),
-                                 next_date.getMonth() + months,
-                                 Math.min(next_date.getDate(), last_day)));
+    parse: function(s) {
+      // Parse a partial RFC 3339 string into a Date.
+      var m = s.match(/^(\d{4,4})-(\d{2,2})-(\d{2,2})$/);
+      if (m) {
+        return new Date(m[1], m[2] - 1, m[3]);
+      } else {
+        return null;
       }
+    },
 
-    , proxy: function(meth) {
-        // Bind a method so that it always gets the datepicker instance for
-        // ``this``. Return ``this`` so chaining calls works.
-        this[meth] = $.proxy(this[meth], this);
-        return this;
+    format: function(date) {
+      // Format a Date into a string as specified by RFC 3339.
+      var month = (date.getMonth() + 1).toString(),
+          dom = date.getDate().toString();
+      if (month.length === 1) {
+        month = '0' + month;
       }
+      if (dom.length === 1) {
+        dom = '0' + dom;
+      }
+      return date.getFullYear() + '-' + month + "-" + dom;
+    },
 
-    , daysBetween: function(start, end) {
-        // Return number of days between ``start`` Date object and ``end``.
-        var dstart = Date.UTC(start.getFullYear(), start.getMonth(), start.getDate());
-        var dend = Date.UTC(end.getFullYear(), end.getMonth(), end.getDate());
-        return (dend - dstart) / 86400000;
-      }
+    ahead: function(months, days) {
+      // Move ahead ``months`` months and ``days`` days, both integers, can be
+      // negative.
+      var next_date, last_day;
+      next_date = new Date(this.selectedDate.getFullYear(),
+                           this.selectedDate.getMonth(),
+                           this.selectedDate.getDate() + days);
+      last_day = new Date(next_date.getFullYear(),
+                          next_date.getMonth() + months + 1,
+                          0).getDate();
 
-    , findClosest: function(dow, date, direction) {
-        // From a starting date, find the first day ahead of behind it that is
-        // a given day of the week.
-        var difference = direction * (Math.abs(date.getDay() - dow - (direction * 7)) % 7);
-        return new Date(date.getFullYear(), date.getMonth(), date.getDate() + difference);
-      }
+      this.selectDate(new Date(next_date.getFullYear(),
+                               next_date.getMonth() + months,
+                               Math.min(next_date.getDate(), last_day)));
+    },
 
-    , rangeStart: function(date) {
-        // Get the first day to show in the current calendar view.
-        return this.findClosest(this.startOfWeek,
-                                new Date(date.getFullYear(), date.getMonth()),
-                                -1);
-      }
+    proxy: function(meth) {
+      // Bind a method so that it always gets the datepicker instance for
+      // ``this``. Return ``this`` so chaining calls works.
+      this[meth] = $.proxy(this[meth], this);
+      return this;
+    },
 
-    , rangeEnd: function(date) {
-        // Get the last day to show in the current calendar view.
-        return this.findClosest((this.startOfWeek - 1) % 7,
-                                new Date(date.getFullYear(), date.getMonth() + 1, 0),
-                                1);
-      }
+    daysBetween: function(start, end) {
+      // Return number of days between ``start`` Date object and ``end``.
+      var dstart = Date.UTC(start.getFullYear(), start.getMonth(), start.getDate());
+      var dend = Date.UTC(end.getFullYear(), end.getMonth(), end.getDate());
+      return (dend - dstart) / 86400000;
+    },
+
+    findClosest: function(dow, date, direction) {
+      // From a starting date, find the first day ahead of behind it that is
+      // a given day of the week.
+      var difference = direction * (Math.abs(date.getDay() - dow - (direction * 7)) % 7);
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate() + difference);
+    },
+
+    rangeStart: function(date) {
+      // Get the first day to show in the current calendar view.
+      return this.findClosest(this.startOfWeek,
+                              new Date(date.getFullYear(), date.getMonth()),
+                              -1);
+    },
+
+    rangeEnd: function(date) {
+      // Get the last day to show in the current calendar view.
+      return this.findClosest((this.startOfWeek - 1) % 7,
+                              new Date(date.getFullYear(), date.getMonth() + 1, 0),
+                              1);
+    }
   };
 
   /* DATEPICKER PLUGIN DEFINITION
@@ -339,9 +343,9 @@ define(['jquery'], function ($) {
 
   $.fn.datepicker.defaults = {
     monthNames: ["January", "February", "March", "April", "May", "June",
-                 "July", "August", "September", "October", "November", "December"]
-  , shortDayNames: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-  , startOfWeek: 0
+                 "July", "August", "September", "October", "November", "December"],
+    shortDayNames: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+    startOfWeek: 0
   };
 
   // Update date_input plugin so that MM/DD/YYYY format is used.

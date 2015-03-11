@@ -1,13 +1,21 @@
 /*globals define*/
 define(['jquery'], function ($) {
-  // AJAX form validation.
+  // This module provides AJAX form validation, so that server-side form
+  // validation can be used with client-side error rendering. This avoids
+  // issues with data being lost during a page reload.
+
+  // To use this module, set the .js-ajax-validate class on a <form>.
+
   "use strict";
 
   function clearErrors($form) {
+    // Remove all existing errors that have been rendered in the DOM.
     $form.find('.form-group').removeClass('has-error').find('ul.error').remove();
   }
 
   function renderErrors($form, errors) {
+    // Render errors in the DOM based on an error object passed from
+    // server-side validation.
     $.each(errors, function(name, error) {
       var
         $input = $form
@@ -19,13 +27,7 @@ define(['jquery'], function ($) {
     });
   }
 
-  function submitHandler(e) {
-    e.stopPropagation();
-    e.preventDefault();
-
-    var $form = $(this);
-    console.log("form is", $form);
-
+  function ajaxValidate($form) {
     // Submit the form with an ajax request
     $.ajax({
       type: $form.attr('method'),
@@ -33,7 +35,7 @@ define(['jquery'], function ($) {
       data: $form.serialize(),
       dataType: 'json',
       error: function (request, status, error) {
-        alert(request.responseText);
+        alert('Server Error');
       },
       success: function (data, status, xhr) {
         if(data.status === 'ok') {
@@ -51,7 +53,13 @@ define(['jquery'], function ($) {
   }
 
   $(function () {
-    $('.js-ajax-validate').on('submit', submitHandler);
+    $('.js-ajax-validate').on('submit', function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+
+      var $form = $(this);
+      ajaxValidate($form);
+    });
   });
 
 });

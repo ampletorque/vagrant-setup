@@ -1,6 +1,11 @@
 /*globals define*/
 define(['jquery', 'moment'], function ($, moment) {
-  // Basic handling of project tile countdowns in javascript.
+  // This module updates project tile countdowns in realtime.
+
+  // To use it, set the data-countdown-to attribute with an ISO-8601 date on an
+  // element containing a <p> (used for the 'value') and a <span> (used for the
+  // 'units').
+
   "use strict";
 
   $(function () {

@@ -1,4 +1,9 @@
 define(['jquery', 'moment', 'teal/datepicker'], function ($, moment) {
+
+  // This module powers the 'date range' selection widget.
+
+  "use strict";
+
   function formatDate(d) {
     return moment(d).format('MM/DD/YYYY');
   }

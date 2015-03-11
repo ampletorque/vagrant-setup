@@ -131,3 +131,7 @@ class Item(Base):
         None,
         ForeignKey('inventory_adjustments.acquisition_id'),
         nullable=True)
+
+    cart_item = orm.relationship('CartItem')
+    destroy_adjustment = orm.relationship('InventoryAdjustment',
+                                          foreign_keys=[destroy_adjustment_id])

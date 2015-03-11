@@ -241,6 +241,7 @@ def migrate_orders(settings, product_map, option_value_map,
                 set(option_value_map[old_ov].id
                     for old_ov in old_ci.option_values))
             ci = model.CartItem(
+                id=old_ci.id,
                 cart=order.cart,
                 product=product,
                 price_each=old_ci.price_each,

@@ -56,13 +56,14 @@ ${project_header.project_header(obj.project)}
             </table>
           </%forms:element>
 
-          <%forms:element label="SKUS">
+          <%forms:element label="SKUs">
             <table class="table">
               <thead>
                 <tr>
                   <th>SKU ID</th>
                   <th>Options</th>
                   <th>Qty In Stock</th>
+                  <th>Qty Available</th>
                 </tr>
               </thead>
               <tbody>
@@ -71,6 +72,7 @@ ${project_header.project_header(obj.project)}
                     <td>${sku.id}</td>
                     <td>${blocks.option_value_list(sku)}</td>
                     <td>${sku.qty}</td>
+                    <td>${sku.qty_available}</td>
                   </tr>
                 % endfor
               </tbody>

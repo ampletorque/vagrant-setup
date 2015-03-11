@@ -1,6 +1,8 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+from datetime import date
+
 from pyramid.httpexceptions import HTTPFound, HTTPBadRequest
 from pyramid.view import view_config
 
@@ -117,12 +119,18 @@ class CartView(object):
             # cart_item.update_reservation() method.
             if project.status == 'crowdfunding':
                 stage = model.CROWDFUNDING
-            elif sku.in_stock:
+                batch = product.current_batch
+                expected_delivery_date = batch.delivery_date
+            # Should this check sku.in_stock instead?
+            elif sku.qty_available > 0:
                 stage = model.STOCK
+                batch = None
+                # XXX FIXME
+                expected_delivery_date = date.today()
             else:
                 stage = model.PREORDER
-
-            batch = product.current_batch
+                batch = product.current_batch
+                expected_delivery_date = batch.delivery_date
 
             assert cart and cart.id
             ci = model.CartItem(
@@ -133,7 +141,7 @@ class CartView(object):
                 stage=stage,
                 batch=batch,
                 sku=sku,
-                expected_delivery_date=batch.delivery_date,
+                expected_delivery_date=expected_delivery_date,
                 status='cart',
             )
             ci.price_each = ci.calculate_price()

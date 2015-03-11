@@ -210,6 +210,18 @@
 </%def>
 
 
+<%def name="stats_stock_only(project)">
+  <div class="status-bar status-bar-primary">
+    <span class="status-bar-left">In Stock</span>
+    <span class="status-bar-right">Available Now</span>
+  </div>
+  <div class="social-buttons">
+    <p>Support this project on social media!</p>
+    ${self.social_buttons(project)}
+  </div>
+</%def>
+
+
 <%def name="stats_tile(project)">
   <div class="project-block">
     % if project.status == 'crowdfunding':
@@ -220,6 +232,8 @@
       ${self.stats_funded(project)}
     % elif project.status == 'available':
       ${self.stats_available(project)}
+    % elif project.status == 'stock-only':
+      ${self.stats_stock_only(project)}
     % else:
       <% assert False, "don't know what stats tile to use for %r" % project.status %>
     % endif
@@ -311,7 +325,7 @@
               % endif
             </p>
 
-          % elif project.status == 'available':
+          % elif project.status in ('available', 'stock-only'):
             % if product.in_stock:
               <button type="submit" class="btn btn-block btn-cta">Add to Cart</button>
             % elif product.accepts_preorders:

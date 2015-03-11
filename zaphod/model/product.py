@@ -103,6 +103,10 @@ class Product(Base, ImageMixin):
     def is_available(self):
         return self.non_physical or self.in_stock or bool(self.current_batch)
 
+    def update_in_stock(self):
+        # XXX FIXME
+        pass
+
 
 class Option(Base):
     __tablename__ = 'options'

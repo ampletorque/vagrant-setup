@@ -33,6 +33,7 @@ def migrate_items():
             cost=old_item.cost,
             destroy_time=old_item.destroy_time,
             destroy_adjustment_id=old_item.destroy_adjustment_id,
+            cart_item_id=old_item.cart_item_id,
         )
         model.Session.add(item)
     model.Session.flush()

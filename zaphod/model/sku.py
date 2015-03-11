@@ -2,10 +2,13 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from sqlalchemy import Table, Column, ForeignKey, types, orm
+from sqlalchemy.sql import or_
 from sqlalchemy.orm.exc import NoResultFound
 
 from .base import Base, Session
 from .product import OptionValue
+from .item import Acquisition, Item
+from .cart import CartItem
 
 
 sku_option_values = Table(
@@ -35,8 +38,14 @@ class SKU(Base):
         Total quantity of unshipped stock, including stock associated with
         unshipped orders.
         """
-        # XXX
-        return 0
+        return Session.query(Item).\
+            join(Item.acquisition).\
+            outerjoin(Item.cart_item).\
+            filter(Item.destroy_time == None,
+                   Acquisition.sku == self).\
+            filter(or_(Item.cart_item_id == None,
+                       CartItem.shipped_date == None)).\
+            count()
 
     @property
     def qty_available(self):
@@ -44,8 +53,11 @@ class SKU(Base):
         Quantity of unreserved stock. This query excludes stock associated with
         unshipped orders and active carts.
         """
-        # XXX
-        return 0
+        return Session.query(Item).\
+            join(Item.acquisition).\
+            filter(Item.destroy_time == None,
+                   Item.cart_item_id == None,
+                   Acquisition.sku == self).count()
 
 
 def sku_for_option_value_ids(product, ov_ids):

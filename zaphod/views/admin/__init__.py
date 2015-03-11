@@ -16,20 +16,25 @@ def includeme(config):
 
     config.add_route('admin:projects', '/projects')
     config.add_route('admin:projects:new', '/projects/new')
+
     config.add_route('admin:project', '/project/{id}')
     config.add_route('admin:project:products', '/project/{id}/products')
     config.add_route('admin:project:products:new',
                      '/project/{id}/products/new')
+
     config.add_route('admin:project:owners', '/project/{id}/owners')
     config.add_route('admin:project:owners:new', '/project/{id}/owners/new')
     config.add_route('admin:project:updates', '/project/{id}/updates')
     config.add_route('admin:project:updates:new', '/project/{id}/updates/new')
     config.add_route('admin:project:emails', '/project/{id}/emails')
+    config.add_route('admin:project:ship', '/project/{id}/ship')
+
     config.add_route('admin:project:reports', '/project/{id}/reports')
     config.add_route('admin:project:reports:funding', '/project/{id}/funding')
     config.add_route('admin:project:reports:status', '/project/{id}/status')
     config.add_route('admin:project:reports:balance', '/project/{id}/balance')
     config.add_route('admin:project:reports:skus', '/project/{id}/skus')
+
     config.add_route('admin:product', '/product/{id}')
     config.add_route('admin:update', '/update/{id}')
 

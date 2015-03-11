@@ -294,6 +294,15 @@ class ProjectEditView(NodeEditView):
             'earliest_due_date': earliest_due_date,
         }
 
+    @view_config(route_name='admin:project:ship',
+                 renderer='admin/project_ship.html')
+    def ship(self):
+        project = self._get_object()
+
+        return {
+            'obj': project,
+        }
+
 
 @view_defaults(route_name='admin:projects:new',
                renderer='admin/projects_new.html')

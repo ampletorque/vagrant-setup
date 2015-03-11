@@ -32,9 +32,19 @@
         Current: ${item.batch.delivery_date}
       % endif
     </td>
-    <td>${renderer.text('items-%d.price_each' % item.id, item.price_each, class_='form-control', style='width:100px')}</td>
-    <td>${renderer.text('items-%d.qty_desired' % item.id, item.qty_desired, class_='form-control', style='width:80px', type='number')}</td>
-    <td>${renderer.text('items-%d.shipping_price' % item.id, item.shipping_price, class_='form-control', style='width:100px')}</td>
+    <td style="width:125px">
+      <div class="input-group">
+        <div class="input-group-addon">$</div>
+        ${renderer.text('items-%d.price_each' % item.id, item.price_each, class_='form-control')}
+      </div>
+    </td>
+    <td style="width:80px">${renderer.text('items-%d.qty_desired' % item.id, item.qty_desired, class_='form-control', type='number')}</td>
+    <td style="width:125px">
+      <div class="input-group">
+        <div class="input-group-addon">$</div>
+        ${renderer.text('items-%d.shipping_price' % item.id, item.shipping_price, class_='form-control')}
+      </div>
+    </td>
     <td>${h.currency(item.total)}</td>
   </tr>
 </%def>

@@ -69,9 +69,9 @@ class ProjectEditView(NodeEditView):
         available_body = validators.UnicodeString()
 
         target = validators.Number()
-        start_time = validators.DateConverter()
-        # Remember we probably want to add a day to this value.
-        end_time = validators.DateConverter()
+        start_time = validators.DateConverter(month_style='yyyy/mm/dd')
+        # XXX FIXME Remember we probably want to add a day to this value.
+        end_time = validators.DateConverter(month_style='yyyy/mm/dd')
         gravity = validators.Int(not_empty=True)
 
         accepts_preorders = validators.Bool()

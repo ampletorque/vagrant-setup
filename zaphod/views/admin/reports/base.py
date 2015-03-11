@@ -11,8 +11,10 @@ from pyramid_uniform import Form
 
 class ReportRangeSchema(Schema):
     allow_extra_fields = True
-    start_date = validators.DateConverter(if_missing=None, if_empty=None)
-    end_date = validators.DateConverter(if_missing=None, if_empty=None)
+    start_date = validators.DateConverter(if_missing=None, if_empty=None,
+                                          month_style='yyyy/mm/dd')
+    end_date = validators.DateConverter(if_missing=None, if_empty=None,
+                                        month_style='yyyy/mm/dd')
 
 
 class BaseReportsView(object):

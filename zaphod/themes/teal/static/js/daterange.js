@@ -205,14 +205,10 @@ define(['jquery', 'moment', 'teal/datepicker'], function ($, moment) {
     },
   };
 
-  $.fn.daterange = function(options) {
-    return this.each(function() { var d = new DateRange(this, options); });
-  };
-
-  $.fn.daterange.DateRange = DateRange;
-
   $(function () {
-    $('.js-date-range-friendly').daterange();
+    $('.js-date-range-friendly').each(function() {
+      var d = new DateRange(this, options); 
+    });
 
     $('.js-date-range-form').on('daterange.change', function(e) {
       $(this).submit();

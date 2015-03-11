@@ -28,7 +28,8 @@ class LeadEditView(BaseEditView):
         source_id = validators.Int()
         new_source = validators.UnicodeString()
         contact_point = validators.String()
-        estimated_launch_time = custom_validators.UTCDateConverter()
+        estimated_launch_time = \
+            custom_validators.UTCDateConverter(month_style='yyyy/mm/dd')
         campaign_duration_days = validators.Int()
         person = validators.UnicodeString(if_empty=u'')
         email = validators.Email(if_empty=u'')

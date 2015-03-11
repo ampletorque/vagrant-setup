@@ -4,8 +4,9 @@ define(['jquery'], function ($) {
 
   "use strict";
 
-  var selector = '[data-datepicker]',
-      all = [];
+  // Keep an array of all active datepickers, so that we can hide them
+  // collectively.
+  var all = [];
 
   function clearDatePickers(except) {
     var ii;
@@ -18,12 +19,15 @@ define(['jquery'], function ($) {
 
   function DatePicker( element, options ) {
     this.$el = $(element);
-    this.proxy('show').proxy('ahead').proxy('hide').proxy('keyHandler').proxy('selectDate');
+    this
+      .proxy('show')
+      .proxy('ahead')
+      .proxy('hide')
+      .proxy('keyHandler')
+      .proxy('selectDate');
 
-    var opts = $.extend({}, $.fn.datepicker.defaults, options );
-
-    if((!!opts.parse) || (!!opts.format) || !this.detectNative()) {
-      $.extend(this, opts);
+    if(!this.detectNative()) {
+      $.extend(this, options);
       this.$el.data('datepicker', this);
       all.push(this);
       this.init();
@@ -58,7 +62,7 @@ define(['jquery'], function ($) {
       this.$month = $('.name', $months);
       this.$year = $('.name', $years);
 
-      $calendar = $("<div>").addClass('calendar');
+      var $calendar = $("<div>").addClass('calendar');
 
       // Populate day of week headers, realigned by startOfWeek.
       for (i = 0; i < this.shortDayNames.length; i++) {
@@ -332,48 +336,18 @@ define(['jquery'], function ($) {
     }
   };
 
-  /* DATEPICKER PLUGIN DEFINITION
-   * ============================ */
-
-  $.fn.datepicker = function( options ) {
-    return this.each(function() { var d = new DatePicker(this, options); });
-  };
-
-  $.fn.datepicker.DatePicker = DatePicker;
-
-  $.fn.datepicker.defaults = {
+  var options = {
     monthNames: ["January", "February", "March", "April", "May", "June",
-                 "July", "August", "September", "October", "November", "December"],
+                 "July", "August", "September", "October", "November",
+                 "December"],
     shortDayNames: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
     startOfWeek: 0
   };
 
-  // Update date_input plugin so that MM/DD/YYYY format is used.
-  $.extend($.fn.datepicker.defaults, {
-    parse: function (string) {
-      var m = string.match(/^(\d{2,2})\/(\d{2,2})\/(\d{4,4})$/);
-      if (m) {
-        return new Date(m[3], m[1] - 1, m[2]);
-      } else {
-        return null;
-      }
-    },
-    format: function (date) {
-      var
-        month = (date.getMonth() + 1).toString(),
-        dom = date.getDate().toString();
-      if (month.length === 1) {
-        month = "0" + month;
-      }
-      if (dom.length === 1) {
-        dom = "0" + dom;
-      }
-      return month + "/" + dom + "/" + date.getFullYear();
-    }
-  });
-
   $(function() {
-    $(selector).datepicker();
+    $('.js-datepicker').each(function(ii) {
+      var d = new DatePicker(this, options);
+    });
     $('html').click(clearDatePickers);
   });
 

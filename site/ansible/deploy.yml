@@ -1,6 +1,8 @@
 ---
 - hosts: webservers
   tasks:
+    - debug: msg="Deploying app environment {{ app_environment }}"
+
     - name: setup pyramid logging dirs
       sudo: yes
       file: path=/var/log/pyramid
@@ -41,7 +43,7 @@
     # XXX Might need a step in here that flushes old .pyc or __pycache__ files.
 
     - name: link uwsgi config file
-      file: src=/var/sw/zaphod/site/conf/uwsgi-{{ environment }}.conf
+      file: src=/var/sw/zaphod/site/conf/uwsgi-{{ app_environment }}.conf
             path=/etc/uwsgi/vassals/zaphod.ini
             owner=deploy
             group=deploy
@@ -50,7 +52,7 @@
         - reload uwsgi
 
     - name: link nginx config file
-      file: src=/var/sw/zaphod/site/conf/nginx-{{ environment }}.conf
+      file: src=/var/sw/zaphod/site/conf/nginx-{{ app_environment }}.conf
             path=/etc/nginx/sites-enabled/100-crowdsupply.com
             owner=deploy
             group=deploy

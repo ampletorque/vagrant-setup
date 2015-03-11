@@ -2,219 +2,245 @@
 define(['jquery', 'underscore', 'text!teal/images-row.erb.html'], function ($, _, rowTemplateRaw) {
   // This module handles the admin interface's image association widget.
 
+  "use strict";
+
   var rowTemplate = _.template(rowTemplateRaw);
 
-  var $movingRow, $helper, $target;
-
-  function makeID() {
-    var text = "";
-    var possible = "abcdefghijklmnopqrstuvwxyz0123456789";
-
-    for( var i=0; i < 32; i++ )
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-    return text;
+  function ImageWidget(selector) {
+    this.$container = $(selector);
+    this
+      .proxy('handleNewFile')
+      .proxy('handleNewFiles')
+      .proxy('handleFileDrop')
+      .proxy('handleFileSelect')
+      .proxy('placeTarget')
+      .proxy('grabHandler')
+      .proxy('dragHandler')
+      .proxy('dropHandler')
+      .proxy('removeHandler')
+      .proxy('setGravity');
+    this.init();
   }
 
-  function loadThumbnail(file, $el) {
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      console.log("setting image", escape(file.name));
-      $el.find('.js-image-placeholder').append(
-        $('<img>')
-          .attr('width', 64)
-          .attr('height', 64)
-          .attr('src', e.target.result)
-      );
-    };
-    reader.readAsDataURL(file);
-  }
+  ImageWidget.prototype = {
 
-  function handleNewFile(file) {
-    var uploadPath = $('.js-image-widget').data('upload-path'),
-        xsrf = $('#_authentication_token').val();
+    proxy: function(meth) {
+      // Bind a method so that it always gets the image widget instance for
+      // ``this``. Return ``this`` so chaining calls works.
+      this[meth] = $.proxy(this[meth], this);
+      return this;
+    },
 
+    init: function() {
+      this.$container
+        .on('dragover', this.handleFileDragOver)
+        .on('drop', this.handleFileDrop)
+        .on('mousedown', '.js-image-drag-handle', this.grabHandler)
+        .on('click', '.js-image-remove', this.removeHandler)
+        .find('input[type=file]')
+          .on('change', this.handleFileSelect);
+    },
 
-    if (!!file.type.match(/image.*/)) {
-      // Make a new random ID to refer to it.
-      var imageID = makeID();
+    makeID: function() {
+      // Return a randomly-generated ID to pass to use to refer to a newly
+      // added image.
+      var text = "", possible = "abcdefghijklmnopqrstuvwxyz0123456789";
+      for( var i=0; i < 32; i++ ) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+      }
+      return text;
+    },
 
-      console.log("counting existing rows");
-      var nextIndex = $('.js-image-widget-images > tr').length;
-
-      // Make a new row, passing in the ID
-      console.log("making new row", nextIndex);
-
-      var s = rowTemplate({
-        idx: nextIndex,
-        gravity: nextIndex,
-        id: imageID,
-        name: file.name
-      });
-      var $el = $(s);
-      $('.js-image-widget-images').append($el);
-      loadThumbnail(file, $el);
-
-      var $progress = $el.find('.js-image-progress'),
-          $status = $el.find('.js-image-status');
-
-      // Upload the file via ajax, get back an ID reference to it
-      var formData = new FormData();
-      formData.append("file", file);
-      formData.append("id", imageID);
-      formData.append("_authentication_token", xsrf);
-
-      console.log("uploading image via ajax");
-      // FIXME The form submission should collect these and block if any are not complete
-      var xhr = new XMLHttpRequest();
-      xhr.open('POST', uploadPath, true);
-      xhr.upload.onprogress = function (e) {
-        if (e.lengthComputable) {
-          if (e.loaded === e.total) {
-            $status.text('Unsaved');
-          } else{
-            $progress.text(e.loaded / e.total * 100);
-          }
-        }
+    loadThumbnail: function(file, $row) {
+      // Load the actual image data from a newly added image file, and show it
+      // in a scaled image element in the corresponding row.
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        $row.find('.js-image-placeholder').append(
+          $('<img>')
+            .attr('width', 64)
+            .attr('height', 64)
+            .attr('src', e.target.result)
+        );
       };
-      xhr.send(formData);
+      reader.readAsDataURL(file);
+    },
+
+    handleNewFile: function(file) {
+      var uploadPath = this.$container.data('upload-path'),
+          xsrf = $('#_authentication_token').val();
+
+      if (!!file.type.match(/image.*/)) {
+        // Make a new random ID to refer to it.
+        var imageID = this.makeID(),
+            nextIndex = this.$container.find('.js-image-widget-images > tr').length;
+
+        // Make a new row, passing in the ID
+        var $el = $(rowTemplate({
+          idx: nextIndex,
+          gravity: nextIndex,
+          id: imageID,
+          name: file.name
+        }));
+        $('.js-image-widget-images').append($el);
+
+        this.loadThumbnail(file, $el);
+
+        var $progress = $el.find('.js-image-progress'),
+            $status = $el.find('.js-image-status');
+
+        // Upload the file via ajax, get back an ID reference to it
+        var formData = new FormData();
+        formData.append("file", file);
+        formData.append("id", imageID);
+        formData.append("_authentication_token", xsrf);
+
+        // FIXME The form submission should collect these and block if any are not complete
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', uploadPath, true);
+        xhr.upload.onprogress = function (e) {
+          if (e.lengthComputable) {
+            if (e.loaded === e.total) {
+              $status.text('Unsaved');
+            } else{
+              $progress.text(e.loaded / e.total * 100);
+            }
+          }
+        };
+        xhr.send(formData);
+      }
+    },
+
+    handleNewFiles: function(files) {
+      for(var ii = 0; ii < files.length; ii++) {
+        this.handleNewFile(files[ii]);
+      }
+    },
+
+    handleFileSelect: function(e) {
+      this.handleNewFiles(e.target.files);
+    },
+
+    handleFileDrop: function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      this.handleNewFiles(e.originalEvent.dataTransfer.files);
+    },
+
+    handleFileDragOver: function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      e.originalEvent.dataTransfer.dropEffect = 'copy';
+    },
+
+    doNothing: function(e) {
+      e.preventDefault();
+    },
+
+    placeTarget: function(e) {
+      var $over = $(e.target).closest('tr');
+
+      // If we're not over the container, return.
+      if(!($.contains(this.$container[0], $over[0]))) {
+        return;
+      }
+
+      // If we're over the existing target, return.
+      if($over[0] === this.$target[0]) {
+        return;
+      }
+
+      this.$target.remove();
+
+      // If we're over the row being dragged, hide the target.
+      if($over[0] === this.$movingRow[0]) {
+        return;
+      }
+
+      // Otherwise, place the target either before or after the row we're over.
+      var h = $over.height(),
+          off = $over.offset();
+      if ((e.pageY < (off.top + h / 2)) && ($over.prev()[0] !== this.$movingRow[0])) {
+        $over.before(this.$target);
+      } else if ((e.pageY > (off.top + h / 2)) && ($over.next()[0] !== this.$movingRow[0])) {
+        $over.after(this.$target);
+      }
+    },
+
+    grabHandler: function(e) {
+      this.$movingRow = $(e.target).closest('tr');
+      this.$helper = $('<table>')
+        .addClass('table')
+        .addClass('table-images')
+        .css({
+          position: 'absolute',
+          width: this.$movingRow.width()
+        })
+        .append(this.$movingRow.clone());
+      this.$movingRow.css('opacity', 0.5);
+
+      this.$target = $('<tr>')
+        .addClass('table-drop-target')
+        .append('<td colspan="' + this.$movingRow.find('td').length + '"></td>');
+
+      $('body')
+        .on('mousemove', this.dragHandler)
+        .on('selectstart', this.doNothing)
+        .on('mouseup', this.dropHandler)
+        .append(this.$helper);
+
+      this.dragHandler(e);
+    },
+
+    dragHandler: function(e) {
+      this.$helper.css({
+        top: e.pageY + 10,
+        left: e.pageX + 10
+      });
+      this.placeTarget(e);
+    },
+
+    dropHandler: function(e) {
+      $('body')
+        .off('selectstart', this.doNothing)
+        .off('mousemove', this.dragHandler)
+        .off('mouseup', this.dropHandler);
+
+      if(this.$target.is(':visible')) {
+        // Actually move item and finalize
+        this.$movingRow.css('opacity', 1.0);
+        this.$target.after(this.$movingRow);
+        this.$target.remove();
+        this.setGravity();
+      } else {
+        this.$movingRow.css('opacity', 1.0);
+      }
+
+      this.$helper.remove();
+    },
+
+    removeHandler: function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var $row = $(e.target).closest('tr').remove();
+    },
+
+    setGravity: function() {
+      // Iterate over all rows and set gravity field
+      this.$container.find('.js-image-widget-images > tr').each(function (ii) {
+        $(this).find('.js-image-gravity').val(ii);
+      });
     }
-  }
 
-  function handleNewFiles(files) {
-    console.log("new files", files);
-    for(var ii = 0; ii < files.length; ii++) {
-      handleNewFile(files[ii]);
-    }
-  }
-
-  function handleFileSelect(e) {
-    handleNewFiles(e.target.files);
-  }
-
-  function handleFileDrop(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    handleNewFiles(e.originalEvent.dataTransfer.files);
-  }
-
-  function handleFileDragOver(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    e.originalEvent.dataTransfer.dropEffect = 'copy';
-  }
-
-  function doNothing(e) {
-    e.preventDefault();
-  }
-
-  function placeTarget(e) {
-    var $over = $(e.target).closest('tr'),
-        $container = $movingRow.closest('table');
-
-    // If we're not over the container, return.
-    if(!($.contains($container[0], $over[0]))) {
-      return;
-    }
-
-    // If we're over the existing target, return.
-    if($over[0] === $target[0]) {
-      return;
-    }
-
-    $target.remove();
-
-    // If we're over the row being dragged, hide the target.
-    if($over[0] === $movingRow[0]) {
-      return;
-    }
-
-    // Otherwise, place the target either before or after the row we're over.
-    var h = $over.height(),
-        off = $over.offset();
-    if ((e.pageY < (off.top + h / 2)) && ($over.prev()[0] !== $movingRow[0])) {
-      $over.before($target);
-    } else if ((e.pageY > (off.top + h / 2)) && ($over.next()[0] !== $movingRow[0])) {
-      $over.after($target);
-    }
-  }
-
-  function grabHandler(e) {
-    $movingRow = $(this).closest('tr');
-    $helper = $('<table>')
-      .addClass('table')
-      .addClass('table-images')
-      .css({
-        position: 'absolute',
-        width: $movingRow.width()
-      })
-      .append($movingRow.clone());
-    $movingRow.css('opacity', 0.5);
-
-    $target = $('<tr>')
-      .addClass('table-drop-target')
-      .append('<td colspan="' + $movingRow.find('td').length + '"></td>');
-
-    $('body')
-      .on('mousemove', dragHandler)
-      .on('selectstart', doNothing)
-      .on('mouseup', dropHandler)
-      .append($helper);
-
-    dragHandler(e);
-  }
-
-  function dragHandler(e) {
-    $helper.css({
-      top: e.pageY + 10,
-      left: e.pageX + 10
-    });
-    placeTarget(e);
-  }
-
-  function dropHandler(e) {
-    $('body')
-      .off('selectstart', doNothing)
-      .off('mousemove', dragHandler)
-      .off('mouseup', dropHandler);
-
-    if($target.is(':visible')) {
-      // Actually move item and finalize
-      $movingRow.css('opacity', 1.0);
-      $target.after($movingRow);
-      $target.remove();
-      setGravity();
-    } else {
-      $movingRow.css('opacity', 1.0);
-    }
-
-    $helper.remove();
-  }
-
-  function removeHandler(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    var $row = $(this).closest('tr').remove();
-  }
-
-  function setGravity() {
-    // Iterate over all rows and set gravity field
-    $('.js-image-widget-images > tr').each(function (ii) {
-      $(this).find('.js-image-gravity').val(ii);
-    });
-  }
+  };
 
   $(function () {
-    if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
+    if (!(window.File && window.FileReader)) {
       alert('Browser unsupported!');
     } else {
-      $('.js-image-widget')
-        .on('dragover', handleFileDragOver)
-        .on('drop', handleFileDrop);
-      $('.js-image-widget input[type=file]').on('change', handleFileSelect);
-
-      $('.js-image-drag-handle').on('mousedown', grabHandler);
-      $('.js-image-remove').on('click', removeHandler);
+      $('.js-image-widget').each(function() {
+        var d = new ImageWidget(this);
+      });
     }
   });
 });

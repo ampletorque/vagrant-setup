@@ -2,6 +2,7 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 import os.path
+from datetime import datetime
 
 from formencode import Schema, NestedVariables, ForEach, validators
 from pyramid.httpexceptions import HTTPFound, HTTPNotFound
@@ -61,6 +62,11 @@ class BaseEditView(object):
                 caption=image_params['caption'],
             ))
 
+    def _touch_obj(self, obj):
+        request = self.request
+        obj.updated_by = request.user
+        obj.updated_time = datetime.utcnow()
+
     def _update_obj(self, form, obj):
         request = self.request
         if 'images' in form.data:
@@ -74,6 +80,7 @@ class BaseEditView(object):
         obj = self._get_object()
         form = Form(request, schema=self.UpdateForm)
         if form.validate():
+            self._touch_obj(obj)
             self._update_obj(form, obj)
             return HTTPFound(location=request.current_route_url())
         return {

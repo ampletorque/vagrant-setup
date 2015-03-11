@@ -1,0 +1,70 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="blocks" file="/common/blocks.html"/>
+<%namespace name="widgets" file="common/widgets.html"/>
+
+<%def name="title()">Edit Vendor Shipment ${obj.id}</%def>
+
+
+<section class="section-admin-vendor-shipment">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">${self.title()}</h1>
+
+        <div class="well">
+          <a href="${request.route_path('admin:vendor_order', id=obj.vendor_order.id)}" class="btn btn-default">&larr; Back to Vendor Order ${obj.vendor_order.id}</a>
+        </div>
+
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
+
+          ${forms.lvalue('%s by %s' % (h.format_datetime(request, obj.created_time), obj.created_by.name), label='Received')}
+
+          ${forms.ltext(renderer, 'description', obj.description)}
+
+          <legend>Items</legend>
+
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Item</th>
+                  <th>SKU</th>
+                  <th>Qty Ordered</th>
+                  <th>Qty in Shipment</th>
+                </tr>
+              </thead>
+              <tbody>
+                % for item in obj.items:
+                  <tr>
+                    <td></td>
+                    <td>
+                      <a href="${request.route_path('admin:product', id=item.sku.product_id)}">
+                        ${item.sku.product.name}
+                      </a>
+                      ${blocks.option_value_list(item.sku)}
+                    </td>
+                    <td>${item.sku.id}</td>
+                    <td>${item.vendor_order_item.qty_ordered}</td>
+                    <td>
+                      <input type="hidden" name="items-${loop.index}.id" value="${item.id}">
+                      <input type="number" name="items-${loop.index}.qty" value="${item.qty}" class="form-control">
+                    </td>
+                  </tr>
+                % endfor
+              </tbody>
+            </table>
+          </div>
+
+          <%forms:actions>
+            <button class="btn btn-primary" type="submit">Save</button>
+            <button class="btn btn-default" type="reset">Cancel</button>
+          </%forms:actions>
+        ${renderer.end()}
+
+      </div>
+    </div>
+  </div>
+</section>

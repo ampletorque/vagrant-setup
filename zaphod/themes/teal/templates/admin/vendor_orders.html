@@ -19,6 +19,7 @@
                 <th></th>
                 <th>ID</th>
                 <th>Creator</th>
+                <th>Status</th>
                 <th>Placed</th>
               </tr>
             </thead>
@@ -30,6 +31,7 @@
                   </td>
                   <td>${vendor_order.id}</td>
                   <td>${vendor_order.creator.name}</td>
+                  <td>${vendor_order.status}</td>
                   <td>
                     % if vendor_order.placed_time:
                       ${h.format_datetime(request, vendor_order.placed_time)}

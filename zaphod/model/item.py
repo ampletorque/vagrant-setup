@@ -25,6 +25,17 @@ class Acquisition(Base):
         'polymorphic_identity': 'Acquisition'
     }
 
+    @property
+    def qty(self):
+        """
+        The number of items currently being tracked for this acquisition.
+        Excludes items which have been "destroyed" as a result of a negative
+        inventory correction.
+        """
+        return Session.query(Item).filter_by(
+            acquisition=self,
+            destroy_time=None).count()
+
     def adjust_qty(self, qty):
         """
         Attempt to change the number of items in this specific
@@ -38,7 +49,7 @@ class Acquisition(Base):
         :type qty:
             int
         """
-        current_qty = Item.query.\
+        current_qty = Session.query(Item).\
             filter_by(destroy_time=None, acquisition=self).\
             with_lockmode('update').\
             count()
@@ -52,8 +63,6 @@ class Acquisition(Base):
                 si = Item(acquisition=self)
                 Session.add(si)
             Session.flush()
-            if self.sku:
-                self.sku.update_in_stock()
             return (current_qty + diff, diff)
 
         elif diff < 0:
@@ -68,9 +77,6 @@ class Acquisition(Base):
                         "destroy_time": utils.utcnow()
                     }, synchronize_session=False)
             Session.flush()
-            if self.sku:
-                self.sku.update_in_stock()
-
             delta = -len(item_ids)
             return (current_qty + delta, delta)
 

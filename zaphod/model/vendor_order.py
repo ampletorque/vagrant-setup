@@ -23,6 +23,20 @@ class VendorOrder(Base, UserMixin, CommentMixin):
     status = Column(types.String(255), nullable=False)
 
     creator = orm.relationship('Creator', backref='orders')
+    placed_by = orm.relationship('User', foreign_keys=[placed_by_id])
+
+    available_statuses = {
+        'crea': u'Order Created',
+        'sent': u'Order Sent',
+        'conf': u'Order Confirmed',
+        'part': u'Order Partially Received',
+        'recd': u'Order Received',
+        'void': u'Order Void',
+    }
+
+    @property
+    def status_description(self):
+        return self.available_statuses[self.status]
 
 
 class VendorOrderItem(Base):
@@ -39,6 +53,16 @@ class VendorOrderItem(Base):
 
     order = orm.relationship('VendorOrder', backref='items')
     sku = orm.relationship('SKU')
+
+    @property
+    def qty_received(self):
+        # XXX FIXME
+        return 0
+
+    @property
+    def qty_invoiced(self):
+        # XXX FIXME
+        return 0
 
 
 class VendorInvoice(Base, UserMixin, CommentMixin):
@@ -71,6 +95,8 @@ class VendorInvoice(Base, UserMixin, CommentMixin):
 
     # For wire transfer fees, escrow fees, etc.
     bank_fee = Column(custom_types.Money, nullable=False, default=0)
+
+    vendor_order = orm.relationship('VendorOrder', backref='invoices')
 
 
 class VendorInvoiceItem(Base):

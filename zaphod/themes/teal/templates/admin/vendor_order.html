@@ -1,6 +1,7 @@
 <%inherit file="base.html"/>
 
 <%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="blocks" file="/common/blocks.html"/>
 <%namespace name="widgets" file="common/widgets.html"/>
 
 <%def name="title()">Edit Vendor Order ${obj.id}</%def>
@@ -10,18 +11,112 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        <h1>${self.title()}</h1>
+        <h1 class="page-header">${self.title()}</h1>
 
-        ${renderer.begin(id='update-form', class_='form-horizontal')}
+        <div class="well">
+          <a class="btn btn-default" href="${request.route_path('admin:vendor_order:mark-sent', id=obj.id)}">Mark as Sent</a>
+          &rarr;
+          <a class="btn btn-primary" href="${request.route_path('admin:vendor_order:mark-confirmed', id=obj.id)}">Confirm Order</a>
+          &rarr;
+          <a class="btn btn-default" href="${request.route_path('admin:vendor_order:receive-shipment', id=obj.id)}">Receive Shipment</a>
+          <a class="btn btn-default" href="${request.route_path('admin:vendor_order:receive-invoice', id=obj.id)}">Receive Invoice</a>
+        </div>
 
-          ## XXX FIXME
+
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
+
+          ${forms.lvalue(obj.creator.name, label='Creator')}
+          % if obj.placed_time:
+            ${forms.lvalue('%s by %s' % (h.format_datetime(request, obj.placed_time), obj.placed_by.name), label='Placed')}
+          % endif
+
+          ${forms.ltext(renderer, 'reference', obj.reference, hint='The number assigned to this order by the vendor.')}
+
+          ${forms.lvalue(obj.status_description, label='Status', hint='This status gets updated automatically as the order gets confirmed and received.')}
+          ${forms.ltext(renderer, 'description', obj.description)}
+
           ${widgets.comments(renderer, obj)}
+
+          <legend>Items</legend>
+
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Item</th>
+                  <th>SKU</th>
+                  <th>Ordered</th>
+                  <th>Received</th>
+                  <th>Invoiced</th>
+                  <th>Unit Cost</th>
+                </tr>
+              </thead>
+              <tbody>
+                % for item in obj.items:
+                  <tr>
+                    <td></td>
+                    <td>
+                      <a href="${request.route_path('admin:product', id=item.sku.product_id)}">
+                        ${item.sku.product.name}
+                      </a>
+                      ${blocks.option_value_list(item.sku)}
+                    </td>
+                    <td>${item.sku.id}</td>
+                    <td>${item.qty_ordered}</td>
+                    <td>${item.qty_received}</td>
+                    <td>${item.qty_invoiced}</td>
+                    <td>${h.currency(item.cost)}</td>
+                  </tr>
+                % endfor
+              </tbody>
+            </table>
+          </div>
 
           <%forms:actions>
             <button class="btn btn-primary" type="submit">Save</button>
             <button class="btn btn-default" type="reset">Cancel</button>
           </%forms:actions>
         ${renderer.end()}
+
+        <h3>Shipments</h3>
+        % if obj.shipments:
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>ID</th>
+                  <th>Description</th>
+                  <th>Received Date</th>
+                  <th>Received By</th>
+                </tr>
+              </thead>
+              <tbody>
+                % for shipment in obj.shipments:
+                  <tr>
+                    <td><a href="${request.route_path('admin:vendor_shipment', id=shipment.id)}">Edit</a></td>
+                    <td>${shipment.id}</td>
+                    <td>${shipment.description}</td>
+                    <td>${h.format_datetime(request, shipment.created_time)}</td>
+                    <td>${shipment.created_by.name}</td>
+                  </tr>
+                % endfor
+              </tbody>
+            </table>
+          </div>
+        % else:
+          <p>No shipments have been received for this order yet.</p>
+        % endif
+
+        <h3>Invoices</h3>
+        % if obj.invoices:
+          <div class="table-responsive">
+          </div>
+        % else:
+          <p>No invoices have been received for this order yet.</p>
+        % endif
+
       </div>
     </div>
   </div>

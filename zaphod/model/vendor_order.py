@@ -87,25 +87,12 @@ class VendorInvoiceItem(Base):
                                          backref='vendor_invoice_items')
 
 
-class VendorShipment(Base):
+class VendorShipment(Base, UserMixin):
     __tablename__ = 'vendor_shipments'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     vendor_order_id = Column(None, ForeignKey('vendor_orders.id'),
                              nullable=False)
+    description = Column(types.UnicodeText, nullable=False, default=u'')
 
     vendor_order = orm.relationship('VendorOrder', backref='shipments')
-
-
-class VendorShipmentItem(Base):
-    __tablename__ = 'vendor_shipment_items'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
-    id = Column(types.Integer, primary_key=True)
-    vendor_shipment_id = Column(None, ForeignKey('vendor_shipments.id'),
-                                nullable=False)
-    vendor_order_item_id = Column(None, ForeignKey('vendor_order_items.id'),
-                                  nullable=False)
-
-    vendor_shipment = orm.relationship('VendorShipment', backref='items')
-    vendor_order_item = orm.relationship('VendorOrderItem',
-                                         backref='vendor_shipment_items')

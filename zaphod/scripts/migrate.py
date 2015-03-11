@@ -15,7 +15,7 @@ except ImportError:
 
 from .. import model
 
-from .migration import images, users, content, orders, vendor_orders
+from .migration import images, users, content, orders, vendor_orders, stock
 
 
 old_url = 'mysql+pymysql://crowdsupply:quux@localhost/crowdsupply?charset=utf8'
@@ -71,6 +71,9 @@ def main(argv=sys.argv):
 
         vendor_orders.migrate_vendor_orders(settings, product_map,
                                             option_value_map)
+
+        stock.migrate_inventory_adjustments()
+        stock.migrate_items()
 
         scott_user = model.Session.query(model.User).\
             filter_by(email='scott.torborg@crowdsupply.com').\

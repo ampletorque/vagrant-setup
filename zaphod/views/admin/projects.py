@@ -174,11 +174,11 @@ class ProjectEditView(NodeEditView):
     def emails(self):
         project = self._get_object()
 
-        counts = dict(model.Session.query(model.ProjectEmail.source,
-                                          func.count('*')).\
-                      filter(model.ProjectEmail.project == project).\
-                      group_by(model.ProjectEmail.source).\
-                      all())
+        q = model.Session.query(model.ProjectEmail.source,
+                                func.count('*')).\
+            filter(model.ProjectEmail.project == project).\
+            group_by(model.ProjectEmail.source)
+        counts = dict(q.all())
 
         emails = model.Session.query(model.ProjectEmail).\
             filter(model.ProjectEmail.project == project).\

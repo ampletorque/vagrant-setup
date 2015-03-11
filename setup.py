@@ -39,6 +39,7 @@ requires = [
     'sphinx-rtd-theme>=0.1.6',
     'WebHelpers2>=2.0',
     'dogpile.cache>=0.5.6',
+    'FormEncode>=1.3',
 
     # Keep repoze.sendmail pinned at 4.1 to deal with this bug:
     # https://github.com/repoze/repoze.sendmail/issues/31
@@ -49,9 +50,6 @@ requires = [
 if not PY3:
     # Needed for uwsgi deployment with ini-paste-logged.
     requires.append('PasteScript>=1.7.5')
-    requires.append('FormEncode>=1.2')
-else:
-    requires.append('FormEncode>=1.3.0a1')
 
 
 setup(name='zaphod',

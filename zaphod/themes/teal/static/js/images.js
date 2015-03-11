@@ -2,6 +2,16 @@
 define(['jquery', 'underscore', 'text!teal/images-row.erb.html'], function ($, _, rowTemplateRaw) {
   // This module handles the admin interface's image association widget.
 
+  // TODO:
+  // - Block form submission until all image uploads have completed.
+  // - Listen for form resets and reset image data back to the original
+  // (requires storing the original data).
+  // - Don't allow dragging images 'out of position' (outside the main tbody
+  // for images).
+  // Improve performmance, particularly of progress indicator updates and
+  // thumbnail showing.
+  // Highlight rows somehow if they're still unsaved.
+
   "use strict";
 
   var rowTemplate = _.template(rowTemplateRaw);

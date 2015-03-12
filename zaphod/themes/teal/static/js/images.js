@@ -13,6 +13,7 @@ define(['jquery', 'underscore', 'text!teal/images-row.erb.html'], function ($, _
   // - Highlight rows somehow if they're still unsaved.
   // - Don't allow dragging at all if there is only one row in the table.
   // - Handle searching for additional (existing) images and associating them.
+  // - Show a special message for 'no images are associated'
   // - Rename this?
 
   "use strict";

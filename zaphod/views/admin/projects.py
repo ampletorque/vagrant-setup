@@ -11,8 +11,8 @@ from pyramid_uniform import Form, FormRenderer, crud_update
 
 from ... import model
 
-from .base import (NodeEditView, NodeListView, NodeUpdateForm, NodeCreateView,
-                   NodeCreateForm)
+from ...editing import (NodeEditView, NodeListView, NodeUpdateForm,
+                        NodeCreateView, NodeCreateForm)
 
 
 class ProductCreateForm(Schema):

@@ -10,7 +10,7 @@ from pyramid_uniform import Form, FormRenderer
 
 from ... import model
 
-from .base import BaseEditView
+from ...editing import BaseEditView
 
 
 class ScheduleForm(Schema):

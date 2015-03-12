@@ -6,7 +6,7 @@ from venusian import lift
 
 from ... import model
 
-from .base import NodeEditView
+from ...editing import NodeEditView
 
 
 @view_defaults(route_name='admin:update', renderer='admin/update.html')

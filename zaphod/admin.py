@@ -12,11 +12,10 @@ from pyramid_frontend.images.files import check_and_save_image
 from pyramid_uniform import Form, FormRenderer
 from pyramid_es import get_client
 
-from ... import model, custom_validators
-from ...helpers.paginate import Page
+from . import model, custom_validators
+from .helpers.paginate import Page
 
 
-@view_defaults(route_name='admin:base_edit', renderer='admin/base_edit.html')
 class BaseEditView(object):
     def __init__(self, request):
         self.request = request
@@ -106,7 +105,6 @@ class BaseEditView(object):
             }
 
 
-@view_defaults(route_name='admin:base_list', renderer='admin/base_list.html')
 class BaseListView(object):
     paginate = False
 
@@ -137,8 +135,6 @@ class BaseListView(object):
             return dict(objs=final_q.all())
 
 
-@view_defaults(route_name='admin:base_create',
-               renderer='admin/base_create.html')
 class BaseCreateView(object):
 
     def __init__(self, request):

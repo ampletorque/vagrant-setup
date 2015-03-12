@@ -5,7 +5,8 @@ require([
   'bootstrap3/collapse',
   'bootstrap3/dropdown',
 
-  'teal/countdowns'
+  'teal/countdowns',
+  'teal/ccfield'
 
 ], function ($) {
   $(function () {

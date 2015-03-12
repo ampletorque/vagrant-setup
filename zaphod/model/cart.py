@@ -3,7 +3,7 @@ from __future__ import (absolute_import, division, print_function,
 
 from sqlalchemy import Column, ForeignKey, types, orm
 
-from . import custom_types
+from . import custom_types, utils
 from .base import Base, Session
 from .item import Item
 

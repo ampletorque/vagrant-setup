@@ -8,9 +8,12 @@ define(['jquery', 'underscore', 'text!teal/images-row.erb.html'], function ($, _
   // (requires storing the original data).
   // - Don't allow dragging images 'out of position' (outside the main tbody
   // for images).
-  // Improve performmance, particularly of progress indicator updates and
+  // - Improve performmance, particularly of progress indicator updates and
   // thumbnail showing.
-  // Highlight rows somehow if they're still unsaved.
+  // - Highlight rows somehow if they're still unsaved.
+  // - Don't allow dragging at all if there is only one row in the table.
+  // - Handle searching for additional (existing) images and associating them.
+  // - Rename this?
 
   "use strict";
 

@@ -26,14 +26,27 @@ class EditUserForm(Schema):
 
 class AddPaymentForm(Schema):
     allow_extra_fields = False
+    # XXX
 
 
 class AddRefundForm(Schema):
     allow_extra_fields = False
+    # XXX
 
 
 class CancelForm(Schema):
     allow_extra_fields = False
+    # XXX
+
+
+class FillForm(Schema):
+    allow_extra_fields = False
+    # XXX
+
+
+class AddItemForm(Schema):
+    allow_extra_fields = False
+    # XXX
 
 
 @view_defaults(route_name='admin:order', renderer='admin/order.html')
@@ -47,12 +60,22 @@ class OrderEditView(BaseEditView):
         loaded_time = validators.Number(not_empty=True)
         new_comment = custom_validators.CommentBody()
 
-    @view_config(route_name='admin:order:resend')
-    def resend(self):
+    @view_config(route_name='admin:order:resend-confirmation')
+    def resend_confirmation(self):
         request = self.request
         order = self._get_object()
         mail.send_order_confirmation(request, order)
         request.flash("Resent order confirmation to %s." % order.user.email,
+                      'success')
+        return HTTPFound(location=request.route_url('admin:order',
+                                                    id=order.id))
+
+    @view_config(route_name='admin:order:resend-shipping-confirmation')
+    def resend_shipping_confirmation(self):
+        request = self.request
+        order = self._get_object()
+        mail.send_shipping_confirmation(request, order)
+        request.flash("Resent shipping confirmation to %s." % order.user.email,
                       'success')
         return HTTPFound(location=request.route_url('admin:order',
                                                     id=order.id))
@@ -72,24 +95,45 @@ class OrderEditView(BaseEditView):
     def cancel(self):
         request = self.request
         order = self._get_object()
-        # XXX
-
         form = Form(request, schema=CancelForm)
         if form.validate():
-            form.bind(order)
+            # XXX
+
             request.flash("Order cancelled.", 'warning')
             return HTTPFound(location=request.route_url('admin:order',
                                                         id=order.id))
 
         return {'obj': order, 'renderer': FormRenderer(form)}
 
-    @view_config(route_name='admin:order:hold')
-    def hold(self):
+    @view_config(route_name='admin:order:fill',
+                 renderer='admin/order_fill.html')
+    def fill(self):
         request = self.request
         order = self._get_object()
-        # XXX
-        return HTTPFound(location=request.route_url('admin:order',
-                                                    id=order.id))
+        form = Form(request, schema=FillForm)
+        if form.validate():
+            # XXX
+
+            request.flash("Order updated.", 'success')
+            return HTTPFound(location=request.route_url('admin:order',
+                                                        id=order.id))
+
+        return {'obj': order, 'renderer': FormRenderer(form)}
+
+    @view_config(route_name='admin:order:add-item',
+                 renderer='admin/order_add_item.html')
+    def add_item(self):
+        request = self.request
+        order = self._get_object()
+        form = Form(request, schema=AddItemForm)
+        if form.validate():
+            # XXX
+
+            request.flash("Added '%s' to order." % product.name, 'success')
+            return HTTPFound(location=request.route_url('admin:order',
+                                                        id=order.id))
+
+        return {'obj': order, 'renderer': FormRenderer(form)}
 
     @view_config(route_name='admin:order:address',
                  renderer='admin/order_address.html')

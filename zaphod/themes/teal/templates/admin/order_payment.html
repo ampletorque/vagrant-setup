@@ -18,7 +18,7 @@
 
           <%forms:actions>
             <button class="btn btn-primary" type="submit">Save</button>
-            <button class="btn btn-default" type="reset">Cancel</button>
+            <a class="btn btn-default" href="${request.route_path('admin:order', id=obj.id)}">Cancel</a>
           </%forms:actions>
         ${renderer.end()}
       </div>

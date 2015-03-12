@@ -107,32 +107,39 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        <h1 class="page-header">${self.title()}</h1>
+        <h1 class="page-header">
+          ${self.title()}
+          % if obj.closed:
+            <span class="pull-right label label-success">Closed</span>
+          % else:
+            <span class="pull-right label label-danger">Open</span>
+          % endif
+        </h1>
 
         <div class="well">
           <a class="btn btn-primary" href="${request.route_path('admin:order:print', id=obj.id)}">Print Invoice</a>
-          ##<a class="btn btn-primary" href="${request.route_path('admin:order:fill', id=obj.id)}">Fill Order</a>
-          <a class="btn btn-primary" href="${request.route_path('admin:order:hold', id=obj.id)}">Place Hold</a>
+          <a class="btn btn-primary" href="${request.route_path('admin:order:resend-confirmation', id=obj.id)}">Resend Order Confirmation</a>
+          <a class="btn btn-primary" href="${request.route_path('admin:order:resend-shipping-confirmation', id=obj.id)}">Resend Order Confirmation</a>
           <a class="btn btn-danger" href="${request.route_path('admin:order:cancel', id=obj.id)}">Cancel Order</a>
-          <a class="btn btn-default" href="${request.route_path('admin:order:resend', id=obj.id)}">Resend Order Confirmation</a>
+          <a class="btn btn-default" href="${request.route_path('admin:order:fill', id=obj.id)}">Fill Order</a>
         </div>
 
         <div class="well">
           <div class="row">
-            <div class="col-sm-4">
+            <div class="col-sm-6">
               <h4>Shipping Address</h4>
               <p>${blocks.address(obj.shipping)}</p>
               <p><a href="${request.route_path('admin:order:address', id=obj.id)}">Change Address</a></p>
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-6">
               <h4>User</h4>
-              <p>${obj.user.name}</p>
+              <p>
+                <a href="${request.route_path('admin:user', id=obj.user.id)}">
+                  ${obj.user.id} - ${obj.user.name}
+                </a>
+              </p>
               <p>${obj.user.email}</p>
               <p><a href="${request.route_path('admin:order:user', id=obj.id)}">Change User</a></p>
-            </div>
-            <div class="col-sm-4">
-              <h4>Schedule</h4>
-              <p>----</p>
             </div>
           </div>
         </div>
@@ -160,7 +167,10 @@
             <tbody>
               <tr>
                 <td></td>
-                <td colspan="5"><strong>Total</strong></td>
+                <td colspan="4">
+                  <a href="${request.route_path('admin:order:add-item', id=obj.id)}">Add Item</a>
+                </td>
+                <td><strong>Total</strong></td>
                 <td>${h.currency(obj.total_amount)}</td>
               </tr>
             </tbody>

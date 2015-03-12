@@ -48,14 +48,18 @@ def includeme(config):
     config.add_route('admin:orders', '/orders')
     config.add_route('admin:orders:new', '/orders/new')
     config.add_route('admin:order', '/order/{id}')
-    config.add_route('admin:order:resend', '/order/{id}/resend')
+    config.add_route('admin:order:resend-confirmation',
+                     '/order/{id}/resend-confirmation')
+    config.add_route('admin:order:resend-shipping-confirmation',
+                     '/order/{id}/resend-shipping-confirmation')
     config.add_route('admin:order:print', '/order/{id}/print')
     config.add_route('admin:order:cancel', '/order/{id}/cancel')
-    config.add_route('admin:order:hold', '/order/{id}/hold')
+    config.add_route('admin:order:fill', '/order/{id}/fill')
     config.add_route('admin:order:address', '/order/{id}/address')
     config.add_route('admin:order:user', '/order/{id}/user')
     config.add_route('admin:order:payment', '/order/{id}/payment')
     config.add_route('admin:order:refund', '/order/{id}/refund')
+    config.add_route('admin:order:add-item', '/order/{id}/add-item')
 
     config.add_route('admin:vendor-orders', '/vendor-orders')
     config.add_route('admin:vendor-orders:new', '/vendor-orders/new')

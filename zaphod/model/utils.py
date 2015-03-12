@@ -9,7 +9,8 @@ from unidecode import unidecode
 from .base import Session
 
 
-__all__ = ['is_url_name', 'to_url_name', 'utcnow', 'dedupe_name']
+__all__ = ['is_url_name', 'to_url_name', 'utcnow', 'dedupe_name',
+           'shipping_day']
 
 
 def is_url_name(s):
@@ -87,3 +88,12 @@ def dedupe_name(cls, attr, name):
         else:
             current = u"%s-%d" % (name, ii)
     raise ValueError("Failed to find non-duplicate name.")
+
+
+def shipping_day():
+    """
+    Calculate the date that an order will be shipped if it is placed now.
+
+    FIXME XXX Implement this
+    """
+    return utcnow().date()

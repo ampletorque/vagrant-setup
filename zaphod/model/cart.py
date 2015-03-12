@@ -4,7 +4,8 @@ from __future__ import (absolute_import, division, print_function,
 from sqlalchemy import Column, ForeignKey, types, orm
 
 from . import custom_types
-from .base import Base
+from .base import Base, Session
+from .item import Item
 
 
 class Cart(Base):
@@ -93,19 +94,15 @@ class CartItem(Base):
 
     def update_status(self, new_value):
         """
-        Update the status of this item.
+        Update the status of this item. Validates acceptable transitions.
         """
         raise NotImplementedError
 
     def calculate_price(self):
         """
-        Calculate the price of this item, including option values.
+        Calculate the price of this item.
         """
-        price = self.product.price
-        # XXX
-        # for ov in self.option_values:
-        #     price += ov.price_increase
-        return price
+        return self.product.price
 
     @property
     def total(self):
@@ -113,16 +110,74 @@ class CartItem(Base):
 
     @property
     def qty_reserved(self):
-        # XXX
-        return 0
+        if self.stage == STOCK:
+            return Session.query(Item).filter_by(cart_item=self).count()
+        else:
+            return self.qty_desired
 
     @property
     def closed(self):
         return self.status in ('cancelled', 'shipped', 'abandoned', 'failed')
 
+    def release_stock(self):
+        # XXX FIXME
+        pass
+
     def refresh(self):
         """
-        Refresh status and reservations.
+        Refresh status and reservations. For a stock item, ensure that
+        qty_reserved is up to date. For a preorder or crowdfunding item,
+        allocate to a product batch. Note that since adding this cart item, the
+        project may have changed status.
+
+        This method may update .qty_desired, .stage, .batch,
+        .expected_delivery_date, and associated Item instances.
+
+        Before doing anything, make sure that this cart item has no associated
+        order.
+
+        If insufficient qty is available, the .qty_desired will be decremented
+        accordingly, and False will be returned. Otherwise, True will be
+        returned.
         """
-        # XXX Implement this!
-        pass
+        assert not self.cart.order, \
+            "cannot refresh cart item that has a placed order"
+
+        # XXX Lock existing items.
+
+        # XXX The batch allocation needs to take into account qty-- e.g. if
+        # there is only a certain qty available in crowdfunding, decrement the
+        # qty.
+
+        project = self.product.project
+        if project.status == 'crowdfunding':
+            self.stage = CROWDFUNDING
+            self.batch = product.select_batch(self.qty_desired)
+            assert self.batch
+            self.expected_delivery_date = self.batch.delivery_date
+            self.release_stock()
+            return True
+        else:
+            # Make sure that the product is available.
+            if self.sku.qty_available > self.qty_desired:
+
+                # XXX Reserve stock
+
+                self.stage = STOCK
+                self.batch = None
+                self.expected_delivery_date = utils.shipping_day()
+                self.release_stock()
+                return True
+            elif project.accepts_preorders and product.accepts_preorders:
+                self.stage = PREORDER
+                self.batch = product.select_batch(self.qty_desired)
+                self.expected_delivery_date = self.batch.delivery_date
+                self.release_stock()
+                return True
+            else:
+                # This thing is no longer available.
+                self.qty_desired = 0
+                self.batch = None
+                self.expected_delivery_date = None
+                self.release_stock()
+                return False

@@ -106,42 +106,17 @@ class CartView(object):
         form = Form(request, schema=CartItemAddSchema)
         if form.validate():
             product = model.Product.get(form.data['product_id'])
-            if not product:
+            cart = self.get_cart(create_new=True)
+            if not (product and cart and cart.id):
                 raise HTTPBadRequest
 
-            cart = self.get_cart(create_new=True)
-
-            project = product.project
-
             sku = model.sku_for_option_value_ids(product, form.data['options'])
-
-            # XXX The stage/batch/SKU stuff should be moved into a
-            # cart_item.update_reservation() method.
-            if project.status == 'crowdfunding':
-                stage = model.CROWDFUNDING
-                batch = product.current_batch
-                expected_delivery_date = batch.delivery_date
-            # Should this check sku.in_stock instead?
-            elif sku.qty_available > 0:
-                stage = model.STOCK
-                batch = None
-                # XXX FIXME
-                expected_delivery_date = date.today()
-            else:
-                stage = model.PREORDER
-                batch = product.current_batch
-                expected_delivery_date = batch.delivery_date
-
-            assert cart and cart.id
             ci = model.CartItem(
                 cart=cart,
                 qty_desired=form.data['qty'],
                 product=product,
                 shipping_price=0,
-                stage=stage,
-                batch=batch,
                 sku=sku,
-                expected_delivery_date=expected_delivery_date,
                 status='cart',
             )
             ci.price_each = ci.calculate_price()

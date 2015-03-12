@@ -51,20 +51,29 @@ class Product(Base, ImageMixin):
 
     batches = orm.relationship('Batch', backref='product')
 
-    @property
-    def current_batch(self):
+    def select_batch(self, qty):
         """
-        Return the batch that new orders for this pledge level should be
-        allocated to.
+        Return the batch that a new order of qty ``qty`` should be allocated
+        to.
         """
         consumed = self.qty_claimed
         for batch in self.batches:
-            if (not batch.qty) or (consumed < batch.qty):
+            if (not batch.qty) or ((consumed + qty) < batch.qty):
                 return batch
             consumed -= batch.qty
 
     @property
+    def current_batch(self):
+        """
+        Return the currently 'open' batch for this product.
+        """
+        return self.select_batch(qty=1)
+
+    @property
     def current_delivery_date(self):
+        """
+        Return the delivery date for the currently 'open' batch.
+        """
         return self.current_batch.delivery_date
 
     @property

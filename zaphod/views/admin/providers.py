@@ -6,8 +6,8 @@ from venusian import lift
 
 from ... import model
 
-from ...editing import (NodeListView, NodeEditView, NodeUpdateForm,
-                        NodeCreateView)
+from ...admin import (NodeListView, NodeEditView, NodeUpdateForm,
+                      NodeCreateView)
 
 
 @view_defaults(route_name='admin:provider', renderer='admin/provider.html')

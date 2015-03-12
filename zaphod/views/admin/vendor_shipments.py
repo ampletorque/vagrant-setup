@@ -7,7 +7,7 @@ from formencode import Schema, ForEach, NestedVariables, validators
 
 from ... import model
 
-from ...editing import BaseEditView
+from ...admin import BaseEditView
 
 
 class ItemForm(Schema):

@@ -7,7 +7,7 @@ from formencode import Schema, validators
 
 from ... import model, custom_validators
 
-from ...editing import BaseEditView, BaseListView, BaseCreateView
+from ...admin import BaseEditView, BaseListView, BaseCreateView
 
 
 @view_defaults(route_name='admin:vendor-order',

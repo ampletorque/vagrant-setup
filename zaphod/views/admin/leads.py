@@ -7,7 +7,7 @@ from formencode import Schema, NestedVariables, validators
 
 from ... import model, custom_validators
 
-from ...editing import BaseListView, BaseEditView, BaseCreateView
+from ...admin import BaseListView, BaseEditView, BaseCreateView
 
 
 @view_defaults(route_name='admin:lead', renderer='admin/lead.html')

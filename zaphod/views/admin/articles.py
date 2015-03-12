@@ -7,8 +7,8 @@ from formencode import validators
 
 from ... import model
 
-from ...editing import (NodeListView, NodeEditView, NodeUpdateForm,
-                        NodeCreateView)
+from ...admin import (NodeListView, NodeEditView, NodeUpdateForm,
+                      NodeCreateView)
 
 
 @view_defaults(route_name='admin:article', renderer='admin/article.html')

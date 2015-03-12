@@ -10,7 +10,7 @@ from pyramid_uniform import Form, FormRenderer
 
 from ... import model, mail, custom_validators
 
-from ...editing import BaseEditView, BaseListView, BaseCreateView
+from ...admin import BaseEditView, BaseListView, BaseCreateView
 
 
 class EditAddressForm(Schema):

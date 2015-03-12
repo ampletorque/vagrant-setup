@@ -6,8 +6,8 @@ from venusian import lift
 
 from ... import model
 
-from ...editing import (NodeEditView, NodeListView, NodeUpdateForm,
-                        NodeCreateView)
+from ...admin import (NodeEditView, NodeListView, NodeUpdateForm,
+                      NodeCreateView)
 
 
 @view_defaults(route_name='admin:tag', renderer='admin/tag.html')

@@ -15,7 +15,7 @@ class ItemForm(Schema):
     id = validators.Int(not_empty=True, min=0)
 
 
-@view_defaults(route_name='admin:vendor_shipment',
+@view_defaults(route_name='admin:vendor-shipment',
                renderer='admin/vendor_shipment.html')
 @lift()
 class VendorShipmentEditView(BaseEditView):

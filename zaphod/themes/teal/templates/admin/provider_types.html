@@ -8,7 +8,7 @@
     <div class="row">
       <div class="col-lg-12">
         <div class="pull-right">
-          <a class="btn btn-default" href="${request.route_path('admin:provider_types:new')}"><i class="fa fa-plus"></i> New Provider Type</a>
+          <a class="btn btn-default" href="${request.route_path('admin:provider-types:new')}"><i class="fa fa-plus"></i> New Provider Type</a>
         </div>
 
         <h1 class="page-header">Provider Types <small>${len(objs)} total</small></h1>
@@ -27,7 +27,7 @@
               % for provider_type in objs:
                 <tr>
                   <td>
-                    <a href="${request.route_path('admin:provider_type', id=provider_type.id)}">Edit</a>
+                    <a href="${request.route_path('admin:provider-type', id=provider_type.id)}">Edit</a>
                   </td>
                   <td>${provider_type.id}</td>
                   <td>${provider_type.name}</td>

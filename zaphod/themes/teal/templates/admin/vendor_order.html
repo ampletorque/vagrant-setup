@@ -14,12 +14,12 @@
         <h1 class="page-header">${self.title()}</h1>
 
         <div class="well">
-          <a class="btn btn-default" href="${request.route_path('admin:vendor_order:mark-sent', id=obj.id)}">Mark as Sent</a>
+          <a class="btn btn-default" href="${request.route_path('admin:vendor-order:mark-sent', id=obj.id)}">Mark as Sent</a>
           &rarr;
-          <a class="btn btn-primary" href="${request.route_path('admin:vendor_order:mark-confirmed', id=obj.id)}">Confirm Order</a>
+          <a class="btn btn-primary" href="${request.route_path('admin:vendor-order:mark-confirmed', id=obj.id)}">Confirm Order</a>
           &rarr;
-          <a class="btn btn-default" href="${request.route_path('admin:vendor_order:receive-shipment', id=obj.id)}">Receive Shipment</a>
-          <a class="btn btn-default" href="${request.route_path('admin:vendor_order:receive-invoice', id=obj.id)}">Receive Invoice</a>
+          <a class="btn btn-default" href="${request.route_path('admin:vendor-order:receive-shipment', id=obj.id)}">Receive Shipment</a>
+          <a class="btn btn-default" href="${request.route_path('admin:vendor-order:receive-invoice', id=obj.id)}">Receive Invoice</a>
         </div>
 
 
@@ -95,7 +95,7 @@
               <tbody>
                 % for shipment in obj.shipments:
                   <tr>
-                    <td><a href="${request.route_path('admin:vendor_shipment', id=shipment.id)}">Edit</a></td>
+                    <td><a href="${request.route_path('admin:vendor-shipment', id=shipment.id)}">Edit</a></td>
                     <td>${shipment.id}</td>
                     <td>${shipment.description}</td>
                     <td>${h.format_datetime(request, shipment.created_time)}</td>

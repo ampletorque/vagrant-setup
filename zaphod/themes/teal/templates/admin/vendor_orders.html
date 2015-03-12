@@ -8,7 +8,7 @@
     <div class="row">
       <div class="col-lg-12">
         <div class="pull-right">
-          <a class="btn btn-default" href="${request.route_path('admin:vendor_orders:new')}"><i class="fa fa-plus"></i> New Vendor Order</a>
+          <a class="btn btn-default" href="${request.route_path('admin:vendor-orders:new')}"><i class="fa fa-plus"></i> New Vendor Order</a>
         </div>
 
         <h1 class="page-header">Vendor Orders <small>${len(objs)} total</small></h1>
@@ -27,7 +27,7 @@
               % for vendor_order in objs:
                 <tr>
                   <td>
-                    <a href="${request.route_path('admin:vendor_order', id=vendor_order.id)}">Edit</a>
+                    <a href="${request.route_path('admin:vendor-order', id=vendor_order.id)}">Edit</a>
                   </td>
                   <td>${vendor_order.id}</td>
                   <td>${vendor_order.creator.name}</td>

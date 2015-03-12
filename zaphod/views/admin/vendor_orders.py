@@ -10,7 +10,7 @@ from ... import model, custom_validators
 from ...editing import BaseEditView, BaseListView, BaseCreateView
 
 
-@view_defaults(route_name='admin:vendor_order',
+@view_defaults(route_name='admin:vendor-order',
                renderer='admin/vendor_order.html')
 @lift()
 class VendorOrderEditView(BaseEditView):
@@ -22,19 +22,19 @@ class VendorOrderEditView(BaseEditView):
         new_comment = custom_validators.CommentBody()
 
 
-@view_defaults(route_name='admin:vendor_orders',
+@view_defaults(route_name='admin:vendor-orders',
                renderer='admin/vendor_orders.html')
 @lift()
 class VendorOrderListView(BaseListView):
     cls = model.VendorOrder
 
 
-@view_defaults(route_name='admin:vendor_orders:new',
+@view_defaults(route_name='admin:vendor-orders:new',
                renderer='admin/vendor_orders_new.html')
 @lift()
 class VendorOrderCreateView(BaseCreateView):
     cls = model.VendorOrder
-    obj_route_name = 'admin:vendor_order'
+    obj_route_name = 'admin:vendor-order'
 
     class CreateForm(Schema):
         allow_extra_fields = False

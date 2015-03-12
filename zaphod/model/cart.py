@@ -56,7 +56,7 @@ class CartItem(Base):
     shipping_price = Column(custom_types.Money, nullable=False)
     stage = Column(types.Integer, nullable=False)
 
-    expected_delivery_date = Column(types.DateTime, nullable=True)
+    expected_ship_date = Column(types.DateTime, nullable=True)
     shipped_date = Column(types.DateTime, nullable=True)
     shipment_id = Column(None, ForeignKey('shipments.id'), nullable=True)
     batch_id = Column(None, ForeignKey('batches.id'), nullable=True)
@@ -131,7 +131,7 @@ class CartItem(Base):
         project may have changed status.
 
         This method may update .qty_desired, .stage, .batch,
-        .expected_delivery_date, and associated Item instances.
+        .expected_ship_date, and associated Item instances.
 
         Before doing anything, make sure that this cart item has no associated
         order.
@@ -154,7 +154,7 @@ class CartItem(Base):
             self.stage = CROWDFUNDING
             self.batch = self.product.select_batch(self.qty_desired)
             assert self.batch
-            self.expected_delivery_date = self.batch.delivery_date
+            self.expected_ship_date = self.batch.ship_date
             self.release_stock()
             return True
         else:
@@ -165,19 +165,19 @@ class CartItem(Base):
 
                 self.stage = STOCK
                 self.batch = None
-                self.expected_delivery_date = utils.shipping_day()
+                self.expected_ship_date = utils.shipping_day()
                 self.release_stock()
                 return True
             elif project.accepts_preorders and self.product.accepts_preorders:
                 self.stage = PREORDER
                 self.batch = self.product.select_batch(self.qty_desired)
-                self.expected_delivery_date = self.batch.delivery_date
+                self.expected_ship_date = self.batch.ship_date
                 self.release_stock()
                 return True
             else:
                 # This thing is no longer available.
                 self.qty_desired = 0
                 self.batch = None
-                self.expected_delivery_date = None
+                self.expected_ship_date = None
                 self.release_stock()
                 return False

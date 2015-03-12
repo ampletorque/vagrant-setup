@@ -30,8 +30,8 @@ ${project_header.project_header(obj)}
               <tr>
                 <td><strong>Earliest Open Delivery Date</strong></td>
                 <td>
-                  % if earliest_open_delivery_date:
-                    ${h.format_datetime(request, earliest_open_delivery_date)}
+                  % if earliest_open_ship_date:
+                    ${h.format_datetime(request, earliest_open_ship_date)}
                   % else:
                     No open orders
                   % endif

@@ -19,7 +19,7 @@ class Batch(Base):
     product_id = Column(None, ForeignKey('products.id'), nullable=False)
     # None for qty means infinite units can be delivered in this batch.
     qty = Column(types.Integer, nullable=True)
-    delivery_date = Column(types.DateTime, nullable=False)
+    ship_date = Column(types.DateTime, nullable=False)
 
 
 class Product(Base, ImageMixin):
@@ -70,11 +70,11 @@ class Product(Base, ImageMixin):
         return self.select_batch(qty=1)
 
     @property
-    def current_delivery_date(self):
+    def current_ship_date(self):
         """
         Return the delivery date for the currently 'open' batch.
         """
-        return self.current_batch.delivery_date
+        return self.current_batch.ship_date
 
     @property
     def qty_available(self):

@@ -27,9 +27,9 @@
       ${item.status_description}<br>
       SKU: ${item.sku.id}<br>
       Reserved: ${item.qty_reserved}<br>
-      Original Delivery: ${item.expected_delivery_date}<br>
+      Original Delivery: ${item.expected_ship_date}<br>
       % if item.batch:
-        Current: ${item.batch.delivery_date}
+        Current: ${item.batch.ship_date}
       % endif
     </td>
     <td style="width:125px">

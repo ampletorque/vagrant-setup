@@ -42,7 +42,7 @@ ${project_header.project_header(obj.project)}
               <tbody>
                 % for batch in obj.batches:
                   <tr>
-                    <td>${batch.delivery_date}</td>
+                    <td>${batch.ship_date}</td>
                     <td>
                       % if batch.qty:
                         ${batch.qty}

@@ -217,7 +217,7 @@ def migrate_projects(settings, creator_map, tag_map):
                 print("      batch %s" % old_batch.id)
                 batch = model.Batch(
                     qty=old_batch.qty,
-                    delivery_date=old_batch.delivery_date
+                    ship_date=old_batch.delivery_date,
                 )
                 batch_map[old_batch] = batch
                 product.batches.append(batch)

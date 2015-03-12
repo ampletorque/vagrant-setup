@@ -231,10 +231,10 @@ def migrate_orders(settings, product_map, option_value_map,
         shipping_prices = item_shipping_prices(old_order)
         item_map = {}
         for old_ci in old_order.cart.items:
-            delivery_date = None
+            ship_date = None
             old_batch = getattr(old_ci, 'batch', None)
             if old_batch:
-                delivery_date = old_ci.batch.delivery_date
+                ship_date = old_ci.batch.delivery_date
             product = product_map[old_ci.product]
             sku = model.sku_for_option_value_ids_sloppy(
                 product,
@@ -252,7 +252,7 @@ def migrate_orders(settings, product_map, option_value_map,
                 shipping_price=(shipping_prices[old_ci]
                                 if shipping_prices else 0),
                 shipped_date=old_ci.shipped_date,
-                expected_delivery_date=delivery_date,
+                expected_ship_date=ship_date,
             )
             item_map[old_ci] = ci
             if old_batch:

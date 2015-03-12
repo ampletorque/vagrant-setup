@@ -19,7 +19,7 @@
           % if item.sku and item.sku.option_values:
             ${blocks.option_value_list(item.sku)}
           % endif
-          <p>Ships ${item.expected_delivery_date.strftime('%B %Y')}</p>
+          <p>Ships ${item.expected_ship_date.strftime('%B %Y')}</p>
         </div>
       </div>
     </div>

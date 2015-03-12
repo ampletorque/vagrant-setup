@@ -152,7 +152,7 @@ class CartItem(Base):
         project = self.product.project
         if project.status == 'crowdfunding':
             self.stage = CROWDFUNDING
-            self.batch = product.select_batch(self.qty_desired)
+            self.batch = self.product.select_batch(self.qty_desired)
             assert self.batch
             self.expected_delivery_date = self.batch.delivery_date
             self.release_stock()
@@ -168,9 +168,9 @@ class CartItem(Base):
                 self.expected_delivery_date = utils.shipping_day()
                 self.release_stock()
                 return True
-            elif project.accepts_preorders and product.accepts_preorders:
+            elif project.accepts_preorders and self.product.accepts_preorders:
                 self.stage = PREORDER
-                self.batch = product.select_batch(self.qty_desired)
+                self.batch = self.product.select_batch(self.qty_desired)
                 self.expected_delivery_date = self.batch.delivery_date
                 self.release_stock()
                 return True

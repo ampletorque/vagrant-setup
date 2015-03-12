@@ -140,7 +140,9 @@ class OptionValue(Base):
     id = Column(types.Integer, primary_key=True)
     option_id = Column(None, ForeignKey('options.id'), nullable=False)
     description = Column(types.Unicode(255), nullable=False, default=u'')
+    price_increase = Column(custom_types.Money, nullable=False, default=0)
     gravity = Column(types.Integer, nullable=False, default=0)
+    is_default = Column(types.Boolean, nullable=True)
     published = Column(types.Boolean, nullable=False, default=False)
 
     option = orm.relationship('Option', backref='values')

@@ -208,7 +208,9 @@ def migrate_projects(settings, creator_map, tag_map):
                     print("        value %s" % old_value.description)
                     value = model.OptionValue(
                         description=old_value.description,
+                        price_increase=old_value.price_increase,
                         gravity=old_value.gravity,
+                        is_default=old_value.is_default,
                         published=old_value.enabled,
                     )
                     option.values.append(value)

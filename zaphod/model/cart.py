@@ -102,7 +102,10 @@ class CartItem(Base):
         """
         Calculate the price of this item.
         """
-        return self.product.price
+        price = self.product.price
+        for ov in self.option_values:
+            price += ov.price_increase
+        return price
 
     @property
     def total(self):

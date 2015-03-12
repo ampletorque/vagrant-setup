@@ -425,6 +425,27 @@
 </%def>
 
 
+<%def name="creator_block(project)">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="project-block">
+        <div class="row">
+          <div class="col-sm-3">
+            ${project.creator.img(request, 'creator-profile')}
+          </div>
+
+          <div class="col-sm-9">
+            ${self.creator_info(project.creator)}
+          </div>
+        </div>
+
+        ${self.owners(project)}
+      </div>
+    </div>
+  </div>
+</%def>
+
+
 <%blocks:admin_bar>
   <p>
     <a href="${request.route_path('admin:project', id=project.id)}">
@@ -499,23 +520,7 @@
         </div>
       </div>
 
-      <div class="row">
-        <div class="col-lg-12">
-          <div class="project-block">
-            <div class="row">
-              <div class="col-sm-3">
-                ${project.creator.img(request, 'creator-profile')}
-              </div>
-
-              <div class="col-sm-9">
-                ${self.creator_info(project.creator)}
-              </div>
-            </div>
-
-            ${self.owners(project)}
-          </div>
-        </div>
-      </div>
+      ${self.creator_block(project)}
     </div>
   </section>
 % endif

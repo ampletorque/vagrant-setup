@@ -32,7 +32,10 @@ ${regions.product_header(obj)}
                 <tr>
                   <td>${sku.id}</td>
                   <td>${blocks.option_value_list(sku)}</td>
-                  <td>${sku.qty}</td>
+                  <td>
+                    ${sku.qty}<br>
+                    <a href="${request.route_path('admin:adjust-inventory', id=sku.id)}">Adjust</a>
+                  </td>
                   <td>${sku.qty_available}</td>
                 </tr>
               % endfor

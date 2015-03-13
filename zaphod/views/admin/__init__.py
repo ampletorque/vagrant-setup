@@ -35,6 +35,8 @@ def includeme(config):
     config.add_route('admin:product:options', '/product/{id}/options')
     config.add_route('admin:product:skus', '/product/{id}/skus')
 
+    config.add_route('admin:adjust-inventory', '/adjust-inventory/{id}')
+
     config.add_route('admin:update', '/update/{id}')
 
     config.add_route('admin:users', '/users')

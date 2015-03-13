@@ -12,7 +12,7 @@ class Acquisition(Base):
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     discriminator = Column(types.String(255), nullable=False)
-    sku_id = Column(None, ForeignKey('skus.id'), nullable=True)
+    sku_id = Column(None, ForeignKey('skus.id'), nullable=False)
     acquisition_time = Column(types.DateTime, nullable=False,
                               default=utils.utcnow)
 

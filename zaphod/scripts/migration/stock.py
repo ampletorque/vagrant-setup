@@ -16,6 +16,8 @@ def migrate_inventory_adjustments():
             scrappy_meta.Session.query(scrappy_model.InventoryAdjustment):
         adj = model.InventoryAdjustment(
             id=old_adj.id,
+            sku_id=old_adj.sku_id,
+            acquisition_time=old_adj.acquisition_time,
             qty_diff=old_adj.qty_diff,
             user_id=old_adj.account_id,
             reason=old_adj.reason,

@@ -5,9 +5,10 @@ from sqlalchemy import Table, Column, ForeignKey, types, orm
 from sqlalchemy.sql import or_
 from sqlalchemy.orm.exc import NoResultFound
 
+from . import utils
 from .base import Base, Session
 from .product import OptionValue
-from .item import Acquisition, Item
+from .item import Acquisition, Item, InventoryAdjustment
 from .cart import CartItem
 
 
@@ -58,6 +59,34 @@ class SKU(Base):
             filter(Item.destroy_time == None,
                    Item.cart_item_id == None,
                    Acquisition.sku == self).count()
+
+    def adjust_qty(self, qty_diff, reason, user):
+        utcnow = utils.utcnow()
+        assert qty_diff != 0
+        adj = InventoryAdjustment(
+            qty_diff=qty_diff,
+            reason=reason,
+            user=user,
+            acquisition_time=utcnow,
+            sku=self,
+        )
+        Session.add(adj)
+        if qty_diff > 0:
+            # Add new Item instances.
+            for __ in range(qty_diff):
+                Session.add(Item(acquisition=adj, create_time=utcnow))
+        elif qty_diff < 0:
+            # Get the N oldest in-stock items for this SKU to destroy.
+            q = Session.query(Item).\
+                join(Item.acquisition).\
+                filter(Acquisition.sku == self).\
+                filter(Item.cart_item_id == None).\
+                filter(Item.destroy_time == None).\
+                order_by(Item.id).\
+                limit(-qty_diff)
+            for item in q:
+                item.destroy_time = utcnow
+        Session.flush()
 
 
 def sku_for_option_value_ids(product, ov_ids):

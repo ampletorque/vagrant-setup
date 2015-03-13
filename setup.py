@@ -24,7 +24,6 @@ requires = [
     'pyramid_cron>=0.1',
     'zope.sqlalchemy>=0.7.3',
     'waitress>=0.8.7',
-    'webhelpers2>=2.0b5',
     'cryptacular>=1.4.1',
     'pymysql>=0.6.2',
     'premailer>=1.13',

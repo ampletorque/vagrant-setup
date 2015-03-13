@@ -13,9 +13,9 @@ try:
 except ImportError:
     scrappy_model = None
 
-from .. import model
+from ... import model
 
-from .migration import images, users, content, orders, vendors, stock
+from . import images, users, content, orders, vendors, stock
 
 
 old_url = 'mysql+pymysql://crowdsupply:quux@localhost/crowdsupply?charset=utf8'

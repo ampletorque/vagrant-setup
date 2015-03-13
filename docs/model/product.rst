@@ -1,5 +1,5 @@
-Pledge
-======
+Product
+=======
 
 .. automodule:: zaphod.model.product
     :members:

@@ -5,7 +5,7 @@ define(['jquery', 'moment', 'teal/datepicker'], function ($, moment) {
   "use strict";
 
   function formatDate(d) {
-    return moment(d).format('MM/DD/YYYY');
+    return moment(d).format('YYYY-MM-DD');
   }
 
   function formatDateLabel(d) {
@@ -30,14 +30,15 @@ define(['jquery', 'moment', 'teal/datepicker'], function ($, moment) {
     'a-while',
   ];
 
-  function DateRange(element, options) {
+  function DateRange(element) {
     this.$el = $(element);
     this.init();
   }
 
   DateRange.prototype = {
     infoFor: function(range) {
-      var start = new Date(),
+      var label,
+          start = new Date(),
           end = new Date();
 
       switch(range) {
@@ -186,7 +187,7 @@ define(['jquery', 'moment', 'teal/datepicker'], function ($, moment) {
 
       var found_named_range = false;
 
-      for (ii = 0; ii < ranges.length; ii++) {
+      for (var ii = 0; ii < ranges.length; ii++) {
         var rr = ranges[ii],
             info = this.infoFor(rr);
         this.$dropdown.append($('<li><a href="#" class="js-date-range" data-range="' + rr + '">' + info.range_label + '</a></li>'));
@@ -207,7 +208,7 @@ define(['jquery', 'moment', 'teal/datepicker'], function ($, moment) {
 
   $(function () {
     $('.js-date-range-friendly').each(function() {
-      var d = new DateRange(this, options); 
+      var d = new DateRange(this); 
     });
 
     $('.js-date-range-form').on('daterange.change', function(e) {

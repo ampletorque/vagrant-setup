@@ -10,19 +10,19 @@ except ImportError:
 
 from ... import model
 
+from . import utils
 
-def get_creator_id(old_vo):
-    creators = set()
-    for voi in old_vo.items:
-        assert voi.product.project, "voi %d has no project" % voi.id
-        creators.add(voi.product.project.creator)
-    assert len(creators) == 1, \
-        "not one creatorfor order %d: %r" % (old_vo.id,
-                                             [creator.id for creator in
-                                              creators])
-    creator = list(creators)[0]
-    assert creator
-    return creator.id
+
+def migrate_vendors():
+    for old_vendor in scrappy_meta.Session.query(scrappy_model.Vendor):
+        print("  vendor %s" % old_vendor.id)
+        vendor = model.Vendor(
+            id=old_vendor.id,
+            name=old_vendor.name,
+            active=old_vendor.active,
+            mailing=utils.convert_address(old_vendor.mailing),
+        )
+        model.Session.add(vendor)
 
 
 def migrate_vendor_orders(settings, product_map, option_value_map):
@@ -30,10 +30,10 @@ def migrate_vendor_orders(settings, product_map, option_value_map):
         print("  vendor order %s" % old_vo.id)
         vo = model.VendorOrder(
             id=old_vo.id,
+            vendor_id=old_vo.vendor_id,
             reference=old_vo.order_num,
             description=old_vo.description,
             status=old_vo.status.value,
-            creator_id=get_creator_id(old_vo),
             placed_by_id=old_vo.placed_by_id,
             placed_time=old_vo.placed_time,
             updated_by_id=old_vo.updated_by_id,

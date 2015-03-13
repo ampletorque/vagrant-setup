@@ -5,7 +5,7 @@ import sys
 
 import transaction
 
-from sqlalchemy import create_engine, engine_from_config
+from sqlalchemy import MetaData, create_engine, engine_from_config
 from pyramid.paster import get_appsettings, setup_logging
 
 try:
@@ -15,7 +15,7 @@ except ImportError:
 
 from .. import model
 
-from .migration import images, users, content, orders, vendor_orders, stock
+from .migration import images, users, content, orders, vendors, stock
 
 
 old_url = 'mysql+pymysql://crowdsupply:quux@localhost/crowdsupply?charset=utf8'
@@ -28,6 +28,14 @@ def usage(argv):
     sys.exit(1)
 
 
+def drop_existing_tables(engine):
+    "Drop all tables, including tables that aren't defined in metadata."
+    temp_metadata = MetaData()
+    temp_metadata.reflect(bind=engine)
+    for table in reversed(temp_metadata.sorted_tables):
+        table.drop(bind=engine)
+
+
 def main(argv=sys.argv):
     if len(argv) < 2:
         usage(argv)
@@ -36,8 +44,9 @@ def main(argv=sys.argv):
     settings = get_appsettings(config_uri)
 
     engine = engine_from_config(settings, 'sqlalchemy.')
+    drop_existing_tables(engine)
+
     model.Session.configure(bind=engine)
-    model.Base.metadata.drop_all(engine)
     model.Base.metadata.create_all(engine)
 
     old_engine = create_engine(old_url)
@@ -69,8 +78,8 @@ def main(argv=sys.argv):
         orders.migrate_orders(settings, product_map,
                               option_value_map, batch_map)
 
-        vendor_orders.migrate_vendor_orders(settings, product_map,
-                                            option_value_map)
+        vendors.migrate_vendors()
+        vendors.migrate_vendor_orders(settings, product_map, option_value_map)
 
         stock.migrate_inventory_adjustments()
         stock.migrate_items()

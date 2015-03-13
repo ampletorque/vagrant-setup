@@ -4,16 +4,26 @@ from __future__ import (absolute_import, division, print_function,
 from sqlalchemy import Column, ForeignKey, types, orm
 
 from . import custom_types
+from .address import make_address_columns
 from .base import Base
 from .user_mixin import UserMixin
 from .comment import CommentMixin
+
+
+class Vendor(Base, UserMixin, CommentMixin):
+    __tablename__ = 'vendors'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+    id = Column(types.Integer, primary_key=True)
+    name = Column(types.Unicode(50), nullable=False)
+    active = Column(types.Boolean, nullable=False, default=True)
+    mailing = make_address_columns('mailing')
 
 
 class VendorOrder(Base, UserMixin, CommentMixin):
     __tablename__ = 'vendor_orders'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
-    creator_id = Column(None, ForeignKey('creators.node_id'), nullable=False)
+    vendor_id = Column(None, ForeignKey('vendors.id'), nullable=False)
     reference = Column(types.Unicode(255), nullable=False, default=u'')
     description = Column(types.UnicodeText, nullable=False, default=u'')
 
@@ -22,7 +32,7 @@ class VendorOrder(Base, UserMixin, CommentMixin):
 
     status = Column(types.String(255), nullable=False)
 
-    creator = orm.relationship('Creator', backref='orders')
+    vendor = orm.relationship('Vendor', backref='orders')
     placed_by = orm.relationship('User', foreign_keys=[placed_by_id])
 
     available_statuses = {

@@ -131,11 +131,12 @@ class OrderEditView(BaseEditView):
                 assert ci.cart.order == order
                 items.add(ci)
             if items:
-                order.ship_items(items=items,
-                                 tracking_number=form.data['tracking_number'],
-                                 cost=form.data['cost'],
-                                 shipped_by_creator=form.data['shipped_by_creator'],
-                                 user=request.user)
+                order.ship_items(
+                    items=items,
+                    tracking_number=form.data['tracking_number'],
+                    cost=form.data['cost'],
+                    shipped_by_creator=form.data['shipped_by_creator'],
+                    user=request.user)
                 request.flash("Order updated.", 'success')
                 return HTTPFound(location=request.route_url('admin:order',
                                                             id=order.id))
@@ -151,6 +152,7 @@ class OrderEditView(BaseEditView):
         order = self._get_object()
         form = Form(request, schema=AddItemForm)
         if form.validate():
+            product = model.Product.get(form.data['product_id'])
             # XXX
 
             request.flash("Added '%s' to order." % product.name, 'success')

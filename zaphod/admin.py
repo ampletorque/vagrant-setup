@@ -6,7 +6,7 @@ from datetime import datetime
 
 from formencode import Schema, NestedVariables, ForEach, validators
 from pyramid.httpexceptions import HTTPFound, HTTPNotFound
-from pyramid.view import view_config, view_defaults
+from pyramid.view import view_config
 from pyramid_frontend.images.files import check_and_save_image
 
 from pyramid_uniform import Form, FormRenderer

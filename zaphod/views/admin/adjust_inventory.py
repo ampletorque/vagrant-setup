@@ -50,8 +50,9 @@ class AdjustInventoryView(object):
                                reason=dict(reasons)[form.data['reason']],
                                user=request.user)
                 request.flash("SKU qty updated.", 'success')
-                return HTTPFound(location=request.route_url('admin:product:skus',
-                                                            id=sku.product_id))
+                return HTTPFound(
+                    location=request.route_url('admin:product:skus',
+                                               id=sku.product_id))
             else:
                 request.flash("Qty was not changed.", 'error')
 

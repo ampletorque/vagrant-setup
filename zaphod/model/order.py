@@ -90,7 +90,8 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
         self.add_comment(user, comment_body)
         self.update_status()
 
-    def ship_items(self, items, tracking_number, cost, shipped_by_creator, user):
+    def ship_items(self, items, tracking_number, cost, shipped_by_creator,
+                   user):
         """
         Add a new shipment to an order, marking the supplied items as shipped.
         """

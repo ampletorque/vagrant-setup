@@ -115,7 +115,7 @@ class CartItem(Base):
         Calculate the price of this item.
         """
         price = self.product.price
-        for ov in self.option_values:
+        for ov in self.sku.option_values:
             price += ov.price_increase
         return price
 
@@ -163,6 +163,8 @@ class CartItem(Base):
         # XXX The batch allocation needs to take into account qty-- e.g. if
         # there is only a certain qty available in crowdfunding, decrement the
         # qty.
+
+        self.price_each = self.calculate_price()
 
         project = self.product.project
         if project.status == 'crowdfunding':

@@ -117,10 +117,9 @@ class CartView(object):
                 sku=sku,
                 status='cart',
                 stage=0,
+                price_each=0
             )
-            ci.price_each = ci.calculate_price()
             ci.refresh()
-            model.Session.add(ci)
 
             request.flash("Added '%s' to your shopping cart." % product.name,
                           'success')

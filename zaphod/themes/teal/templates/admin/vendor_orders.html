@@ -18,7 +18,7 @@
               <tr>
                 <th></th>
                 <th>ID</th>
-                <th>Creator</th>
+                <th>Vendor</th>
                 <th>Status</th>
                 <th>Placed</th>
               </tr>
@@ -30,7 +30,7 @@
                     <a href="${request.route_path('admin:vendor-order', id=vendor_order.id)}">Edit</a>
                   </td>
                   <td>${vendor_order.id}</td>
-                  <td>${vendor_order.creator.name}</td>
+                  <td>${vendor_order.vendor.name}</td>
                   <td>${vendor_order.status_description}</td>
                   <td>
                     % if vendor_order.placed_time:

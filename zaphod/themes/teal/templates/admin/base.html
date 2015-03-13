@@ -81,8 +81,14 @@
               <li><a href="${request.route_path('admin:providers')}">Providers</a></li>
             </ul>
           </li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Buying <span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="${request.route_path('admin:vendors')}">Vendors</a></li>
+              <li><a href="${request.route_path('admin:vendor-orders')}">Vendor Orders</a></li>
+            </ul>
+          </li>
           ${self.admin_tab('Orders', request.route_path('admin:orders'))}
-          ${self.admin_tab('Buying', request.route_path('admin:vendor-orders'))}
           ${self.admin_tab('Users', request.route_path('admin:users'))}
           ${self.admin_tab('Leads', request.route_path('admin:leads'))}
           ${self.admin_tab('Reports', request.route_path('admin:reports'))}

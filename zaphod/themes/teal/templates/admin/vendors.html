@@ -1,0 +1,48 @@
+<%inherit file="base.html"/>
+
+<%def name="title()">List Vendors </%def>
+
+
+<section class="section-admin-vendors">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="pull-right">
+          <a class="btn btn-default" href="${request.route_path('admin:vendors:new')}"><i class="fa fa-plus"></i> New Vendor</a>
+        </div>
+
+        <h1 class="page-header">Vendors <small>${len(objs)} total</small></h1>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Active</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+            <tbody>
+              % for vendor in objs:
+                <tr>
+                  <td>
+                    <a href="${request.route_path('admin:vendor', id=vendor.id)}">Edit</a>
+                  </td>
+                  <td>${vendor.id}</td>
+                  <td>${vendor.name}</td>
+                  <td>
+                    % if vendor.active:
+                      Yes
+                    % endif
+                  </td>
+                  <td>${h.format_datetime(request, vendor.created_time)}
+                </tr>
+              % endfor
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

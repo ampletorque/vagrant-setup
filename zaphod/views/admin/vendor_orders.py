@@ -38,13 +38,13 @@ class VendorOrderCreateView(BaseCreateView):
 
     class CreateForm(Schema):
         allow_extra_fields = False
-        creator_id = validators.Int(not_empty=True)
+        vendor_id = validators.Int(not_empty=True)
 
     @view_config(permission='authenticated')
     def create(self):
         vars = BaseCreateView.create(self)
-        vars['creators'] = \
-            model.Session.query(model.Creator.id,
-                                model.Creator.name).\
-            order_by(model.Creator.name.desc())
+        vars['vendors'] = \
+            model.Session.query(model.Vendor.id,
+                                model.Vendor.name).\
+            order_by(model.Vendor.name.desc())
         return vars

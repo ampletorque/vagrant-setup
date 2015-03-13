@@ -3,7 +3,7 @@
 <%namespace name="forms" file="/common/forms.html"/>
 
 
-<%def name="title()">New Vendor Order</%def>
+<%def name="title()">New Vendor</%def>
 
 
 <section class="section-admin-new">
@@ -14,11 +14,11 @@
 
         ${renderer.begin(id='create-form', class_='form-horizontal form-wrapped')}
 
-          ${forms.lselect(renderer, 'vendor_id', None, vendors, label='Vendor', prompt='Select Vendor')}
+          ${forms.ltext(renderer, 'name')}
 
           <%forms:actions>
             <button class="btn btn-primary" type="submit">Save</button>
-            <a class="btn btn-default" href="${request.route_path('admin:vendor-orders')}">Cancel</a>
+            <a class="btn btn-default" href="${request.route_path('admin:vendors')}">Cancel</a>
           </%forms:actions>
 
         ${renderer.end()}

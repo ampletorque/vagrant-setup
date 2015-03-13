@@ -63,6 +63,10 @@ def includeme(config):
     config.add_route('admin:order:refund', '/order/{id}/refund')
     config.add_route('admin:order:add-item', '/order/{id}/add-item')
 
+    config.add_route('admin:vendors', '/vendors')
+    config.add_route('admin:vendors:new', '/vendors/new')
+    config.add_route('admin:vendor', '/vendor/{id}')
+
     config.add_route('admin:vendor-orders', '/vendor-orders')
     config.add_route('admin:vendor-orders:new', '/vendor-orders/new')
     config.add_route('admin:vendor-order', '/vendor-order/{id}')

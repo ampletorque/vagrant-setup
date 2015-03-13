@@ -516,14 +516,32 @@
         </div>
       </div>
 
-      <div class="row">
-        <div class="col-md-8">
-          ${next.body()}
+      % if not action:
+        <div class="row">
+          <div class="col-md-8">
+            % if project.crowdfunding_vimeo_id:
+              ${blocks.vimeo_embed(project.crowdfunding_vimeo_id)}
+            % else:
+              ${project.img(request, 'project-tile')}
+            % endif
+          </div>
+          <div class="col-md-4 project-sidebar">
+            ${self.sidebar(project)}
+          </div>
+          <div class="col-md-8">
+            ${next.body()}
+          </div>
         </div>
-        <div class="col-md-4">
-          ${self.sidebar(project)}
+      % else:
+        <div class="row">
+          <div class="col-md-8">
+            ${next.body()}
+          </div>
+          <div class="col-md-4 project-sidebar">
+            ${self.sidebar(project)}
+          </div>
         </div>
-      </div>
+      % endif
 
       ${self.creator_block(project)}
     </div>

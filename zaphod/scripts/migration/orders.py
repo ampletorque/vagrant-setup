@@ -263,8 +263,8 @@ def migrate_orders(settings, product_map, option_value_map,
             shipment = model.Shipment(
                 order=order,
                 tracking_number=','.join(list(old_shipment.tracking_num)),
-                source=old_shipment.source,
                 cost=old_shipment.cost,
+                shipped_by_creator=False,
             )
             for old_ci in old_shipment.items:
                 shipment.items.append(item_map[old_ci])

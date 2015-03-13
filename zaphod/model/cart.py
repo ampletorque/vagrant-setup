@@ -96,7 +96,19 @@ class CartItem(Base):
         """
         Update the status of this item. Validates acceptable transitions.
         """
-        raise NotImplementedError
+        valid_transitions = {
+            'unfunded': ('failed', 'cancelled', 'payment pending'),
+            'payment pending': ('cancelled', 'waiting', 'payment failed'),
+            'payment failed': ('waiting', 'cancelled', 'abandoned'),
+            'waiting': ('cancelled', 'in process'),
+            'in process': ('cancelled', 'being packed', 'shipped'),
+            'being packed': ('shipped',),
+        }
+        valid_next_statuses = valid_transitions.get(self.status, ())
+        assert new_value in valid_next_statuses, \
+            "invalid next cart item status: cannot %r -> %r" % (self.status,
+                                                                new_value)
+        self.status = new_value
 
     def calculate_price(self):
         """

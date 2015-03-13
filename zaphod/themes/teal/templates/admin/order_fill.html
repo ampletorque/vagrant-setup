@@ -14,7 +14,38 @@
 
         ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
 
-          <p>WIP: add fill form here.</p>
+          <%forms:element label="Items" hint="Select items in this shipment.">
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Shipped?</th>
+                    <th>Qty</th>
+                    <th>Item</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  % for item in obj.cart.items:
+                    % if not item.closed:
+                      <tr>
+                        <td>${renderer.checkbox('item_ids', value=item.id)}</td>
+                        <td>${item.qty_desired}</td>
+                        <td>
+                          <strong>${item.product.name}</strong><br>
+                          ${item.product.project.name}<br>
+                          ${blocks.option_value_list(item.sku)}
+                        </td>
+                      </tr>
+                    % endif
+                  % endfor
+                </tbody>
+              </table>
+            </div>
+          </%forms:element>
+
+          ${forms.ltext(renderer, 'tracking_number', label='Tracking Number', hint='Carrier-supplied package tracking number.')}
+          ${forms.ltext(renderer, 'cost', prefix='$', hint="Crowd Supply's cost to ship this package.")}
+          ${forms.lcheckbox(renderer, 'shipped_by_creator')}
 
           <%forms:actions>
             <button class="btn btn-primary" type="submit">Save</button>

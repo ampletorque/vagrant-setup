@@ -34,6 +34,7 @@ cannot transition into any other state, are outlined in bold.
 
         "Waiting for items" -> "In process";
         "In process" -> "Being packed";
+        "In process" -> Shipped;
         "Being packed" -> Shipped;
 
         Unfunded -> Cancelled;

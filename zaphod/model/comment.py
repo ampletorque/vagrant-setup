@@ -53,7 +53,10 @@ class CommentMixin(object):
     def new_comment(self, value):
         if value:
             user, body = value
-            self.comments.append(self.Comment(
-                created_by=user,
-                body=body,
-            ))
+            self.add_comment(body, user)
+
+    def add_comment(self, user, body):
+        self.comments.append(self.Comment(
+            created_by=user,
+            body=body,
+        ))

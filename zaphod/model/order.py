@@ -5,7 +5,7 @@ from sqlalchemy import Column, ForeignKey, types, orm
 
 from pyramid_es.mixin import ElasticMixin, ESMapping, ESField
 
-from . import custom_types
+from . import utils, custom_types
 from .address import make_address_columns
 from .base import Base
 from .user_mixin import UserMixin
@@ -75,11 +75,39 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
         """
         self.closed = all(ci.closed for ci in self.cart.items)
 
-    def ship_items(self, items, tracking_num, source, cost):
+    def cancel(self, items, reason, user):
+        """
+        Cancel items on this order.
+        """
+        for item in items:
+            item.release_stock()
+            item.update_status('cancelled')
+        comment_body = 'Order cancelled.'
+        if reason:
+            comment_body += (' Details: %s' % reason)
+        else:
+            comment_body += ' No details specified.'
+        self.add_comment(user, comment_body)
+        self.update_status()
+
+    def ship_items(self, items, tracking_number, cost, shipped_by_creator, user):
         """
         Add a new shipment to an order, marking the supplied items as shipped.
         """
-        raise NotImplementedError
+        utcnow = utils.utcnow()
+        shipment = Shipment(
+            tracking_number=tracking_number,
+            cost=cost,
+            shipped_by_creator=shipped_by_creator,
+            created_by=user,
+            shipping=self.shipping,
+        )
+        self.shipments.append(shipment)
+        for item in items:
+            item.shipped_date = utcnow
+            item.shipment = shipment
+            item.update_status('shipped')
+        self.update_status()
 
     @classmethod
     def elastic_mapping(cls):
@@ -111,16 +139,9 @@ class Shipment(Base, UserMixin):
     id = Column(types.Integer, primary_key=True)
     order_id = Column(None, ForeignKey('orders.id'), nullable=False)
     tracking_number = Column(types.String(255), nullable=True)
-    source = Column(types.CHAR(4), nullable=False)
     cost = Column(custom_types.Money, nullable=True)
+    shipped_by_creator = Column(types.Boolean, nullable=False)
     shipping = make_address_columns('shipping')
 
     order = orm.relationship('Order', backref='shipments')
     items = orm.relationship('CartItem', backref='shipments')
-
-    available_sources = {'hist': u'Historical Data Population',
-                         'manl': u'Manually Marked as Shipped'}
-
-    @property
-    def source_description(self):
-        return self.available_sources[self.source]

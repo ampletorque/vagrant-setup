@@ -14,7 +14,36 @@
 
         ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
 
-          <p>WIP: add cancellation form here.</p>
+          <%forms:element label="Items To Cancel" hint="Select at least one item.">
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Cancel?</th>
+                    <th>Qty</th>
+                    <th>Item</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  % for item in obj.cart.items:
+                    % if not item.closed:
+                      <tr>
+                        <td>${renderer.checkbox('item_ids', value=item.id)}</td>
+                        <td>${item.qty_desired}</td>
+                        <td>
+                          <strong>${item.product.name}</strong><br>
+                          ${item.product.project.name}<br>
+                          ${blocks.option_value_list(item.sku)}
+                        </td>
+                      </tr>
+                    % endif
+                  % endfor
+                </tbody>
+              </table>
+            </div>
+          </%forms:element>
+
+          ${forms.ltextarea(renderer, 'reason', hint='Optional comments about why the customer is cancelling their order.')}
 
           <%forms:actions>
             <button class="btn btn-primary" type="submit">Save</button>

@@ -120,8 +120,11 @@
           <a class="btn btn-primary" href="${request.route_path('admin:order:print', id=obj.id)}">Print Invoice</a>
           <a class="btn btn-primary" href="${request.route_path('admin:order:resend-confirmation', id=obj.id)}">Resend Order Confirmation</a>
           <a class="btn btn-primary" href="${request.route_path('admin:order:resend-shipping-confirmation', id=obj.id)}">Resend Order Confirmation</a>
-          <a class="btn btn-danger" href="${request.route_path('admin:order:cancel', id=obj.id)}">Cancel Order</a>
-          <a class="btn btn-default" href="${request.route_path('admin:order:fill', id=obj.id)}">Fill Order</a>
+
+          % if not obj.closed:
+            <a class="btn btn-danger" href="${request.route_path('admin:order:cancel', id=obj.id)}">Cancel Order</a>
+            <a class="btn btn-default" href="${request.route_path('admin:order:fill', id=obj.id)}">Fill Order</a>
+          % endif
         </div>
 
         <div class="well">

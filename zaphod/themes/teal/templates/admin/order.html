@@ -119,7 +119,10 @@
         <div class="well">
           <a class="btn btn-primary" href="${request.route_path('admin:order:print', id=obj.id)}">Print Invoice</a>
           <a class="btn btn-primary" href="${request.route_path('admin:order:resend-confirmation', id=obj.id)}">Resend Order Confirmation</a>
-          <a class="btn btn-primary" href="${request.route_path('admin:order:resend-shipping-confirmation', id=obj.id)}">Resend Order Confirmation</a>
+
+          % if any(item.status == 'shipped' for item in obj.cart.items):
+            <a class="btn btn-primary" href="${request.route_path('admin:order:resend-shipping-confirmation', id=obj.id)}">Resend Shipping Confirmation</a>
+          % endif
 
           % if not obj.closed:
             <a class="btn btn-danger" href="${request.route_path('admin:order:cancel', id=obj.id)}">Cancel Order</a>

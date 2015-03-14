@@ -347,12 +347,14 @@
 
 <%def name="products(project)">
   <div class="project-block">
-    % for product in project.published_levels:
-      ${self.product_level(project, product)}
-      % if not loop.last:
-        <hr>
-      % endif
-    % endfor
+    <%blocks:collapse_on_mobile target="products" title="${'Pledge Now' if project.status == 'crowdfunding' else 'Product Choices'}">
+      % for product in project.published_levels:
+        ${self.product_level(project, product)}
+        % if not loop.last:
+          <hr>
+        % endif
+      % endfor
+    </%blocks:collapse_on_mobile>
   </div>
 </%def>
 
@@ -434,17 +436,18 @@
   <div class="row">
     <div class="col-lg-12">
       <div class="project-block">
-        <div class="row">
-          <div class="col-sm-3">
-            ${project.creator.img(request, 'creator-profile')}
-          </div>
+        <%blocks:collapse_on_mobile target="creator" title="Creator">
+          <div class="row">
+            <div class="col-sm-3">
+              ${project.creator.img(request, 'creator-profile')}
+            </div>
 
-          <div class="col-sm-9">
-            ${self.creator_info(project.creator)}
+            <div class="col-sm-9">
+              ${self.creator_info(project.creator)}
+            </div>
           </div>
-        </div>
-
-        ${self.owners(project)}
+          ${self.owners(project)}
+        </%blocks:collapse_on_mobile>
       </div>
     </div>
   </div>
@@ -518,26 +521,26 @@
 
       % if not action:
         <div class="row">
-          <div class="col-md-8">
+          <div class="col-md-8 project-media">
             % if project.crowdfunding_vimeo_id:
               ${blocks.vimeo_embed(project.crowdfunding_vimeo_id)}
             % else:
               ${project.img(request, 'project-tile')}
             % endif
           </div>
-          <div class="col-md-4 project-sidebar">
+          <div class="col-sm-4 project-sidebar">
             ${self.sidebar(project)}
           </div>
-          <div class="col-md-8">
+          <div class="col-sm-8">
             ${next.body()}
           </div>
         </div>
       % else:
         <div class="row">
-          <div class="col-md-8">
+          <div class="col-sm-8">
             ${next.body()}
           </div>
-          <div class="col-md-4 project-sidebar">
+          <div class="col-sm-4 project-sidebar">
             ${self.sidebar(project)}
           </div>
         </div>

@@ -154,3 +154,29 @@ section {
     padding-bottom: 0;
     margin: 20px 0;
 }
+
+.mobile-header {
+    &:hover, &:active, &:focus {
+        text-decoration: none;
+        outline: none;
+    }
+    h2 {
+        color: @cs-black;
+        margin: 0;
+        padding: 10px 0;
+        border-top: 1px solid lighten(@gray-light, 35%);
+
+        i {
+            margin-top: 10px;
+            float: right;
+            font-size: 0.6em;
+        }
+    }
+}
+
+@media (min-width: @screen-sm-min) {
+    .collapse.collapse-xs {
+        display: block;
+        visibility: visible;
+    }
+}

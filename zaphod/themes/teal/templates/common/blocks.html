@@ -54,3 +54,16 @@
   ${addr.city}, ${addr.state} ${addr.postal_code}<br>
   ${addr.country_name}
 </%def>
+
+
+<%def name="collapse_on_mobile(target, title)">
+  <a class="visible-xs mobile-header" data-toggle="collapse" data-target="#${target}" name="${target}-top" href="#${target}-top">
+    <h2>
+      ${title}
+      <i class="fa fa-chevron-right"></i>
+    </h2>
+  </a>
+  <div class="collapse collapse-xs" id="${target}">
+    ${caller.body()}
+  </div>
+</%def>

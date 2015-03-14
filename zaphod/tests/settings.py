@@ -13,4 +13,5 @@ settings = {
     'pyramid_frontend.theme': 'teal',
 
     'gimlet.secret': 's3krit',
+    'cache.backend': 'dogpile.cache.memory',
 }

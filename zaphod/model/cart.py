@@ -38,6 +38,16 @@ class Cart(Base):
     def non_physical(self):
         return all(ci.product.non_physical for ci in self.items)
 
+    @property
+    def international_available(self):
+        return all(ci.product.international_available
+                   for ci in self.items)
+
+    @property
+    def international_surcharge_total(self):
+        return sum(ci.product.international_surcharge
+                   for ci in self.items)
+
     def refresh(self):
         """
         Refresh item statuses and reservations.

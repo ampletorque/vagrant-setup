@@ -54,11 +54,17 @@
         <div class="col-md-8 col-md-offset-2">
           ${renderer.begin(id='checkout-form', class_='form-horizontal form-wrapped')}
 
-          % if not cart.non_physical:
+          <div class="js-international-surcharge">
+            % if cart.international_available:
+              <p>An surcharge of ${h.currency(cart.international_surcharge_total)} applies for international shipping.</p>
+            % else:
+              <p>International shipping is not available on some or all of the items in your cart.</p>
+            % endif
+          </div>
+            % if not cart.non_physical:
               <fieldset>
                 <legend>Shipping Information</legend>
                 ${forms.address_fields(renderer, 'shipping', None)}
-
               </fieldset>
             % endif
 

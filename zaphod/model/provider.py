@@ -20,6 +20,9 @@ provider_type_assoc = Table(
 
 
 class ProviderType(Node):
+    """
+    A type of service provider.
+    """
     __tablename__ = 'provider_types'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     node_id = Column(None, ForeignKey('nodes.id'), primary_key=True)
@@ -36,6 +39,9 @@ class ProviderType(Node):
 
 
 class Provider(Node):
+    """
+    A service provider in the 'provider database'.
+    """
     __tablename__ = 'providers'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     node_id = Column(None, ForeignKey('nodes.id'), primary_key=True)

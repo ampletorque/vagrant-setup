@@ -8,6 +8,10 @@ from .base import Base, Session
 
 
 class Acquisition(Base):
+    """
+    Represents a set of ``Item`` instances for a given SKU that were added to
+    inventory concurrently.
+    """
     __tablename__ = 'acquisitions'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
@@ -82,6 +86,9 @@ class Acquisition(Base):
 
 
 class VendorShipmentItem(Acquisition):
+    """
+    A line item on a received vendor shipment.
+    """
     __tablename__ = 'vendor_shipment_items'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     acquisition_id = Column(None, ForeignKey('acquisitions.id'),
@@ -118,6 +125,10 @@ class InventoryAdjustment(Acquisition):
 
 
 class Item(Base):
+    """
+    Represents one specific instance of stock. E.g. where "the red XL t-shirt"
+    is one ``SKU``, "the red XL t-shirt serial numbered 1234" is one ``Item``.
+    """
     __tablename__ = 'items'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)

@@ -32,6 +32,11 @@ related_projects = Table(
 
 
 class Project(Node, ElasticMixin):
+    """
+    A 'campaign' presented on a single page. May be a crowdfunding campaign,
+    but could also be pre-order or in-stock only. Has a set of products
+    associated with it, comparable to 'pledge levels'.
+    """
     __tablename__ = 'projects'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     node_id = Column(None, ForeignKey('nodes.id'), primary_key=True)
@@ -270,6 +275,9 @@ class Project(Node, ElasticMixin):
 
 
 class ProjectUpdate(Node):
+    """
+    A status update article associated with a given project.
+    """
     __tablename__ = 'project_updates'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     node_id = Column(None, ForeignKey('nodes.id'), primary_key=True)
@@ -283,6 +291,11 @@ class ProjectUpdate(Node):
 
 
 class ProjectOwner(Base):
+    """
+    An association between a project and a user which represents an "owner".
+    Includes additional metadata about how the project owner should be
+    displayed and what permissions they should have.
+    """
     __tablename__ = 'project_owners'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     project_id = Column(None, ForeignKey('projects.node_id'), primary_key=True)
@@ -301,6 +314,9 @@ class ProjectOwner(Base):
 
 
 class ProjectEmail(Base):
+    """
+    An e-mail signup that has expressed interest in a project.
+    """
     __tablename__ = 'project_emails'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)

@@ -15,8 +15,9 @@ from .address import make_address_columns
 
 class PaymentGateway(Base):
     """
-    An abstract payment gateway, cannot be instantiated directly. Subclass this
-    to represent different types of payment gateway credentials.
+    A payment gateway, which can have payments made against it. Tracks the
+    credentials used to authenticate to the upstream provider and make a given
+    payment.
     """
     __tablename__ = 'payment_gateways'
     __table_args__ = {'mysql_engine': 'InnoDB'}
@@ -40,6 +41,10 @@ class PaymentGateway(Base):
 
 
 class PaymentMethod(Base):
+    """
+    A stored payment method belonging to a user. Payments can be made on this
+    method.
+    """
     __tablename__ = 'payment_methods'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)

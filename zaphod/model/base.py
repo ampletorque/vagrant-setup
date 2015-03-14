@@ -10,6 +10,11 @@ from zope.sqlalchemy import ZopeTransactionExtension
 __all__ = ['Base', 'Session']
 
 
+"""
+SQLAlchemy session used for the entire Zaphod app. The Zope transaction
+extension is used, so this session automatically commits transactions in the
+scope of a request. Transactions should not be manually committed.
+"""
 Session = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 
 

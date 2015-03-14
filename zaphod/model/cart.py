@@ -9,12 +9,16 @@ from .item import Item
 
 
 class Cart(Base):
+    """
+    A user's shopping cart. This object is used for tracking added items prior
+    to and after checkout. After checkout, it will be associated with an Order.
+    """
     __tablename__ = 'carts'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
-    # Used for tracking stale Carts.
     updated_time = Column(types.DateTime, nullable=False,
-                          default=utils.utcnow, index=True)
+                          default=utils.utcnow, index=True,
+                          doc='Time this cart was refreshed by a user action.')
 
     order = orm.relationship('Order', uselist=False, backref='cart')
 
@@ -48,6 +52,10 @@ STOCK = 2
 
 
 class CartItem(Base):
+    """
+    An item in a user's cart. After checkout, this object is used for tracking
+    order fulfillment state.
+    """
     __tablename__ = 'cart_items'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
@@ -93,6 +101,9 @@ class CartItem(Base):
 
     @property
     def status_description(self):
+        """
+        Human-readable description of this item's status.
+        """
         return dict(self.available_statuses)[self.status]
 
     def update_status(self, new_value):
@@ -115,7 +126,8 @@ class CartItem(Base):
 
     def calculate_price(self):
         """
-        Calculate the price of this item.
+        Calculate the price of this item including selected product option
+        values.
         """
         price = self.product.price
         for ov in self.sku.option_values:
@@ -124,10 +136,16 @@ class CartItem(Base):
 
     @property
     def total(self):
+        """
+        Total price of this line item, including shipping.
+        """
         return (self.price_each + self.shipping_price) * self.qty_desired
 
     @property
     def qty_reserved(self):
+        """
+        Qty of product that is 'reserved' to this order.
+        """
         if self.stage == STOCK:
             return Session.query(Item).filter_by(cart_item=self).count()
         else:
@@ -135,10 +153,17 @@ class CartItem(Base):
 
     @property
     def closed(self):
+        """
+        True if this item is in a final, resolved state.
+        """
         return self.status in ('cancelled', 'shipped', 'abandoned', 'failed')
 
     def release_stock(self):
-        # XXX FIXME
+        """
+        Release any reserved stock associated with this item.
+
+        FIXME: not implemented yet
+        """
         pass
 
     def refresh(self):

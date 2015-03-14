@@ -11,6 +11,9 @@ from .comment import CommentMixin
 
 
 class Vendor(Base, UserMixin, CommentMixin):
+    """
+    A vendor from which wholesale inventory is purchased.
+    """
     __tablename__ = 'vendors'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
@@ -20,6 +23,9 @@ class Vendor(Base, UserMixin, CommentMixin):
 
 
 class VendorOrder(Base, UserMixin, CommentMixin):
+    """
+    An order placed from an upstream vendor.
+    """
     __tablename__ = 'vendor_orders'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
@@ -50,6 +56,9 @@ class VendorOrder(Base, UserMixin, CommentMixin):
 
 
 class VendorOrderItem(Base):
+    """
+    A line item in a vendor order.
+    """
     __tablename__ = 'vendor_order_items'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
@@ -76,6 +85,11 @@ class VendorOrderItem(Base):
 
 
 class VendorInvoice(Base, UserMixin, CommentMixin):
+    """
+    An invoice indicating costs due for a vendor order. Invoices should be used
+    to track all costs paid to a vendor: that is, no payments should ever be
+    made that do not match an invoice.
+    """
     __tablename__ = 'vendor_invoices'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
@@ -110,6 +124,9 @@ class VendorInvoice(Base, UserMixin, CommentMixin):
 
 
 class VendorInvoiceItem(Base):
+    """
+    A line item on a vendor invoice.
+    """
     __tablename__ = 'vendor_invoice_items'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
@@ -124,6 +141,9 @@ class VendorInvoiceItem(Base):
 
 
 class VendorShipment(Base, UserMixin):
+    """
+    A shipment of stock received against a vendor order.
+    """
     __tablename__ = 'vendor_shipments'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)

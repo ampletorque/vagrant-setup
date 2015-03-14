@@ -97,15 +97,25 @@ class Address(MutableComposite):
 
     @property
     def country_name(self):
+        """
+        Full name of the country for this address. An 'apolitical' name, chosen
+        to avoid controversy, is used instead of the exact ISO3166 name.
+        """
         lookup = {c.alpha2.lower(): c.name for c in countries}
         return lookup.get(self.country_code, self.country_code)
 
     @property
     def full_name(self):
+        """
+        Full name of addressee (first and last names concatenated).
+        """
         return "%s %s" % (self.first_name, self.last_name)
 
     @property
     def inline(self):
+        """
+        A single-line representation of this address.
+        """
         s = ''
         if self.address1:
             s += self.address1 + ', '

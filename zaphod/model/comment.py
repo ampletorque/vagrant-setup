@@ -11,7 +11,9 @@ from .base import Base
 
 
 class CommentMixin(object):
-
+    """
+    Mixin class which provides admin comment tracking on a model object.
+    """
     @declared_attr
     def comments(cls):
         if not issubclass(cls, Base):
@@ -56,6 +58,9 @@ class CommentMixin(object):
             self.add_comment(body, user)
 
     def add_comment(self, user, body):
+        """
+        Add a new comment to this object.
+        """
         self.comments.append(self.Comment(
             created_by=user,
             body=body,

@@ -22,6 +22,11 @@ sku_option_values = Table(
 
 
 class SKU(Base):
+    """
+    A stock-keeping-unit, representing a specific variant of a product. Any
+    stock items of the same "SKU" can be interchanged with each other without
+    any distinction.
+    """
     __tablename__ = 'skus'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)

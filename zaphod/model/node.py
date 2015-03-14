@@ -62,10 +62,17 @@ class Node(Base, ImageMixin, UserMixin, CommentMixin):
         self.override_path = override_path
 
     def generate_path(self):
+        """
+        Generate the recommended path for this node. This may be overridden in
+        subclasses to customize automatically generated paths.
+        """
         name = self.name or u'node-%s' % self.id
         return utils.to_url_name(name)
 
     def canonical_path(self, suffix=None):
+        """
+        Get the canonical path for this node.
+        """
         path = None
         for alias in self.aliases:
             if alias.canonical:
@@ -79,6 +86,11 @@ class Node(Base, ImageMixin, UserMixin, CommentMixin):
         return path
 
     def update_path(self, path):
+        """
+        Update the canonical path for this node. This will leave behind
+        redirect aliases from previous paths, although those redirects may be
+        overridden if other nodes are updated to the previous paths.
+        """
         # Make all existing aliases for this node non-canonical.
         for aa in self.aliases:
             aa.canonical = False
@@ -103,6 +115,13 @@ class Node(Base, ImageMixin, UserMixin, CommentMixin):
 
     @property
     def override_path(self):
+        """
+        A property to simplify building interfaces that manage node paths.
+        Getting the property will return None unless the path has been manually
+        overridden, in which case the override path will be returned.
+        Similarly, setting the property to None will make the node use an
+        automatically generated path, setting a non-None path will override it.
+        """
         if self.use_custom_paths:
             return self.canonical_path()
 

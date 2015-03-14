@@ -15,6 +15,9 @@ __all__ = ['LeadSource', 'Lead']
 
 
 class LeadSource(Base):
+    """
+    A tracked source of leads.
+    """
     __tablename__ = 'lead_sources'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
@@ -26,6 +29,10 @@ def next_contact_default():
 
 
 class Lead(Base, UserMixin, CommentMixin):
+    """
+    A potential lead for a project, which may or may not have 'converted' to a
+    launched project.
+    """
     __tablename__ = 'leads'
     __table_args__ = {'mysql_engine': 'InnoDB'}
 

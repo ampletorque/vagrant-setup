@@ -13,6 +13,9 @@ from .cart import Cart, CartItem
 
 
 class Batch(Base):
+    """
+    A planned production batch for a product.
+    """
     __tablename__ = 'batches'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
@@ -23,6 +26,11 @@ class Batch(Base):
 
 
 class Product(Base, ImageMixin):
+    """
+    A product associated with a product. This can be thought of as comparable
+    to a 'pledge level', but is also used for projects which aren't and weren't
+    crowdfunding campaigns.
+    """
     __tablename__ = 'products'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
@@ -118,6 +126,9 @@ class Product(Base, ImageMixin):
 
 
 class Option(Base):
+    """
+    A product option which allows for per-item configuration.
+    """
     __tablename__ = 'options'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
@@ -135,6 +146,9 @@ class Option(Base):
 
 
 class OptionValue(Base):
+    """
+    A single possible 'choice' for an option.
+    """
     __tablename__ = 'option_values'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)

@@ -13,6 +13,9 @@ from .comment import CommentMixin
 
 
 class Order(Base, UserMixin, CommentMixin, ElasticMixin):
+    """
+    A customer order that has been placed.
+    """
     __tablename__ = 'orders'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
@@ -63,6 +66,10 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
 
     @property
     def any_billing(self):
+        """
+        Retrun any billing address that is associated with this order, or None
+        if no billing addresses are associated.
+        """
         return None
         for payment in self.payments:
             if hasattr(payment, 'method'):
@@ -135,6 +142,9 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
 
 
 class Shipment(Base, UserMixin):
+    """
+    A shipment that has been shipped against this order.
+    """
     __tablename__ = 'shipments'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)

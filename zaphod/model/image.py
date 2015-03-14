@@ -16,7 +16,9 @@ __all__ = ['ImageMixin', 'ImageMeta']
 
 
 class ImageMixin(object):
-
+    """
+    Mixin class to add associated images to an object.
+    """
     @declared_attr
     def image_associations(cls):
         if not issubclass(cls, Base):

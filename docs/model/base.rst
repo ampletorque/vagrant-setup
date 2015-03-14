@@ -1,6 +1,10 @@
 Base Classes
 ============
 
-.. automodule:: zaphod.model.base
+.. autodata:: zaphod.model.base.Session
+
+.. autoclass:: zaphod.model.base.Base
     :members:
-    :undoc-members:
+    :inherited-members:
+
+    Base class for all SQLAlchemy mapped classes in the model.

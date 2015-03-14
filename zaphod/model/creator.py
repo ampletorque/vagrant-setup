@@ -6,6 +6,9 @@ from .node import Node
 
 
 class Creator(Node):
+    """
+    A project creator.
+    """
     __tablename__ = 'creators'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     node_id = Column(None, ForeignKey('nodes.id'), primary_key=True)
@@ -22,6 +25,9 @@ class Creator(Node):
 
     @property
     def display_url(self):
+        """
+        Format the ``home_url`` for more friendly display.
+        """
         if not self.home_url:
             return
         # Strip off http:// or https://

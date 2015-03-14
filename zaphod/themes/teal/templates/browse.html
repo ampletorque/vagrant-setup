@@ -22,6 +22,27 @@
 </%def>
 
 
+<%def name="filters(browse_tags)">
+  <div class="col-sm-4 col-md-2 browse-filters">
+    <h3>Browse By Stage</h3>
+    <ul class="list-unstyled list-sidebar">
+      <%self:filter_target url="${request.route_url('prelaunch')}">Pre-launch</%self:filter_target>
+      <%self:filter_target url="${request.route_url('crowdfunding')}">Crowdfunding</%self:filter_target>
+      <%self:filter_target url="${request.route_url('available')}">Funded &amp; Available</%self:filter_target>
+      <%self:filter_target url="${request.route_url('archive')}">Archive</%self:filter_target>
+    </ul>
+    <h3>Browse By Tag</h3>
+    <ul class="list-unstyled list-sidebar">
+      % for filter_tag in browse_tags:
+        <%self:filter_target url="${request.node_path(filter_tag)}">
+          ${filter_tag.name}
+        </%self:filter_target>
+      % endfor
+    </ul>
+  </div>
+</%def>
+
+
 % if tag:
   <%blocks:admin_bar>
     <p>
@@ -42,23 +63,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-sm-4 col-md-2 browse-filters">
-        <h3>Browse By Stage</h3>
-        <ul class="list-unstyled list-sidebar">
-          <%self:filter_target url="${request.route_url('prelaunch')}">Pre-launch</%self:filter_target>
-          <%self:filter_target url="${request.route_url('crowdfunding')}">Crowdfunding</%self:filter_target>
-          <%self:filter_target url="${request.route_url('available')}">Funded &amp; Available</%self:filter_target>
-          <%self:filter_target url="${request.route_url('archive')}">Archive</%self:filter_target>
-        </ul>
-        <h3>Browse By Tag</h3>
-        <ul class="list-unstyled list-sidebar">
-          % for filter_tag in browse_tags:
-            <%self:filter_target url="${request.node_path(filter_tag)}">
-              ${filter_tag.name}
-            </%self:filter_target>
-          % endfor
-        </ul>
-      </div>
+      ${self.filters(browse_tags)}
 
       <div class="col-sm-8 col-md-10">
         % if request.matched_route.name == 'prelaunch':

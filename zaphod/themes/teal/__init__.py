@@ -7,6 +7,8 @@ import socket
 from dogpile.cache import make_region
 from dogpile.cache.proxy import ProxyBackend
 
+from pyramid.decorator import reify
+
 from pyramid_frontend.images.filters import ThumbFilter, VignetteFilter
 from pyramid_frontend.images.chain import FilterChain
 from pyramid_frontend.theme import Theme
@@ -32,22 +34,6 @@ class LoggingProxy(ProxyBackend):
     def get(self, key):
         log.debug("cache get: %r", key)
         return self.proxied.get(key)
-
-
-cache_regions = {
-    'default': make_region().configure(
-        'dogpile.cache.redis',
-        arguments={
-            'host': 'localhost',
-            'port': 6379,
-            'db': 0,
-            'redis_expiration_time': 60 * 60 * 2,
-            'distributed_lock': True,
-        },
-        # XXX Enable this to log cache accesses.
-        # wrap=[LoggingProxy],
-    ),
-}
 
 
 class TealTheme(Theme):
@@ -182,16 +168,31 @@ class TealTheme(Theme):
     ]
 
     cache_impl = 'dogpile.cache'
-    cache_args = {
-        'regions': cache_regions,
-    }
+
+    @reify
+    def cache_regions(self):
+        settings = self.settings
+        default = make_region().configure_from_config(settings, 'cache.')
+
+        # Enable this to log cache gets and sets, useful for debugging.
+        # default.wrap(LoggingProxy)
+
+        return {
+            'default': default
+        }
+
+    @property
+    def cache_args(self):
+        return {
+            'regions': self.cache_regions,
+        }
 
     def invalidate_index(self):
-        cache = cache_regions['default']
+        cache = self.cache_regions['default']
         cache.invalidate('index')
 
     def invalidate_project(self, project_id):
-        cache = cache_regions['default']
+        cache = self.cache_regions['default']
         cache.invalidate('project-%d-tile' % project_id)
         cache.invalidate('project-%d-body' % project_id)
         cache.invalidate('project-%d-sidebar' % project_id)

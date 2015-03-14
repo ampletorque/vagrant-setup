@@ -26,4 +26,4 @@ def tag_view(tag, system):
 
 
 def includeme(config):
-    config.add_node_view(tag_view, model.Tag)
+    config.add_node_view(tag_view, model.Tag, renderer='browse.html')

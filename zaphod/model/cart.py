@@ -12,6 +12,9 @@ class Cart(Base):
     __tablename__ = 'carts'
     __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
+    # Used for tracking stale Carts.
+    updated_time = Column(types.DateTime, nullable=False,
+                          default=utils.utcnow, index=True)
 
     order = orm.relationship('Order', uselist=False, backref='cart')
 

@@ -226,7 +226,10 @@ def migrate_orders(settings, product_map, option_value_map,
         )
         model.Session.add(order)
         utils.migrate_comments(old_order, order)
-        cart = model.Cart(order=order)
+        cart = model.Cart(
+            order=order,
+            updated_time=old_order.cart.updated_time,
+        )
         model.Session.add(cart)
         shipping_prices = item_shipping_prices(old_order)
         item_map = {}

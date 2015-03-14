@@ -7,9 +7,8 @@ from sqlalchemy import engine_from_config
 
 from gimlet.factories import session_factory_from_settings
 
-from . import helpers
+from . import helpers, model
 from .logging import init_querytimer
-from .model import Session, Base
 
 
 def add_renderer_globals(event):
@@ -32,8 +31,7 @@ def main(global_config, **settings):
     """
     engine = engine_from_config(settings, 'sqlalchemy.')
     init_querytimer(engine)
-    Session.configure(bind=engine)
-    Base.metadata.bind = engine
+    model.init_model(engine)
 
     session_factory = session_factory_from_settings(settings)
 

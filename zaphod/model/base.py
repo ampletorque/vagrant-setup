@@ -14,6 +14,12 @@ __all__ = ['Base', 'Session']
 SQLAlchemy session used for the entire Zaphod app. The Zope transaction
 extension is used, so this session automatically commits transactions in the
 scope of a request. Transactions should not be manually committed.
+
+To commit transactions outside request scope, you can use the
+transaction.manager context manager, like::
+
+    with transaction.manager:
+        # modify data
 """
 Session = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 

@@ -52,7 +52,7 @@ def utcnow():
     return datetime.datetime.utcnow()
 
 
-def dedupe_name(cls, attr, name, max_tries=100):
+def dedupe_name(cls, attr, name, session=Session, max_tries=100):
     """
     Given a SQLAlchemy mapped class, an attribute key, and a base name, find a
     name (which may be just the supplied base name) which is unique for that
@@ -80,7 +80,7 @@ def dedupe_name(cls, attr, name, max_tries=100):
         str
     """
     obj = getattr(cls, attr)
-    q = Session.query(obj)
+    q = session.query(obj)
     current = name
     for ii in range(1, max_tries):
         if q.filter(obj == current).count() == 0:

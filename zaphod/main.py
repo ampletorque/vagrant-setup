@@ -2,6 +2,7 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from pyramid.config import Configurator
+from pyramid.settings import asbool
 from pyramid.events import BeforeRender, NewResponse
 from sqlalchemy import engine_from_config
 
@@ -31,7 +32,8 @@ def main(global_config, **settings):
     """
     engine = engine_from_config(settings, 'sqlalchemy.')
     init_querytimer(engine)
-    model.init_model(engine)
+    model.init_model(engine,
+                     read_only=asbool(settings.get('model.read_only')))
 
     session_factory = session_factory_from_settings(settings)
 

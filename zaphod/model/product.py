@@ -17,7 +17,6 @@ class Batch(Base):
     A planned production batch for a product.
     """
     __tablename__ = 'batches'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     product_id = Column(None, ForeignKey('products.id'), nullable=False)
     # None for qty means infinite units can be delivered in this batch.
@@ -32,7 +31,6 @@ class Product(Base, ImageMixin):
     crowdfunding campaigns.
     """
     __tablename__ = 'products'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     project_id = Column(None, ForeignKey('projects.node_id'), nullable=False)
     name = Column(types.Unicode(255), nullable=False, default=u'')
@@ -130,7 +128,6 @@ class Option(Base):
     A product option which allows for per-item configuration.
     """
     __tablename__ = 'options'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     product_id = Column(None, ForeignKey('products.id'), nullable=False)
     name = Column(types.Unicode(255), nullable=False, default=u'')
@@ -150,7 +147,6 @@ class OptionValue(Base):
     A single possible 'choice' for an option.
     """
     __tablename__ = 'option_values'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     option_id = Column(None, ForeignKey('options.id'), nullable=False)
     description = Column(types.Unicode(255), nullable=False, default=u'')

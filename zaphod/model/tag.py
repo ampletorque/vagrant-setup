@@ -22,7 +22,6 @@ class Tag(Node):
     together for browsing and searching.
     """
     __tablename__ = 'tags'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     node_id = Column(None, ForeignKey('nodes.id'), primary_key=True)
 
     __mapper_args__ = {'polymorphic_identity': 'Tag'}

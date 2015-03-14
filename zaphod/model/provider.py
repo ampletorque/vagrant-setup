@@ -24,7 +24,6 @@ class ProviderType(Node):
     A type of service provider.
     """
     __tablename__ = 'provider_types'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     node_id = Column(None, ForeignKey('nodes.id'), primary_key=True)
 
     __mapper_args__ = {'polymorphic_identity': 'ProviderType'}
@@ -43,7 +42,6 @@ class Provider(Node):
     A service provider in the 'provider database'.
     """
     __tablename__ = 'providers'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     node_id = Column(None, ForeignKey('nodes.id'), primary_key=True)
     email = Column(types.Unicode(255), nullable=False, default=u'')
     home_url = Column(types.String(255), nullable=True)

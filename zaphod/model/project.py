@@ -38,7 +38,6 @@ class Project(Node, ElasticMixin):
     associated with it, comparable to 'pledge levels'.
     """
     __tablename__ = 'projects'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     node_id = Column(None, ForeignKey('nodes.id'), primary_key=True)
 
     creator_id = Column(None, ForeignKey('creators.node_id'), nullable=False)
@@ -279,7 +278,6 @@ class ProjectUpdate(Node):
     A status update article associated with a given project.
     """
     __tablename__ = 'project_updates'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     node_id = Column(None, ForeignKey('nodes.id'), primary_key=True)
     project_id = Column(None, ForeignKey('projects.node_id'), nullable=False)
 
@@ -297,7 +295,6 @@ class ProjectOwner(Base):
     displayed and what permissions they should have.
     """
     __tablename__ = 'project_owners'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     project_id = Column(None, ForeignKey('projects.node_id'), primary_key=True)
     user_id = Column(None, ForeignKey('users.id'), primary_key=True)
     title = Column(types.Unicode(255), nullable=False, default=u'')
@@ -318,7 +315,6 @@ class ProjectEmail(Base):
     An e-mail signup that has expressed interest in a project.
     """
     __tablename__ = 'project_emails'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     project_id = Column(None, ForeignKey('projects.node_id'), nullable=False)
     email = Column(types.String(255), nullable=False)

@@ -20,7 +20,6 @@ class Alias(Base):
     the canonical alias.
     """
     __tablename__ = 'aliases'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     path = Column(types.String(255), primary_key=True)
     node_id = Column(None, ForeignKey('nodes.id'), nullable=False)
     canonical = Column(types.Boolean, nullable=False, default=True)
@@ -39,7 +38,6 @@ class Node(Base, ImageMixin, UserMixin, CommentMixin):
     with Alias) and a few other helpful features.
     """
     __tablename__ = 'nodes'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     discriminator = Column(types.String(32), nullable=False)
     name = Column(types.Unicode(255), nullable=False, default=u'')

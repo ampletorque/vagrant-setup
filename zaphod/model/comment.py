@@ -29,7 +29,6 @@ class CommentMixin(object):
             type_name,
             (Base,),
             dict(__tablename__='%s_comments' % table_name,
-                 __table_args__={'mysql_engine': 'InnoDB'},
                  id=Column('id', types.Integer, primary_key=True),
                  source_id=Column('source_id', None,
                                   ForeignKey('%s.id' % table_name),

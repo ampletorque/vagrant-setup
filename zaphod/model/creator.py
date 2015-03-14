@@ -10,7 +10,6 @@ class Creator(Node):
     A project creator.
     """
     __tablename__ = 'creators'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     node_id = Column(None, ForeignKey('nodes.id'), primary_key=True)
     home_url = Column(types.String(255), nullable=True)
     location = Column(types.Unicode(255), nullable=False, default=u'')

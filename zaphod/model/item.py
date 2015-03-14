@@ -13,7 +13,6 @@ class Acquisition(Base):
     inventory concurrently.
     """
     __tablename__ = 'acquisitions'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     discriminator = Column(types.String(255), nullable=False)
     sku_id = Column(None, ForeignKey('skus.id'), nullable=False)
@@ -90,7 +89,6 @@ class VendorShipmentItem(Acquisition):
     A line item on a received vendor shipment.
     """
     __tablename__ = 'vendor_shipment_items'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     acquisition_id = Column(None, ForeignKey('acquisitions.id'),
                             primary_key=True)
     vendor_shipment_id = Column(None, ForeignKey('vendor_shipments.id'),
@@ -111,8 +109,6 @@ class InventoryAdjustment(Acquisition):
     records.
     """
     __tablename__ = 'inventory_adjustments'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
-
     acquisition_id = Column(None, ForeignKey('acquisitions.id'),
                             primary_key=True)
     qty_diff = Column(types.Integer, nullable=False)
@@ -130,7 +126,6 @@ class Item(Base):
     is one ``SKU``, "the red XL t-shirt serial numbered 1234" is one ``Item``.
     """
     __tablename__ = 'items'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     acquisition_id = Column(None, ForeignKey('acquisitions.id'),
                             nullable=False)

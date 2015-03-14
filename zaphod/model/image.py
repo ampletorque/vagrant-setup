@@ -34,7 +34,6 @@ class ImageMixin(object):
             type_name,
             (Base,),
             dict(__tablename__='%s_image_metas' % table_name,
-                 __table_args__={'mysql_engine': 'InnoDB'},
                  source_id=Column("source_id", None,
                                   ForeignKey('%s.id' % table_name),
                                   primary_key=True),
@@ -89,7 +88,6 @@ class ImageMeta(Base, UserMixin):
     in the DB.
     """
     __tablename__ = 'image_metas'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     admin_handler = 'images'
 
     id = Column(types.Integer, primary_key=True)

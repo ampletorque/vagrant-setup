@@ -15,7 +15,6 @@ class Vendor(Base, UserMixin, CommentMixin):
     A vendor from which wholesale inventory is purchased.
     """
     __tablename__ = 'vendors'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     name = Column(types.Unicode(50), nullable=False)
     active = Column(types.Boolean, nullable=False, default=True)
@@ -27,7 +26,6 @@ class VendorOrder(Base, UserMixin, CommentMixin):
     An order placed from an upstream vendor.
     """
     __tablename__ = 'vendor_orders'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     vendor_id = Column(None, ForeignKey('vendors.id'), nullable=False)
     reference = Column(types.Unicode(255), nullable=False, default=u'')
@@ -60,7 +58,6 @@ class VendorOrderItem(Base):
     A line item in a vendor order.
     """
     __tablename__ = 'vendor_order_items'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     vendor_order_id = Column(None, ForeignKey('vendor_orders.id'),
                              nullable=False)
@@ -91,7 +88,6 @@ class VendorInvoice(Base, UserMixin, CommentMixin):
     made that do not match an invoice.
     """
     __tablename__ = 'vendor_invoices'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     vendor_order_id = Column(None, ForeignKey('vendor_orders.id'),
                              nullable=False)
@@ -128,7 +124,6 @@ class VendorInvoiceItem(Base):
     A line item on a vendor invoice.
     """
     __tablename__ = 'vendor_invoice_items'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     vendor_invoice_id = Column(None, ForeignKey('vendor_invoices.id'),
                                nullable=False)
@@ -145,7 +140,6 @@ class VendorShipment(Base, UserMixin):
     A shipment of stock received against a vendor order.
     """
     __tablename__ = 'vendor_shipments'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     vendor_order_id = Column(None, ForeignKey('vendor_orders.id'),
                              nullable=False)

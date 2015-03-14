@@ -25,6 +25,7 @@ Session = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 
 
 class _Base(object):
+    __table_args__ = {'mysql_engine': 'InnoDB'}
 
     @classmethod
     def get(cls, id):

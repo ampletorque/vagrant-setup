@@ -17,7 +17,6 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
     A customer order that has been placed.
     """
     __tablename__ = 'orders'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     cart_id = Column(None, ForeignKey('carts.id'), nullable=False, unique=True)
     user_id = Column(None, ForeignKey('users.id'), nullable=True)
@@ -146,7 +145,6 @@ class Shipment(Base, UserMixin):
     A shipment that has been shipped against this order.
     """
     __tablename__ = 'shipments'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     order_id = Column(None, ForeignKey('orders.id'), nullable=False)
     tracking_number = Column(types.String(255), nullable=True)

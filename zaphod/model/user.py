@@ -24,7 +24,6 @@ class User(Base, ImageMixin, UserMixin, CommentMixin, ElasticMixin):
     A user account.
     """
     __tablename__ = 'users'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     name = Column(types.Unicode(255), nullable=False)
     email = Column(types.String(255), nullable=False, unique=True)

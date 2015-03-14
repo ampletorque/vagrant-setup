@@ -13,7 +13,6 @@ class Article(Node):
     Represents a single-page chunk of arbitrary content on the site.
     """
     __tablename__ = 'articles'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     node_id = Column(None, ForeignKey('nodes.id'), primary_key=True)
     show_heading = Column(types.Boolean, nullable=False, default=True)
     show_article_list = Column(types.Boolean, nullable=False, default=True)

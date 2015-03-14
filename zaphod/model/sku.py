@@ -28,7 +28,6 @@ class SKU(Base):
     any distinction.
     """
     __tablename__ = 'skus'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     product_id = Column(None, ForeignKey('products.id'), nullable=False)
 

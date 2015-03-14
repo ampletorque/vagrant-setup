@@ -20,7 +20,6 @@ class PaymentGateway(Base):
     payment.
     """
     __tablename__ = 'payment_gateways'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     dev = Column(types.Boolean, nullable=False)
     enabled = Column(types.Boolean, nullable=False)
@@ -46,7 +45,6 @@ class PaymentMethod(Base):
     method.
     """
     __tablename__ = 'payment_methods'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     user_id = Column(None, ForeignKey('users.id'), nullable=True)
     payment_gateway_id = Column(None, ForeignKey('payment_gateways.id'),
@@ -75,7 +73,6 @@ class Payment(Base, StateMixin):
     order. This class cannot be instantiated directly, but is subclassed.
     """
     __tablename__ = 'payments'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     order_id = Column(None, ForeignKey('orders.id'), nullable=False)
     created_by_id = Column(None, ForeignKey('users.id'), nullable=False)
@@ -134,7 +131,6 @@ class CheckPayment(Payment):
     Checks may be marked as void or bounced.
     """
     __tablename__ = 'check_payments'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     payment_id = Column(None, ForeignKey('payments.id'), primary_key=True)
     reference = Column(types.Unicode(50), nullable=False, default=u'')
     check_date = Column(types.Date, nullable=False)
@@ -168,7 +164,6 @@ class CreditCardPayment(Payment):
     credited against.
     """
     __tablename__ = 'credit_card_payments'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     payment_id = Column(None, ForeignKey('payments.id'), primary_key=True)
     transaction_id = Column(types.Unicode(50), nullable=False)
     invoice_number = Column(types.Unicode(50), nullable=False)
@@ -312,8 +307,6 @@ class CreditCardPayment(Payment):
 class Refund(Payment):
     "A refund."
     __tablename__ = 'refunds'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
-
     payment_id = Column(None, ForeignKey('payments.id'), primary_key=True)
 
     # Authorized refund amount. Refund.amount is updated when the refund is
@@ -339,7 +332,6 @@ class CashRefund(Refund):
 class CheckRefund(Refund):
     "A Check refund."
     __tablename__ = 'check_refunds'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     __mapper_args__ = {'polymorphic_identity': 'chrf'}
 
     refund_id = Column(None, ForeignKey('refunds.payment_id'),
@@ -352,8 +344,6 @@ class CheckRefund(Refund):
 class CreditCardRefund(Refund):
     "A Credit Card refund."
     __tablename__ = 'credit_card_refunds'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
-
     refund_id = Column(
         None, ForeignKey('refunds.payment_id'), primary_key=True)
     credit_card_payment_id = Column(

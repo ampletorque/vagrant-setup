@@ -19,7 +19,6 @@ class LeadSource(Base):
     A tracked source of leads.
     """
     __tablename__ = 'lead_sources'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     name = Column(types.Unicode(255), nullable=False)
 
@@ -34,10 +33,6 @@ class Lead(Base, UserMixin, CommentMixin):
     launched project.
     """
     __tablename__ = 'leads'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
-
-    admin_handler = 'leads'
-
     id = Column(types.Integer, primary_key=True)
     name = Column(types.Unicode(255), nullable=False)
     description = Column(types.UnicodeText, nullable=False, default=u'')

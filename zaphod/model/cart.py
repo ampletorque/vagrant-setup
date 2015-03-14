@@ -14,7 +14,6 @@ class Cart(Base):
     to and after checkout. After checkout, it will be associated with an Order.
     """
     __tablename__ = 'carts'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     updated_time = Column(types.DateTime, nullable=False,
                           default=utils.utcnow, index=True,
@@ -67,7 +66,6 @@ class CartItem(Base):
     order fulfillment state.
     """
     __tablename__ = 'cart_items'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     cart_id = Column(None, ForeignKey('carts.id'), nullable=False)
     product_id = Column(None, ForeignKey('products.id'),

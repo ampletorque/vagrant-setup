@@ -53,6 +53,13 @@ class Node(Base, ImageMixin, UserMixin, CommentMixin):
                        'polymorphic_identity': 'Node'}
 
     aliases = orm.relationship('Alias', cascade='all, delete, delete-orphan')
+    canonical_alias = orm.relationship(
+        'Alias',
+        cascade='all, delete, delete-orphan',
+        primaryjoin='and_(Node.id == Alias.node_id, Alias.canonical == True)',
+        viewonly=True,
+        uselist=False,
+        lazy='joined')
 
     def generate_path(self):
         """
@@ -66,10 +73,11 @@ class Node(Base, ImageMixin, UserMixin, CommentMixin):
         """
         Get the canonical path for this node.
         """
-        path = None
-        for alias in self.aliases:
-            if alias.canonical:
-                path = alias.path
+        alias = self.canonical_alias
+        if alias:
+            path = alias.path
+        else:
+            path = None
 
         if not path:
             raise AttributeError("node has no canonical alias")

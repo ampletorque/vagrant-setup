@@ -202,73 +202,42 @@
 </%def>
 
 
-<%def name="single_tile_row(project)">
-  <div class="row">
-    <div class="col-lg-12">
-      <a href="${request.node_url(project)}">
-        ${project.img(request, 'project-mega')}
-      </a>
-      <div class="project-single-row">
-        <div class="row">
-          <div class="col-sm-6">
-            ${self.metadata_inline(project)}
+<%def name="tile_row(projects, cols=None)">
+  <div class="project-row">
+    <!-- Background row -->
+    <div class="background-row hidden-xs hidden-sm">
+      <div class="row">
+        <%
+          if not cols:
+            cols = len(projects)
+            cols = 3 if cols < 2 else cols
+          width = 12 / cols
+        %>
+        % for project in projects:
+          <div class="col-sm-12 col-md-${width}">
+            <a href="${request.node_url(project)}">
+              <div class="background-filler">
+              </div>
+            </a>
           </div>
-          <div class="col-sm-6">
-            % if project.status == 'prelaunch':
-              <h3>${project.name}</h3>
-              <p>This project is launching soon. Click for more information or to enter your email address for news &amp; updates.</p>
-            % else:
-              <h3>${project.name}</h3>
-              <p>${project.teaser}</p>
-            % endif
-          </div>
-        </div>
+        % endfor
       </div>
+    </div>
+
+    <!-- Project tile -->
+    <div class="row">
+    % for project in projects:
+      ${self.tile(project, cols)}
+    % endfor
     </div>
   </div>
-</%def>
 
-
-<%def name="tile_row(projects, cols=None)">
-  % if (not cols) and (len(projects) == 1):
-    ${self.single_tile_row(projects[0])}
-  % else:
-    <div class="project-row">
-      <!-- Background row -->
-      <div class="background-row hidden-xs hidden-sm">
-        <div class="row">
-          <%
-            if not cols:
-              cols = len(projects)
-              cols = 3 if cols < 2 else cols
-            width = 12 / cols
-          %>
-          % for project in projects:
-            <div class="col-sm-12 col-md-${width}">
-              <a href="${request.node_url(project)}">
-                <div class="background-filler">
-                </div>
-              </a>
-            </div>
-          % endfor
-        </div>
-      </div>
-
-      <!-- Project tile -->
-      <div class="row">
-      % for project in projects:
-        ${self.tile(project, cols)}
-      % endfor
-      </div>
-    </div>
-
-    <!-- Metadata row -->
-    <div class="row metadata-row hidden-xs hidden-sm">
-      % for project in projects:
-        <a href="${request.node_url(project)}">
-          ${self.metadata(project, cols)}
-        </a>
-      % endfor
-    </div>
-  % endif
+  <!-- Metadata row -->
+  <div class="row metadata-row hidden-xs hidden-sm">
+    % for project in projects:
+      <a href="${request.node_url(project)}">
+        ${self.metadata(project, cols)}
+      </a>
+    % endfor
+  </div>
 </%def>

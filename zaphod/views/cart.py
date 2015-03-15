@@ -109,17 +109,22 @@ class CartView(object):
                 raise HTTPBadRequest
 
             sku = model.sku_for_option_value_ids(product, form.data['options'])
-            ci = model.CartItem(
-                cart=cart,
-                qty_desired=form.data['qty'],
-                product=product,
-                shipping_price=0,
-                sku=sku,
-                status='cart',
-                stage=0,
-                price_each=0
-            )
-            ci.refresh()
+            ci = model.Session.query(model.CartItem).\
+                filter_by(cart=cart, sku=sku).first()
+
+            if ci:
+                ci.qty_desired += 1
+            else:
+                ci = model.CartItem(
+                    cart=cart,
+                    qty_desired=form.data['qty'],
+                    product=product,
+                    shipping_price=0,
+                    sku=sku,
+                    stage=0,
+                    price_each=0
+                )
+                ci.refresh()
 
             request.flash("Added '%s' to your shopping cart." % product.name,
                           'success')

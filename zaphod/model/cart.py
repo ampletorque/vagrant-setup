@@ -81,7 +81,7 @@ class CartItem(Base):
     batch_id = Column(None, ForeignKey('batches.id'), nullable=True)
     sku_id = Column(None, ForeignKey('skus.id'), nullable=False)
 
-    status = Column(types.CHAR(16), nullable=False)
+    status = Column(types.CHAR(16), nullable=False, default='cart')
 
     cart = orm.relationship('Cart', backref='items')
     product = orm.relationship('Product', backref='cart_items')
@@ -93,7 +93,6 @@ class CartItem(Base):
     STOCK = 2
 
     available_statuses = [
-        ('init', 'Unset'),
         ('cart', 'Pre-checkout'),
         ('unfunded', 'Project Not Yet Funded'),
         ('failed', 'Project Failed To Fund'),

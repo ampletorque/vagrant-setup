@@ -8,12 +8,13 @@ from sqlalchemy import engine_from_config
 
 from gimlet.factories import session_factory_from_settings
 
-from . import helpers, model
+from . import helpers, getters, model
 from .logging import init_querytimer
 
 
 def add_renderer_globals(event):
     event['h'] = helpers
+    event['getters'] = getters
 
 
 class Root(object):

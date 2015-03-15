@@ -24,7 +24,7 @@ class ProjectSearchView(ProjectListView):
         phrase = self.phrase
         return "Search Results for '%s'" % phrase
 
-    def base_q(self):
+    def get_project_ids(self):
         phrase = self.phrase
 
         client = get_client(self.request)
@@ -32,10 +32,9 @@ class ProjectSearchView(ProjectListView):
 
         result = q.execute()
         project_ids = [int(record._id) for record in result]
-
-        return ProjectListView.base_q(self).\
-            filter(model.Project.id.in_(project_ids))
+        return project_ids
 
 
 def includeme(config):
-    config.add_view(ProjectSearchView, route_name='search')
+    config.add_view(ProjectSearchView, route_name='search',
+                    renderer='browse.html')

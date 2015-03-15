@@ -562,7 +562,7 @@
       </div>
 
       % for row in h.grouper(4, project.related_projects):
-        ${tiles.tile_row(row)}
+        ${tiles.tile_row([project.id for project in row])}
       % endfor
     </div>
   </section>

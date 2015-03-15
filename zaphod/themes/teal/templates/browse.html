@@ -13,9 +13,9 @@
 </%def>
 
 
-<%def name="filter_target(url)">
-  <li class="${'selected' if request.url == url else ''}">
-    <a href="${url}">
+<%def name="filter_target(path)">
+  <li class="${'selected' if request.path.startswith(path) else ''}">
+    <a href="${path}">
       ${caller.body()}
     </a>
   </li>
@@ -26,15 +26,15 @@
   <div class="col-sm-4 col-md-2 browse-filters">
     <h3>Browse By Stage</h3>
     <ul class="list-unstyled list-sidebar">
-      <%self:filter_target url="${request.route_url('prelaunch')}">Pre-launch</%self:filter_target>
-      <%self:filter_target url="${request.route_url('crowdfunding')}">Crowdfunding</%self:filter_target>
-      <%self:filter_target url="${request.route_url('available')}">Funded &amp; Available</%self:filter_target>
-      <%self:filter_target url="${request.route_url('archive')}">Archive</%self:filter_target>
+      <%self:filter_target path="${request.route_path('prelaunch')}">Pre-launch</%self:filter_target>
+      <%self:filter_target path="${request.route_path('crowdfunding')}">Crowdfunding</%self:filter_target>
+      <%self:filter_target path="${request.route_path('available')}">Funded &amp; Available</%self:filter_target>
+      <%self:filter_target path="${request.route_path('archive')}">Archive</%self:filter_target>
     </ul>
     <h3>Browse By Tag</h3>
     <ul class="list-unstyled list-sidebar">
       % for filter_tag in browse_tags:
-        <%self:filter_target url="${request.node_path(filter_tag)}">
+        <%self:filter_target path="${request.node_path(filter_tag)}">
           ${filter_tag.name}
         </%self:filter_target>
       % endfor
@@ -71,12 +71,11 @@
           <hr>
         % endif
 
-
         % if feature_count:
-          ${tiles.tile_row(projects[:feature_count])}
+          ${tiles.tile_row(projects[:feature_count], cols=feature_count)}
         % endif
         % for row in h.grouper(3, projects[feature_count:]):
-          ${tiles.tile_row(row, cols=3)}
+          ${tiles.tile_row(row)}
         % endfor
 
         % if request.matched_route.name == 'crowdfunding':

@@ -7,6 +7,7 @@ from .. import model
 
 
 def load_projects(rows):
+    return rows
     all = []
     for row in rows:
         these = []

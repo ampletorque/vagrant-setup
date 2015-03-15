@@ -160,7 +160,10 @@
 </%def>
 
 
-<%def name="tile(project)" cached="True" cache_region="default" cache_key="project-${str(project.id)}-tile">
+<%def name="tile(project_id)" cached="True" cache_region="default" cache_key="project-${str(project_id)}-tile">
+  <%
+    project = getters.get_project(project_id)
+  %>
   <a class="project-tile" href="${request.node_url(project)}">
     ${project.img(request, 'project-tile')}
     <div class="project-tile-overview">
@@ -180,10 +183,15 @@
 </%def>
 
 
-<%def name="tile_row(projects, cols=None)">
+<%def name="tile_row(project_ids, cols=None)">
   <div class="project-row">
-    % for project in projects:
-      ${self.tile(project)}
+    % for project_id in project_ids:
+      ${self.tile(project_id)}
     % endfor
+    % if cols != 2:
+      % for __ in range(3 - len(project_ids)):
+        <div class="project-tile-spacer"></div>
+      % endfor
+    % endif
   </div>
 </%def>

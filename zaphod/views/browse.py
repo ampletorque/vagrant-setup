@@ -22,7 +22,7 @@ class ProjectListView(object):
 
     def base_q(self):
         utcnow = datetime.utcnow()
-        return model.Session.query(model.Project).\
+        return model.Session.query(model.Project.id).\
             filter(model.Project.suspended_time == None).\
             filter(model.Project.published == True).\
             filter(model.Project.listed == True).\
@@ -30,11 +30,13 @@ class ProjectListView(object):
                        model.Project.successful == True)).\
             order_by(model.Project.gravity)
 
-    def render_html(self):
-        q = self.base_q()
-        projects = q.all()
+    def get_project_ids(self):
+        return self.base_q().all()
 
-        if len(projects) == 2:
+    def render_html(self):
+        project_ids = self.get_project_ids()
+
+        if len(project_ids) == 2:
             feature_count = 2
         else:
             feature_count = self.feature_count
@@ -45,7 +47,7 @@ class ProjectListView(object):
 
         data = {
             'browse_tags': browse_tags,
-            'projects': projects,
+            'projects': project_ids,
             'feature_count': feature_count,
             'stage': self.stage,
             'page_title': self.title(),

@@ -5,7 +5,7 @@ from ... import model
 
 
 def creator_view(creator, system):
-    projects = [project for project in reversed(creator.projects)
+    projects = [project.id for project in reversed(creator.projects)
                 if project.published and project.is_live()]
 
     return dict(creator=creator, projects=projects)

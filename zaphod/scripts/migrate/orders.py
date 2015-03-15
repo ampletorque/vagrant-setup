@@ -212,6 +212,7 @@ def status_for_item(utcnow, product_map, old_order, old_ci):
 def migrate_orders(settings, product_map, option_value_map,
                    batch_map):
     utcnow = model.utcnow()
+    cart_item_map = {}
     for old_order in scrappy_meta.Session.query(scrappy_model.Order):
         print("  order %s" % old_order.id)
         order = model.Order(
@@ -232,7 +233,6 @@ def migrate_orders(settings, product_map, option_value_map,
         )
         model.Session.add(cart)
         shipping_prices = item_shipping_prices(old_order)
-        item_map = {}
         for old_ci in old_order.cart.items:
             ship_date = None
             old_batch = getattr(old_ci, 'batch', None)
@@ -257,7 +257,7 @@ def migrate_orders(settings, product_map, option_value_map,
                 shipped_date=old_ci.shipped_date,
                 expected_ship_date=ship_date,
             )
-            item_map[old_ci] = ci
+            cart_item_map[old_ci] = ci
             if old_batch:
                 ci.batch = batch_map[old_batch]
             order.cart.items.append(ci)
@@ -270,7 +270,7 @@ def migrate_orders(settings, product_map, option_value_map,
                 shipped_by_creator=False,
             )
             for old_ci in old_shipment.items:
-                shipment.items.append(item_map[old_ci])
+                shipment.items.append(cart_item_map[old_ci])
             model.Session.add(shipment)
         payment_map = {}
         for old_payment in old_order.payments:
@@ -279,3 +279,4 @@ def migrate_orders(settings, product_map, option_value_map,
             order.payments.append(payment)
         model.Session.flush()
         order.update_status()
+    return cart_item_map

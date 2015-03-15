@@ -75,14 +75,14 @@ def main(argv=sys.argv):
 
         orders.migrate_payment_gateways()
         orders.migrate_payment_methods()
-        orders.migrate_orders(settings, product_map,
-                              option_value_map, batch_map)
+        cart_item_map = orders.migrate_orders(settings, product_map,
+                                              option_value_map, batch_map)
 
         vendors.migrate_vendors()
         vendors.migrate_vendor_orders(settings, product_map, option_value_map)
 
         stock.migrate_inventory_adjustments()
-        stock.migrate_items()
+        stock.migrate_items(cart_item_map)
 
         scott_user = model.Session.query(model.User).\
             filter_by(email='scott.torborg@crowdsupply.com').\

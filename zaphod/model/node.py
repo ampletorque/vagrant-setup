@@ -54,11 +54,6 @@ class Node(Base, ImageMixin, UserMixin, CommentMixin):
 
     aliases = orm.relationship('Alias', cascade='all, delete, delete-orphan')
 
-    def __init__(self, *args, **kwargs):
-        override_path = kwargs.pop('override_path', None)
-        Base.__init__(self, *args, **kwargs)
-        self.override_path = override_path
-
     def generate_path(self):
         """
         Generate the recommended path for this node. This may be overridden in
@@ -76,7 +71,8 @@ class Node(Base, ImageMixin, UserMixin, CommentMixin):
             if alias.canonical:
                 path = alias.path
 
-        assert path, "node has no canonical alias"
+        if not path:
+            raise AttributeError("node has no canonical alias")
 
         if suffix:
             path = path + '/' + ('/'.join(suffix))

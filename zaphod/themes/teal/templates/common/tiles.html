@@ -99,7 +99,7 @@
 
 
 <%def name="available_metadata(project)">
-  <div class="stats stats-pre-order clearfix">
+  <div class="stats stats-pre-order">
     <div class="status-bar status-bar-primary">
       <div class="status-bar-left">Funded!</div>
       <div class="status-bar-right">Order Now</div>
@@ -126,7 +126,7 @@
 
 
 <%def name="stock_metadata(project)">
-  <div class="stats stats-pre-order clearfix">
+  <div class="stats stats-pre-order">
     <div class="status-bar status-bar-dark">
       <div class="status-bar-left">In Stock</div>
       <div class="status-bar-right">Order Now</div>
@@ -141,20 +141,7 @@
 </%def>
 
 
-<%def name="metadata(project, cols=3)">
-  <%
-    # Never show a full width tile
-    width = 12 / cols
-
-    utcnow = h.datetime.utcnow()
-  %>
-  <div class="col-sm-12 col-md-${width} stats-tile">
-    ${self.metadata_inline(project)}
-  </div>
-</%def>
-
-
-<%def name="metadata_inline(project)" cached="True" cache_region="default" cache_key="project-${str(project.id)}-tile">
+<%def name="metadata_inline(project)">
   % if project.status == 'crowdfunding':
     ${self.crowdfunding_metadata(project)}
   % elif project.status == 'suspended':
@@ -173,71 +160,30 @@
 </%def>
 
 
-<%def name="tile(project, cols=3)">
-  <%
-    # Never show a full width tile
-    width = 12 / cols
+<%def name="tile(project)" cached="True" cache_region="default" cache_key="project-${str(project.id)}-tile">
+  <a class="project-tile" href="${request.node_url(project)}">
+    ${project.img(request, 'project-tile')}
+    <div class="project-tile-overview">
+      % if project.status == 'prelaunch':
+        <h3>${project.name}</h3>
+        <p>This project is launching soon. Click for more information or to enter your email address for news &amp; updates.</p>
+      % else:
+        <h3>${project.name}</h3>
+        <p>${project.teaser}</p>
+      % endif
+    </div>
 
-    utcnow = h.datetime.utcnow()
-  %>
-  <div class="col-sm-12 col-md-${width}">
-    <a href="${request.node_url(project)}" class="project-tile">
-      <!-- project status is ${project.status} -->
-      ${project.img(request, 'project-tile')}
-      <div class="project-tile-overview">
-        % if project.status == 'prelaunch':
-          <h3>${project.name}</h3>
-          <p>This project is launching soon. Click for more information or to enter your email address for news &amp; updates.</p>
-        % else:
-          <h3>${project.name}</h3>
-          <p>${project.teaser}</p>
-        % endif
-      </div>
-
-      <div class="${'' if cols == 1 else 'visible-xs visible-sm'}">
-        ${self.metadata_inline(project)}
-      </div>
-    </a>
-  </div>
+    <div class="project-metadata">
+      ${self.metadata_inline(project)}
+    </div>
+  </a>
 </%def>
 
 
 <%def name="tile_row(projects, cols=None)">
   <div class="project-row">
-    <!-- Background row -->
-    <div class="background-row hidden-xs hidden-sm">
-      <div class="row">
-        <%
-          if not cols:
-            cols = len(projects)
-            cols = 3 if cols < 2 else cols
-          width = 12 / cols
-        %>
-        % for project in projects:
-          <div class="col-sm-12 col-md-${width}">
-            <a href="${request.node_url(project)}">
-              <div class="background-filler">
-              </div>
-            </a>
-          </div>
-        % endfor
-      </div>
-    </div>
-
-    <!-- Project tile -->
-    <div class="row">
     % for project in projects:
-      ${self.tile(project, cols)}
-    % endfor
-    </div>
-  </div>
-
-  <!-- Metadata row -->
-  <div class="row metadata-row hidden-xs hidden-sm">
-    % for project in projects:
-      <a href="${request.node_url(project)}">
-        ${self.metadata(project, cols)}
-      </a>
+      ${self.tile(project)}
     % endfor
   </div>
 </%def>

@@ -18,6 +18,11 @@
 
 .status-bar {
     .clearfix();
+
+    // This is necessary: otherwise, if used inside an element with non-zero
+    // border-spacing, the clearfix hack will have extra whitespace.
+    border-spacing: 0;
+
     font-weight: bold;
     font-size: 16px;
     line-height: 22px;

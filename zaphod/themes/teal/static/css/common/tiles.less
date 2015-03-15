@@ -1,27 +1,5 @@
-@tile-background: #f3f4f4;
-
-.project-row {
-    position: relative;
-    overflow: hidden;
-}
-
-.project-single-row {
-    .clearfix();
-    padding-top: 10px;
-    padding-bottom: 10px;
-    background-color: @tile-background;
-    margin-bottom: 30px;
-}
-
-.background-row {
-    position: absolute;
-    width: 100%;
-    overflow: hidden;
-}
-.background-filler {
-    background-color: @tile-background;
-    height: 480px;
-}
+@project-tile-background: #f3f4f4;
+@project-metadata-height: 104px;
 
 .stats {
     .progress {
@@ -34,35 +12,10 @@
     padding-top: 13px;
 }
 
-.metadata-row {
-    margin-bottom: 30px;
-    .stats {
-        background-color: @tile-background;
-    }
-}
-
-.project-tile {
-    display: block;
-    background-color: @tile-background;
-    color: @cs-black;
-    margin-bottom: 15px;
-
-    p {
-        margin-bottom: 0;
-        padding-bottom: 10px;
-    }
-
-    &:hover, &:focus {
-        text-decoration: none;
-        color: @cs-black;
-    }
-}
-.project-tile-overview {
-    padding: 15px;
-}
 .factoids {
     display: table;
     width: 100%;
+    border-spacing: 0;
 }
 .fact {
     display: table-cell;
@@ -93,5 +46,57 @@
 .fact-micro {
     p {
         font-size: 13px;
+    }
+}
+
+.project-tile {
+    display: block;
+    color: @cs-black;
+    margin-bottom: 30px;
+    background-color: @project-tile-background;
+
+    &:hover, &:focus {
+        text-decoration: none;
+        color: @cs-black;
+        // Potential link hover highlight on tiles.
+        //box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+    }
+}
+
+.project-tile-overview {
+    padding: 15px;
+
+    h3 {
+        margin-top: 0;
+    }
+    p {
+        margin-bottom: 0;
+    }
+}
+
+.project-metadata {
+    height: @project-metadata-height;
+}
+
+@media (min-width: @screen-md-min) {
+    .project-row {
+        display: table;
+        margin-top: -30px;
+        margin-left: -30px;
+        margin-right: -30px;
+        border-spacing: 30px;
+    }
+
+    .project-tile {
+        display: table-cell;
+        width: 33%;
+        position: relative;
+        padding-bottom: @project-metadata-height;
+    }
+
+    .project-metadata {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
     }
 }

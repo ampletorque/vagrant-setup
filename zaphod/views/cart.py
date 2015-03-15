@@ -114,6 +114,9 @@ class CartView(object):
 
             if ci:
                 ci.qty_desired += 1
+                request.flash("'%s' was already in your cart, so "
+                              "the qty has been increased to %d." %
+                              (product.name, ci.qty_desired), 'success')
             else:
                 ci = model.CartItem(
                     cart=cart,
@@ -125,9 +128,8 @@ class CartView(object):
                     price_each=0
                 )
                 ci.refresh()
-
-            request.flash("Added '%s' to your shopping cart." % product.name,
-                          'success')
+                request.flash("Added '%s' to your shopping cart." %
+                              product.name, 'success')
             return HTTPFound(location=request.route_url('cart'))
         else:
             raise HTTPBadRequest

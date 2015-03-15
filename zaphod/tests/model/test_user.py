@@ -14,7 +14,8 @@ class TestAccounts(ModelTest):
         cls.user = model.User(name='Test User', email=u'admin@example.com')
         model.Session.add(cls.user)
 
-        # cls.edit_accounts_permission = model.Permission(name=u'edit_accounts')
+        # cls.edit_accounts_permission = \
+        #   model.Permission(name=u'edit_accounts')
         # model.Session.add(cls.edit_accounts_permission)
         # cls.edit_orders_permission = model.Permission(name=u'edit_orders')
         # model.Session.add(cls.edit_orders_permission)

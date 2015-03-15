@@ -51,7 +51,7 @@ def init_querytimer(engine):
 
     def after(conn, cursor, statement, parameters, context, executemany):
         now = time.time()
-        _log_query_time(now - context.__querytimer, statement % parameters)
+        _log_query_time(now - context.__querytimer, statement)
 
     listen(engine, "before_cursor_execute", before)
     listen(engine, "after_cursor_execute", after)

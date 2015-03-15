@@ -1,3 +1,5 @@
+import transaction
+
 from ... import model
 
 from .base import ModelTest
@@ -32,20 +34,36 @@ class TestNode(ModelTest):
     #     self.assertIn('<img', img)
 
     def test_canonical_path(self):
-        n = model.Node(name=u'Hello Node')
-        with self.assertRaises(AttributeError):
-            self.assertIsNone(n.canonical_path())
-        n.aliases.append(model.Alias(path='hello-node',
-                                     canonical=True))
-        self.assertEqual(n.canonical_path(), 'hello-node')
+        with transaction.manager:
+            n = model.Node(name=u'Hello Node')
+            with self.assertRaises(AttributeError):
+                self.assertIsNone(n.canonical_path())
+            n.aliases.append(model.Alias(path='hello-node',
+                                         canonical=True))
+            model.Session.add(n)
+            model.Session.flush()
+            node_id = n.id
+
+        n2 = model.Node.get(node_id)
+        self.assertEqual(n2.canonical_path(), 'hello-node')
 
     def test_update_path(self):
-        n = model.Node(name=u'Sup Sup')
-        n.update_path('sup-sup')
-        self.assertEqual(n.canonical_path(), 'sup-sup')
+        with transaction.manager:
+            n = model.Node(name=u'Sup Sup')
+            n.update_path('sup-sup')
+            model.Session.add(n)
+            model.Session.flush()
+            node_id = n.id
 
-        n.update_path('yo-yo')
-        self.assertEqual(n.canonical_path(), 'yo-yo')
+        n2 = model.Node.get(node_id)
+        self.assertEqual(n2.canonical_path(), 'sup-sup')
+
+        with transaction.manager:
+            n3 = model.Node.get(node_id)
+            n3.update_path('yo-yo')
+
+        n4 = model.Node.get(node_id)
+        self.assertEqual(n4.canonical_path(), 'yo-yo')
 
     def test_generate_path(self):
         n = model.Node(name=u'Foo Bar')
@@ -58,12 +76,21 @@ class TestNode(ModelTest):
         self.assertEqual(n.generate_path(), 'node-99')
 
     def test_override_path(self):
-        n = model.Node(name=u'Hello')
-        self.assertEqual(n.override_path, None)
+        with transaction.manager:
+            n = model.Node(name=u'Hello')
+            self.assertEqual(n.override_path, None)
+            n.override_path = 'blah'
+            model.Session.add(n)
+            model.Session.flush()
+            node_id = n.id
 
-        n.override_path = 'blah'
-        self.assertEqual(n.override_path, 'blah')
+        n2 = model.Node.get(node_id)
+        self.assertEqual(n2.override_path, 'blah')
 
-        n.override_path = None
-        self.assertEqual(n.override_path, None)
-        self.assertEqual(n.canonical_path(), 'hello')
+        with transaction.manager:
+            n3 = model.Node.get(node_id)
+            n3.override_path = None
+
+        n4 = model.Node.get(node_id)
+        self.assertEqual(n4.override_path, None)
+        self.assertEqual(n4.canonical_path(), 'hello')

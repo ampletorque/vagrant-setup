@@ -8,6 +8,7 @@ settings = {
     'elastic.index': 'zaphod-tests',
 
     'debug': 'true',
+    'testing': 'true',
 
     'pyramid_frontend.compiled_asset_dir': '/tmp/zaphod/compiled',
     'pyramid_frontend.theme': 'teal',

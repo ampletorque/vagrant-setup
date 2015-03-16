@@ -3,8 +3,6 @@ from __future__ import (absolute_import, division, print_function,
 
 from datetime import datetime
 
-import transaction
-
 from ... import model
 
 from .base import ModelTest

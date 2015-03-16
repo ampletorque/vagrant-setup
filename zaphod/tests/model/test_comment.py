@@ -3,8 +3,6 @@ from __future__ import (absolute_import, division, print_function,
 
 from sqlalchemy import Column, types
 
-import transaction
-
 from ... import model
 
 from .base import ModelTest

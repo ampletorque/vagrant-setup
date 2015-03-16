@@ -1,8 +1,6 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import transaction
-
 from ... import model
 
 from .base import ModelTest
@@ -19,5 +17,5 @@ class TestVendor(ModelTest):
 
         model.Session.flush()
 
-        self.vendor_id = vendor.id
-        self.vendor_order_id = vendor_order.id
+        cls.vendor_id = vendor.id
+        cls.vendor_order_id = vendor_order.id

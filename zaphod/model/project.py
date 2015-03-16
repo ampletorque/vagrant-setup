@@ -117,10 +117,6 @@ class Project(Node, ElasticMixin):
         utcnow = utils.utcnow()
         return (utcnow > self.start_time) or self.listed
 
-    def is_failed(self):
-        utcnow = utils.utcnow()
-        return (self.pledged_amount < self.target) and (utcnow > self.end_time)
-
     def update_successful(self):
         self.successful = self.pledged_amount >= self.target
 

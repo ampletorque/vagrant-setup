@@ -34,8 +34,8 @@ class ModelTest(TestCase):
         model.Base.metadata.create_all()
 
         cls._setup_once_schema()
-        with transaction.manager:
-            cls._setup_once_data()
+        cls._setup_once_data()
+        transaction.commit()
 
     @classmethod
     def tearDownClass(cls):
@@ -44,12 +44,12 @@ class ModelTest(TestCase):
 
     def setUp(self):
         self._setup_each_schema()
-        with transaction.manager:
-            self._setup_each_data()
+        self._setup_each_data()
+        transaction.commit()
 
     def tearDown(self):
-        with transaction.manager:
-            self._teardown_each()
+        self._teardown_each()
+        transaction.commit()
 
     @classmethod
     def _setup_once_schema(self):

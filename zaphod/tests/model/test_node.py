@@ -23,8 +23,7 @@ class TestNode(ModelTest):
             model.ImageMeta(name='test-image-for-node',
                             original_ext='jpg'))
 
-        model.Session.flush()
-        cls.node_id = node.id
+        cls.node = node
 
     # def test_image_normal(self):
     #     node = model.Node.get(self.node_id)
@@ -36,33 +35,33 @@ class TestNode(ModelTest):
     #     self.assertIn('<img', img)
 
     def test_canonical_path(self):
-        with transaction.manager:
-            n = model.Node(name=u'Hello Node')
-            with self.assertRaises(AttributeError):
-                self.assertIsNone(n.canonical_path())
-            n.aliases.append(model.Alias(path='hello-node',
-                                         canonical=True))
-            model.Session.add(n)
-            model.Session.flush()
-            node_id = n.id
+        n = model.Node(name=u'Hello Node')
+        with self.assertRaises(AttributeError):
+            self.assertIsNone(n.canonical_path())
+        n.aliases.append(model.Alias(path='hello-node',
+                                     canonical=True))
+        model.Session.add(n)
+        model.Session.flush()
+        node_id = n.id
+        transaction.commit()
 
         n2 = model.Node.get(node_id)
         self.assertEqual(n2.canonical_path(), 'hello-node')
 
     def test_update_path(self):
-        with transaction.manager:
-            n = model.Node(name=u'Sup Sup')
-            n.update_path('sup-sup')
-            model.Session.add(n)
-            model.Session.flush()
-            node_id = n.id
+        n = model.Node(name=u'Sup Sup')
+        n.update_path('sup-sup')
+        model.Session.add(n)
+        model.Session.flush()
+        node_id = n.id
+        transaction.commit()
 
         n2 = model.Node.get(node_id)
         self.assertEqual(n2.canonical_path(), 'sup-sup')
 
-        with transaction.manager:
-            n3 = model.Node.get(node_id)
-            n3.update_path('yo-yo')
+        n3 = model.Node.get(node_id)
+        n3.update_path('yo-yo')
+        transaction.commit()
 
         n4 = model.Node.get(node_id)
         self.assertEqual(n4.canonical_path(), 'yo-yo')
@@ -78,20 +77,20 @@ class TestNode(ModelTest):
         self.assertEqual(n.generate_path(), 'node-99')
 
     def test_override_path(self):
-        with transaction.manager:
-            n = model.Node(name=u'Hello')
-            self.assertEqual(n.override_path, None)
-            n.override_path = 'blah'
-            model.Session.add(n)
-            model.Session.flush()
-            node_id = n.id
+        n = model.Node(name=u'Hello')
+        self.assertEqual(n.override_path, None)
+        n.override_path = 'blah'
+        model.Session.add(n)
+        model.Session.flush()
+        node_id = n.id
+        transaction.commit()
 
         n2 = model.Node.get(node_id)
         self.assertEqual(n2.override_path, 'blah')
 
-        with transaction.manager:
-            n3 = model.Node.get(node_id)
-            n3.override_path = None
+        n3 = model.Node.get(node_id)
+        n3.override_path = None
+        transaction.commit()
 
         n4 = model.Node.get(node_id)
         self.assertEqual(n4.override_path, None)

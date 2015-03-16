@@ -18,6 +18,7 @@ def index_view(request):
         def get_groups():
             recently_launched = [
                 [
+                    1497,  # fold-up eating set
                     1490,  # plywerk
                     1492,  # key switches
                 ],

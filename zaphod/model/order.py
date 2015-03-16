@@ -69,7 +69,6 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
         Retrun any billing address that is associated with this order, or None
         if no billing addresses are associated.
         """
-        return None
         for payment in self.payments:
             if hasattr(payment, 'method'):
                 return payment.method.billing

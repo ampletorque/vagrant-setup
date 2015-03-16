@@ -4,6 +4,23 @@
 <%def name="title()">Crowd Supply Invoice - Order ${order.id}</%def>
 
 
+<%def name="address(a)">
+  ${a.first_name} ${a.last_name}<br>
+  % if a.company:
+    ${a.company}<br>
+  % endif
+  ${a.address1}<br>
+  % if a.address2:
+    ${a.address2}<br>
+  % endif
+  ${a.city}, ${a.state} ${a.postal_code}<br>
+  ${a.country_name}
+  % if a.phone:
+    <br>${a.phone}
+  % endif
+</%def>
+
+
 <%self:page_letter>
   <h1>Crowd Supply Order ${order.id}</h1>
 
@@ -11,6 +28,17 @@
   <p>${h.format_datetime(request, order.created_time, '%B %d, %Y')}</p>
 
   <h3>Shipping Information</h3>
+  <p>${self.address(order.shipping)}</p>
+
+  % if order.any_billing:
+    <h3>Billing Information</h3>
+    <p>${self.address(order.any_billing)}</p>
+  % endif
+
+  % if order.customer_comments:
+    <h3>Customer Comments</h3>
+    <p>${order.customer_comments}</p>
+  % endif
 
   <table class="table">
     <thead>

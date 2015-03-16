@@ -48,13 +48,13 @@ class CommentMixin(object):
 
     @property
     def new_comment(self):
-        return u''
+        return
 
     @new_comment.setter
     def new_comment(self, value):
         if value:
             user, body = value
-            self.add_comment(body, user)
+            self.add_comment(user, body)
 
     def add_comment(self, user, body):
         """

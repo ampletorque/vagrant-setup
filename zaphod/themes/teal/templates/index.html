@@ -31,7 +31,7 @@
       </div>
 
       % for row in rows:
-        ${tiles.tile_row(row)}
+        ${tiles.tile_row(row, cols=len(row))}
       % endfor
 
     </div>

@@ -6,6 +6,7 @@ from sqlalchemy import Table, Column, ForeignKey, types, orm
 from . import utils
 from .base import Base
 from .node import Node
+from .address import make_address_columns
 
 
 provider_type_assoc = Table(
@@ -19,8 +20,10 @@ provider_type_assoc = Table(
 
 
 class ProviderType(Node):
+    """
+    A type of service provider.
+    """
     __tablename__ = 'provider_types'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     node_id = Column(None, ForeignKey('nodes.id'), primary_key=True)
 
     __mapper_args__ = {'polymorphic_identity': 'ProviderType'}
@@ -35,13 +38,14 @@ class ProviderType(Node):
 
 
 class Provider(Node):
+    """
+    A service provider in the 'provider database'.
+    """
     __tablename__ = 'providers'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     node_id = Column(None, ForeignKey('nodes.id'), primary_key=True)
     email = Column(types.Unicode(255), nullable=False, default=u'')
     home_url = Column(types.String(255), nullable=True)
-    # XXX
-    # mailing = make_address_columns('mailing')
+    mailing = make_address_columns('mailing')
 
     lat = Column(types.Numeric(9, 6), nullable=True)
     lon = Column(types.Numeric(9, 6), nullable=True)
@@ -53,7 +57,7 @@ class Provider(Node):
                              collection_class=set,
                              backref='providers')
 
-    def generate_path(self, site_id):
+    def generate_path(self):
         name = self.name or u'provider-%s' % self.id
         provider_path = utils.to_url_name(name)
 

@@ -1,6 +1,8 @@
 ---
 - hosts: webservers
   tasks:
+    - debug: msg="Deploying app environment {{ app_environment }}"
+
     - name: setup pyramid logging dirs
       sudo: yes
       file: path=/var/log/pyramid
@@ -35,9 +37,13 @@
         - run alembic migrations
         - reload uwsgi
         - restart nginx
+        - flush redis
+        - build docs
+
+    # XXX Might need a step in here that flushes old .pyc or __pycache__ files.
 
     - name: link uwsgi config file
-      file: src=/var/sw/zaphod/site/conf/uwsgi.conf
+      file: src=/var/sw/zaphod/site/conf/uwsgi-{{ app_environment }}.conf
             path=/etc/uwsgi/vassals/zaphod.ini
             owner=deploy
             group=deploy
@@ -46,7 +52,7 @@
         - reload uwsgi
 
     - name: link nginx config file
-      file: src=/var/sw/zaphod/site/conf/nginx-staging.conf
+      file: src=/var/sw/zaphod/site/conf/nginx-{{ app_environment }}.conf
             path=/etc/nginx/sites-enabled/100-crowdsupply.com
             owner=deploy
             group=deploy
@@ -54,6 +60,7 @@
       notify:
         - restart nginx
 
+    # XXX set up /cron handler
 
   handlers:
     - name: run setup.py develop
@@ -70,5 +77,12 @@
       service: name=uwsgi state=reloaded
 
     - name: restart nginx
+      # XXX It would be good if we could check the config before doing this. Or maybe we can make reloading work, instead of restarting?
       sudo: yes
       service: name=nginx state=restarted
+
+    - name: flush redis
+      command: redis-cli flushall
+
+    - name: build docs
+      command: /var/sw/pyramid27/bin/sphinx-build -d /var/sw/zaphod/docs/_build/doctrees -b html /var/sw/zaphod/docs /var/sw/zaphod/docs/_build/html

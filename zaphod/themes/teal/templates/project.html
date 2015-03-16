@@ -1,17 +1,13 @@
 <%inherit file="project_base.html"/>
 
+<%page cached="True" cache_region="default" cache_key="project-${str(project.id)}-body" />
+
 
 <%namespace name="tiles" file="common/tiles.html"/>
 <%namespace name="blocks" file="common/blocks.html"/>
 
 
 <%def name="title()">${project.name}</%def>
-
-% if project.crowdfunding_vimeo_id:
-  ${blocks.vimeo_embed(project.crowdfunding_vimeo_id)}
-% else:
-  ${project.img(request, 'project-tile')}
-% endif
 
 
 <%def name="remind_me_form(project)">
@@ -32,18 +28,22 @@
 
 
 <div class="project-block">
-  ${self.remind_me_form(project)}
-  <div class="rendered-content">
-    ${request.render_content(project, project.body)}
-  </div>
+  <%blocks:collapse_on_mobile target="details" title="Details">
+    ${self.remind_me_form(project)}
+    <div class="rendered-content">
+      ${request.render_content(project, project.body)}
+    </div>
+  </%blocks:collapse_on_mobile>
 </div>
 
 
 <div class="project-block">
-  <p>Have a question not answered in the description above or in the <a href="#">Updates</a>?</p>
-  <p>
-    <a class="btn btn-primary" href="${request.node_path(project, suffix=['ask-question'])}">Ask ${project.creator.name} a Question</a>
-    or
-    <a href="${request.route_path('questions')}">Browse Crowd Supply Questions &amp; Answers</a>
-  </p>
+  <%blocks:collapse_on_mobile target="faq" title="Ask a Question">
+    <p>Have a question not answered in the description above or in the <a href="#">Updates</a>?</p>
+    <p>
+      <a class="btn btn-primary" href="${request.node_path(project, suffix=['ask-question'])}">Ask ${project.creator.name} a Question</a>
+      or
+      <a href="${request.route_path('questions')}">Browse Crowd Supply Questions &amp; Answers</a>
+    </p>
+  </%blocks:collapse_on_mobile>
 </div>

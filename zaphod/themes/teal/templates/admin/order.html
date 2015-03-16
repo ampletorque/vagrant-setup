@@ -1,19 +1,205 @@
 <%inherit file="base.html"/>
 
 <%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="blocks" file="/common/blocks.html"/>
+<%namespace name="widgets" file="common/widgets.html"/>
 
 <%def name="title()">Edit Order ${obj.id}</%def>
+
+
+<%def name="item_row(item)">
+  <tr>
+    <td></td>
+    <td>
+      % if item.stage == item.CROWDFUNDING:
+        <span class="label label-success">Crowdfunding</span>
+      % elif item.stage == item.PREORDER:
+        <span class="label label-info">Pre-Order</span>
+      % else:
+        <span class="label label-default">Stock</span>
+      % endif
+      <br>
+      <strong>${item.product.name}</strong><br>
+      <a href="${request.route_path('admin:project', id=item.product.project.id)}">${item.product.project.name}</a>
+      ${blocks.option_value_list(item.sku)}
+    </td>
+    <td>
+      ${item.status_description}<br>
+      SKU: ${item.sku.id}<br>
+      Reserved: ${item.qty_reserved}<br>
+      Original Delivery: ${item.expected_ship_date}<br>
+      % if item.batch:
+        Current: ${item.batch.ship_date}
+      % endif
+    </td>
+    <td style="width:125px">
+      <div class="input-group">
+        <div class="input-group-addon">$</div>
+        ${renderer.text('items-%d.price_each' % item.id, item.price_each, class_='form-control')}
+      </div>
+    </td>
+    <td style="width:80px">${renderer.text('items-%d.qty_desired' % item.id, item.qty_desired, class_='form-control', type='number')}</td>
+    <td style="width:125px">
+      <div class="input-group">
+        <div class="input-group-addon">$</div>
+        ${renderer.text('items-%d.shipping_price' % item.id, item.shipping_price, class_='form-control')}
+      </div>
+    </td>
+    <td>${h.currency(item.total)}</td>
+  </tr>
+</%def>
+
+
+<%def name="payment_description(payment)">
+  % if payment.discriminator == 'cc':
+    Transaction ${payment.transaction_id}
+    % if not payment.captured_time:
+      - Authorized for ${h.currency(payment.authorized_amount)} on ${h.format_datetime(request, payment.created_time)}
+    % else:
+      - Captured on ${h.format_datetime(request, payment.captured_time)}
+    % endif
+  % elif payment.discriminator == 'cash':
+    Cash
+  % elif payment.discriminator == 'chck':
+    Check ${payment.reference}
+  % elif payment.discriminator == 'gift':
+    Gift Code <a href="${request.admin_url(payment.gift_code)}">${payment.gift_code.code}</a>
+  % elif payment.discriminator == 'carf':
+    Cash Refund: ${payment.comments}
+  % elif payment.discriminator == 'chrf':
+    Check Refund(${payment.reference}): ${payment.comments}
+  % elif payment.discriminator == 'gcrf':
+    Refund: Gift Code <a href="${request.admin_url(payment.gift_code)}">${payment.gift_code.code}</a> - ${payment.comments}
+  % elif payment.discriminator == 'ccrf':
+    % if not payment.processed_time and payment.pending_action == 'rfnd' and payment.valid:
+      <span class='label label-info'>Refund Pending</span>
+    % endif
+    Refund: Credit Card
+    % if payment.credit_card_payment:
+      (Transaction ${payment.credit_card_payment.transaction_id})
+    % endif
+    - ${payment.comments}
+  % endif
+</%def>
+
+
+<%def name="payment_row(payment)">
+  <tr>
+    <td></td>
+    <td>
+      % if payment.discriminator == 'cc':
+        Method ${payment.method.id} - ${payment.method.reference['customer_id']}<br>
+        ${blocks.address(payment.method.billing)}
+      % endif
+    </td>
+    <td colspan="4">
+      ${self.payment_description(payment)}<br>
+      % if payment.discriminator == 'cc':
+        CCV: ${payment.ccv_result} - AVS: ${payment.avs_result}
+      % endif
+    </td>
+    <td>${h.currency(payment.amount)}</td>
+  </tr>
+</%def>
 
 
 <section class="section-admin-order">
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        <h1>${self.title()}</h1>
+        <h1 class="page-header">
+          ${self.title()}
+          % if obj.closed:
+            <span class="pull-right label label-success">Closed</span>
+          % else:
+            <span class="pull-right label label-danger">Open</span>
+          % endif
+        </h1>
 
-        ${renderer.begin(id='update-form', class_='form-horizontal')}
+        <div class="well">
+          <a class="btn btn-primary" href="${request.route_path('admin:order:print', id=obj.id)}">Print Invoice</a>
+          <a class="btn btn-primary" href="${request.route_path('admin:order:resend-confirmation', id=obj.id)}">Resend Order Confirmation</a>
+
+          % if any(item.status == 'shipped' for item in obj.cart.items):
+            <a class="btn btn-primary" href="${request.route_path('admin:order:resend-shipping-confirmation', id=obj.id)}">Resend Shipping Confirmation</a>
+          % endif
+
+          % if not obj.closed:
+            <a class="btn btn-danger" href="${request.route_path('admin:order:cancel', id=obj.id)}">Cancel Order</a>
+            <a class="btn btn-default" href="${request.route_path('admin:order:fill', id=obj.id)}">Fill Order</a>
+          % endif
+        </div>
+
+        <div class="well">
+          <div class="row">
+            <div class="col-sm-6">
+              <h4>Shipping Address</h4>
+              <p>${blocks.address(obj.shipping)}</p>
+              <p><a href="${request.route_path('admin:order:address', id=obj.id)}">Change Address</a></p>
+            </div>
+            <div class="col-sm-6">
+              <h4>User</h4>
+              <p>
+                <a href="${request.route_path('admin:user', id=obj.user.id)}">
+                  ${obj.user.id} - ${obj.user.name}
+                </a>
+              </p>
+              <p>${obj.user.email}</p>
+              <p><a href="${request.route_path('admin:order:user', id=obj.id)}">Change User</a></p>
+            </div>
+          </div>
+        </div>
+
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
 
           ## XXX FIXME
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Price Each</th>
+                <th>Qty</th>
+                <th>Shipping Price</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              % for item in obj.cart.items:
+                ${self.item_row(item)}
+              % endfor
+            </tbody>
+            <tbody>
+              <tr>
+                <td></td>
+                <td colspan="4">
+                  <a href="${request.route_path('admin:order:add-item', id=obj.id)}">Add Item</a>
+                </td>
+                <td><strong>Total</strong></td>
+                <td>${h.currency(obj.total_amount)}</td>
+              </tr>
+            </tbody>
+            <tbody>
+              % for payment in obj.payments:
+                ${self.payment_row(payment)}
+              % endfor
+            </tbody>
+            <tfoot>
+              <tr>
+                <td></td>
+                <td colspan="4">
+                  <a href="${request.route_path('admin:order:payment', id=obj.id)}">Add Payment</a>
+                  /
+                  <a href="${request.route_path('admin:order:refund', id=obj.id)}">Add Refund</a>
+                </td>
+                <td>Balance Due</td>
+                <td>${h.currency(obj.unauthorized_amount)}</td>
+              </tr>
+            </tfoot>
+          </table>
+
+          ${widgets.comments(renderer, obj)}
 
           <%forms:actions>
             <button class="btn btn-primary" type="submit">Save</button>

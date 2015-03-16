@@ -17,8 +17,11 @@ project_tags = Table(
 
 
 class Tag(Node):
+    """
+    A tag that can be associated with projets to group similar projects
+    together for browsing and searching.
+    """
     __tablename__ = 'tags'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     node_id = Column(None, ForeignKey('nodes.id'), primary_key=True)
 
     __mapper_args__ = {'polymorphic_identity': 'Tag'}

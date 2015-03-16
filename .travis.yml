@@ -14,7 +14,7 @@ before_install:
   - "npm install -g less requirejs autoprefixer"
 
 install:
-  - "pip install webtest mock coverage nose-cover3 flake8 --use-mirrors"
+  - "pip install webtest mock coverage nose-cov flake8 python-coveralls --use-mirrors"
   - "pip install -e . --use-mirrors"
 
 before_script: "flake8 zaphod"

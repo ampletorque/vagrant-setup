@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>${self.title()}</title>
+  ${request.asset_tag('paper-less')}
+
+  <script type="text/javascript" src="//use.typekit.net/yne8zlt.js"></script>
+  <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+</head>
+<body>
+  ${next.body()}
+</body>
+</html>
+
+
+<%def name="title()"></%def>
+
+
+<%def name="page_letter(padded=True)">
+  <div class="page-letter ${'page-letter-padded' if padded else ''}">
+    ${caller.body()}
+  </div>
+</%def>
+
+
+<%def name="print_guide()">
+  <div class="print-guide">
+    <p>Print this document with zero margins.</p>
+    <div class="scale-indicator">1"</div>
+  </div>
+</%def>

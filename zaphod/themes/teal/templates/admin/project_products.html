@@ -1,0 +1,59 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="widgets" file="/admin/common/widgets.html"/>
+<%namespace name="regions" file="/admin/common/regions.html"/>
+
+<%def name="title()">Products for Project ${obj.id}</%def>
+
+
+${regions.project_header(obj)}
+
+
+<section class="section-admin-project">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+
+        % if obj.levels:
+
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Published</th>
+                  <th>Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                % for product in obj.levels:
+                  <tr>
+                    <td><a href="${request.route_path('admin:product', id=product.id)}">Edit</a></td>
+                    <td>${product.id}</td>
+                    <td>${product.name}</td>
+                    <td>
+                      % if product.published:
+                        Yes
+                      % endif
+                    </td>
+                    <td>${h.currency(product.price)}</td>
+                  </tr>
+                % endfor
+              </tbody>
+            </table>
+          </div>
+
+        % else:
+
+          <p>This project has no products.</p>
+
+        % endif
+
+        <a class="btn btn-default" href="${request.route_path('admin:project:products:new', id=obj.id)}">Create New Product</a>
+      </div>
+    </div>
+  </div>
+</section>

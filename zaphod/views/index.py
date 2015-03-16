@@ -2,62 +2,52 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from pyramid.view import view_config
-
-from .. import model
-
-
-def get_project(name):
-    return model.Session.query(model.Project).\
-        filter_by(name=name, published=True).\
-        first()
-
-
-def load_projects(rows):
-    all = []
-    for row in rows:
-        these = []
-        for name in row:
-            project = get_project(name)
-            if project:
-                these.append(project)
-        all.append(these)
-    return all
+from pyramid.settings import asbool
 
 
 @view_config(route_name='index', renderer='index.html')
 def index_view(request):
-    recently_launched = [
-        [
-            'Librem 15: A Free/Libre Software Laptop That '
-            'Respects Your Essential Freedoms',
-            'USB Armory: Open Source USB Stick Computer',
-        ],
-    ]
+    if asbool(request.registry.settings.get('testing')):
+        def get_groups():
+            return [
+                ('Recently Launched', []),
+                ('Recently Funded', []),
+                ('Crowd Favorites', []),
+            ]
+    else:
+        def get_groups():
+            recently_launched = [
+                [
+                    1497,  # fold-up eating set
+                    1490,  # plywerk
+                    1492,  # key switches
+                ],
+            ]
 
-    recently_funded = [
-        [
-            'A Weather Walked In',
-            'Goodwell: Open Source Modern Toothbrush',
-        ],
-        [
-            'Hydrogen: Next-Generation Supercapacitor-Powered '
-            'Portable Speaker',
-            'Hack-E-Bot: affordable + open source robot for all',
-            'Handmade Cedar SUP Paddles, Boards and DIY Kits',
-        ],
-    ]
+            recently_funded = [
+                [
+                    1364,  # librem
+                    1329,  # usb armory
+                ],
+                [
+                    1430,  # a weather walked in
+                    1224,  # goodwell
+                    1259,  # hydrogen
+                ],
+            ]
 
-    crowd_favorites = [
-        [
-            'The Portland Press',
-            'Circuit Stickers',
-            'Novena',
-        ],
-    ]
+            crowd_favorites = [
+                [
+                    236,  # portland press
+                    746,  # circuit stickers
+                    962,  # novena
+                ],
+            ]
 
-    groups = [
-        ('Recently Launched', load_projects(recently_launched)),
-        ('Recently Funded', load_projects(recently_funded)),
-        ('Crowd Favorites', load_projects(crowd_favorites)),
-    ]
-    return dict(groups=groups)
+            return [
+                ('Recently Launched', recently_launched),
+                ('Recently Funded', recently_funded),
+                ('Crowd Favorites', crowd_favorites),
+            ]
+
+    return dict(get_groups=get_groups)

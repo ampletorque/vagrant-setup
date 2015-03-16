@@ -10,3 +10,60 @@
     <div class="container">${msg}</div>
   </section>
 </%def>
+
+
+<%def name="admin_bar()">
+  % if request.user and request.user.admin and request.user.show_admin_bars:
+    <section class="section-admin-bar">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+            ${caller.body()}
+          </div>
+        </div>
+      </div>
+    </section>
+  % endif
+</%def>
+
+
+<%def name="option_value_list(obj)">
+  <ul>
+    % for ov in sorted(obj.option_values, key=lambda ov: ov.option.gravity):
+      <li>
+        ${ov.option.name}: ${ov.description}
+        % if ov.price_increase:
+          (+${h.currency(ov.price_increase)})
+        % endif
+      </li>
+    % endfor
+  </ul>
+</%def>
+
+
+<%def name="address(addr)">
+  ${addr.full_name}<br>
+  % if addr.company != '':
+    ${addr.company}<br>
+  % endif
+  ${addr.phone}<br>
+  ${addr.address1}<br>
+  % if addr.address2:
+    ${addr.address2}<br>
+  % endif
+  ${addr.city}, ${addr.state} ${addr.postal_code}<br>
+  ${addr.country_name}
+</%def>
+
+
+<%def name="collapse_on_mobile(target, title)">
+  <a class="visible-xs mobile-header" data-toggle="collapse" data-target="#${target}" name="${target}-top" href="#${target}-top">
+    <h2>
+      ${title}
+      <i class="fa fa-chevron-right"></i>
+    </h2>
+  </a>
+  <div class="collapse collapse-xs" id="${target}">
+    ${caller.body()}
+  </div>
+</%def>

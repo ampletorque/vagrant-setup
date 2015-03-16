@@ -5,10 +5,11 @@ import urllib
 
 from pyramid.httpexceptions import HTTPNotFound, HTTPMovedPermanently
 from pyramid.view import view_config
+from pyramid.renderers import render
 from sqlalchemy.orm.exc import NoResultFound
 
 from .. import model
-from ..nodes import lookup_node_renderer
+from ..nodes import lookup_node_view
 
 
 class NodeView(object):
@@ -25,10 +26,10 @@ class NodeView(object):
         """
         for suffix_chunks in range(len(path)):
             if suffix_chunks > 0:
-                suffix = path[-suffix_chunks:]
+                suffix = tuple(path[-suffix_chunks:])
                 lookup_path = path[:-suffix_chunks]
             else:
-                suffix = []
+                suffix = None
                 lookup_path = path
             lookup_path = '/'.join(lookup_path)
             lookup_path = lookup_path.encode('utf8', 'replace')
@@ -43,7 +44,7 @@ class NodeView(object):
                 pass
             else:
                 return alias, suffix
-        raise HTTPNotFound()
+        raise HTTPNotFound
 
     @view_config(route_name='node', renderer='htmlstring')
     def view(self):
@@ -52,17 +53,21 @@ class NodeView(object):
         alias, suffix = self._query_match(path)
         node = alias.node
 
-        renderer, accept_suffix = lookup_node_renderer(request.registry,
-                                                       node.__class__)
+        node_info = lookup_node_view(request.registry, node.__class__, suffix)
 
-        if (not accept_suffix) and suffix:
-            raise HTTPNotFound()
+        if not node_info:
+            raise HTTPNotFound
 
         if not alias.canonical:
             # Redirect to the canonical alias.
-            canon_url = request.node_url(node, suffix,
-                                         _query=request.params)
+            canon_url = request.node_url(node, suffix, _query=request.params)
             raise HTTPMovedPermanently(location=canon_url)
 
-        system = dict(request=request, suffix=suffix)
-        return renderer(node, system)
+        view, renderer = node_info
+
+        system = dict(request=request)
+        data = view(node, system)
+        if renderer:
+            return render(renderer, data, request)
+        else:
+            return data

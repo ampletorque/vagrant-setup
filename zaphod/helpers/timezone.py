@@ -23,3 +23,7 @@ def format_datetime(request, dt, format='%m/%d/%Y %I:%M:%S %p %Z',
         dt = pytz.utc.localize(dt).astimezone(tz)
 
     return dt.strftime(format)
+
+
+def timezones_for_select():
+    return pytz.common_timezones

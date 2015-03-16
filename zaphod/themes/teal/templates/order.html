@@ -32,20 +32,20 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        <h1 class="text-center">Order Details</h1>
+        <h1 class="text-center page-header">Order Details</h1>
       </div>
     </div>
 
     % for ci in order.cart.items:
       <div class="row">
         <div class="col-xs-4 col-sm-2">
-          ${ci.pledge_level.img(request, 'pledge-icon')}
+          ${ci.product.img(request, 'product-icon')}
         </div>
 
         <div class="col-xs-8 col-sm-10">
-          <a href="${request.node_path(ci.pledge_level.project)}">${ci.pledge_level.name}</a>
+          <a href="${request.node_path(ci.product.project)}">${ci.product.name}</a>
           <br>
-          ${ci.pledge_level.project.name}
+          ${ci.product.project.name}
         </div>
       </div>
     % endfor

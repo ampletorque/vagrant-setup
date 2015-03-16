@@ -1,0 +1,157 @@
+<%inherit file="base.html"/>
+
+<%def name="title()">Markdown Guide</%def>
+
+
+<%def name="example(s='')">
+  <div class="row">
+    <div class="col-sm-5">
+      <h4>Rendered</h4>
+      <div class="well rendered-content">${h.markdown_extended(s)}</div>
+    </div>
+    <div class="col-sm-5 col-sm-offset-1">
+      <h4>Code</h4>
+      <pre>${s}</pre>
+    </div>
+  </div>
+  <hr>
+</%def>
+
+
+<section class="section-markdown-guide">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>${self.title()}</h1>
+        <p><a href="http://daringfireball.net/projects/markdown/">Markdown</a> is a simple language that lets you write in an easy-to-read, natural format, but still allows for expressive formatting when rendered as HTML. It is used for unstructed "body text" content.</p>
+
+        <p>For additional reference, see <a href="https://help.github.com/articles/markdown-basics/">GitHub's Markdown Basics</a>.</p>
+
+        <h3>Paragraphs</h3>
+        <p>Paragraphs in Markdown are just one or more lines of consecutive text followed by one or more blank lines.</p>
+        ${self.example('''
+On July 2, an alien mothership entered Earth's orbit and deployed several dozen saucer-shaped "destroyer" spacecraft, each 15 miles (24 km) wide.
+
+On July 3, the Black Knights, a squadron of Marine Corps F/A-18 Hornets, participated in an assault on a destroyer near the city of Los Angeles.
+''')}
+
+        <h3>Headings</h3>
+        <p>You can create a heading by adding one or more <code>#</code> symbols before your heading text. The number of <code>#</code> you use will determine the size of the heading.</p>
+        ${self.example('''
+# Huge heading (&lt;h1&gt; tag)
+## Big heading (&lt;h2&gt; tag)
+...
+###### The 6th largest heading (an &lt;h6&gt; tag)
+''')}
+
+        <h3>Blockquotes</h3>
+        <p>You can indicate blockquotes with a <code>&gt;</code>.</p>
+        ${self.example('''
+In the words of Abraham Lincoln:
+
+> Pardon my french
+''')}
+
+        <h3>Styling Text</h3>
+        <p>Make text bold or italic using the <code>_</code> or <code>*</code> symbols.</p>
+        ${self.example('''
+*This text will be italic*
+**This text will be bold**
+
+You can *mix* and **match** them within a line, heading, etc.
+
+You can **nest them _using_ the underscore character**.
+''')}
+
+        <h3>Lists</h3>
+
+        <p>Lists can be unordered, ordered, or nested, using the <code>*</code> marker or a <code>-</code>.
+
+        ${self.example('''
+* Item
+* Item
+* Item
+
+- Item
+- Item
+- Item
+
+1. Item 1
+2. Item 2
+3. Item 3
+
+1. Item 1
+  1. A corollary to the above item.
+  2. Yet another point to consider.
+2. Item 2
+  * A corollary that does not need to be ordered.
+    * This is indented four spaces, because it's two spaces further than the item above.
+    * You might want to consider making a new list.
+3. Item 3
+''')}
+
+        <h3>Code Formatting</h3>
+
+        <p>Using single backticks to enclose something will format it as fixed-width text.</p>
+        <p>Note that within the backticks, other Markdown syntax will not apply.</p>
+
+        ${self.example('''
+Here's an idea: why don't we take `SuperiorProject` and turn it into `**Reasonable**Project`.
+''')}
+
+        <p>A multi-line example can be enclosed with triple backticks.</p>
+
+        ${self.example('''
+Check out this neat program I wrote:
+
+```
+x = 0
+x = 2 + 2
+what is x
+```
+''')}
+
+        <h3>Links</h3>
+
+        <p>You can create an inline link by wrapping link text in brackets ( [ ] ), and then wrapping the link in parentheses ( ( ) ).</p>
+
+        ${self.example('''
+Tell all your friends to [visit Crowd Supply!](https://www.crowdsupply.com)
+''')}
+
+        <h3>Images</h3>
+
+        <p>You can insert images similarly to a link. Images can be referenced by URL (anywhere on the web).</p>
+
+        ${self.example('''
+Here is a great placeholder image:
+
+![This is a placeholder](https://placekitten.com/g/300/200)
+''')}
+
+        <p>To reference images within the Zaphod system, use a simplified URL path, like:</p>
+
+        ${self.example('''
+Here is a Crowd Supply image:
+
+![Super cool title](/img/novena-848_jpg_project-body.jpg)
+''')}
+        <h3>Tables</h3>
+
+        <p>Table structures can be built using the <code>-</code> and <code>|</code> symbols.</p>
+
+        ${self.example('''
+Animal          | Maximum Speed
+----------------|--------------
+Cheetah         | 112-120 km/h
+Free-tailed bat | 96.6 km/h
+Pronghorn       | 88.5 km/h
+Springbok       | 88 km/h
+Wildebeest      | 80.5 km/h
+Blackbuck       | 80 km/h
+Hare            | 80 km/h
+''')}
+
+      </div>
+  </div>
+</section>

@@ -1,5 +1,11 @@
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 from unittest import TestCase
 from datetime import datetime
+
+from sqlalchemy import MetaData, Column, types
+from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 
 from ...model import utils
 
@@ -41,3 +47,49 @@ class TestUTCNow(TestCase):
     def test_mockable(self):
         with patch_utcnow(2012, 4, 1):
             self.assertEqual(utils.utcnow(), datetime(2012, 4, 1))
+
+
+class TestDedupe(TestCase):
+    def setUp(self):
+        metadata = MetaData('sqlite://')
+        Base = declarative_base(metadata=metadata)
+
+        class Foo(Base):
+            __tablename__ = 'test_dedupe'
+            id = Column(types.Integer, primary_key=True)
+            blah = Column(types.String(10), unique=True)
+
+        Base.metadata.create_all()
+        sm = sessionmaker(bind=metadata.bind)
+        self.Session = scoped_session(sm)
+        self.Foo = Foo
+
+    def test_dedupe_nodupes(self):
+        self.assertEquals(utils.dedupe_name(self.Foo, 'blah', u'no-such-node',
+                                            session=self.Session),
+                          u'no-such-node')
+
+    def test_dedupe_onedupe(self):
+        self.Session.add(self.Foo(blah=u'zyzzx'))
+        self.Session.commit()
+        self.assertEquals(utils.dedupe_name(self.Foo, 'blah', u'zyzzx',
+                                            session=self.Session),
+                          u'zyzzx-1')
+
+    def test_dedupe_lots(self):
+        self.Session.add(self.Foo(blah=u'sup'))
+        for ii in range(20):
+            self.Session.add(self.Foo(blah=u'sup-%d' % ii))
+        self.Session.commit()
+        self.assertEquals(utils.dedupe_name(self.Foo, 'blah', u'sup',
+                                            session=self.Session),
+                          u'sup-20')
+
+    def test_dedupe_toomany(self):
+        self.Session.add(self.Foo(blah=u'ugh'))
+        for ii in range(120):
+            self.Session.add(self.Foo(blah=u'ugh-%d' % ii))
+        self.Session.commit()
+        with self.assertRaisesRegexp(ValueError,
+                                     'Failed to find non-duplicate'):
+            utils.dedupe_name(self.Foo, 'blah', 'ugh', session=self.Session)

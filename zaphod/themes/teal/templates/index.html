@@ -1,6 +1,9 @@
 <%inherit file="base.html"/>
 
 
+<%page cached="True" cache_key="index" cache_region="default"/>
+
+
 <%namespace name="tiles" file="common/tiles.html"/>
 
 
@@ -9,7 +12,7 @@
 
 <section class="section-hero">
   <div class="hero-quote-overlay">
-    <h3>Our projects raise an average of $43,600, over twice as much as Kickstarter.</h3>
+    <h3>Our projects raise an average of $52,200, over triple that of Kickstarter.</h3>
     <p><a href="/launch">Find out why.</a></p>
     <p class="hidden-xs">Your next big idea starts here.</p>
     <a class="btn btn-primary" href="/launch">Launch Your Project</a>
@@ -17,7 +20,7 @@
 </section>
 
 
-% for title, rows in groups:
+% for title, rows in get_groups():
   <section class="section-${title.lower().replace(' ', '-')}">
     <div class="container">
 
@@ -28,7 +31,7 @@
       </div>
 
       % for row in rows:
-        ${tiles.tile_row(row)}
+        ${tiles.tile_row(row, cols=len(row))}
       % endfor
 
     </div>

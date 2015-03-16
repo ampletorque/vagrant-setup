@@ -12,48 +12,48 @@ Available Node Renderers
 Article
 ~~~~~~~
 
-.. automodule:: zaphod.renderers.article
+.. automodule:: zaphod.views.nodes.article
     :members:
     :undoc-members:
 
 Creator
 ~~~~~~~
 
-.. automodule:: zaphod.renderers.creator
+.. automodule:: zaphod.views.nodes.creator
     :members:
     :undoc-members:
 
 Project
 ~~~~~~~
 
-.. automodule:: zaphod.renderers.project
+.. automodule:: zaphod.views.nodes.project
     :members:
     :undoc-members:
 
 Project Update
 ~~~~~~~~~~~~~~
 
-.. automodule:: zaphod.renderers.update
+.. automodule:: zaphod.views.nodes.update
     :members:
     :undoc-members:
 
 Tag
 ~~~
 
-.. automodule:: zaphod.renderers.tag
+.. automodule:: zaphod.views.nodes.tag
     :members:
     :undoc-members:
 
 Provider
 ~~~~~~~~
 
-.. automodule:: zaphod.renderers.provider
+.. automodule:: zaphod.views.nodes.provider
     :members:
     :undoc-members:
 
 Provider Type
 ~~~~~~~~~~~~~
 
-.. automodule:: zaphod.renderers.provider_type
+.. automodule:: zaphod.views.nodes.provider_type
     :members:
     :undoc-members:

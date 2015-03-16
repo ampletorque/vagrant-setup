@@ -6,40 +6,49 @@
 <section class="section-admin-projects">
   <div class="container">
     <div class="row">
-      <table class="table">
-        <thead>
-          <tr>
-            <th></th>
-            <th>ID</th>
-            <th>Creator</th>
-            <th>Name</th>
-            <th>Published</th>
-            <th>Listed</th>
-          </tr>
-        </thead>
-        <tbody>
-          % for project in objs:
-            <tr>
-              <td>
-                <a href="${request.route_path('admin:project', id=project.id)}">Edit</a>
-              </td>
-              <td>${project.id}</td>
-              <td>${project.creator.name}</td>
-              <td>${project.name}</td>
-              <td>
-                % if project.published:
-                  Yes
-                % endif
-              </td>
-              <td>
-                % if project.listed:
-                  Yes
-                % endif
-              </td>
-            </tr>
-          % endfor
-        </tbody>
-      </table>
+      <div class="col-lg-12">
+        <div class="pull-right">
+          <a class="btn btn-default" href="${request.route_path('admin:projects:new')}"><i class="fa fa-plus"></i> New Project</a>
+        </div>
+
+        <h1 class="page-header">Projects <small>${len(objs)} total</small></h1>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>ID</th>
+                <th>Creator</th>
+                <th>Name</th>
+                <th>Published</th>
+                <th>Listed</th>
+              </tr>
+            </thead>
+            <tbody>
+              % for project in objs:
+                <tr>
+                  <td>
+                    <a href="${request.route_path('admin:project', id=project.id)}">Edit</a>
+                  </td>
+                  <td>${project.id}</td>
+                  <td>${project.creator.name}</td>
+                  <td>${project.name}</td>
+                  <td>
+                    % if project.published:
+                      Yes
+                    % endif
+                  </td>
+                  <td>
+                    % if project.listed:
+                      Yes
+                    % endif
+                  </td>
+                </tr>
+              % endfor
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </section>

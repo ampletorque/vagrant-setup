@@ -1,29 +1,93 @@
 <%inherit file="base.html"/>
 
+
+<%namespace name="pagination" file="/common/pagination.html"/>
+
+
 <%def name="title()">List Orders</%def>
 
 
 <section class="section-admin-orders">
   <div class="container">
     <div class="row">
-      <table class="table">
-        <thead>
-          <tr>
-            <th></th>
-            <th>ID</th>
-          </tr>
-        </thead>
-        <tbody>
-          % for order in objs:
-            <tr>
-              <td>
-                <a href="${request.route_path('admin:order', id=order.id)}">Edit</a>
-              </td>
-              <td>${order.id}</td>
-            </tr>
-          % endfor
-        </tbody>
-      </table>
+      <div class="col-lg-12">
+        <div class="pull-right">
+          <a class="btn btn-default" href="${request.route_path('admin:orders:new')}"><i class="fa fa-plus"></i> New Order</a>
+        </div>
+
+        <h1 class="page-header">
+          Orders
+          % if page:
+            <small>${page.item_count} total, ${num_open} open</small>
+          % endif
+        </h1>
+
+        <div class="clearfix">
+          % if page:
+            <div class="pull-right">
+              ${pagination.pagination(page)}
+            </div>
+          % endif
+          <form class="form-inline form-search" method="GET">
+            <div class="form-group">
+              <input type="text" name="q" placeholder="Search orders..." value="${request.params.get('q')}" class="form-control">
+              <button class="btn btn-default" type="submit">Search</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>ID</th>
+                <th>Items</th>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Placed</th>
+              </tr>
+            </thead>
+            <tbody>
+              % if page:
+                % for order in page:
+                  <tr>
+                    <td>
+                      <a href="${request.route_path('admin:order', id=order.id)}">Edit</a>
+                    </td>
+                    <td>${order.id}</td>
+                    <td>
+                      % for item in order.cart.items:
+                        ${item.product.name}<br>
+                      % endfor
+                    </td>
+                    <td>${order.shipping.full_name}</td>
+                    <td>
+                      % if order.closed:
+                        <span class="label label-success">Closed</span>
+                      % else:
+                        <span class="label label-danger">Open</span>
+                      % endif
+                    </td>
+                    <td>${h.format_datetime(request, order.created_time)}</td>
+                  </tr>
+                % endfor
+              % else:
+                % for record in results:
+                  <tr>
+                    <td>
+                      <a href="${request.route_path('admin:order', id=record.id)}">Edit</a>
+                    </td>
+                    <td>${record.id}</td>
+                    <td>${record.shipping.full_name}</td>
+                    <td></td>
+                  </tr>
+                % endfor
+              % endif
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </section>

@@ -3,8 +3,8 @@ from __future__ import (absolute_import, division, print_function,
 
 from datetime import datetime
 
-from pyramid.renderers import render_to_response
 from pyramid.httpexceptions import HTTPNotFound
+from sqlalchemy.sql import or_
 
 from .. import model
 
@@ -21,21 +21,22 @@ class ProjectListView(object):
         return self.stage
 
     def base_q(self):
-        return model.Session.query(model.Project).\
+        utcnow = datetime.utcnow()
+        return model.Session.query(model.Project.id).\
+            filter(model.Project.suspended_time == None).\
             filter(model.Project.published == True).\
             filter(model.Project.listed == True).\
+            filter(or_(model.Project.end_time >= utcnow,
+                       model.Project.successful == True)).\
             order_by(model.Project.gravity)
-        # return model.Session.query(model.Project).\
-        #     filter(model.Project.suspended_time == None).\
-        #     filter(model.Project.published == True).\
-        #     filter(model.Project.listed == True).\
-        #     order_by(model.Project.gravity)
+
+    def get_project_ids(self):
+        return self.base_q().all()
 
     def render_html(self):
-        q = self.base_q()
-        projects = [project for project in q.all() if not project.is_failed()]
+        project_ids = self.get_project_ids()
 
-        if len(projects) == 2:
+        if len(project_ids) == 2:
             feature_count = 2
         else:
             feature_count = self.feature_count
@@ -46,13 +47,13 @@ class ProjectListView(object):
 
         data = {
             'browse_tags': browse_tags,
-            'projects': projects,
+            'projects': project_ids,
             'feature_count': feature_count,
             'stage': self.stage,
             'page_title': self.title(),
         }
         data.update(self.data)
-        return render_to_response('browse.html', data, self.request)
+        return data
 
     def render_json(self):
         raise NotImplementedError
@@ -102,10 +103,9 @@ class AvailableView(ProjectListView):
 
     def base_q(self):
         utcnow = datetime.utcnow()
-        # XXX Filter out failed projects and projects that don't accept
-        # preorders.
         return ProjectListView.base_q(self).\
-            filter(utcnow >= model.Project.end_time)
+            filter(utcnow >= model.Project.end_time).\
+            filter(model.Project.accepts_preorders == True)
 
 
 class ArchiveView(ProjectListView):
@@ -113,15 +113,18 @@ class ArchiveView(ProjectListView):
 
     def base_q(self):
         utcnow = datetime.utcnow()
-        # XXX Filter out projects which aren't available for pre-order or
-        # in-stock.
         return ProjectListView.base_q(self).\
-            filter(utcnow >= model.Project.end_time)
+            filter(utcnow >= model.Project.end_time).\
+            filter(model.Project.accepts_preorders == False)
 
 
 def includeme(config):
-    config.add_view(EverythingView, route_name='browse')
-    config.add_view(PrelaunchView, route_name='prelaunch')
-    config.add_view(CrowdfundingView, route_name='crowdfunding')
-    config.add_view(AvailableView, route_name='available')
-    config.add_view(ArchiveView, route_name='archive')
+    config.add_view(EverythingView, route_name='browse',
+                    renderer='browse.html')
+    config.add_view(PrelaunchView, route_name='prelaunch',
+                    renderer='browse.html')
+    config.add_view(CrowdfundingView, route_name='crowdfunding',
+                    renderer='browse.html')
+    config.add_view(AvailableView, route_name='available',
+                    renderer='browse.html')
+    config.add_view(ArchiveView, route_name='archive', renderer='browse.html')

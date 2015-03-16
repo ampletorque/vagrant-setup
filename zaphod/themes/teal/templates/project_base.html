@@ -95,19 +95,19 @@
     <div class="progress-bar" style="width: ${project.progress_percent}%"></div>
   </div>
 
-  <div class="factoids row">
-    <div class="fact col-xs-4" data-countdown-to="${project.end_time.isoformat()}">
+  <div class="factoids">
+    <div class="fact" data-countdown-to="${project.end_time.isoformat()}">
       <%
         val, units = project.remaining
       %>
       <p>${val}</p>
       <span>${units} left</span>
     </div>
-    <div class="fact col-xs-4">
+    <div class="fact">
       <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
       <span>funded</span>
     </div>
-    <div class="fact col-xs-4">
+    <div class="fact">
       <p>${h.commas(project.num_pledges)}</p>
       <span>pledges</span>
     </div>
@@ -130,16 +130,16 @@
   <div class="status-bar status-bar-danger">
     <div class="status-bar-left">Campaign Suspended</div>
   </div>
-  <div class="factoids row">
-    <div class="fact col-xs-4">
+  <div class="factoids">
+    <div class="fact">
       <p>${h.format_datetime(request, project.suspended_time, '%b %d')}</p>
       <span>suspended</span>
     </div>
-    <div class="fact col-xs-4">
+    <div class="fact">
       <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
       <span>funded</span>
     </div>
-    <div class="fact col-xs-4">
+    <div class="fact">
       <p>${h.commas(project.num_pledges)}</p>
       <span>pledges</span>
     </div>
@@ -157,16 +157,16 @@
   <div class="status-bar status-bar-primary">
     <span class="status-bar-left">Funded!</span>
   </div>
-  <div class="factoids row">
-    <div class="fact col-xs-4">
+  <div class="factoids">
+    <div class="fact">
       <p>${h.format_datetime(request, project.final_day, '%b %d')}</p>
       <span>Funded on</span>
     </div>
-    <div class="fact col-xs-4">
+    <div class="fact">
       <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
       <span>funded</span>
     </div>
-    <div class="fact col-xs-4">
+    <div class="fact">
       <p>${h.commas(project.num_pledges)}</p>
       <span>pledges</span>
     </div>
@@ -189,19 +189,31 @@
     <span class="status-bar-left">Funded!</span>
     <span class="status-bar-right">Pre-Order Now</span>
   </div>
-  <div class="factoids row">
-    <div class="fact col-xs-4">
+  <div class="factoids">
+    <div class="fact">
       <p>${h.format_datetime(request, project.final_day, '%b %d')}</p>
       <span>Funded on</span>
     </div>
-    <div class="fact col-xs-4">
+    <div class="fact">
       <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
       <span>funded</span>
     </div>
-    <div class="fact col-xs-4">
+    <div class="fact">
       <p>${h.commas(project.num_pledges)}</p>
       <span>pledges</span>
     </div>
+  </div>
+  <div class="social-buttons">
+    <p>Support this project on social media!</p>
+    ${self.social_buttons(project)}
+  </div>
+</%def>
+
+
+<%def name="stats_stock_only(project)">
+  <div class="status-bar status-bar-primary">
+    <span class="status-bar-left">In Stock</span>
+    <span class="status-bar-right">Available Now</span>
   </div>
   <div class="social-buttons">
     <p>Support this project on social media!</p>
@@ -220,6 +232,8 @@
       ${self.stats_funded(project)}
     % elif project.status == 'available':
       ${self.stats_available(project)}
+    % elif project.status == 'stock-only':
+      ${self.stats_stock_only(project)}
     % else:
       <% assert False, "don't know what stats tile to use for %r" % project.status %>
     % endif
@@ -227,20 +241,21 @@
 </%def>
 
 
-<%def name="pledge_level(project, pledge_level)">
+<%def name="product_level(project, product)">
   <form method="post" action="${request.route_path('cart:add')}">
+    ${h.auth_token_hidden_field(request)}
     <div class="pledge-level">
       <div class="clearfix">
         <div class="pull-left">
-          <h3>${pledge_level.name}</h3>
+          <h3>${product.name}</h3>
           <p class="pledge-level-delivery pledge-level-metadata">
-            % if pledge_level.non_physical:
+            % if product.non_physical:
               Thank you!
-            % elif pledge_level.in_stock:
+            % elif product.in_stock:
               In Stock
-            % elif pledge_level.is_available:
-              Ships ${pledge_level.current_delivery_date.strftime('%B %Y')}
-            % elif not pledge_level.batches:
+            % elif product.is_available:
+              Ships ${product.current_ship_date.strftime('%B %Y')}
+            % elif not product.batches:
               Preview only: check back soon!
             % else:
               No longer available
@@ -249,9 +264,9 @@
         </div>
         <div class="pull-right text-right">
           <p class="pledge-level-price">
-            <sup>$</sup>${h.commas(int(pledge_level.price))}
+            <sup>$</sup>${h.commas(int(product.price))}
           </p>
-          % if not pledge_level.non_physical:
+          % if not product.non_physical:
             <p class="pledge-level-shipping pledge-level-metadata">
               Free US Shipping!
             </p>
@@ -261,32 +276,42 @@
 
       <div class="row">
         <div class="col-xs-4">
-          ${pledge_level.img(request, 'pledge-icon')}
+          ${product.img(request, 'product-icon')}
         </div>
 
         <div class="col-xs-8">
-          ${h.hidden('pledge_level_id', pledge_level.id)}
+          ${h.hidden('product_id', product.id)}
+          ${h.hidden('qty', 1)}
 
-          % for option in pledge_level.published_options:
+          % for option in product.published_options:
             <div class="form-group">
               <label for="option-${option.id}">${option.name}</label>
-              <select id="option-${option.id}" name="option-${loop.index}.value_id" class="form-control">
+              <select id="option-${option.id}" name="options-${loop.index}" class="form-control">
                 % for value in option.published_values:
-                  <option value="${value.id}">${value.description}</option>
+                  <option value="${value.id}">
+                    ${value.description}
+                    % if value.price_increase:
+                      (+${h.currency(value.price_increase)})
+                    % endif
+                  </option>
                 % endfor
               </select>
             </div>
           % endfor
 
           % if project.status == 'crowdfunding':
-            <button type="submit" class="btn btn-block btn-cta">Back This Project</button>
+            % if product.is_available:
+              <button type="submit" class="btn btn-block btn-cta">Back This Project</button>
+            % else:
+              <button type="submit" class="btn btn-block btn-cta" disabled>All Gone</button>
+            % endif
 
             <%
-              qty_claimed = pledge_level.qty_claimed
-              qty_remaining = pledge_level.qty_remaining
+              qty_claimed = product.qty_claimed
+              qty_remaining = product.qty_remaining
             %>
             <p class="pledge-level-supporters pledge-level-metadata text-right">
-              % if pledge_level.non_physical and qty_claimed > 0:
+              % if product.non_physical and qty_claimed > 0:
                 ${h.commas(qty_claimed)}
                 % if qty_claimed == 1:
                   person loves us
@@ -305,10 +330,10 @@
               % endif
             </p>
 
-          % elif project.status == 'available':
-            % if pledge_level.in_stock:
+          % elif project.status in ('available', 'stock-only'):
+            % if product.in_stock:
               <button type="submit" class="btn btn-block btn-cta">Add to Cart</button>
-            % elif pledge_level.accepts_preorders:
+            % elif product.accepts_preorders:
               <button type="submit" class="btn btn-block btn-cta">Pre-order</button>
             % endif
           % endif
@@ -320,137 +345,211 @@
 </%def>
 
 
-<%def name="pledge_levels(project)">
+<%def name="products(project)">
   <div class="project-block">
-    % for pledge_level in project.published_levels:
-      ${self.pledge_level(project, pledge_level)}
-      % if not loop.last:
-        <hr>
-      % endif
-    % endfor
+    <%blocks:collapse_on_mobile target="products" title="${'Pledge Now' if project.status == 'crowdfunding' else 'Product Choices'}">
+      % for product in project.published_levels:
+        ${self.product_level(project, product)}
+        % if not loop.last:
+          <hr>
+        % endif
+      % endfor
+    </%blocks:collapse_on_mobile>
   </div>
 </%def>
 
 
-% if request.user and request.user.has_permission('admin'):
-  <section class="section-admin-bar">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-12">
-          <p>
-            <a href="${request.route_path('admin:project', id=project.id)}">
-              Edit Project ${project.id} - ${project.name}
-            </a>
-          </p>
-        </div>
-      </div>
+<%def name="leader(project)" cached="True" cache_region="default" cache_key="project-${str(project.id)}-leader">
+  <div class="row">
+    <div class="col-lg-12">
+      ${self.breadcrumbs(project)}
     </div>
-  </section>
-% endif
+  </div>
 
-
-<section class="section-project">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-12">
-        ${self.breadcrumbs(project)}
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-lg-12">
-        <ul class="list-unstyled list-tags pull-right text-right">
-          % if project.creator.location:
+  <div class="row">
+    <div class="col-lg-12">
+      <ul class="list-unstyled list-tags pull-right text-right">
+        % if project.creator.location:
+          <li>
+            <i class="fa fa-map-marker"></i>&nbsp;
+            ${project.creator.location}
+          </li>
+        % endif
+        % for tag in list(project.tags)[:2]:
+          % if tag.published:
             <li>
-              <i class="fa fa-map-marker"></i>&nbsp;
-              ${project.creator.location}
+              <i class="fa fa-tag"></i>
+              <a href="${request.node_url(tag)}">${tag.name}</a>
             </li>
           % endif
-          % for tag in list(project.tags)[:2]:
-            % if tag.published:
-              <li>
-                <i class="fa fa-tag"></i>
-                <a href="${request.node_url(tag)}">${tag.name}</a>
-              </li>
-            % endif
-          % endfor
-        </ul>
+        % endfor
+      </ul>
 
-        <h1>${project.name}</h1>
-      </div>
+      <h1>${project.name}</h1>
     </div>
+  </div>
+</%def>
 
+
+<%def name="sidebar(project)" cached="True" cache_region="default" cache_key="project-${str(project.id)}-sidebar">
+  ${self.stats_tile(project)}
+  ${self.products(project)}
+</%def>
+
+
+<%def name="creator_info(creator)">
+  <h4>${creator.name}</h4>
+  <p class="creator-block-teaser">${creator.teaser}</p>
+  <p class="creator-block-metadata">
+    <i class="fa fa-map-marker"></i>&nbsp;${creator.location}
+    % if creator.home_url:
+      &nbsp;&middot;&nbsp;
+      <a href="${creator.home_url}">${creator.display_url}</a>
+    % endif
+  </p>
+</%def>
+
+
+<%def name="owners(project)">
+  % if project.published_ownerships:
     <div class="row">
       <div class="col-lg-12">
-        <ul class="nav nav-tabs">
-          <%self:tab suffix="${None}">
-            Home
-          </%self:tab>
-          <%self:tab suffix="updates">
-            Updates
-            <span class="badge">${len(project.published_updates)}</span>
-          </%self:tab>
-          <%self:tab suffix="backers">
-            Backers
-          </%self:tab>
-        </ul>
+        <hr>
       </div>
     </div>
-
     <div class="row">
-      <div class="col-md-8">
-        ${next.body()}
-      </div>
-      <div class="col-md-4">
-        ${self.stats_tile(project)}
-        ${self.pledge_levels(project)}
-      </div>
+      % for owner in project.published_ownerships:
+        <div class="col-xs-6 col-sm-3">
+          <div class="project-owner">
+            ${h.image_or_gravatar(request, owner.user, 'project-avatar', default='mm', title=owner.user.name, class_='img-avatar')}
+            <h4>${owner.user.name}</h4>
+            <p>${owner.title}</p>
+          </div>
+        </div>
+      % endfor
     </div>
+  % endif
+</%def>
 
-    <div class="row">
-      <div class="col-lg-12">
-        <div class="project-block">
+
+<%def name="creator_block(project)">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="project-block">
+        <%blocks:collapse_on_mobile target="creator" title="Creator">
           <div class="row">
             <div class="col-sm-3">
               ${project.creator.img(request, 'creator-profile')}
             </div>
 
             <div class="col-sm-9">
-              <h4>${project.creator.name}</h4>
-              <p class="creator-block-teaser">${project.creator.teaser}</p>
-              <p class="creator-block-metadata">
-                <i class="fa fa-map-marker"></i>&nbsp;${project.creator.location}
-                % if project.creator.home_url:
-                  &nbsp;&middot;&nbsp;
-                  <a href="${project.creator.home_url}">${project.creator.display_url}</a>
-                % endif
-              </p>
+              ${self.creator_info(project.creator)}
             </div>
           </div>
-
-          % if project.published_ownerships:
-            <div class="row">
-              <div class="col-lg-12">
-                <hr>
-              </div>
-            </div>
-            <div class="row">
-              % for owner in project.published_ownerships:
-                <div class="col-xs-6 col-sm-3">
-                  <div class="project-owner">
-                    ${h.image_or_gravatar(request, owner.user, 'project-avatar', default='mm', title=owner.user.name, class_='img-avatar')}
-                    <h4>${owner.user.name}</h4>
-                    <p>${owner.title}</p>
-                  </div>
-                </div>
-              % endfor
-            </div>
-          % endif
-        </div>
+          ${self.owners(project)}
+        </%blocks:collapse_on_mobile>
       </div>
     </div>
   </div>
-</section>
+</%def>
+
+
+<%blocks:admin_bar>
+  <p>
+    <a href="${request.route_path('admin:project', id=project.id)}">
+      Edit Project ${project.id} - ${project.name}
+    </a>
+  </p>
+</%blocks:admin_bar>
+
+
+% if project.status == 'prelaunch':
+  <section class="section-project-prelaunch">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2 text-center">
+          <h1>${project.name}</h1>
+          <hr>
+
+          % if project.prelaunch_body:
+            <div class="rendered-content">
+              ${request.render_content(project, project.prelaunch_body)}
+            </div>
+          % else:
+            <p>This project is coming soon. Sign up to receive updates and be notified when this project launches:</p>
+          % endif
+
+          <form method="POST" action="${request.node_path(project, suffix=['prelaunch-signup'])}" id="project-signup-form" class="form-inline">
+            <div>
+              ${h.text('email', placeholder='email@example.com', class_='form-control input-lg', type='email')}
+              <button type="submit" class="btn btn-lg btn-primary">Subscribe</button>
+            </div>
+          </form>
+
+          <div class="project-prelaunch-media">
+            % if project.prelaunch_vimeo_id:
+              ${blocks.vimeo_embed(project.prelaunch_vimeo_id)}
+            % else:
+              ${project.img(request, 'project-main')}
+            % endif
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+% else:
+  <section class="section-project">
+    <div class="container">
+      ${self.leader(project)}
+
+      <div class="row">
+        <div class="col-lg-12">
+          <ul class="nav nav-tabs">
+            <%self:tab suffix="${None}">
+              Home
+            </%self:tab>
+            <%self:tab suffix="updates">
+              Updates
+              <span class="badge">${len(project.published_updates)}</span>
+            </%self:tab>
+            <%self:tab suffix="backers">
+              Backers
+            </%self:tab>
+          </ul>
+        </div>
+      </div>
+
+      % if not action:
+        <div class="row">
+          <div class="col-md-8 project-media">
+            % if project.crowdfunding_vimeo_id:
+              ${blocks.vimeo_embed(project.crowdfunding_vimeo_id)}
+            % else:
+              ${project.img(request, 'project-tile')}
+            % endif
+          </div>
+          <div class="col-sm-4 project-sidebar">
+            ${self.sidebar(project)}
+          </div>
+          <div class="col-sm-8">
+            ${next.body()}
+          </div>
+        </div>
+      % else:
+        <div class="row">
+          <div class="col-sm-8">
+            ${next.body()}
+          </div>
+          <div class="col-sm-4 project-sidebar">
+            ${self.sidebar(project)}
+          </div>
+        </div>
+      % endif
+
+      ${self.creator_block(project)}
+    </div>
+  </section>
+% endif
 
 
 % if project.related_projects:
@@ -458,12 +557,12 @@
     <div class="container">
       <div class="row">
         <div class="col-lg-12">
-          <h1 class="text-center">Similar Projects</h1>
+          <h1 class="text-center page-header">Similar Projects</h1>
         </div>
       </div>
 
       % for row in h.grouper(4, project.related_projects):
-        ${tiles.tile_row(row)}
+        ${tiles.tile_row([project.id for project in row])}
       % endfor
     </div>
   </section>

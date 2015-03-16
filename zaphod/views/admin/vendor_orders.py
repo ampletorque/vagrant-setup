@@ -1,16 +1,16 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from pyramid.view import view_defaults
+from pyramid.view import view_defaults, view_config
 from venusian import lift
 from formencode import Schema, validators
 
-from ... import model
+from ... import model, custom_validators
 
-from .base import BaseEditView, BaseListView
+from ...admin import BaseEditView, BaseListView, BaseCreateView
 
 
-@view_defaults(route_name='admin:vendor_order',
+@view_defaults(route_name='admin:vendor-order',
                renderer='admin/vendor_order.html')
 @lift()
 class VendorOrderEditView(BaseEditView):
@@ -19,10 +19,32 @@ class VendorOrderEditView(BaseEditView):
     class UpdateForm(Schema):
         "Schema for validating vendor order update form."
         loaded_time = validators.Number(not_empty=True)
+        new_comment = custom_validators.CommentBody()
 
 
-@view_defaults(route_name='admin:vendor_orders',
+@view_defaults(route_name='admin:vendor-orders',
                renderer='admin/vendor_orders.html')
 @lift()
 class VendorOrderListView(BaseListView):
     cls = model.VendorOrder
+
+
+@view_defaults(route_name='admin:vendor-orders:new',
+               renderer='admin/vendor_orders_new.html')
+@lift()
+class VendorOrderCreateView(BaseCreateView):
+    cls = model.VendorOrder
+    obj_route_name = 'admin:vendor-order'
+
+    class CreateForm(Schema):
+        allow_extra_fields = False
+        vendor_id = validators.Int(not_empty=True)
+
+    @view_config(permission='authenticated')
+    def create(self):
+        vars = BaseCreateView.create(self)
+        vars['vendors'] = \
+            model.Session.query(model.Vendor.id,
+                                model.Vendor.name).\
+            order_by(model.Vendor.name.desc())
+        return vars

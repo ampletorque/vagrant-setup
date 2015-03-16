@@ -1,35 +1,121 @@
 <%inherit file="base.html"/>
 
 <%namespace name="forms" file="common/forms.html"/>
+<%namespace name="cart_table" file="common/cart_table.html"/>
 
 
-<%def name="title()">Cart</%def>
+<%def name="title()">Shopping Cart</%def>
 
 
-<section class="section-cart">
+<%def name="payment_block(renderer, cart, billing, shipping, masked_card)">
+  <%forms:element renderer="${renderer}" name="cc.number" label="Card Number">
+    <div class="row">
+      <div class="col-sm-8">
+        ${renderer.text('cc.number', class_='form-control js-ccfield')}
+      </div>
+    </div>
+  </%forms:element>
+
+  <%forms:element renderer="${renderer}" names="${['cc.expires_month', 'cc.expires_year']}" label="Expiration">
+    <div class="row">
+      <div class="col-xs-6 col-sm-3">
+        ${h.cc_expires_month_select(renderer, 'cc.expires_month', class_='form-control')}
+      </div>
+      <div class="col-xs-6 col-sm-3">
+        ${h.cc_expires_year_select(renderer, 'cc.expires_year', class_='form-control')}
+      </div>
+    </div>
+  </%forms:element>
+  <%forms:element renderer="${renderer}" name="cc.code" label="CVV Code">
+    <div class="row">
+      <div class="col-sm-4 col-xs-9">
+        ${renderer.text('cc.code', class_='form-control')}
+      </div>
+    </div>
+  </%forms:element>
+
+  ${forms.lcheckbox(renderer, 'save_credit_card', True, label='Save credit card information for future use')}
+  ${forms.lcheckbox(renderer, 'billing_same_as_shipping', True, label='Credit card billing address is the same as the shipping address')}
+
+  ${forms.address_fields(renderer, 'billing', billing)}
+</%def>
+
+
+<%def name="checkout_form(renderer, cart)">
+  <section class="section-checkout">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <h1 class="text-center page-header">Checkout</h1>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+          ${renderer.begin(id='checkout-form', class_='form-horizontal form-wrapped')}
+
+          <div class="js-international-surcharge">
+            % if cart.international_available:
+              <p>An surcharge of ${h.currency(cart.international_surcharge_total)} applies for international shipping.</p>
+            % else:
+              <p>International shipping is not available on some or all of the items in your cart.</p>
+            % endif
+          </div>
+            % if not cart.non_physical:
+              <fieldset>
+                <legend>Shipping Information</legend>
+                ${forms.address_fields(renderer, 'shipping', None)}
+              </fieldset>
+            % endif
+
+            <fieldset>
+              <legend>Payment Information</legend>
+              ${self.payment_block(renderer, cart, billing=None, shipping=None, masked_card=None)}
+            </fieldset>
+
+            <fieldset>
+              <legend>Order Information</legend>
+              ${forms.ltext(renderer, 'email', request.user and request.user.email, label='Email Address', required=True, **{'data-required': 'true'})}
+              ${forms.ltextarea(renderer, 'comments', rows=4)}
+            </fieldset>
+
+            <%forms:actions>
+              <button type="submit" class="btn btn-cta">
+                <i class="fa fa-lock"></i> Place Secure Order
+              </button>
+              <span class="submit-hint">This will place your order immediately.</span>
+            </%forms:actions>
+
+          ${renderer.end()}
+        </div>
+      </div>
+    </div>
+  </section>
+</%def>
+
+
+<section class="section-cart-header">
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        <h1 class="text-center">Cart</h1>
-
-        ## XXX show items
-
+        <h1 class="text-center page-header">${self.title()}</h1>
       </div>
     </div>
   </div>
 </section>
 
 
-<section class="section-checkout">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-12">
-        ${renderer.begin(class_='form-horizontal')}
-
-          ## XXX add fields
-
-        ${renderer.end()}
+% if cart and cart.items:
+  ${cart_table.cart_table(cart)}
+  ${self.checkout_form(renderer, cart)}
+% else:
+  <section class="section-cart-empty">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <p class="text-center">Your cart is empty. <a href="${request.route_path('browse')}">Continue browsing</a>.</p>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+% endif

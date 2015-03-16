@@ -4,6 +4,7 @@ from __future__ import (absolute_import, division, print_function,
 import os
 import os.path
 import email.utils
+import textwrap
 from datetime import datetime
 
 import six
@@ -25,6 +26,18 @@ def process_html(body):
                      include_star_selectors=True).transform()
 
 
+def process_text(body):
+    out_lines = []
+    for line in body.split('\n'):
+        if line:
+            out_lines.extend(textwrap.wrap(line, 79,
+                                           break_long_words=False,
+                                           break_on_hyphens=False))
+        else:
+            out_lines.append('')
+    return '\n'.join(out_lines)
+
+
 def dump_locally(settings, msg):
     # Don't use UTC, local time is more convenient for debugging.
     now = datetime.now()
@@ -34,19 +47,25 @@ def dump_locally(settings, msg):
     if not os.path.exists(this_dir):
         os.makedirs(this_dir)
 
-    with open(os.path.join(this_dir, 'headers.txt'), 'w') as f:
+    with open(os.path.join(this_dir, 'raw.txt'), 'w') as f:
         raw_msg = msg.to_message()
         f.write(raw_msg.as_string())
 
     with open(os.path.join(this_dir, 'body.txt'), 'w') as f:
         f.write(msg.body)
 
-    with open(os.path.join(this_dir, 'body.html'), 'w') as f:
-        f.write(msg.html)
+    if msg.html:
+        with open(os.path.join(this_dir, 'body.html'), 'w') as f:
+            f.write(msg.html)
+
+
+def format_address_list(addrs):
+    return [addr if isinstance(addr, six.string_types) else
+            email.utils.formataddr(addr) for addr in addrs]
 
 
 def send(request, template_name, vars, to=None, from_=None,
-         bcc=None, cc=None):
+         bcc=None, cc=None, reply_to=None):
     settings = request.registry.settings
 
     subject = render('emails/%s.subject.txt' % template_name,
@@ -56,16 +75,19 @@ def send(request, template_name, vars, to=None, from_=None,
     # headers.
     subject = subject.strip().replace('\n', ' ').replace('\r', '')
 
-    recipients = to or [settings['mailer.from']]
-    recipients = [recipient
-                  if isinstance(recipient, six.string_types) else
-                  email.utils.formataddr(recipient)
-                  for recipient in recipients]
+    recipients = format_address_list(to or [settings['mailer.from']])
+
+    extra_headers = {}
+    if reply_to:
+        extra_headers['Reply-To'] = reply_to
 
     msg = Message(
         subject=subject,
         sender=from_ or settings['mailer.from'],
         recipients=recipients,
+        cc=cc and format_address_list(cc),
+        bcc=bcc and format_address_list(bcc),
+        extra_headers=extra_headers,
     )
 
     try:
@@ -76,8 +98,8 @@ def send(request, template_name, vars, to=None, from_=None,
     else:
         msg.html = process_html(html_body)
 
-    msg.body = render('emails/%s.txt' % template_name,
-                      vars, request)
+    msg.body = process_text(render('emails/%s.txt' % template_name,
+                                   vars, request))
 
     if asbool(settings.get('mailer.debug')):
         dump_locally(settings, msg)
@@ -99,6 +121,22 @@ def send_with_admin(request, template_name, vars, to=None, from_=None,
     """
     admin_emails = [(user.name, user.email) for user in
                     load_admin_users(template_name)]
+    bcc = bcc or []
     bcc.extend(admin_emails)
-    return send(request=request, template_name=template_name, vars=vars,
-                to=to, from_=from_, bcc=bcc, cc=cc)
+    return send(request=request, template_name=template_name,
+                vars=vars,
+                to=to, from_=from_, bcc=bcc, cc=cc, reply_to=reply_to)
+
+
+def send_order_confirmation(request, order):
+    recipient = [(order.shipping.full_name,
+                  order.user.email)]
+    items_by_project = {}
+    for item in order.cart.items:
+        this_project = items_by_project.setdefault(item.product.project, [])
+        this_project.append(item)
+    vars = {
+        'order': order,
+        'items_by_project': items_by_project,
+    }
+    send_with_admin(request, 'order_confirmation', vars=vars, to=recipient)

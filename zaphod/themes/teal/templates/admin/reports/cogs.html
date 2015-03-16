@@ -1,0 +1,33 @@
+<%inherit file="base.html"/>
+
+
+<%def name="title()">COGS Report</%def>
+
+
+<section class="section-report-cogs">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="table-responsive">
+          <table class="table">
+            <tbody>
+              <tr>
+                <td><strong>Stock Item Cost</strong></td>
+                <td>${h.currency(stock_items)}</td>
+              </tr>
+              <tr>
+                <td><strong>Shipping Cost</strong></td>
+                <td>${h.currency(shipping)}</td>
+              </tr>
+              <tr class="table-divider"><td colspan="2"></td></tr>
+              <tr>
+                <td><strong>Total</strong></td>
+                <td>${h.currency(total)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

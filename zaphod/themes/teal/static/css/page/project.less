@@ -1,16 +1,14 @@
-@project-block-padding: 15px;
-
 .section-project {
     background-color: @cs-offwhite;
 }
 
 .project-block {
     background-color: @cs-white;
-    padding: @project-block-padding;
-    margin-bottom: 30px;
+    padding: 5px 15px;
+    margin: 0 -15px;
 
     .status-bar {
-        margin: 0 -@project-block-padding;
+        margin: 0 -15px;
     }
 
     .project-pledged {
@@ -27,6 +25,20 @@
             color: @cs-black;
             font-size: 22px;
         }
+    }
+}
+
+.project-media {
+    margin: 0 -15px;
+}
+
+@media (min-width: @screen-sm-min) {
+    .project-block {
+        margin: 0 0 30px;
+        padding: 15px;
+    }
+    .project-media {
+        margin: 0;
     }
 }
 
@@ -116,4 +128,15 @@
 }
 .backer-location {
     color: @gray-light;
+}
+
+.project-prelaunch-media {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+@media (min-width: @screen-sm-min) {
+    .project-sidebar {
+        float: right;
+    }
 }

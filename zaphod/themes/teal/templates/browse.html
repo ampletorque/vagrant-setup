@@ -1,6 +1,7 @@
 <%inherit file="base.html"/>
 
 <%namespace name="tiles" file="common/tiles.html"/>
+<%namespace name="blocks" file="common/blocks.html"/>
 
 
 <%def name="title()">
@@ -12,25 +13,44 @@
 </%def>
 
 
-<%def name="filter_target(url)">
-  <li class="${'selected' if request.url == url else ''}">
-    <a href="${url}">
+<%def name="filter_target(path)">
+  <li class="${'selected' if request.path.startswith(path) else ''}">
+    <a href="${path}">
       ${caller.body()}
     </a>
   </li>
 </%def>
 
 
-% if tag and request.user and request.user.has_permission('admin'):
-  <section class="section-admin-bar">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-12">
-          <p><a href="${request.route_path('admin:tag', id=tag.id)}">Admin Edit Page</a></p>
-        </div>
-      </div>
-    </div>
-  </section>
+<%def name="filters(browse_tags)">
+  <div class="col-sm-4 col-md-2 browse-filters">
+    <h3>Browse By Stage</h3>
+    <ul class="list-unstyled list-sidebar">
+      <%self:filter_target path="${request.route_path('prelaunch')}">Pre-launch</%self:filter_target>
+      <%self:filter_target path="${request.route_path('crowdfunding')}">Crowdfunding</%self:filter_target>
+      <%self:filter_target path="${request.route_path('available')}">Funded &amp; Available</%self:filter_target>
+      <%self:filter_target path="${request.route_path('archive')}">Archive</%self:filter_target>
+    </ul>
+    <h3>Browse By Tag</h3>
+    <ul class="list-unstyled list-sidebar">
+      % for filter_tag in browse_tags:
+        <%self:filter_target path="${request.node_path(filter_tag)}">
+          ${filter_tag.name}
+        </%self:filter_target>
+      % endfor
+    </ul>
+  </div>
+</%def>
+
+
+% if tag:
+  <%blocks:admin_bar>
+    <p>
+      <a href="${request.route_path('admin:tag', id=tag.id)}">
+        Edit Tag ${tag.id} - ${tag.name}
+      </a>
+    </p>
+  </%blocks:admin_bar>
 % endif
 
 
@@ -38,28 +58,12 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        <h1 class="text-center">${page_title}</h1>
+        <h1 class="text-center page-header">${page_title}</h1>
 
       </div>
     </div>
     <div class="row">
-      <div class="col-sm-4 col-md-2 browse-filters">
-        <h3>Browse By Stage</h3>
-        <ul class="list-unstyled list-sidebar">
-          <%self:filter_target url="${request.route_url('prelaunch')}">Pre-launch</%self:filter_target>
-          <%self:filter_target url="${request.route_url('crowdfunding')}">Crowdfunding</%self:filter_target>
-          <%self:filter_target url="${request.route_url('available')}">Funded &amp; Available</%self:filter_target>
-          <%self:filter_target url="${request.route_url('archive')}">Archive</%self:filter_target>
-        </ul>
-        <h3>Browse By Tag</h3>
-        <ul class="list-unstyled list-sidebar">
-          % for filter_tag in browse_tags:
-            <%self:filter_target url="${request.node_path(filter_tag)}">
-              ${filter_tag.name}
-            </%self:filter_target>
-          % endfor
-        </ul>
-      </div>
+      ${self.filters(browse_tags)}
 
       <div class="col-sm-8 col-md-10">
         % if request.matched_route.name == 'prelaunch':
@@ -67,9 +71,8 @@
           <hr>
         % endif
 
-
         % if feature_count:
-          ${tiles.tile_row(projects[:feature_count])}
+          ${tiles.tile_row(projects[:feature_count], cols=feature_count)}
         % endif
         % for row in h.grouper(3, projects[feature_count:]):
           ${tiles.tile_row(row)}

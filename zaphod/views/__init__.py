@@ -27,6 +27,8 @@ def includeme(config):
 
     config.add_route('cart', '/cart')
     config.add_route('cart:add', '/cart/add')
+    config.add_route('cart:remove', '/cart/remove')
+    config.add_route('cart:update', '/cart/update')
     config.add_route('cart:confirmed', '/cart/complete')
 
     config.add_route('browse', '/browse')
@@ -55,3 +57,5 @@ def includeme(config):
     config.add_route('node', '/*path')
 
     config.scan('.')
+
+    config.include('.nodes')

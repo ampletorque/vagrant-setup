@@ -2,38 +2,30 @@
 
 
 <%namespace name="provider_tiles" file="common/provider_tiles.html"/>
+<%namespace name="blocks" file="common/blocks.html"/>
 
 
 <%def name="title()">${provider_type.name}</%def>
 
 
-% if request.user and request.user.has_permission('admin'):
-  <section class="section-admin-bar">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-12">
-          <p>
-            <a href="${request.route_path('admin:provider_type', id=provider_type.id)}">
-              Edit Provider Type ${provider_type.id} - ${provider_type.name}
-            </a>
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-% endif
+<%blocks:admin_bar>
+  <p>
+    <a href="${request.route_path('admin:provider-type', id=provider_type.id)}">
+      Edit Provider Type ${provider_type.id} - ${provider_type.name}
+    </a>
+  </p>
+</%blocks:admin_bar>
 
 
-<section class="provider-type-info">
+<section class="section-provider-type">
   <div class="container">
     <div class="row">
-      <div class="span10 offset1">
+      <div class="col-md-12">
         <ul class="breadcrumb">
           <li>
-            <a href="${request.route_path('providers')}">
-              <i class="icon-arrow-left"></i> Service Provider Index
-            </a>
+            <a href="${request.route_path('providers')}">Service Provider Index</a>
           </li>
+          <li>${provider_type.plural_name}</li>
         </ul>
 
         <h1>${provider_type.plural_name}</h1>

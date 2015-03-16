@@ -1,4 +1,4 @@
-from __future__ import (absolute_import, print_function, division,
+from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from sqlalchemy import Column, ForeignKey, types, orm
@@ -16,9 +16,11 @@ __all__ = ['ImageMixin', 'ImageMeta']
 
 
 class ImageMixin(object):
-
+    """
+    Mixin class to add associated images to an object.
+    """
     @declared_attr
-    def _image_associations(cls):
+    def image_associations(cls):
         if not issubclass(cls, Base):
             return
 
@@ -32,7 +34,6 @@ class ImageMixin(object):
             type_name,
             (Base,),
             dict(__tablename__='%s_image_metas' % table_name,
-                 __table_args__={'mysql_engine': 'InnoDB'},
                  source_id=Column("source_id", None,
                                   ForeignKey('%s.id' % table_name),
                                   primary_key=True),
@@ -54,7 +55,7 @@ class ImageMixin(object):
 
         cls.ImageAssociation = ImageAssociation
 
-        cls.image_metas = association_proxy('_image_associations',
+        cls.image_metas = association_proxy('image_associations',
                                             'image_meta',
                                             creator=creator)
 
@@ -63,19 +64,20 @@ class ImageMixin(object):
                                 order_by=ImageAssociation.gravity,
                                 cascade='all, delete-orphan')
 
-    def img(self, request, chain=None, class_=None, id=None):
+    def img(self, request, chain=None, class_=None, id=None, qualified=False):
         # XXX Improve this for performance...
         if self.image_metas:
             im = self.image_metas[0]
             return request.image_tag(im.name, im.original_ext, chain,
                                      title=im.title, alt=im.alt,
-                                     class_=class_, id=id)
+                                     class_=class_, id=id, qualified=qualified)
 
-    def img_url(self, request, chain=None):
+    def img_url(self, request, chain=None, qualified=False):
         # XXX Improve this for performance...
         if self.image_metas:
             im = self.image_metas[0]
-            return request.image_url(im.name, im.original_ext, chain)
+            return request.image_url(im.name, im.original_ext, chain,
+                                     qualified=qualified)
 
 
 class ImageMeta(Base, UserMixin):
@@ -86,7 +88,6 @@ class ImageMeta(Base, UserMixin):
     in the DB.
     """
     __tablename__ = 'image_metas'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     admin_handler = 'images'
 
     id = Column(types.Integer, primary_key=True)

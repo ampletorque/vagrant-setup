@@ -3,6 +3,7 @@ from __future__ import (absolute_import, division, print_function,
 
 from operator import attrgetter
 from datetime import datetime
+from decimal import Decimal
 
 import pytz
 
@@ -13,8 +14,10 @@ from pyramid_es.mixin import ElasticMixin, ESMapping, ESField, ESString
 
 from . import utils, custom_types
 from .base import Base, Session
-from .order import Cart, CartItem
-from .pledge import PledgeLevel
+from .user import User
+from .order import Order
+from .cart import Cart, CartItem
+from .product import Product
 from .node import Node
 
 
@@ -29,13 +32,24 @@ related_projects = Table(
 
 
 class Project(Node, ElasticMixin):
+    """
+    A 'campaign' presented on a single page. May be a crowdfunding campaign,
+    but could also be pre-order or in-stock only. Has a set of products
+    associated with it, comparable to 'pledge levels'.
+    """
     __tablename__ = 'projects'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     node_id = Column(None, ForeignKey('nodes.id'), primary_key=True)
 
     creator_id = Column(None, ForeignKey('creators.node_id'), nullable=False)
     target = Column(custom_types.Money, nullable=False, default=0)
     accepts_preorders = Column(types.Boolean, nullable=False, default=False)
+    successful = Column(types.Boolean, nullable=False, default=False)
+
+    include_in_launch_stats = Column(types.Boolean, nullable=False,
+                                     default=True)
+    pledged_elsewhere_amount = Column(custom_types.Money, nullable=False,
+                                      default=0)
+    pledged_elsewhere_count = Column(types.Integer, nullable=False, default=0)
 
     start_time = Column(types.DateTime, nullable=True)
     end_time = Column(types.DateTime, nullable=True)
@@ -58,6 +72,12 @@ class Project(Node, ElasticMixin):
     homepage_url = Column(types.String(255), nullable=False, default=u'')
     open_source_url = Column(types.String(255), nullable=False, default=u'')
 
+    direct_transactions = Column(types.Boolean, nullable=False, default=False)
+    crowdfunding_fee_percent = Column(types.Numeric(6, 4), nullable=False,
+                                      default=Decimal('5.0000'))
+    preorder_fee_percent = Column(types.Numeric(6, 4), nullable=False,
+                                  default=Decimal('10.0000'))
+
     updates = orm.relationship(
         'ProjectUpdate',
         backref='project',
@@ -65,7 +85,7 @@ class Project(Node, ElasticMixin):
     )
 
     levels = orm.relationship(
-        'PledgeLevel',
+        'Product',
         backref='project',
         cascade='all, delete, delete-orphan',
     )
@@ -90,10 +110,15 @@ class Project(Node, ElasticMixin):
         return creator_path + '/' + project_path
 
     def is_live(self):
-        return True
+        """
+        Return True if the project should be available for the public to view
+        (e.g. it's not pre-release).
+        """
+        utcnow = utils.utcnow()
+        return (utcnow > self.start_time) or self.listed
 
-    def is_failed(self):
-        return False
+    def update_successful(self):
+        self.successful = self.pledged_amount >= self.target
 
     @property
     def status(self):
@@ -113,10 +138,12 @@ class Project(Node, ElasticMixin):
             return 'crowdfunding'
         elif self.pledged_amount < self.target:
             return 'failed'
-        elif self.accepts_preorders:
+        elif self.accepts_preorders and self.target:
             return 'available'
+        elif self.accepts_preorders:
+            return 'stock-only'
         else:
-            return 'archive'
+            return 'funded'
 
     @property
     def progress_percent(self):
@@ -134,31 +161,34 @@ class Project(Node, ElasticMixin):
                                       CartItem.price_each)).\
             join(CartItem.cart).\
             join(Cart.order).\
-            join(CartItem.pledge_level).\
-            filter(PledgeLevel.project == self).\
+            join(CartItem.product).\
+            filter(Product.project == self).\
             scalar() or 0
-        # FIXME XXX
-        # elsewhere_amount = self.pledged_elsewhere_amount or 0
-        elsewhere_amount = 0
+        elsewhere_amount = self.pledged_elsewhere_amount or 0
         return base + elsewhere_amount
 
     @property
     def num_backers(self):
-        # XXX Performance
-        return sum(level.num_backers for level in self.levels)
+        q = Session.query(func.count(User.id.distinct())).\
+            join(User.orders).\
+            join(Order.cart).\
+            join(Cart.items).\
+            join(CartItem.product).\
+            filter(Product.project == self)
+        return q.scalar() or 0
 
     @property
     def num_pledges(self):
         # XXX Performance
-        # if (self.status != 'fundraising' and
-        #         self.pledged_elsewhere_count > 0):
-        #     return self.pledged_elsewhere_count
+        if (self.status != 'fundraising' and
+                self.pledged_elsewhere_count > 0):
+            return self.pledged_elsewhere_count
         # XXX FIXME Filter out cancelled orders.
         return Session.query(func.sum(CartItem.qty_desired)).\
             join(CartItem.cart).\
             join(Cart.order).\
-            join(CartItem.pledge_level).\
-            filter(PledgeLevel.project == self).\
+            join(CartItem.product).\
+            filter(Product.project == self).\
             scalar() or 0
 
     @property
@@ -198,6 +228,16 @@ class Project(Node, ElasticMixin):
         # XXX FIXME turn into a relationship
         return [owner for owner in self.ownerships if owner.show_on_campaign]
 
+    @property
+    def price_range_low(self):
+        return min(pl.price for pl in self.levels
+                   if pl.published and not pl.non_physical)
+
+    @property
+    def price_range_high(self):
+        return max(pl.price for pl in self.levels
+                   if pl.published and not pl.non_physical)
+
     @classmethod
     def elastic_mapping(cls):
         return ESMapping(
@@ -230,8 +270,10 @@ class Project(Node, ElasticMixin):
 
 
 class ProjectUpdate(Node):
+    """
+    A status update article associated with a given project.
+    """
     __tablename__ = 'project_updates'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     node_id = Column(None, ForeignKey('nodes.id'), primary_key=True)
     project_id = Column(None, ForeignKey('projects.node_id'), nullable=False)
 
@@ -243,11 +285,16 @@ class ProjectUpdate(Node):
 
 
 class ProjectOwner(Base):
+    """
+    An association between a project and a user which represents an "owner".
+    Includes additional metadata about how the project owner should be
+    displayed and what permissions they should have.
+    """
     __tablename__ = 'project_owners'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     project_id = Column(None, ForeignKey('projects.node_id'), primary_key=True)
     user_id = Column(None, ForeignKey('users.id'), primary_key=True)
     title = Column(types.Unicode(255), nullable=False, default=u'')
+    gravity = Column(types.Integer, nullable=False, default=0)
     can_change_content = Column(types.Boolean, nullable=False, default=False)
     can_post_updates = Column(types.Boolean, nullable=False, default=False)
     can_receive_questions = Column(types.Boolean, nullable=False,
@@ -257,3 +304,18 @@ class ProjectOwner(Base):
     show_on_campaign = Column(types.Boolean, nullable=False, default=False)
 
     user = orm.relationship('User', backref='project_ownerships')
+
+
+class ProjectEmail(Base):
+    """
+    An e-mail signup that has expressed interest in a project.
+    """
+    __tablename__ = 'project_emails'
+    id = Column(types.Integer, primary_key=True)
+    project_id = Column(None, ForeignKey('projects.node_id'), nullable=False)
+    email = Column(types.String(255), nullable=False)
+    source = Column(types.String(8), nullable=False, default='')
+    subscribed_time = Column(types.DateTime, nullable=False,
+                             default=utils.utcnow)
+
+    project = orm.relationship('Project', backref='emails')

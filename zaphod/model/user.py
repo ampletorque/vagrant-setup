@@ -8,6 +8,8 @@ from datetime import timedelta
 from cryptacular.bcrypt import BCRYPTPasswordManager
 from sqlalchemy import Column, types
 
+from pyramid_es.mixin import ElasticMixin, ESMapping, ESField, ESString
+
 from . import utils
 from .base import Base
 from .image import ImageMixin
@@ -17,9 +19,11 @@ from .comment import CommentMixin
 __all__ = ['User']
 
 
-class User(Base, ImageMixin, UserMixin, CommentMixin):
+class User(Base, ImageMixin, UserMixin, CommentMixin, ElasticMixin):
+    """
+    A user account.
+    """
     __tablename__ = 'users'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(types.Integer, primary_key=True)
     name = Column(types.Unicode(255), nullable=False)
     email = Column(types.String(255), nullable=False, unique=True)
@@ -30,6 +34,7 @@ class User(Base, ImageMixin, UserMixin, CommentMixin):
 
     enabled = Column(types.Boolean, nullable=False, default=True)
     admin = Column(types.Boolean, nullable=False, default=False)
+    show_admin_bars = Column(types.Boolean, nullable=False, default=False)
 
     url_path = Column(types.String(255), nullable=True, unique=True)
     timezone = Column(types.String(255), nullable=False,
@@ -101,14 +106,27 @@ class User(Base, ImageMixin, UserMixin, CommentMixin):
         self.password_reset_token = ''
         self.password_reset_time = utils.utcnow()
 
-    def update_password(self, password):
+    def update_password(self, value):
         """
         Given a new plaintext password, hash it and update the password field.
+        Passing ``None`` for the plaintext password will clear the hashed
+        password field, and make it impossible for that user to login.
 
-        :param password:
+        :param value:
           Plaintext password, as a unicode string.
         """
-        self.hashed_password = User.hash_password(password)
+        if value is None:
+            self.hashed_password = None
+        else:
+            self.hashed_password = User.hash_password(value)
+
+    @property
+    def password(self):
+        return ''
+
+    @password.setter
+    def password(self, value):
+        self.update_password(value)
 
     def check_password(self, password):
         """
@@ -128,3 +146,13 @@ class User(Base, ImageMixin, UserMixin, CommentMixin):
     def has_permission(self, permission_name):
         # XXX Implement this, obviously.
         return True
+
+    @classmethod
+    def elastic_mapping(cls):
+        return ESMapping(
+            analyzer='content',
+            properties=ESMapping(
+                ESField('id'),
+                ESString('name'),
+                ESString('email'),
+            ))

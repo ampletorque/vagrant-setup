@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <link rel="icon" href="/_teal/images/favicon.ico">
+  <link rel="apple-touch-icon" href="/_teal/images/crowd-supply-admin-icon.png">
 
   <!--[if lt IE 9]>
     <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -24,6 +25,11 @@
     ${blocks.flash(msg, category)}
   % endfor
   ${next.body()}
+  <section class="footer-admin">
+    <div class="container">
+      <p><a href="#">Back to top</a></p>
+    </div>
+  </section>
   ${request.asset_tag('admin-js')}
   ${self.additional_footer()}
 </body>
@@ -37,7 +43,7 @@
 
 <%def name="admin_tab(label, path)">
   % if request.path.startswith(path):
-    <li class="active"><a href="#">${label}</a></li>
+    <li class="active"><a href="${path}">${label}</a></li>
   % else:
     <li><a href="${path}">${label}</a></li>
   % endif
@@ -71,12 +77,18 @@
               <li><a href="${request.route_path('admin:creators')}">Creators</a></li>
               <li><a href="${request.route_path('admin:projects')}">Projects</a></li>
               <li><a href="${request.route_path('admin:tags')}">Tags</a></li>
-              <li><a href="${request.route_path('admin:provider_types')}">Provider Types</a></li>
+              <li><a href="${request.route_path('admin:provider-types')}">Provider Types</a></li>
               <li><a href="${request.route_path('admin:providers')}">Providers</a></li>
             </ul>
           </li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Buying <span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="${request.route_path('admin:vendors')}">Vendors</a></li>
+              <li><a href="${request.route_path('admin:vendor-orders')}">Vendor Orders</a></li>
+            </ul>
+          </li>
           ${self.admin_tab('Orders', request.route_path('admin:orders'))}
-          ${self.admin_tab('Buying', request.route_path('admin:vendor_orders'))}
           ${self.admin_tab('Users', request.route_path('admin:users'))}
           ${self.admin_tab('Leads', request.route_path('admin:leads'))}
           ${self.admin_tab('Reports', request.route_path('admin:reports'))}
@@ -106,7 +118,9 @@
         </li>
         <li><a href="${request.route_path('admin:settings')}">Settings</a></li>
         <li class="divider"></li>
+        <li><a href="${request.route_path('admin:help')}">Help</a></li>
         <li><a href="${request.route_path('index')}">View Public Site</a></li>
+        <li><a href="${request.route_path('styleguide')}">Style Guide</a></li>
         <li class="divider"></li>
         <li><a href="${request.route_path('logout')}">Sign Out</a></li>
       </ul>

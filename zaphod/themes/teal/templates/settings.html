@@ -13,7 +13,7 @@
         <h4 class="text-center">Settings for ${request.user.email}</h4>
 
         <div class="block-form">
-          ${renderer.begin(class_='form-horizontal')}
+          ${renderer.begin(class_='form-horizontal form-wrapped')}
 
             ${forms.ltext(renderer, 'name', request.user.name)}
             ${forms.ltext(renderer, 'email', request.user.email)}

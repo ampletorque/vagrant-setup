@@ -1,0 +1,74 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="widgets" file="/admin/common/widgets.html"/>
+<%namespace name="regions" file="/admin/common/regions.html"/>
+
+<%def name="title()">Edit Project ${obj.id}</%def>
+
+
+${regions.project_header(obj)}
+
+
+<section class="section-admin-project">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+
+        % if obj.ownerships:
+
+          ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Title</th>
+                    <th>Gravity</th>
+                    <th>Change Content</th>
+                    <th>Manage Payment</th>
+                    <th>Post Updates</th>
+                    <th>Receive Questions</th>
+                    <th>Manage Owners</th>
+                    <th>Show on Campaign</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  % for ownership in obj.ownerships:
+                    <tr>
+                      <td>${ownership.user.name}</td>
+                      <td>
+                        ${renderer.hidden('owners-%d.user_id' % loop.index, ownership.user.id)}
+                        ${renderer.text('owners-%d.title' % loop.index, ownership.title, class_='form-control')}
+                      </td>
+                      <td>${renderer.select('owners-%d.gravity' % loop.index, ownership.gravity, range(-10, 10), class_='form-control', type='number')}</td>
+                      <td>${renderer.checkbox('owners-%d.can_change_content' % loop.index, checked=ownership.can_change_content)}</td>
+                      <td>${renderer.checkbox('owners-%d.can_manage_payments' % loop.index, checked=ownership.can_manage_payments)}</td>
+                      <td>${renderer.checkbox('owners-%d.can_post_updates' % loop.index, checked=ownership.can_post_updates)}</td>
+                      <td>${renderer.checkbox('owners-%d.can_receive_questions' % loop.index, checked=ownership.can_receive_questions)}</td>
+                      <td>${renderer.checkbox('owners-%d.can_manage_owners' % loop.index, checked=ownership.can_manage_owners)}</td>
+                      <td>${renderer.checkbox('owners-%d.show_on_campaign' % loop.index, checked=ownership.show_on_campaign)}</td>
+                    </tr>
+                  % endfor
+                </tbody>
+              </table>
+            </div>
+
+            <%forms:actions>
+              <button class="btn btn-primary" type="submit">Save</button>
+              <button class="btn btn-default" type="reset">Cancel</button>
+            </%forms:actions>
+          ${renderer.end()}
+
+        % else:
+
+          <p>This project has no owners.</p>
+
+        % endif
+
+        <a class="btn btn-default" href="${request.route_path('admin:project:owners:new', id=obj.id)}">Add New Owner</a>
+
+      </div>
+    </div>
+  </div>
+</section>

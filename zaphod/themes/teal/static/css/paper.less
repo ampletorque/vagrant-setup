@@ -1,0 +1,95 @@
+@import "vendor/bootstrap3/normalize";
+@import "variables.less";
+
+body {
+    color: #434345;
+    font-family: "Helvetica Neue";
+    font-size: 13px;
+    line-height: 16px;
+    background-color: #f7f7f7;
+
+    // Force browser to print background colors and images.
+    -webkit-print-color-adjust: exact;
+
+    font-family: @cs-sans-font-family;
+    -webkit-font-smoothing: antialiased;
+}
+h1 {
+    font-family: @cs-serif-font-family;
+    text-rendering: optimizeLegibility;
+}
+
+@page {
+    margin: 0;
+}
+
+// Hide the pyramid_debugtoolbar activation button when printing.
+@media print {
+    #pDebug {
+        display: none;
+    }
+}
+
+strong {
+    font-weight: bold;
+}
+
+.table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    text-align: left;
+
+    th {
+        font-weight: bold;
+        border-bottom: 1px solid #888;
+    }
+    th, td {
+        padding: 10px 5px;
+        vertical-align: top;
+    }
+    td {
+        border-bottom: 1px solid #ccc;
+    }
+    .qty {
+        text-align: right;
+    }
+    .nopad {
+        padding: 0;
+    }
+}
+
+.page-letter {
+    width: 8.5in;
+    // The browser seems to think that a page is 10.963" long, not 11", so we
+    // have to set the height of this container to less than that in order to
+    // prevent it from overflowing onto a new page.
+    height: 10.750in;
+    padding: 0;
+    margin: 0 auto;
+    border: 0;
+    page-break-inside: avoid;
+    overflow: hidden;
+    background-color: #fff;
+}
+.page-letter-padded {
+    padding: 0.5in;
+}
+
+.print-guide {
+    text-align: center;
+    padding-top: 0.125in;
+    padding-bottom: 0.25in;
+}
+
+.scale-indicator {
+    width: 1in;
+    height: 0.100in;
+    border: 1pt solid #000;
+    border-top: 0;
+    text-align: center;
+    margin: 0 auto;
+    font-size: 7pt;
+    line-height: 0.100in;
+}

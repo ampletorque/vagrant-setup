@@ -1,6 +1,7 @@
 <%inherit file="base.html"/>
 
 <%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="widgets" file="common/widgets.html"/>
 
 <%def name="title()">Edit User ${obj.id}</%def>
 
@@ -9,17 +10,83 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        <h1>${self.title()}</h1>
+        <h1>
+          ${self.title()}
+          % if obj == request.user:
+            <small>This is you!</small>
+          % endif
+        </h1>
 
-        ${renderer.begin(id='update-form', class_='form-horizontal')}
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped js-ajax-validate')}
           ${forms.ltext(renderer, 'name', obj.name)}
           ${forms.ltext(renderer, 'email', obj.email, prefix='@')}
+
+          ${forms.lpassword(renderer, 'password')}
+          ${forms.lpassword(renderer, 'password2', label='Confirm Password', hint="To update this user's password, enter a new one here.")}
+
+          ${forms.ltext(renderer, 'url_path', obj.url_path, label='Profile URL', hint='If supplied, a profile page for this user will be published.', prefix='crowdsupply.com' + request.route_path('profile', path=''))}
+          ${forms.lselect(renderer, 'timezone', obj.timezone, h.timezones_for_select())}
+          ${forms.ltext(renderer, 'twitter_username', obj.twitter_username, prefix='@')}
+
+          ${forms.lcheckbox(renderer, 'show_in_backers', obj.show_in_backers, hint='Show this user in lists of project backers.')}
+          ${forms.lcheckbox(renderer, 'show_name', obj.show_name, hint="Show this user's name in backers lists.")}
+          ${forms.lcheckbox(renderer, 'show_location', obj.show_location, hint="Show this user's location in backers lists.")}
+
+          ${forms.lcheckbox(renderer, 'show_admin_bars', checked=obj.show_admin_bars, hint='Show shortcut admin toolbars on public site.')}
+          ${forms.lcheckbox(renderer, 'enabled', checked=obj.enabled, hint='If this is unchecked, the user will not be able to login, and will be logged out if they are currently logged in.')}
+          ${forms.lcheckbox(renderer, 'admin', checked=obj.admin, hint='Grant this user admin permissions.')}
+
+          ${widgets.images(renderer, obj)}
+          ${widgets.comments(renderer, obj)}
 
           <%forms:actions>
             <button class="btn btn-primary" type="submit">Save</button>
             <button class="btn btn-default" type="reset">Cancel</button>
           </%forms:actions>
         ${renderer.end()}
+
+        <h3>Order History</h3>
+        % if obj.orders:
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Order ID</th>
+                  <th>First Item</th>
+                  <th>Total</th>
+                  <th>Placed</th>
+                  <th>Closed</th>
+                </tr>
+              </thead>
+              <tbody>
+                % for order in obj.orders:
+                  <tr>
+                    <td><a href="${request.route_path('admin:order', id=order.id)}">Edit</a></td>
+                    <td>${order.id}</td>
+                    <td>
+                      % if order.cart.items:
+                        ${order.cart.items[0].product.name}
+                      % endif
+                    </td>
+                    <td>${h.currency(order.total_amount)}</td>
+                    <td>${h.format_datetime(request, order.created_time)}</td>
+                    <td>
+                      % if order.closed:
+                        Closed
+                      % else:
+                        Open
+                      % endif
+                    </td>
+                  </tr>
+                % endfor
+              </tbody>
+            </table>
+          </div>
+        % else:
+          <p>This user has not placed any orders.</p>
+        % endif
+
       </div>
     </div>
   </div>

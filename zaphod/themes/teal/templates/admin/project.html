@@ -2,46 +2,58 @@
 
 <%namespace name="forms" file="/common/forms.html"/>
 <%namespace name="widgets" file="/admin/common/widgets.html"/>
+<%namespace name="regions" file="/admin/common/regions.html"/>
 
 <%def name="title()">Edit Project ${obj.id}</%def>
+
+
+${regions.project_header(obj)}
 
 
 <section class="section-admin-project">
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        <a class="pull-right" href="${request.node_path(obj)}">View Public Page</a>
-        <h1 class="page-header">${self.title()}</h1>
+        ##<div class="well">
+        ##  <a class="btn btn-danger" href="#">Suspend Project</a>
+        ##</div>
 
-        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped js-ajax-validate')}
           ${forms.ltext(renderer, 'name', obj.name)}
 
           ${widgets.aliases(renderer, obj)}
 
-          ${forms.ltext(renderer, 'target', obj.target, label='Funding Target')}
-          ${forms.ltext(renderer, 'gravity', obj.gravity, hint='Determines sort order of project in list views.', type='number')}
-
           ${forms.ldaterange(renderer, 'start_time', 'end_time', obj.start_time, obj.end_time)}
+          ${forms.lvalue('Yes' if obj.successful else 'No', label='Successful')}
+          ${forms.ltext(renderer, 'target', obj.target, label='Funding Target', prefix='$')}
+          ${forms.ltext(renderer, 'gravity', obj.gravity, hint='Determines sort order of project in list views.', type='number')}
+          ${forms.lcheckbox(renderer, 'accepts_preorders', obj.accepts_preorders, label='Accepts Pre-Orders', hint='Check if the project will continue to accept orders after the crowdfunding campaign is over.')}
+          ${forms.ltext(renderer, 'pledged_elsewhere_amount', obj.pledged_elsewhere_amount, label='Amount Pledged Elsewhere', prefix='$')}
+          ${forms.ltext(renderer, 'pledged_elsewhere_count', obj.pledged_elsewhere_count, label='Count Pledged Elsewhere')}
+          ${forms.lcheckbox(renderer, 'include_in_launch_stats', obj.include_in_launch_stats, label='Include in Launch Stats', hint='Check if this project launched or will launch as a crowdfunding campaign on Crowd Supply.')}
+
+          ${forms.ltextarea(renderer, 'keywords', obj.keywords, rows=3, hint='Included in a keywords meta tag and used for search.')}
 
           ${forms.lcheckbox(renderer, 'listed', obj.listed)}
           ${forms.lcheckbox(renderer, 'published', obj.published)}
 
-          ${forms.ltextarea(renderer, 'keywords', obj.keywords, rows=3, hint='Included in a keywords meta tag and used for search.')}
-
           <h2>Prelaunch</h2>
           ${forms.ltext(renderer, 'prelaunch_vimeo_id', obj.prelaunch_vimeo_id, label='Vimeo ID')}
           ${forms.ltextarea(renderer, 'prelaunch_teaser', obj.prelaunch_teaser, rows=3, label='Teaser', hint='Optional summary.')}
-          ${forms.ltextarea(renderer, 'prelaunch_body', obj.prelaunch_body, rows=15, label='Body')}
+          ${widgets.lcontent(renderer, 'prelaunch_body', obj.prelaunch_body)}
 
           <h2>Crowdfunding</h2>
           ${forms.ltext(renderer, 'crowdfunding_vimeo_id', obj.crowdfunding_vimeo_id, label='Vimeo ID')}
           ${forms.ltextarea(renderer, 'teaser', obj.teaser, rows=3, label='Teaser', hint='Optional summary.')}
-          ${forms.ltextarea(renderer, 'body', obj.body, rows=15, label='Body')}
+          ${widgets.lcontent(renderer, 'body', obj.body)}
 
           <h2>Available</h2>
           ${forms.ltext(renderer, 'available_vimeo_id', obj.available_vimeo_id, label='Vimeo ID')}
           ${forms.ltextarea(renderer, 'available_teaser', obj.available_teaser, rows=3, label='Teaser', hint='Optional summary.')}
-          ${forms.ltextarea(renderer, 'available_body', obj.available_body, rows=15, label='Body')}
+          ${widgets.lcontent(renderer, 'available_body', obj.available_body)}
+
+          ${widgets.images(renderer, obj)}
+          ${widgets.comments(renderer, obj)}
 
           <%forms:actions>
             <button class="btn btn-primary" type="submit">Save</button>

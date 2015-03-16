@@ -2,18 +2,19 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from pyramid.config import Configurator
+from pyramid.settings import asbool
 from pyramid.events import BeforeRender, NewResponse
 from sqlalchemy import engine_from_config
 
 from gimlet.factories import session_factory_from_settings
 
-from . import helpers
+from . import helpers, getters, model
 from .logging import init_querytimer
-from .model import Session, Base
 
 
 def add_renderer_globals(event):
     event['h'] = helpers
+    event['getters'] = getters
 
 
 class Root(object):
@@ -32,8 +33,8 @@ def main(global_config, **settings):
     """
     engine = engine_from_config(settings, 'sqlalchemy.')
     init_querytimer(engine)
-    Session.configure(bind=engine)
-    Base.metadata.bind = engine
+    model.init_model(engine,
+                     read_only=asbool(settings.get('model.read_only')))
 
     session_factory = session_factory_from_settings(settings)
 
@@ -50,11 +51,12 @@ def main(global_config, **settings):
     config.include('pyramid_mailer')
     config.include('pyramid_cron')
 
+    config.include('.renderers')
     config.include('.auth')
     config.include('.themes')
-    config.include('.views')
     config.include('.nodes')
-    config.include('.renderers')
+    config.include('.views')
+    config.include('.tasks')
 
     config.add_subscriber(new_response_subscriber, NewResponse)
     config.add_subscriber(add_renderer_globals, BeforeRender)

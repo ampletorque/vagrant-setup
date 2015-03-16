@@ -11,7 +11,9 @@ from .base import Base
 
 
 class CommentMixin(object):
-
+    """
+    Mixin class which provides admin comment tracking on a model object.
+    """
     @declared_attr
     def comments(cls):
         if not issubclass(cls, Base):
@@ -27,7 +29,6 @@ class CommentMixin(object):
             type_name,
             (Base,),
             dict(__tablename__='%s_comments' % table_name,
-                 __table_args__={'mysql_engine': 'InnoDB'},
                  id=Column('id', types.Integer, primary_key=True),
                  source_id=Column('source_id', None,
                                   ForeignKey('%s.id' % table_name),
@@ -45,7 +46,21 @@ class CommentMixin(object):
                                 foreign_keys=[cls.Comment.source_id],
                                 order_by=cls.Comment.id)
 
-    def add_comment(self, request, body):
+    @property
+    def new_comment(self):
+        return
+
+    @new_comment.setter
+    def new_comment(self, value):
+        if value:
+            user, body = value
+            self.add_comment(user, body)
+
+    def add_comment(self, user, body):
+        """
+        Add a new comment to this object.
+        """
         self.comments.append(self.Comment(
-            created_by=request.user,
-            body=body))
+            created_by=user,
+            body=body,
+        ))

@@ -26,6 +26,10 @@ a {
   text-decoration: none;
 }
 
+.bold {
+  font-weight: bold;
+}
+
 .btn {
   text-decoration: none;
 	color: #ffffff;
@@ -68,14 +72,10 @@ table.footer-wrap {
   width: 100%;
   clear: both !important;
 }
-.footer-wrap .container td.content  p {
-  border-top: 1px solid rgb(215,215,215);
-  padding-top: 15px;
+table.bordered {
+  border-top: 1px solid #ccc;
 }
-.footer-wrap .container td.content p {
-  font-size: 10px;
-  font-weight: bold;
-}
+
 .footer-wrap a {
   margin-right: 15px;
 }
@@ -178,21 +178,23 @@ ul li {
 
 <body topmargin="0" leftmargin="0" marginheight="0" marginwidth="0">
   ${self.header()}
+  ${next.body()}
+  ${self.footer()}
+</body>
+</html>
 
-  <!-- body -->
-  <table class="body-wrap" bgcolor="">
+
+<%def name="container(cls='')">
+  <table class="body-wrap ${cls}" bgcolor="">
     <tr>
       <td></td>
       <td class="container" align="">
-        ${next.body()}
+        ${caller.body()}
       </td>
       <td></td>
     </tr>
   </table><!-- /body -->
-
-  ${self.footer()}
-</body>
-</html>
+</%def>
 
 
 <%def name="header()">
@@ -230,13 +232,21 @@ ul li {
             <table>
               <tr>
                 <td>
-                  <p>
-                    <a href="${request.relative_url('/shipping')}">Shipping</a>
-                    <a href="${request.relative_url('/returns')}">Returns</a>
-                    <a href="${request.relative_url('/terms-of-use')}">Terms</a>
-                    <a href="${request.relative_url('/privacy-policy')}">Privacy Policy</a>
-                    <a href="${request.route_url('contact')}">Contact</a>
-                  </p>
+                  <a href="${request.relative_url('/shipping')}">Shipping</a>
+                  <a href="${request.relative_url('/returns')}">Returns</a>
+                  <a href="${request.relative_url('/terms-of-use')}">Terms</a>
+                  <a href="${request.relative_url('/privacy-policy')}">Privacy Policy</a>
+                  <a href="${request.route_url('contact')}">Contact</a>
+                  <br /><br />
+
+                  Crowd Supply<br />
+                  <a href="${request.host_url}">${request.host_url}</a><br />
+                  ${request.registry.settings['address.address1']}<br />
+                  % if 'address.address2' in request.registry.settings:
+                  ${request.registry.settings['address.address1']}<br />
+                  % endif
+                  ${request.registry.settings['address.city']}, ${request.registry.settings['address.state']} ${request.registry.settings['address.postal_code']}<br />
+                  ${request.registry.settings['address.phone']}<br />
                 </td>
               </tr>
             </table>
@@ -246,4 +256,19 @@ ul li {
       <td></td>
     </tr>
   </table><!-- /footer -->
+</%def>
+
+
+<%def name="address_fields(addr)">
+  ${addr.full_name}<br />
+  % if addr.company != '':
+    ${addr.company}<br />
+  % endif
+  ${addr.phone}<br />
+  ${addr.address1}<br />
+  % if addr.address2:
+    ${addr.address2}<br />
+  % endif
+  ${addr.city}, ${addr.state} ${addr.postal_code}<br />
+  ${addr.country_name}
 </%def>

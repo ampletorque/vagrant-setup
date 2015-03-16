@@ -1,0 +1,59 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="widgets" file="/admin/common/widgets.html"/>
+<%namespace name="regions" file="/admin/common/regions.html"/>
+
+<%def name="title()">Project ${obj.id} Updates</%def>
+
+
+${regions.project_header(obj)}
+
+
+<section class="section-admin-project">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+
+        % if obj.updates:
+
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Title</th>
+                  <th>Published</th>
+                  <th>Posted Time</th>
+                  <th>Author</th>
+                </tr>
+              </thead>
+              <tbody>
+                % for update in obj.updates:
+                  <tr>
+                    <td><a href="${request.route_path('admin:update', id=update.id)}">Edit</a></td>
+                    <td>${update.name}</td>
+                    <td>
+                      % if update.published:
+                        Yes
+                      % endif
+                    </td>
+                    <td>${h.format_datetime(request, update.created_time)}</td>
+                    <td>${update.created_by.name}</td>
+                  </tr>
+                % endfor
+              </tbody>
+            </table>
+          </div>
+
+        % else:
+
+          <p>This project has no updates.</p>
+
+        % endif
+
+        <a class="btn btn-default" href="${request.route_path('admin:project:updates:new', id=obj.id)}">Create New Update</a>
+      </div>
+    </div>
+  </div>
+</section>

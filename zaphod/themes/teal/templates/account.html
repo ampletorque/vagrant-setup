@@ -44,42 +44,42 @@
     </div>
 
     % for order in request.user.orders:
-      % for pledge in order.cart.items:
+      % for cart_item in order.cart.items:
         <div class="row">
           <div class="col-md-2">
             ## Item image
-            ${pledge.pledge_level.img(request, 'pledge-icon')}
+            ${cart_item.product.img(request, 'product-icon')}
           </div>
           <div class="col-md-10">
             <h4>
-              Order ${pledge.cart.order.id} -
-              <a href="${request.node_path(pledge.pledge_level.project)}">${pledge.pledge_level.name}</a> - ${pledge.pledge_level.project.name}
+              Order ${cart_item.cart.order.id} -
+              <a href="${request.node_path(cart_item.product.project)}">${cart_item.product.name}</a> - ${cart_item.product.project.name}
             </h4>
             <p>
-              Backed on ${h.format_datetime(request, pledge.cart.order.created_time, '%b %d, %Y')}<br>
-              % if pledge.shipped_date:
-                Shipped on ${h.format_datetime(request, pledge.shipped_date, '%b %d, %Y')}<br>
-                % if pledge.expected_delivery_date:
-                  % if pledge.shipped_date < pledge.expected_delivery_date:
-                    <strong>Shipped ${(pledge.expected_delivery_date - pledge.shipped_date).days} days early!</strong>
+              Backed on ${h.format_datetime(request, cart_item.cart.order.created_time, '%b %d, %Y')}<br>
+              % if cart_item.shipped_date:
+                Shipped on ${h.format_datetime(request, cart_item.shipped_date, '%b %d, %Y')}<br>
+                % if cart_item.expected_ship_date:
+                  % if cart_item.shipped_date < cart_item.expected_ship_date:
+                    <strong>Shipped ${(cart_item.expected_ship_date - cart_item.shipped_date).days} days early!</strong>
                   % else:
-                    <strong>Shipped ${(pledge.shipped_date - pledge.expected_delivery_date).days} days late!</strong>
+                    <strong>Shipped ${(cart_item.shipped_date - cart_item.expected_ship_date).days} days late!</strong>
                   % endif
-                  Originally expected to ship on ${h.format_datetime(request, pledge.expected_delivery_date, '%b %d, %Y')}
+                  Originally expected to ship on ${h.format_datetime(request, cart_item.expected_ship_date, '%B %Y')}
                 % endif
-              % elif pledge.pledge_level.non_physical:
+              % elif cart_item.product.non_physical:
                 No shipment
-              % elif pledge.batch  and pledge.expected_delivery_date != pledge.batch.delivery_date:
-                <strong>This project has fallen behind schedule and is currently expecting to ship on ${h.format_datetime(request, pledge.batch.delivery_date, '%b %d, %Y')}. Please see project updates for more information.</strong><br>
-                Originally expected to ship on ${h.format_datetime(request, pledge.expected_delivery_date, '%b %d, %Y')}
-              % elif pledge.expected_delivery_date:
-                Ships on ${h.format_datetime(request, pledge.expected_delivery_date, '%b %d, %Y')}
+              % elif cart_item.batch  and cart_item.expected_ship_date != cart_item.batch.ship_date:
+                <strong>This project has fallen behind schedule and is currently expecting to ship on ${h.format_datetime(request, cart_item.batch.ship_date, '%b %d, %Y')}. Please see project updates for more information.</strong><br>
+                Originally expected to ship on ${h.format_datetime(request, cart_item.expected_ship_date, '%B %Y')}
+              % elif cart_item.expected_ship_date:
+                Ships on ${h.format_datetime(request, cart_item.expected_ship_date, '%b %d, %Y')}
               % else:
                 Delivery date unknown
               % endif
             </p>
             <p>
-              <a href="${request.route_path('order', id=pledge.cart.order.id)}">View Order Details</a>
+              <a href="${request.route_path('order', id=cart_item.cart.order.id)}">View Order Details</a>
             </p>
           </div>
         </div>

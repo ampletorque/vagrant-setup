@@ -13,5 +13,7 @@ from .misc import *
 from .social import *
 from .timezone import *
 from .paginate import *
+from .xsrf import *
+from .markdown import *
 
 used = [datetime]

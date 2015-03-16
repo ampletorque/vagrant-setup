@@ -1,5 +1,9 @@
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 from unittest import TestCase
 from sqlalchemy import create_engine
+
+import transaction
 
 from ... import model
 
@@ -12,25 +16,26 @@ class ModelTest(TestCase):
     """
     @classmethod
     def save_model_state(cls):
-        cls.orig_engine = model.Base.metadata.engine
-        cls.orig_session = model.Session
+        cls.orig_engine = model.Base.metadata.bind
 
     @classmethod
     def restore_model_state(cls):
         model.Base.metadata.bind = cls.orig_engine
-        model.Session = cls.orig_session
+        model.Session.remove()
 
     @classmethod
     def setUpClass(cls):
         cls.save_model_state()
 
         engine = create_engine('sqlite:///')
-        model.Session.configure(bind=engine)
+        model.Session.remove()
+        model.init_model(engine)
+
         model.Base.metadata.create_all()
 
         cls._setup_once_schema()
         cls._setup_once_data()
-        model.Session.commit()
+        transaction.commit()
 
     @classmethod
     def tearDownClass(cls):
@@ -38,16 +43,13 @@ class ModelTest(TestCase):
         cls.restore_model_state()
 
     def setUp(self):
-        super(ModelTest, self).setUp()
         self._setup_each_schema()
         self._setup_each_data()
-        model.Session.commit()
+        transaction.commit()
 
     def tearDown(self):
-        if model.Session and not model.Session.is_active:
-            model.Session.rollback()
         self._teardown_each()
-        model.Session.commit()
+        transaction.commit()
 
     @classmethod
     def _setup_once_schema(self):
@@ -87,7 +89,6 @@ class ModelTest(TestCase):
         for cls in classes:
             for obj in model.Session.query(cls):
                 model.Session.delete(obj)
-        model.Session.commit()
 
     def assertJoined(self, q, cls):
         joined_classes = set(to_mapper.class_ for from_mapper, to_mapper, along

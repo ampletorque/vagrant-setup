@@ -1,7 +1,13 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import logging
 import socket
+
+from dogpile.cache import make_region
+from dogpile.cache.proxy import ProxyBackend
+
+from pyramid.decorator import reify
 
 from pyramid_frontend.images.filters import ThumbFilter, VignetteFilter
 from pyramid_frontend.images.chain import FilterChain
@@ -11,11 +17,23 @@ from pyramid_frontend.assets.requirejs import RequireJSAsset
 
 from .imagefilters import CreatorProfileFilter
 
+log = logging.getLogger(__name__)
+
 
 if socket.gethostname().startswith('janus.'):
     lessc_path = '/var/sw/less-1.7.0/node_modules/less/bin/lessc'
 else:
     lessc_path = 'lessc'
+
+
+class LoggingProxy(ProxyBackend):
+    def set(self, key, value):
+        log.debug("cache set: %r -> %r", key, value)
+        self.proxied.set(key, value)
+
+    def get(self, key):
+        log.debug("cache get: %r", key)
+        return self.proxied.get(key)
 
 
 class TealTheme(Theme):
@@ -29,6 +47,11 @@ class TealTheme(Theme):
         ),
         'admin-less': LessAsset(
             '/_teal/css/admin.less',
+            less_path='/_teal/js/vendor/less.js',
+            lessc_path=lessc_path,
+        ),
+        'paper-less': LessAsset(
+            '/_teal/css/paper.less',
             less_path='/_teal/js/vendor/less.js',
             lessc_path=lessc_path,
         ),
@@ -47,6 +70,16 @@ class TealTheme(Theme):
     # XXX All of these may need size tweaking
     image_filters = [
         FilterChain(
+            'admin-thumb', width=250, height=250,
+            crop=False, pad=True,
+            extension='jpg', quality=65),
+
+        FilterChain(
+            'admin-tiny', width=64, height=64,
+            crop=False, pad=True,
+            extension='jpg', quality=65),
+
+        FilterChain(
             'project-main', width=749, height=421,
             crop_whitespace=True, pad=True, crop='nonwhite',
             extension='jpg', quality=85),
@@ -57,7 +90,7 @@ class TealTheme(Theme):
         #     extension='jpg', quality=85),
 
         FilterChain(
-            'pledge-icon', width=100, height=100,
+            'product-icon', width=100, height=100,
             crop_whitespace=True, pad=True,
             extension='jpg', quality=85),
 
@@ -75,6 +108,15 @@ class TealTheme(Theme):
             'large-avatar', width=120, height=120,
             crop=True, pad=True,
             extension='png'),
+
+        FilterChain(
+            'project-mega', width=1200, extension='jpg',
+            filters=[
+                ThumbFilter((1200, 400), crop_whitespace=True, pad=True,
+                            crop='nonwhite'),
+                VignetteFilter(),
+            ],
+            quality=85),
 
         FilterChain(
             'project-body', width=749, extension='jpg',
@@ -124,3 +166,35 @@ class TealTheme(Theme):
             crop_whitespace=True, pad=True,
             extension='png'),
     ]
+
+    cache_impl = 'dogpile.cache'
+
+    @reify
+    def cache_regions(self):
+        settings = self.settings
+        default = make_region().configure_from_config(settings, 'cache.')
+
+        # Enable this to log cache gets and sets, useful for debugging.
+        # default.wrap(LoggingProxy)
+
+        return {
+            'default': default
+        }
+
+    @property
+    def cache_args(self):
+        return {
+            'regions': self.cache_regions,
+        }
+
+    def invalidate_index(self):
+        cache = self.cache_regions['default']
+        cache.invalidate('index')
+
+    def invalidate_project(self, project_id):
+        cache = self.cache_regions['default']
+        cache.invalidate('project-%d-tile' % project_id)
+        cache.invalidate('project-%d-body' % project_id)
+        cache.invalidate('project-%d-sidebar' % project_id)
+        cache.invalidate('project-%d-leader' % project_id)
+        self.invalidate_index()

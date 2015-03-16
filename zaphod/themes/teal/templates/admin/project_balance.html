@@ -1,0 +1,97 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="widgets" file="/admin/common/widgets.html"/>
+<%namespace name="regions" file="/admin/common/regions.html"/>
+
+<%def name="title()">Project ${obj.id} Balance Sheet</%def>
+
+
+${regions.project_header(obj)}
+
+
+<section class="section-admin-project">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">Balance Sheet</h1>
+
+        <div class="table-responsive">
+          <table class="table">
+            <tbody>
+              <tr>
+                <td>Crowdfunding Pledges</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Crowdfunding Payment Fees</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Crowdfunding Crowd Supply Fees</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td><strong>Net Crowdfunding Income</strong></td>
+                <td></td>
+              </tr>
+              <tr class="table-divider"><td colspan="2"></td></tr>
+              <tr>
+                <td>Pre-Order Commitments</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Pre-Order Payment Fees</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Pre-Order Crowd Supply Fees</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td><strong>Net Pre-Order Income</strong></td>
+                <td></td>
+              </tr>
+              <tr class="table-divider"><td colspan="2"></td></tr>
+              <tr>
+                <td>Actual Fulfillment Fees</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Projected Fulfillment Fees</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Actual Freight Fees</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Projected Freight Fees</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td><strong>Net Total Income</strong></td>
+                <td></td>
+              </tr>
+              <tr class="table-divider"><td colspan="2"></td></tr>
+              <tr>
+                <td>Payment ___ on ____</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td><strong>Total Paid to Project</strong></td>
+                <td></td>
+              </tr>
+              <tr class="table-divider"><td colspan="2"></td></tr>
+              <tr>
+                <td><strong>Balance Owed to Project</strong></td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>

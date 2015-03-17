@@ -44,13 +44,15 @@ class OwnerCreateForm(Schema):
     user_id = validators.Int(not_empty=True)
 
 
-@view_defaults(route_name='admin:projects', renderer='admin/projects.html')
+@view_defaults(route_name='admin:projects', renderer='admin/projects.html',
+               permission='admin')
 @lift()
 class ProjectListView(NodeListView):
     cls = model.Project
 
 
-@view_defaults(route_name='admin:project', renderer='admin/project.html')
+@view_defaults(route_name='admin:project', renderer='admin/project.html',
+               permission='admin')
 @lift()
 class ProjectEditView(NodeEditView):
     cls = model.Project
@@ -305,7 +307,7 @@ class ProjectEditView(NodeEditView):
 
 
 @view_defaults(route_name='admin:projects:new',
-               renderer='admin/projects_new.html')
+               renderer='admin/projects_new.html', permission='admin')
 @lift()
 class ProjectCreateView(NodeCreateView):
     cls = model.Project

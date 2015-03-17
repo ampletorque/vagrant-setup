@@ -8,7 +8,7 @@ from pyramid.view import view_config
 from pyramid.response import FileResponse
 
 
-@view_config(route_name='admin:docs', permission='authenticated')
+@view_config(route_name='admin:docs', permission='admin')
 def docs_view(request):
     settings = request.registry.settings
     docs_dir = os.path.normpath(settings['docs.build_dir'])

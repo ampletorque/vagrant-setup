@@ -53,7 +53,8 @@ class AddItemForm(Schema):
     # XXX
 
 
-@view_defaults(route_name='admin:order', renderer='admin/order.html')
+@view_defaults(route_name='admin:order', renderer='admin/order.html',
+               permission='admin')
 @lift()
 class OrderEditView(BaseEditView):
     cls = model.Order
@@ -220,7 +221,8 @@ class OrderEditView(BaseEditView):
         return {'obj': order, 'renderer': FormRenderer(form)}
 
 
-@view_defaults(route_name='admin:orders', renderer='admin/orders.html')
+@view_defaults(route_name='admin:orders', renderer='admin/orders.html',
+               permission='admin')
 @lift()
 class OrderListView(BaseListView):
     cls = model.Order
@@ -236,7 +238,7 @@ class OrderListView(BaseListView):
 
 
 @view_defaults(route_name='admin:orders:new',
-               renderer='admin/orders_new.html')
+               renderer='admin/orders_new.html', permission='admin')
 @lift()
 class OrderCreateView(BaseCreateView):
     cls = model.Order

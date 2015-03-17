@@ -11,7 +11,7 @@ from ...admin import (NodeEditView, NodeListView, NodeUpdateForm,
 
 
 @view_defaults(route_name='admin:provider-type',
-               renderer='admin/provider_type.html')
+               renderer='admin/provider_type.html', permission='admin')
 @lift()
 class ProviderTypeEditView(NodeEditView):
     cls = model.ProviderType
@@ -20,14 +20,14 @@ class ProviderTypeEditView(NodeEditView):
 
 
 @view_defaults(route_name='admin:provider-types',
-               renderer='admin/provider_types.html')
+               renderer='admin/provider_types.html', permission='admin')
 @lift()
 class ProviderTypeListView(NodeListView):
     cls = model.ProviderType
 
 
 @view_defaults(route_name='admin:provider-types:new',
-               renderer='admin/provider_types_new.html')
+               renderer='admin/provider_types_new.html', permission='admin')
 @lift()
 class ProviderTypeCreateView(NodeCreateView):
     cls = model.ProviderType

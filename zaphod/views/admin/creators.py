@@ -10,7 +10,8 @@ from ...admin import (NodeEditView, NodeListView, NodeUpdateForm,
                       NodeCreateView)
 
 
-@view_defaults(route_name='admin:creator', renderer='admin/creator.html')
+@view_defaults(route_name='admin:creator', renderer='admin/creator.html',
+               permission='admin')
 @lift()
 class CreatorEditView(NodeEditView):
     cls = model.Creator
@@ -18,14 +19,15 @@ class CreatorEditView(NodeEditView):
     UpdateForm = NodeUpdateForm
 
 
-@view_defaults(route_name='admin:creators', renderer='admin/creators.html')
+@view_defaults(route_name='admin:creators', renderer='admin/creators.html',
+               permission='admin')
 @lift()
 class CreatorListView(NodeListView):
     cls = model.Creator
 
 
 @view_defaults(route_name='admin:creators:new',
-               renderer='admin/creators_new.html')
+               renderer='admin/creators_new.html', permission='admin')
 @lift()
 class CreateCreateView(NodeCreateView):
     cls = model.Creator

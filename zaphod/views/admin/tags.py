@@ -10,7 +10,8 @@ from ...admin import (NodeEditView, NodeListView, NodeUpdateForm,
                       NodeCreateView)
 
 
-@view_defaults(route_name='admin:tag', renderer='admin/tag.html')
+@view_defaults(route_name='admin:tag', renderer='admin/tag.html',
+               permission='admin')
 @lift()
 class TagEditView(NodeEditView):
     cls = model.Tag
@@ -18,14 +19,15 @@ class TagEditView(NodeEditView):
     UpdateForm = NodeUpdateForm
 
 
-@view_defaults(route_name='admin:tags', renderer='admin/tags.html')
+@view_defaults(route_name='admin:tags', renderer='admin/tags.html',
+               permission='admin')
 @lift()
 class TagListView(NodeListView):
     cls = model.Tag
 
 
 @view_defaults(route_name='admin:tags:new',
-               renderer='admin/tags_new.html')
+               renderer='admin/tags_new.html', permission='admin')
 @lift()
 class TagCreateView(NodeCreateView):
     cls = model.Tag

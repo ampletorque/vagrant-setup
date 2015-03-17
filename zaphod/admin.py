@@ -73,7 +73,7 @@ class BaseEditView(object):
         form.bind(obj)
         request.flash('Saved changes.', 'success')
 
-    @view_config(permission='authenticated', xhr=False)
+    @view_config(permission='admin', xhr=False)
     def edit(self):
         request = self.request
         obj = self._get_object()
@@ -87,7 +87,7 @@ class BaseEditView(object):
             'renderer': FormRenderer(form),
         }
 
-    @view_config(permission='authenticated', xhr=True, renderer='json')
+    @view_config(permission='admin', xhr=True, renderer='json')
     def edit_ajax(self):
         request = self.request
         obj = self._get_object()
@@ -111,7 +111,7 @@ class BaseListView(object):
     def __init__(self, request):
         self.request = request
 
-    @view_config(permission='authenticated')
+    @view_config(permission='admin')
     def index(self):
         request = self.request
 
@@ -140,7 +140,7 @@ class BaseCreateView(object):
     def __init__(self, request):
         self.request = request
 
-    @view_config(permission='authenticated')
+    @view_config(permission='admin')
     def create(self):
         request = self.request
 

@@ -27,7 +27,8 @@ class OptionsForm(Schema):
     options = ForEach(OptionSchema)
 
 
-@view_defaults(route_name='admin:product', renderer='admin/product.html')
+@view_defaults(route_name='admin:product', renderer='admin/product.html',
+               permission='admin')
 @lift()
 class ProductEditView(BaseEditView):
     cls = model.Product

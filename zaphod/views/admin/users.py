@@ -10,7 +10,8 @@ from ... import model, custom_validators
 from ...admin import BaseEditView, BaseListView, BaseCreateView
 
 
-@view_defaults(route_name='admin:user', renderer='admin/user.html')
+@view_defaults(route_name='admin:user', renderer='admin/user.html',
+               permission='admin')
 @lift()
 class UserEditView(BaseEditView):
     cls = model.User
@@ -34,7 +35,8 @@ class UserEditView(BaseEditView):
         new_comment = custom_validators.CommentBody()
 
 
-@view_defaults(route_name='admin:users', renderer='admin/users.html')
+@view_defaults(route_name='admin:users', renderer='admin/users.html',
+               permission='admin')
 @lift()
 class UserListView(BaseListView):
     cls = model.User
@@ -42,7 +44,7 @@ class UserListView(BaseListView):
 
 
 @view_defaults(route_name='admin:users:new',
-               renderer='admin/users_new.html')
+               renderer='admin/users_new.html', permission='admin')
 @lift()
 class UserCreateView(BaseCreateView):
     cls = model.User

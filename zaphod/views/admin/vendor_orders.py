@@ -11,7 +11,7 @@ from ...admin import BaseEditView, BaseListView, BaseCreateView
 
 
 @view_defaults(route_name='admin:vendor-order',
-               renderer='admin/vendor_order.html')
+               renderer='admin/vendor_order.html', permission='admin')
 @lift()
 class VendorOrderEditView(BaseEditView):
     cls = model.VendorOrder
@@ -23,14 +23,14 @@ class VendorOrderEditView(BaseEditView):
 
 
 @view_defaults(route_name='admin:vendor-orders',
-               renderer='admin/vendor_orders.html')
+               renderer='admin/vendor_orders.html', permission='admin')
 @lift()
 class VendorOrderListView(BaseListView):
     cls = model.VendorOrder
 
 
 @view_defaults(route_name='admin:vendor-orders:new',
-               renderer='admin/vendor_orders_new.html')
+               renderer='admin/vendor_orders_new.html', permission='admin')
 @lift()
 class VendorOrderCreateView(BaseCreateView):
     cls = model.VendorOrder
@@ -40,7 +40,7 @@ class VendorOrderCreateView(BaseCreateView):
         allow_extra_fields = False
         vendor_id = validators.Int(not_empty=True)
 
-    @view_config(permission='authenticated')
+    @view_config(permission='admin')
     def create(self):
         vars = BaseCreateView.create(self)
         vars['vendors'] = \

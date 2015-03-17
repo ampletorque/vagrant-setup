@@ -23,7 +23,7 @@ class AdjustInventoryView(object):
 
     @view_config(route_name='admin:adjust-inventory',
                  renderer='admin/adjust_inventory.html',
-                 permission='authenticated')
+                 permission='admin')
     def index(self):
         request = self.request
         id = request.matchdict['id']

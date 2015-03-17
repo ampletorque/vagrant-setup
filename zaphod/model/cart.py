@@ -51,6 +51,7 @@ class Cart(Base):
         """
         Refresh item statuses and reservations.
         """
+        self.updated_time = utils.utcnow()
         for item in self.items:
             item.refresh()
 

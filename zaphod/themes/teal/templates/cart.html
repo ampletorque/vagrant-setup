@@ -8,6 +8,21 @@
 
 
 <%def name="payment_block(renderer, cart, billing, shipping, masked_card)">
+
+  % if masked_card:
+    <%forms:element renderer="${renderer}" name="cc.use_saved" label=" ">
+      <label for="cc-use-saved-yes">
+        ${renderer.radio('cc.use_saved', 'yes', checked=True, id='cc-use-saved-yes')}
+        Use credit card on file ending in ${masked_card[-4:]}
+      </label>
+      <br>
+      <label for="cc-use-saved-no">
+        ${renderer.radio('cc.use_saved', 'no', checked=False, id='cc-use-saved-no')}
+        Enter a new credit card
+      </label>
+    </%forms:element>
+  % endif
+
   <%forms:element renderer="${renderer}" name="cc.number" label="Card Number">
     <div class="row">
       <div class="col-sm-8">
@@ -34,8 +49,8 @@
     </div>
   </%forms:element>
 
-  ${forms.lcheckbox(renderer, 'save_credit_card', True, label='Save credit card information for future use')}
-  ${forms.lcheckbox(renderer, 'billing_same_as_shipping', True, label='Credit card billing address is the same as the shipping address')}
+  ${forms.lcheckbox(renderer, 'cc.save', True, label='Save credit card information for future use')}
+  ${forms.lcheckbox(renderer, 'billing_same_as_shipping', billing == shipping, label='Credit card billing address is the same as the shipping address')}
 
   ${forms.address_fields(renderer, 'billing', billing)}
 </%def>
@@ -64,18 +79,18 @@
             % if not cart.non_physical:
               <fieldset>
                 <legend>Shipping Information</legend>
-                ${forms.address_fields(renderer, 'shipping', None)}
+                ${forms.address_fields(renderer, 'shipping', shipping)}
               </fieldset>
             % endif
 
             <fieldset>
               <legend>Payment Information</legend>
-              ${self.payment_block(renderer, cart, billing=None, shipping=None, masked_card=None)}
+              ${self.payment_block(renderer, cart, billing=billing, shipping=shipping, masked_card=masked_card)}
             </fieldset>
 
             <fieldset>
               <legend>Order Information</legend>
-              ${forms.ltext(renderer, 'email', request.user and request.user.email, label='Email Address', required=True, **{'data-required': 'true'})}
+              ${forms.ltext(renderer, 'email', request.user and request.user.email, label='Email Address')}
               ${forms.ltextarea(renderer, 'comments', rows=4)}
             </fieldset>
 

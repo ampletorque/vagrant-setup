@@ -7,17 +7,19 @@ from pyramid.view import view_config
 from formencode import Schema, ForEach, NestedVariables, validators
 from pyramid_uniform import Form, FormRenderer
 
-from .. import model, custom_validators
+from .. import model, custom_validators, payment
 
 
 class CheckoutForm(Schema):
     "Validates checkout submissions."
     allow_extra_fields = False
-    pre_validators = [NestedVariables]
+    pre_validators = [NestedVariables,
+                      custom_validators.CloneFields(
+                          'shipping', 'billing',
+                          when='billing_same_as_shipping')]
 
     shipping = custom_validators.AddressSchema
 
-    save_credit_card = validators.Bool()
     billing_same_as_shipping = validators.Bool()
     billing = custom_validators.AddressSchema
 
@@ -25,9 +27,9 @@ class CheckoutForm(Schema):
     comments = validators.UnicodeString()
 
     cc = custom_validators.SelectValidator(
-        {'empty': custom_validators.WildcardSchema()},
+        {'yes': validators.Constant('saved')},
         default=custom_validators.CreditCardSchema(),
-        selector_field='method')
+        selector_field='use_saved')
 
 
 class CartItemAddSchema(Schema):
@@ -80,22 +82,6 @@ class CartView(object):
             model.Session.flush()
             request.session['cart_id'] = cart.id
             return cart
-
-    @view_config(route_name='cart', renderer='cart.html')
-    def cart(self):
-        request = self.request
-        cart = self.get_cart()
-
-        if cart:
-            cart.refresh()
-
-        form = Form(request, schema=CheckoutForm)
-        if form.validate():
-            # XXX process order
-
-            return HTTPFound(location=request.route_url('cart:confirmed'))
-
-        return dict(cart=cart, renderer=FormRenderer(form))
 
     @view_config(route_name='cart:add')
     def add(self):
@@ -170,6 +156,56 @@ class CartView(object):
             return HTTPFound(location=request.route_url('cart'))
         else:
             raise HTTPBadRequest
+
+    @view_config(route_name='cart', renderer='cart.html')
+    def cart(self):
+        request = self.request
+        registry = request.registry
+        cart = self.get_cart()
+
+        if cart:
+            cart.refresh()
+
+        billing = shipping = masked_card = None
+
+        if cart and request.user:
+            email = request.user.email
+
+            last_order = model.Session.query(model.Order).\
+                filter_by(user=request.user).\
+                order_by(model.Order.id.desc()).\
+                first()
+
+            if last_order:
+                shipping = last_order.shipping
+
+            payment_method = model.Session.query(model.PaymentMethod).\
+                filter_by(save=True, user=request.user).\
+                order_by(model.PaymentMethod.id.desc()).\
+                first()
+
+            if payment_method:
+                try:
+                    masked_card = \
+                        payment.get_masked_card(registry, payment_method)
+                    billing = payment_method.billing
+                except payment.UnknownGatewayException:
+                    pass
+
+        form = Form(request, schema=CheckoutForm)
+        if form.validate():
+            # XXX process order
+            assert False
+
+            return HTTPFound(location=request.route_url('cart:confirmed'))
+
+        return {
+            'cart': cart,
+            'renderer': FormRenderer(form),
+            'shipping': shipping,
+            'billing': billing,
+            'masked_card': masked_card,
+        }
 
     @view_config(route_name='cart:confirmed', renderer='order.html')
     def confirmed(self):

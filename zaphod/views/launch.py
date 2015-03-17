@@ -35,6 +35,8 @@ def launch_view(request):
         vars = dict(
             body=templ % form.data,
             user_agent=request.user_agent,
+            subject=form.data['name'],
+            email=form.data['email'],
         )
         mail.send_with_admin(request, 'contact', vars,
                              to='projects+inbound@crowdsupply.com',

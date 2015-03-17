@@ -29,8 +29,8 @@
           ${forms.ltext(renderer, 'twitter_username', obj.twitter_username, prefix='@')}
 
           ${forms.lcheckbox(renderer, 'show_in_backers', obj.show_in_backers, hint='Show this user in lists of project backers.')}
-          ${forms.lcheckbox(renderer, 'show_name', obj.show_name, hint="Show this user's name in backers lists.")}
-          ${forms.lcheckbox(renderer, 'show_location', obj.show_location, hint="Show this user's location in backers lists.")}
+          ${forms.ltext(renderer, 'show_name', obj.show_name, hint="Show this user's name in backers lists.")}
+          ${forms.ltext(renderer, 'show_location', obj.show_location, hint="Show this user's location in backers lists.")}
 
           ${forms.lcheckbox(renderer, 'show_admin_bars', checked=obj.show_admin_bars, hint='Show shortcut admin toolbars on public site.')}
           ${forms.lcheckbox(renderer, 'enabled', checked=obj.enabled, hint='If this is unchecked, the user will not be able to login, and will be logged out if they are currently logged in.')}

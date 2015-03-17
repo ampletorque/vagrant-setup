@@ -42,8 +42,8 @@ class User(Base, ImageMixin, UserMixin, CommentMixin, ElasticMixin):
 
     twitter_username = Column(types.String(255), nullable=True)
 
-    show_location = Column(types.Unicode(255), nullable=False, default=u'')
     show_in_backers = Column(types.Boolean, nullable=False, default=True)
+    show_location = Column(types.Unicode(255), nullable=False, default=u'')
     show_name = Column(types.Unicode(255), nullable=False, default=u'')
 
     @staticmethod

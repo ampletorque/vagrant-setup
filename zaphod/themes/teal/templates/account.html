@@ -24,8 +24,11 @@
 
       <div class="col-md-10">
         <p>Welcome back, ${request.user.name} (${request.user.email})</p>
-        ##<p>Joined Mar 20, 2013</p>
+        <p>Joined ${h.format_datetime(request, request.user.created_time, '%b %d, %Y')}</p>
 
+        % if request.user.url_path:
+          <a class="btn btn-default" href="${request.route_path('profile', path=request.user.url_path)}">View Profile Page</a>
+        % endif
         <a class="btn btn-default" href="${request.route_path('settings')}">Edit Account Details</a>
         <a class="btn btn-default" href="https://en.gravatar.com">Update Avatar</a>
         <a class="btn btn-default" href="${request.route_path('logout')}">Sign Out</a>

@@ -59,11 +59,13 @@ Change 'delivery date' language to 'ship date'!
 
 ### User / Account Handling
 
-Prevent accounts from being created with duplicate email addresses, with a unique constraint on User.email. If an order is placed by a non-logged in user with an email address that is not 'taken', create an account for that email. If the email address is already taken, do not associate the order with an account. If the email is not taken, create an account for that email/order.
+Prevent accounts from being created with duplicate email addresses, with a unique constraint on User.email.
 
-In a logged-in user's account page, show a form which allows associating an orphan order by order ID and postal code.
+If an order is placed by a logged-in user, just associate it with the account.
 
-If possible, provide alternate means of associating orders easily, but think very carefully about the security implications of doing so.
+If an order is placed by a non-logged-in user, and the email already has an account, associate the order with the account, but don't log the user in or tell the web session user that the account already existed. Send an email with a link to reset the password.
+
+If an order is placed by a non-logged-in user, and the email does not have an account, create an account and associate the order, but don't log the user in or tell the web session user that the account has been newly created. Send a welcome email with a link to set the password.
 
 ### Better Account Page (as in the 'My Account' page)
 

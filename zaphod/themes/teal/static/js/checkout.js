@@ -27,6 +27,26 @@ define(['jquery', 'teal/ccfield'], function ($) {
       .trigger('change');
   }
 
+  function initCCForm() {
+    var useSavedSelector = "input[name='cc.use_saved']";
+
+    function updateCCVisibility() {
+      var
+        useSaved = 'no',
+        $radio = $(useSavedSelector + '[type="radio"]:checked');
+
+      if ($radio.length) {
+        useSaved = $radio.val();
+      }
+      $('.credit-card-fields').toggle(useSaved === 'no');
+    }
+
+    $(useSavedSelector)
+      .change(updateCCVisibility)
+      .click(updateCCVisibility)
+      .trigger('change');
+  }
+
   $(function () {
     $('.js-ccfield').on('cctype', function (e, ccType) {
       updateCardType(ccType);

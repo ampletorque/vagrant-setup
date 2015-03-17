@@ -30,7 +30,7 @@ ${regions.project_header(obj)}
               </tr>
             </thead>
             <tbody>
-              % for product in obj.levels:
+              % for product in obj.products:
                 % if not product.non_physical:
                   <tr>
                     <td colspan="6">${product.name}</td>

@@ -348,7 +348,7 @@
 <%def name="products(project)">
   <div class="project-block">
     <%blocks:collapse_on_mobile target="products" title="${'Pledge Now' if project.status == 'crowdfunding' else 'Product Choices'}">
-      % for product in project.published_levels:
+      % for product in project.published_products:
         ${self.product_level(project, product)}
         % if not loop.last:
           <hr>

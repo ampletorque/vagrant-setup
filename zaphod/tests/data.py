@@ -7,6 +7,26 @@ from .. import model
 
 
 def populate_content():
+    tags = {}
+    for name in ('Lifestyle', 'Technology', 'Accessories'):
+        tag = model.Tag(
+            name=name,
+            published=True,
+            listed=True,
+        )
+        tag.update_path(tag.generate_path())
+        model.Session.add(tag)
+        tags[name] = tag
+
+    tag = model.Tag(
+        name='Unlisted Tag',
+        published=True,
+        listed=False,
+    )
+    tag.update_path(tag.generate_path())
+    model.Session.add(tag)
+    tags[tag.name] = tag
+
     creator1 = model.Creator(
         name='Widgets International',
         published=True,
@@ -36,6 +56,8 @@ def populate_content():
         listed=True,
     )
     project1.update_path(project1.generate_path())
+    project1.tags.add(tags['Technology'])
+    project1.tags.add(tags['Lifestyle'])
     model.Session.add(project1)
 
     project2 = model.Project(
@@ -49,6 +71,8 @@ def populate_content():
         listed=True,
     )
     project2.update_path(project2.generate_path())
+    project2.tags.add(tags['Technology'])
+    project2.tags.add(tags['Accessories'])
     model.Session.add(project2)
 
     project3 = model.Project(
@@ -62,6 +86,8 @@ def populate_content():
         listed=True,
     )
     project3.update_path(project3.generate_path())
+    project3.tags.add(tags['Technology'])
+    project3.tags.add(tags['Unlisted Tag'])
     model.Session.add(project3)
 
     article = model.Article(
@@ -73,22 +99,38 @@ def populate_content():
     article.update_path(article.generate_path())
     model.Session.add(article)
 
-    tags = {}
-    for name in ('Lifestyle', 'Technology', 'Accessories'):
-        tag = model.Tag(
-            name=name,
-            published=True,
-            listed=True,
-        )
-        tag.update_path(tag.generate_path())
-        model.Session.add(tag)
-        tags[name] = tag
+    model.Session.flush()
 
-    tag = model.Tag(
-        name='Unlisted Tag',
-        published=True,
-        listed=False,
+
+def populate_users():
+    for name in ('Ben Bitdiddle', 'Louis Reasoner', 'Alyssa P Hacker'):
+        user = model.User(
+            name=name,
+            email='%s@example.com' % name.split()[0].lower(),
+            admin=False,
+        )
+        model.Session.add(user)
+
+    model.Session.flush()
+
+
+def populate_orders():
+
+    def load(cls):
+        return model.Session.query(cls).order_by(cls.id).all()
+
+    users = load(model.User)
+    products = load(model.Product)
+
+    cart1 = model.Cart()
+    model.Session.add(cart1)
+    product = products[0]
+    cart1.items.append(model.CartItem(
+        product=product,
+        sku=model.sku_for_option_value_ids(product, ())
+    ))
+
+    order1 = model.Order(
+        cart=cart1,
     )
-    tag.update_path(tag.generate_path())
-    model.Session.add(tag)
-    tags[tag.name] = tag
+    model.Session.add(order1)

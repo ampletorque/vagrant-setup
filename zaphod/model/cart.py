@@ -70,6 +70,8 @@ class CartItem(Base):
     cart_id = Column(None, ForeignKey('carts.id'), nullable=False)
     product_id = Column(None, ForeignKey('products.id'),
                         nullable=False)
+    sku_id = Column(None, ForeignKey('skus.id'), nullable=False)
+    batch_id = Column(None, ForeignKey('batches.id'), nullable=True)
     price_each = Column(custom_types.Money, nullable=False)
     qty_desired = Column(types.Integer, nullable=False, default=1)
     shipping_price = Column(custom_types.Money, nullable=False)
@@ -78,8 +80,6 @@ class CartItem(Base):
     expected_ship_date = Column(types.DateTime, nullable=True)
     shipped_date = Column(types.DateTime, nullable=True)
     shipment_id = Column(None, ForeignKey('shipments.id'), nullable=True)
-    batch_id = Column(None, ForeignKey('batches.id'), nullable=True)
-    sku_id = Column(None, ForeignKey('skus.id'), nullable=False)
 
     status = Column(types.CHAR(16), nullable=False, default='cart')
 

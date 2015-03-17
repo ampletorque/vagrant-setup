@@ -1,6 +1,7 @@
 <%inherit file="base.html"/>
 
 <%namespace name="forms" file="common/forms.html"/>
+<%namespace name="blocks" file="common/blocks.html"/>
 <%namespace name="cart_table" file="common/cart_table.html"/>
 
 
@@ -25,8 +26,11 @@
 
   <%forms:element renderer="${renderer}" name="cc.number" label="Card Number">
     <div class="row">
-      <div class="col-sm-8">
-        ${renderer.text('cc.number', class_='form-control js-ccfield')}
+      <div class="col-sm-6">
+        ${renderer.text('cc.number', class_='form-control credit-card-field js-ccfield')}
+      </div>
+      <div class="col-sm-6">
+        ${blocks.credit_card_icons()}
       </div>
     </div>
   </%forms:element>

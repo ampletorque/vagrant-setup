@@ -54,3 +54,25 @@
         text-align: left;
     }
 }
+
+.credit-card-field {
+    margin-bottom: 10px;
+}
+
+.credit-card-icons {
+    text-align: center;
+
+    .cc-icon {
+        display: inline-block;
+        svg {
+            display: inline-block;
+            height: 34px;
+            width: auto;
+        }
+
+        &.disabled {
+            //-webkit-filter: grayscale(100%);
+            opacity: 0.3;
+        }
+    }
+}

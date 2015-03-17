@@ -17,6 +17,9 @@ class DashboardView(object):
     @view_config(route_name='admin:dashboard', renderer='admin/dashboard.html',
                  permission='authenticated')
     def index(self):
+        assert request.user.has_permission('admin'), \
+            "non-admin has admin interface access"
+
         utcnow = datetime.utcnow()
 
         active_crowdfunding_q = model.Session.query(model.Project).\

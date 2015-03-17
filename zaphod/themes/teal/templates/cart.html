@@ -56,7 +56,9 @@
   ${forms.lcheckbox(renderer, 'cc.save', True, label='Save credit card information for future use')}
   ${forms.lcheckbox(renderer, 'billing_same_as_shipping', billing == shipping, label='Credit card billing address is the same as the shipping address')}
 
-  ${forms.address_fields(renderer, 'billing', billing)}
+  <div class="billing-fields">
+    ${forms.address_fields(renderer, 'billing', billing)}
+  </div>
 </%def>
 
 
@@ -70,7 +72,7 @@
       </div>
 
       <div class="row">
-        <div class="col-md-8 col-md-offset-2">
+        <div class="col-md-10 col-md-offset-1">
           ${renderer.begin(id='checkout-form', class_='form-horizontal form-wrapped')}
 
           <div class="js-international-surcharge">

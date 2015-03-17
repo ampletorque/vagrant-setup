@@ -12,9 +12,27 @@ define(['jquery', 'teal/ccfield'], function ($) {
     }
   }
 
-  $('.js-ccfield').on('cctype', function (e, ccType) {
-    updateCardType(ccType);
+
+  function initBillingSameAsShipping() {
+    var $checkbox = $("#billing_same_as_shipping");
+
+    function updateBillingVisibility(e) {
+      var same = $checkbox.attr('checked') || ($checkbox.attr('type') === 'hidden');
+      $('.billing-fields').toggle(!same);
+    }
+
+    $checkbox
+      .change(updateBillingVisibility)
+      .click(updateBillingVisibility)
+      .trigger('change');
+  }
+
+  $(function () {
+    $('.js-ccfield').on('cctype', function (e, ccType) {
+      updateCardType(ccType);
+    });
+
+    initBillingSameAsShipping();
+    initCCForm();
   });
-
-
 });

@@ -110,6 +110,7 @@
         ${h.image_or_gravatar(request, request.user, 'header-avatar', default='mm', title=request.user.name, class_='img-avatar')}
       </a>
       <ul class="dropdown-menu" role="menu">
+        <li><a href="${request.route_path('cart')}">My Cart</a></li>
         <li>
           <a href="${request.route_path('account')}">
             ${h.image_or_gravatar(request, request.user, 'header-avatar', default='mm', title=request.user.name, class_='visible-xs img-avatar')}
@@ -121,6 +122,7 @@
         <li><a href="${request.route_path('admin:help')}">Help</a></li>
         <li><a href="${request.route_path('index')}">View Public Site</a></li>
         <li><a href="${request.route_path('styleguide')}">Style Guide</a></li>
+        <li><a href="${request.route_path('admin:docs', path='')}">Developer Docs</a></li>
         <li class="divider"></li>
         <li><a href="${request.route_path('logout')}">Sign Out</a></li>
       </ul>

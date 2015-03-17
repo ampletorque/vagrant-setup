@@ -170,7 +170,7 @@ class TestCustomValidators(TestCase):
             '38888675309',
             # FIXME This is a case that we'd kind of like to be able to fix,
             # but can't flag it yet because it reformats to 188-867-5309
-            #'1-88-867-5309',
+            # '1-88-867-5309',
             '0-888-867-530',
         ]
         for bad_case in bad_cases:

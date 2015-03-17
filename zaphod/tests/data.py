@@ -130,7 +130,9 @@ def populate_orders():
         sku=model.sku_for_option_value_ids(product, ())
     ))
 
+    user = users[0]
     order1 = model.Order(
         cart=cart1,
+        user=user,
     )
     model.Session.add(order1)

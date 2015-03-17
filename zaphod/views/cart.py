@@ -169,8 +169,6 @@ class CartView(object):
         billing = shipping = masked_card = None
 
         if cart and request.user:
-            email = request.user.email
-
             last_order = model.Session.query(model.Order).\
                 filter_by(user=request.user).\
                 order_by(model.Order.id.desc()).\

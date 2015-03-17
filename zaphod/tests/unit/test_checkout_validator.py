@@ -71,7 +71,6 @@ class TestCheckoutValidator(TestCase):
             'comments': 'Hello, world.',
         })
 
-
     def test_unsaved_cc(self):
         self.assertEqual(CheckoutForm.to_python({
             'shipping.country_code': 'us',
@@ -139,4 +138,3 @@ class TestCheckoutValidator(TestCase):
             'email': 'ben@example.com',
             'comments': 'Hello, world.',
         })
-

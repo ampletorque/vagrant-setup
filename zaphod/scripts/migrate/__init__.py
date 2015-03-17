@@ -61,25 +61,27 @@ def main(argv=sys.argv):
         model.Session.add(root_user)
         model.Session.flush()
 
-        users.migrate_users(settings)
+        user_map = users.migrate_users(settings)
         images.migrate_images(settings)
-        users.migrate_user_data(settings)
+        users.migrate_user_data(settings, user_map)
 
-        content.migrate_providers(settings)
-        content.migrate_articles(settings)
-        tag_map = content.migrate_tags(settings)
-        creator_map = content.migrate_creators(settings)
+        content.migrate_providers(settings, user_map)
+        content.migrate_articles(settings, user_map)
+        tag_map = content.migrate_tags(settings, user_map)
+        creator_map = content.migrate_creators(settings, user_map)
         project_map, product_map, option_value_map, batch_map = \
             content.migrate_projects(settings, creator_map,
-                                     tag_map)
+                                     tag_map, user_map)
 
         orders.migrate_payment_gateways()
-        orders.migrate_payment_methods()
+        orders.migrate_payment_methods(user_map)
         cart_item_map = orders.migrate_orders(settings, product_map,
-                                              option_value_map, batch_map)
+                                              option_value_map, batch_map,
+                                              user_map)
 
-        vendors.migrate_vendors()
-        vendors.migrate_vendor_orders(settings, product_map, option_value_map)
+        vendors.migrate_vendors(settings, user_map)
+        vendors.migrate_vendor_orders(settings, product_map, option_value_map,
+                                      user_map)
 
         stock.migrate_inventory_adjustments()
         stock.migrate_items(cart_item_map)

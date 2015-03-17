@@ -30,7 +30,7 @@ def lookup_location(old_user):
 
 def migrate_users(settings):
     user_map = {}
-    user_emails = set()
+    email_to_user_map = {}
     for old_user in scrappy_meta.Session.query(scrappy_model.Account).\
             order_by(scrappy_model.Account.id.desc()):
         print("  user %s" % old_user.email)
@@ -39,18 +39,15 @@ def migrate_users(settings):
             user_map[old_user] = model.User.get(1)
             continue
 
-        if old_user.email in user_emails:
-            email = old_user.email + '.' + str(old_user.id)
-        else:
-            email = old_user.email
+        if old_user.email in email_to_user_map:
+            user_map[old_user] = email_to_user_map[old_user.email]
+            continue
 
-        user_emails.add(old_user.email)
         is_admin = old_user.has_permission('admin')
-
         user = model.User(
             id=old_user.id,
             name=old_user.name,
-            email=email,
+            email=old_user.email,
             hashed_password=old_user.hashed_password,
             enabled=old_user.enabled,
             created_time=old_user.created_time,
@@ -62,18 +59,21 @@ def migrate_users(settings):
         )
         model.Session.add(user)
         user_map[old_user] = user
+        email_to_user_map[old_user.email] = user
         model.Session.flush()
 
+    user_map[None] = None
     return user_map
 
 
-def migrate_user_data(settings):
+def migrate_user_data(settings, user_map):
     # Take a second pass through to set the updated by / created by and images,
     # after the images are migrated.
     for old_user in scrappy_meta.Session.query(scrappy_model.Account).\
             order_by(scrappy_model.Account.id.desc()):
         new_user = model.User.get(old_user.id)
-        new_user.updated_by_id = old_user.updated_by_id
-        new_user.created_by_id = old_user.created_by_id
-        utils.migrate_comments(old_user, new_user)
-        utils.migrate_image_associations(settings, old_user, new_user)
+        if new_user:
+            new_user.updated_by = user_map[old_user.updated_by]
+            new_user.created_by = user_map[old_user.created_by]
+            utils.migrate_comments(old_user, new_user, user_map)
+            utils.migrate_image_associations(settings, old_user, new_user)

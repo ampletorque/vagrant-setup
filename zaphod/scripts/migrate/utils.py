@@ -22,11 +22,11 @@ def migrate_aliases(settings, old_node, new_node):
         new_node.update_path(canonical_path)
 
 
-def migrate_comments(old_obj, new_obj):
+def migrate_comments(old_obj, new_obj, user_map):
     for old_comment in old_obj.comments:
         new_obj.comments.append(new_obj.Comment(
             created_time=old_comment.created_time,
-            created_by_id=old_comment.created_by_id,
+            created_by=user_map[old_comment.created_by],
             body=old_comment.body,
         ))
 

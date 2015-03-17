@@ -360,6 +360,10 @@ class CreditCardRefund(Refund):
 
     payment_type = CreditCardPayment
 
+    processed_by = orm.relationship(
+        'User',
+        primaryjoin='User.id == CreditCardRefund.processed_by_id')
+
     def can_be_voided(self):
         if not self.processed_time and not self.voided_time:
             return True

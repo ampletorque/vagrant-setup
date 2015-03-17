@@ -157,6 +157,28 @@ class CartView(object):
         else:
             raise HTTPBadRequest
 
+    def _place_order(self, cart, form, payment_method):
+        request = self.request
+
+        # update item shipping prices in case of international
+
+        # update item statuses
+
+        # fetch or create user
+
+        # fetch or create payment method
+
+        # create order object
+
+        # flush so that we have order ID
+
+        # attempt to issue payment as appropriate: in case of failure, send
+        # emails (need to send email outside of transaction scope)
+
+        # if successful, attach payment, send order confirmation
+
+        # if account is new, send a separate welcome email
+
     @view_config(route_name='cart', renderer='cart.html')
     def cart(self):
         request = self.request
@@ -192,9 +214,7 @@ class CartView(object):
 
         form = Form(request, schema=CheckoutForm)
         if form.validate():
-            # XXX process order
-            assert False
-
+            self._place_order(cart, form, payment_method)
             return HTTPFound(location=request.route_url('cart:confirmed'))
 
         return {

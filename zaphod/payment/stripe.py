@@ -51,12 +51,12 @@ class StripeInterface(object):
             raise new_e
 
     def create_profile(self, card_number, expiration_date,
-                       ccv, billing, customer_id, email=u'',
+                       ccv, billing, email=u'',
                        description=u''):
         """
         Create a new profile, returning a PaymentProfile instance.
         """
-        self.log.info("create_profile\tcustomer_id:%s", customer_id)
+        self.log.info("create_profile\email:%s", email)
         name = "%s %s" % (billing.first_name, billing.last_name)
         exp_year, exp_month = expiration_date.split('-')
 
@@ -79,23 +79,6 @@ class StripeInterface(object):
                       address_state=billing.state.upper(),
                       address_country=billing.country_name.upper()))
         self.log.info("create_profile response:\n%r", cu)
-
-        return StripePaymentProfile(customer_id=cu.id,
-                                    customer=cu,
-                                    interface=self)
-
-    def create_profile_with_token(self, token, email=u'', description=u''):
-        self.log.info("create_profile_with_token\temail:%s", email)
-
-        if self.prefix:
-            description = '%s:%s' % (self.prefix, description)
-
-        cu = self._wrap_call(
-            stripe.Customer.create,
-            description=description,
-            email=email,
-            card=token)
-        self.log.info("create_profile_with_token response:\n%r", cu)
 
         return StripePaymentProfile(customer_id=cu.id,
                                     customer=cu,

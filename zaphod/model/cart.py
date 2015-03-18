@@ -41,17 +41,42 @@ class Cart(Base):
 
     @property
     def non_physical(self):
+        """
+        Return True if this cart is entirely non-physical.
+        """
         return all(ci.product.non_physical for ci in self.items)
 
     @property
     def international_available(self):
+        """
+        Return True if international shipping is available for all items in
+        this cart.
+        """
         return all(ci.product.international_available
                    for ci in self.items)
 
     @property
     def international_surcharge_total(self):
-        return sum(ci.product.international_surcharge
+        """
+        Return total international shipping price for this cart.
+        """
+        return sum((ci.product.international_surcharge * ci.qty_desired)
                    for ci in self.items)
+
+    def set_international_shipping(self):
+        """
+        Set shipping prices for all items in this cart to international
+        surcharges.
+        """
+        for item in self.items:
+            item.shipping_price = (item.product.international_surcharge *
+                                   item.qty_desired)
+
+    def set_initial_statuses(self):
+        """
+        Set initial item statuses for a new order.
+        """
+        pass
 
     def refresh(self):
         """

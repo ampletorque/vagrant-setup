@@ -71,6 +71,8 @@ class BaseEditView(object):
         if 'images' in form.data:
             self._handle_images(form, obj)
         form.bind(obj)
+        client = get_client(request)
+        client.index_object(obj)
         request.flash('Saved changes.', 'success')
 
     @view_config(permission='admin', xhr=False)

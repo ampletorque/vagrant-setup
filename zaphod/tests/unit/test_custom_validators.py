@@ -12,7 +12,7 @@ class TestCustomValidators(TestCase):
                             state=None):
         try:
             validated = validator.to_python(value, state)
-        except Invalid, e:
+        except Invalid as e:
             if should_be_valid:
                 raise AssertionError("'%s' should be valid, got %s" %
                                      (value, e))

@@ -8,5 +8,6 @@ class TestBrowse(FunctionalBase):
 
     def test_browse(self):
         resp = self.app.get('/browse')
-        self.assertIn('Lifestyle', resp.body)
-        self.assertNotIn('Unlisted Tag', resp.body)
+        body = resp.body.decode('utf-8')
+        self.assertIn('Lifestyle', body)
+        self.assertNotIn('Unlisted Tag', body)

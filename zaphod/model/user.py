@@ -143,10 +143,6 @@ class User(Base, ImageMixin, UserMixin, CommentMixin, ElasticMixin):
         manager = BCRYPTPasswordManager()
         return hsh and manager.check(hsh, password)
 
-    def has_permission(self, permission_name):
-        # XXX Implement this, obviously.
-        return True
-
     @classmethod
     def elastic_mapping(cls):
         return ESMapping(

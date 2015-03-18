@@ -1,11 +1,15 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import logging
+
 from sqlalchemy import Column, ForeignKey, types, orm
 
 from . import custom_types, utils
 from .base import Base, Session
-from .item import Item
+from .item import Acquisition, Item
+
+log = logging.getLogger(__name__)
 
 
 class Cart(Base):
@@ -20,6 +24,8 @@ class Cart(Base):
                           doc='Time this cart was refreshed by a user action.')
 
     order = orm.relationship('Order', uselist=False, backref='cart')
+    items = orm.relationship('CartItem', backref='cart',
+                             cascade='all, delete, delete-orphan')
 
     @property
     def total(self):
@@ -84,7 +90,6 @@ class CartItem(Base):
 
     status = Column(types.CHAR(16), nullable=False, default='cart')
 
-    cart = orm.relationship('Cart', backref='items')
     product = orm.relationship('Product', backref='cart_items')
     batch = orm.relationship('Batch', backref='cart_items')
     sku = orm.relationship('SKU', backref='cart_items')
@@ -170,9 +175,32 @@ class CartItem(Base):
         """
         Release any reserved stock associated with this item.
 
-        FIXME: not implemented yet
+        FIXME This is a very naive approach with no protection against race
+        conditions.
         """
-        pass
+        q = Session.query(Item).filter_by(cart_item=self)
+        for item in q:
+            item.cart_item = None
+        Session.flush()
+
+    def reserve_stock(self):
+        """
+        Reserve stock associated with this item.
+
+        FIXME This is a very naive approach with no protection against race
+        conditions.
+        """
+        q = Session.query(Item).\
+            join(Item.acquisition).\
+            filter(Acquisition.sku == self.sku,
+                   Item.destroy_time == None,
+                   Item.cart_item_id == None).\
+            limit(self.qty_desired)
+        items = q.all()
+        assert len(items) == self.qty_desired, \
+            "only got %d items, wanted %d" % (len(items), self.qty_desired)
+        for item in items:
+            item.cart_item = self
 
     def refresh(self):
         """
@@ -191,6 +219,7 @@ class CartItem(Base):
         accordingly, and False will be returned. Otherwise, True will be
         returned.
         """
+        log.info('refresh %d: begin', self.id)
         assert not self.cart.order, \
             "cannot refresh cart item that has a placed order"
 
@@ -204,33 +233,74 @@ class CartItem(Base):
 
         project = self.product.project
         if project.status == 'crowdfunding':
+            log.info('refresh %d: selecting crowdfunding', self.id)
             self.stage = CROWDFUNDING
             self.batch = self.product.select_batch(self.qty_desired)
             assert self.batch
             self.expected_ship_date = self.batch.ship_date
             self.release_stock()
+            log.info('refresh %d: good', self.id)
             return True
         else:
+            self.release_stock()
             # Make sure that the product is available.
-            if self.sku.qty_available > self.qty_desired:
+            accepts_preorders = (project.accepts_preorders and
+                                 self.product.accepts_preorders)
+            stock_available = self.sku.qty_available
 
-                # XXX Reserve stock
+            if accepts_preorders and self.product.batches:
+                preorder_available = self.product.qty_remaining
+                if preorder_available is None:
+                    # This means a non-qty-limited product
+                    preorder_available = self.qty_desired
+            else:
+                preorder_available = 0
 
+            log.info('refresh %d: preorder_available: %s', self.id,
+                     preorder_available)
+            log.info('refresh %d: stock_available: %s', self.id,
+                     stock_available)
+
+            if stock_available >= self.qty_desired:
+                log.info('refresh %d: selecting stock', self.id)
+                self.reserve_stock()
                 self.stage = STOCK
                 self.batch = None
                 self.expected_ship_date = utils.shipping_day()
-                self.release_stock()
+                log.info('refresh %d: good', self.id)
                 return True
-            elif project.accepts_preorders and self.product.accepts_preorders:
-                self.stage = PREORDER
+
+            if stock_available >= preorder_available:
+                log.info('refresh %d: selecting stock', self.id)
+                self.qty_desired = stock_available
+                self.reserve_stock()
+                self.stage = STOCK
+                self.batch = None
+                self.expected_ship_date = utils.shipping_day()
+                log.info('refresh %d: partial', self.id)
+                return False
+
+            if preorder_available > 0:
+                log.info('refresh %d: selecting preorder', self.id)
+                if preorder_available < self.qty_desired:
+                    self.qty_desired = preorder_available
+                    log.info('refresh %d: partial', self.id)
+                    partial = True
+                else:
+                    log.info('refresh %d: good', self.id)
+                    partial = False
                 self.batch = self.product.select_batch(self.qty_desired)
+                assert self.batch
+                self.stage = PREORDER
                 self.expected_ship_date = self.batch.ship_date
                 self.release_stock()
-                return True
-            else:
-                # This thing is no longer available.
-                self.qty_desired = 0
-                self.batch = None
-                self.expected_ship_date = None
-                self.release_stock()
-                return False
+                return (not partial)
+
+            # This thing is no longer available.
+            log.info('refresh %d: unavailable', self.id)
+            self.qty_desired = 0
+            self.batch = None
+            self.expected_ship_date = None
+            self.release_stock()
+            log.info('refresh %d: fail', self.id)
+            return False

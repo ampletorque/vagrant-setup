@@ -83,12 +83,16 @@ class SKU(Base):
             # Get the N oldest in-stock items for this SKU to destroy.
             q = Session.query(Item).\
                 join(Item.acquisition).\
+                outerjoin(Item.cart_item).\
                 filter(Acquisition.sku == self).\
-                filter(Item.cart_item_id == None).\
+                filter(or_(Item.cart_item_id == None,
+                           CartItem.shipped_date == None)).\
                 filter(Item.destroy_time == None).\
                 order_by(Item.id).\
                 limit(-qty_diff)
-            for item in q:
+            items = q.all()
+            assert len(items) == -qty_diff
+            for item in items:
                 item.destroy_time = utcnow
         Session.flush()
 

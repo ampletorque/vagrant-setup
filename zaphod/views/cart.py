@@ -187,6 +187,13 @@ class CartView(object):
 
         if cart:
             cart.refresh()
+            for ci in cart.items:
+                if not ci.qty_desired:
+                    request.flash("'%s' is not available, it has "
+                                  "been removed from your cart." %
+                                  ci.product.name, 'warning')
+                    cart.items.remove(ci)
+            model.Session.flush()
 
         billing = shipping = masked_card = None
 

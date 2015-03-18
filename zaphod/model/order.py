@@ -19,7 +19,7 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
     __tablename__ = 'orders'
     id = Column(types.Integer, primary_key=True)
     cart_id = Column(None, ForeignKey('carts.id'), nullable=False, unique=True)
-    user_id = Column(None, ForeignKey('users.id'), nullable=True)
+    user_id = Column(None, ForeignKey('users.id'), nullable=False)
     closed = Column(types.Boolean, nullable=False, default=False)
     shipping = make_address_columns('shipping')
 

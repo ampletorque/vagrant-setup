@@ -19,7 +19,7 @@ def htmlstring_renderer_factory(info):
             response = request.response
             ct = response.content_type
             if ct == response.default_content_type:
-                response.content_type = b'text/html'
+                response.content_type = str('text/html')
         return value
     return _render
 

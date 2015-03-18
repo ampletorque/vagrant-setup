@@ -1,0 +1,58 @@
+<%inherit file="base.html"/>
+
+<%def name="title()">Funding and Fees</%def>
+
+
+<section class="section-funding">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        <h3 class="text-tagline">
+          <strong>Your success is our success.</strong> We don't make money unless you do.
+        </h3>
+        <hr>
+
+        <h1>Funding and Fees</h1>
+
+        <p>Crowd Supply follows an all-or-nothing funding model. If your campaign meets its funding goal, then you get all the money raised, less fees. Otherwise, no one is charged and you don't get anything.</p>
+
+        <img src="/_teal/images/launch/icons-cash.png" class="hidden-xs pull-right">
+
+        <h2>Funding</h2>
+
+        <p>You receive funds at four times:</p>
+        <ul>
+          <li>as soon as your campaign hits its funding goal, the pledges up until that point will be processed and you should receive funds within ten days</li>
+          <li>the remaining pledges, assuming your campaign was successful, will be processed as soon as your campaign ends and you should receive funds within ten days</li>
+          <li>once you fulfill all the orders from your original campaign, you will receive funds from the pre-orders placed since campaign</li>
+          <li>whenever Crowd Supply decides to refill its own inventory of your product</li>
+        </ul>
+
+        <h2>Fees</h2>
+
+        <p>Crowd Supply's fee structure is simple:</p>
+        <ul>
+          <li><strong>Credit Card Processing Fee:</strong> 2.9% + $0.30 per transaction</li>
+          <li><strong>Crowdfunding Fee:</strong> 5% of total pledged during your campaign</li>
+          <li><strong>Pre-order Fee:</strong> optional; 10% of total pledged after your campaign</li>
+          <li><strong>Fulfillment Fee:</strong> optional; see <a href="/logistics"><em>Fulfillment and Logistics</em></a> for more details</li>
+        </ul>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section-ready-to-launch">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Ready to Launch?</h1>
+        <h3>
+          <a class="btn btn-primary btn-large" href="${request.route_path('launch', _anchor='launch-form')}">Tell us about your project.</a>
+        </h3>
+      </div>
+    </div>
+  </div>
+</section>

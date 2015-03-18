@@ -18,12 +18,11 @@ def includeme(config):
     config.add_route('providers', '/providers')
 
     config.add_route('questions', '/questions')
-    # XXX Include these?
-    # config.add_route('how', '/how-it-works')
-    # config.add_route('logistics', '/logistics')
-    # config.add_route('funding', '/funding')
-    # config.add_route('campaign_information', '/campaign-information')
-    # config.add_route('user_experience', '/user-experience')
+    config.add_route('how', '/how-it-works')
+    config.add_route('logistics', '/logistics')
+    config.add_route('funding', '/funding')
+    config.add_route('campaign-information', '/campaign-information')
+    config.add_route('user-experience', '/user-experience')
 
     config.add_route('cart', '/cart')
     config.add_route('cart:add', '/cart/add')

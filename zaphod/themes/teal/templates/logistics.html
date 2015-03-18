@@ -1,0 +1,111 @@
+<%inherit file="base.html"/>
+
+<%def name="title()">Logistics and Fulfillment</%def>
+
+
+<section class="section-logistics">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        <h3 class="text-tagline">
+          <strong>Go make a great product.</strong> Leave the packing peanuts to us.
+        </h3>
+        <hr>
+
+        <h1>Logistics and Fulfillment Services</h1>
+
+        <img src="/_teal/images/launch/icons-shipping.png" alt="" class="hidden-xs pull-right">
+        <p>Once your campaign has successfully met its funding goal, you will need to start dealing with the logistics of actually delivering your product. Choosing Crowd Supply's comprehensive logistics and fulfillment services will help you deliver your product on time and within budget.</p>
+        <p>Crowd Supply will:</p>
+        <ul>
+          <li>gather order details, like quantity, size, and color</li>
+          <li>collect and verify your backers' shipping addresses</li>
+          <li>provide packing materials, box, tape, and address label</li>
+          <li>break bulk and pack each customer's shipment</li>
+          <li>inventory and store your products in a warehouse</li>
+          <li>ship via USPS or via UPS at a discounted negotiated rate</li>
+          <li>provide you and your backers with tracking numbers</li>
+          <li>accept and process returns</li>
+        </ul>
+
+        <h2>International Shipping</h2>
+
+        <p>You have the option to enable shipping a product to international destinations by specifying a flat international shipping surcharge for the product. This surcharge will be added to any order shipped outside the United States.</p>
+
+        <h2>Fulfillment Fees</h2>
+
+        <ul>
+          <li><strong>Freight</strong> is the cost paid to the carrier (usually either UPS or USPS) for actually transporting and delivering the package. This cost is passed directly to you without markup. For example, in the case of shipping via UPS, you will benefit from the volume discount rate Crowd Supply has negotiated with UPS. In the case of USPS, the exact cost of postage is passed on to you.</li>
+          <li><strong>International handling</strong> is a $1 fee added to each package shipped to an address outside the US. This fee covers the cost of dealing with customs, validating non-US addresses, and the additional customer service international orders entail.</li>
+          <li><strong>Packaging and handling</strong> is a fee that covers the box, packing materials, tape, address label, storage space, and manual labor involved in preparing your products to ship. Our standard rates are:</li>
+        </ul>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Package Type</th>
+              <th>Dimensions</th>
+              <th>Weight</th>
+              <th># of SKUs</th>
+              <th>Fee/Package</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>Envelope/Mailer</td>
+            <td>20"x14" or smaller</td>
+            <td>1lb or less</td>
+            <td>5 or less</td>
+            <td>$2.75</td>
+          </tr>
+          <tr>
+            <td>Small Box</td>
+            <td>8"x8"x8" or smaller</td>
+            <td>5lbs or less</td>
+            <td>5 or less</td>
+            <td>$3.25</td>
+          </tr>
+          <tr>
+            <td>Medium Box</td>
+            <td>12"x12"x12" or smaller</td>
+            <td>8lbs or less</td>
+            <td>5 or less</td>
+            <td>$3.75</td>
+          </tr>
+          <tr>
+            <td>Large Box</td>
+            <td>20"x20"x20" or smaller</td>
+            <td>12lbs or less</td>
+            <td>5 or less</td>
+            <td>$4.75</td>
+          </tr>
+          <tr>
+            <td>Everything Else</td>
+            <td colspan="4">quote available upon request</td>
+          </tr>
+          </tbody>
+        </table>
+
+        <h2>The Fine Print</h2>
+
+        <p><a href="/shipping">Shipping policy represented to customers placing an order on Crowd Supply</a></p>
+
+        <p><a href="/_teal/pdf/crowd-supply-fulfillment-agreement.pdf">Crowd Supply Warehouse and Fulfillment Services Agreement</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section-ready-to-launch">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Ready to Launch?</h1>
+        <h3>
+          <a class="btn btn-primary btn-large" href="${request.route_path('launch', _anchor='launch-form')}">Tell us about your project.</a>
+        </h3>
+      </div>
+    </div>
+  </div>
+</section>

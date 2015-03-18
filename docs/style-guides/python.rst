@@ -6,7 +6,7 @@ Not all of these are Python-specific, but they're all good suggestions.
 Static Checking
 ---------------
 
-Always use ``pep8`` and ``sfood-checker``. Some PEP8 errors may need to be ignored to support SQLAlchemy constructs.
+Always use ``flake8``. Some PEP8 errors may need to be ignored to support SQLAlchemy constructs: those are enumerated in ``setup.cfg``, so if you call ``flake8`` with no arguments in the root of the repository, it will ignore the right errors.
 
 Style
 -----
@@ -18,6 +18,8 @@ On comment lines, keep a space between the "#" and the comment text.
 Don't put whitespace between a function name and a paren when making a call.
 
 Don't use things like ``each`` for loop variables.
+
+For integer iterators, use a doubled character (e.g. ``ii``) instead of a single character (``i``) so that it can be grepped for or replaced.
 
 If you have a comment on the first line of a function, consider if it should be a doctoring.
 

@@ -85,6 +85,7 @@ def main(argv=sys.argv):
 
         stock.migrate_inventory_adjustments()
         stock.migrate_items(cart_item_map)
+        stock.update_stock_flags()
 
         scott_user = model.Session.query(model.User).\
             filter_by(email='scott.torborg@crowdsupply.com').\

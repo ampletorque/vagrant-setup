@@ -45,3 +45,8 @@ def migrate_items(cart_item_map):
         )
         model.Session.add(item)
     model.Session.flush()
+
+
+def update_stock_flags():
+    for product in model.Session.query(model.Product):
+        product.update_in_stock()

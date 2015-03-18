@@ -118,9 +118,11 @@ class Product(Base, ImageMixin):
     def is_available(self):
         return self.non_physical or self.in_stock or bool(self.current_batch)
 
+    def calculate_in_stock(self):
+        return any(sku.qty_available > 0 for sku in self.skus)
+
     def update_in_stock(self):
-        # XXX FIXME
-        pass
+        self.in_stock = self.calculate_in_stock()
 
 
 class Option(Base):

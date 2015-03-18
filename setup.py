@@ -40,6 +40,10 @@ requires = [
     'dogpile.cache>=0.5.6',
     'FormEncode>=1.3',
     'stripe>=1.19.1',
+    'mock>=1.0.1',
+    'nose>=1.3.4',
+    'nose-cov>=1.6',
+    'WebTest>=2.0.16',
 
     # Keep repoze.sendmail pinned at 4.1 to deal with this bug:
     # https://github.com/repoze/repoze.sendmail/issues/31

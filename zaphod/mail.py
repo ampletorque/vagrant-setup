@@ -107,7 +107,18 @@ def send(request, template_name, vars, to=None, from_=None,
 
     log.info("enqueueing %s to:%r subject:%r", template_name, to, subject)
     if asbool(settings.get('mailer.debug')):
+        log.info("debug: dumping %s", template_name)
         dump_locally(settings, msg)
+        debug_addr = settings.get('mailer.debug_addr')
+        if debug_addr:
+            log.info("debug: sending %s to %s", template_name, debug_addr)
+            subject += ' [was to %s]' % msg.recipients
+            msg.subject = subject
+            msg.recipients = [debug_addr]
+            msg.cc = []
+            msg.bcc = []
+            mailer = get_mailer(request)
+            mailer.send(msg)
     else:
         mailer = get_mailer(request)
         mailer.send(msg)

@@ -244,7 +244,7 @@ class CartItem(Base):
         accordingly, and False will be returned. Otherwise, True will be
         returned.
         """
-        log.info('refresh %d: begin', self.id)
+        log.info('refresh %s: begin', self.id)
         assert not self.cart.order, \
             "cannot refresh cart item that has a placed order"
 
@@ -258,13 +258,13 @@ class CartItem(Base):
 
         project = self.product.project
         if project.status == 'crowdfunding':
-            log.info('refresh %d: selecting crowdfunding', self.id)
+            log.info('refresh %s: selecting crowdfunding', self.id)
             self.stage = CROWDFUNDING
             self.batch = self.product.select_batch(self.qty_desired)
             assert self.batch
             self.expected_ship_time = self.batch.ship_time
             self.release_stock()
-            log.info('refresh %d: good', self.id)
+            log.info('refresh %s: good', self.id)
             return True
         else:
             self.release_stock()
@@ -281,38 +281,38 @@ class CartItem(Base):
             else:
                 preorder_available = 0
 
-            log.info('refresh %d: preorder_available: %s', self.id,
+            log.info('refresh %s: preorder_available: %s', self.id,
                      preorder_available)
-            log.info('refresh %d: stock_available: %s', self.id,
+            log.info('refresh %s: stock_available: %s', self.id,
                      stock_available)
 
             if stock_available >= self.qty_desired:
-                log.info('refresh %d: selecting stock', self.id)
+                log.info('refresh %s: selecting stock', self.id)
                 self.reserve_stock()
                 self.stage = STOCK
                 self.batch = None
                 self.expected_ship_time = utils.shipping_day()
-                log.info('refresh %d: good', self.id)
+                log.info('refresh %s: good', self.id)
                 return True
 
             if stock_available >= preorder_available:
-                log.info('refresh %d: selecting stock', self.id)
+                log.info('refresh %s: selecting stock', self.id)
                 self.qty_desired = stock_available
                 self.reserve_stock()
                 self.stage = STOCK
                 self.batch = None
                 self.expected_ship_time = utils.shipping_day()
-                log.info('refresh %d: partial', self.id)
+                log.info('refresh %s: partial', self.id)
                 return False
 
             if preorder_available > 0:
-                log.info('refresh %d: selecting preorder', self.id)
+                log.info('refresh %s: selecting preorder', self.id)
                 if preorder_available < self.qty_desired:
                     self.qty_desired = preorder_available
-                    log.info('refresh %d: partial', self.id)
+                    log.info('refresh %s: partial', self.id)
                     partial = True
                 else:
-                    log.info('refresh %d: good', self.id)
+                    log.info('refresh %s: good', self.id)
                     partial = False
                 self.batch = self.product.select_batch(self.qty_desired)
                 assert self.batch
@@ -322,10 +322,10 @@ class CartItem(Base):
                 return (not partial)
 
             # This thing is no longer available.
-            log.info('refresh %d: unavailable', self.id)
+            log.info('refresh %s: unavailable', self.id)
             self.qty_desired = 0
             self.batch = None
             self.expected_ship_time = None
             self.release_stock()
-            log.info('refresh %d: fail', self.id)
+            log.info('refresh %s: fail', self.id)
             return False

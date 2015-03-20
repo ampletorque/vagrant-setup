@@ -1,6 +1,8 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import logging
+
 import os
 import os.path
 import email.utils
@@ -18,6 +20,8 @@ from mako.exceptions import TopLevelLookupException
 from premailer import Premailer
 
 from . import model
+
+log = logging.getLogger(__name__)
 
 
 def process_html(body):
@@ -101,6 +105,7 @@ def send(request, template_name, vars, to=None, from_=None,
     msg.body = process_text(render('emails/%s.txt' % template_name,
                                    vars, request))
 
+    log.info("enqueueing %s to:%r subject:%r", template_name, to, subject)
     if asbool(settings.get('mailer.debug')):
         dump_locally(settings, msg)
     else:

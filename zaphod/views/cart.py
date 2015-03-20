@@ -182,6 +182,8 @@ class CartView(object):
                 show_name='%s %s' % (shipping.first_name,
                                      shipping.last_name[0]))
             model.Session.add(user)
+
+            # XXX Need to transactionally send a welcome email to this user.
         return user
 
     def _handle_existing_payment(self, order, payment_method):

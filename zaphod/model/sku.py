@@ -49,7 +49,7 @@ class SKU(Base):
             filter(Item.destroy_time == None,
                    Acquisition.sku == self).\
             filter(or_(Item.cart_item_id == None,
-                       CartItem.shipped_date == None)).\
+                       CartItem.shipped_time == None)).\
             count()
 
     @property
@@ -86,7 +86,7 @@ class SKU(Base):
                 outerjoin(Item.cart_item).\
                 filter(Acquisition.sku == self).\
                 filter(or_(Item.cart_item_id == None,
-                           CartItem.shipped_date == None)).\
+                           CartItem.shipped_time == None)).\
                 filter(Item.destroy_time == None).\
                 order_by(Item.id).\
                 limit(-qty_diff)

@@ -110,7 +110,7 @@ class CartItem(Base):
     stage = Column(types.Integer, nullable=False)
 
     expected_ship_time = Column(types.DateTime, nullable=True)
-    shipped_date = Column(types.DateTime, nullable=True)
+    shipped_time = Column(types.DateTime, nullable=True)
     shipment_id = Column(None, ForeignKey('shipments.id'), nullable=True)
 
     status = Column(types.CHAR(16), nullable=False, default='cart')

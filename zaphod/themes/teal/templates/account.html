@@ -60,13 +60,13 @@
             </h4>
             <p>
               Backed on ${h.format_datetime(request, cart_item.cart.order.created_time, '%b %d, %Y')}<br>
-              % if cart_item.shipped_date:
-                Shipped on ${h.format_datetime(request, cart_item.shipped_date, '%b %d, %Y')}<br>
+              % if cart_item.shipped_time:
+                Shipped on ${h.format_datetime(request, cart_item.shipped_time, '%b %d, %Y')}<br>
                 % if cart_item.expected_ship_time:
-                  % if cart_item.shipped_date < cart_item.expected_ship_time:
-                    <strong>Shipped ${(cart_item.expected_ship_time - cart_item.shipped_date).days} days early!</strong>
+                  % if cart_item.shipped_time < cart_item.expected_ship_time:
+                    <strong>Shipped ${(cart_item.expected_ship_time - cart_item.shipped_time).days} days early!</strong>
                   % else:
-                    <strong>Shipped ${(cart_item.shipped_date - cart_item.expected_ship_time).days} days late!</strong>
+                    <strong>Shipped ${(cart_item.shipped_time - cart_item.expected_ship_time).days} days late!</strong>
                   % endif
                   Originally expected to ship on ${h.format_datetime(request, cart_item.expected_ship_time, '%B %Y')}
                 % endif

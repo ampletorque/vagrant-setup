@@ -110,7 +110,7 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
         )
         self.shipments.append(shipment)
         for item in items:
-            item.shipped_date = utcnow
+            item.shipped_time = utcnow
             item.shipment = shipment
             item.update_status('shipped')
         self.update_status()

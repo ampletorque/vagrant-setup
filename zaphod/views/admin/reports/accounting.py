@@ -50,8 +50,8 @@ class AccountingReportsView(BaseReportsView):
         q = model.Session.query(
             func.sum(model.CartItem.price_each * model.CartItem.qty_desired)).\
             filter(model.CartItem.stage == model.CartItem.STOCK,
-                   model.CartItem.shipped_date >= start,
-                   model.CartItem.shipped_date < end)
+                   model.CartItem.shipped_time >= start,
+                   model.CartItem.shipped_time < end)
 
         stock_items = q.scalar() or 0
 
@@ -60,8 +60,8 @@ class AccountingReportsView(BaseReportsView):
         q = model.Session.query(
             func.sum(model.CartItem.shipping_price)).\
             filter(model.CartItem.stage == model.CartItem.STOCK,
-                   model.CartItem.shipped_date >= start,
-                   model.CartItem.shipped_date < end)
+                   model.CartItem.shipped_time >= start,
+                   model.CartItem.shipped_time < end)
 
         stock_shipping = q.scalar()
 

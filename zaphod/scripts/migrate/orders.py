@@ -255,7 +255,7 @@ def migrate_orders(settings, product_map, option_value_map,
                 sku=sku,
                 shipping_price=(shipping_prices[old_ci]
                                 if shipping_prices else 0),
-                shipped_date=old_ci.shipped_date,
+                shipped_time=old_ci.shipped_date,
                 expected_ship_time=ship_time,
             )
             cart_item_map[old_ci] = ci

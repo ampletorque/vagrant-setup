@@ -109,7 +109,7 @@ class CartItem(Base):
     shipping_price = Column(custom_types.Money, nullable=False)
     stage = Column(types.Integer, nullable=False)
 
-    expected_ship_date = Column(types.DateTime, nullable=True)
+    expected_ship_time = Column(types.DateTime, nullable=True)
     shipped_date = Column(types.DateTime, nullable=True)
     shipment_id = Column(None, ForeignKey('shipments.id'), nullable=True)
 
@@ -235,7 +235,7 @@ class CartItem(Base):
         project may have changed status.
 
         This method may update .qty_desired, .stage, .batch,
-        .expected_ship_date, and associated Item instances.
+        .expected_ship_time, and associated Item instances.
 
         Before doing anything, make sure that this cart item has no associated
         order.
@@ -262,7 +262,7 @@ class CartItem(Base):
             self.stage = CROWDFUNDING
             self.batch = self.product.select_batch(self.qty_desired)
             assert self.batch
-            self.expected_ship_date = self.batch.ship_date
+            self.expected_ship_time = self.batch.ship_time
             self.release_stock()
             log.info('refresh %d: good', self.id)
             return True
@@ -291,7 +291,7 @@ class CartItem(Base):
                 self.reserve_stock()
                 self.stage = STOCK
                 self.batch = None
-                self.expected_ship_date = utils.shipping_day()
+                self.expected_ship_time = utils.shipping_day()
                 log.info('refresh %d: good', self.id)
                 return True
 
@@ -301,7 +301,7 @@ class CartItem(Base):
                 self.reserve_stock()
                 self.stage = STOCK
                 self.batch = None
-                self.expected_ship_date = utils.shipping_day()
+                self.expected_ship_time = utils.shipping_day()
                 log.info('refresh %d: partial', self.id)
                 return False
 
@@ -317,7 +317,7 @@ class CartItem(Base):
                 self.batch = self.product.select_batch(self.qty_desired)
                 assert self.batch
                 self.stage = PREORDER
-                self.expected_ship_date = self.batch.ship_date
+                self.expected_ship_time = self.batch.ship_time
                 self.release_stock()
                 return (not partial)
 
@@ -325,7 +325,7 @@ class CartItem(Base):
             log.info('refresh %d: unavailable', self.id)
             self.qty_desired = 0
             self.batch = None
-            self.expected_ship_date = None
+            self.expected_ship_time = None
             self.release_stock()
             log.info('refresh %d: fail', self.id)
             return False

@@ -287,7 +287,7 @@
             % elif product.in_stock:
               In Stock
             % elif product.is_available:
-              Ships ${product.current_ship_date.strftime('%B %Y')}
+              Ships ${product.current_ship_time.strftime('%B %Y')}
             % elif not product.batches:
               Preview only: check back soon!
             % else:

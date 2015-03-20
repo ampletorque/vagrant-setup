@@ -224,12 +224,12 @@ class ProjectEditView(NodeEditView):
 
         # - # of orders that are currently late
         late_orders_q = open_orders_q.\
-            filter(model.CartItem.expected_ship_date < utcnow)
+            filter(model.CartItem.expected_ship_time < utcnow)
         late_orders_count = late_orders_q.count()
 
         # - earliest open delivery date
-        earliest_open_ship_date = open_orders_q.with_entities(
-            func.min(model.CartItem.expected_ship_date)).\
+        earliest_open_ship_time = open_orders_q.with_entities(
+            func.min(model.CartItem.expected_ship_time)).\
             scalar()
 
         # - age of latest project update
@@ -245,7 +245,7 @@ class ProjectEditView(NodeEditView):
             'obj': project,
             'open_orders_count': open_orders_count,
             'late_orders_count': late_orders_count,
-            'earliest_open_ship_date': earliest_open_ship_date,
+            'earliest_open_ship_time': earliest_open_ship_time,
             'last_update_time': last_update_time,
         }
 
@@ -280,7 +280,7 @@ class ProjectEditView(NodeEditView):
 
         due_q = model.Session.query(
             model.SKU,
-            func.min(model.CartItem.expected_ship_date)).\
+            func.min(model.CartItem.expected_ship_time)).\
             join(model.SKU.cart_items).\
             join(model.CartItem.cart).\
             join(model.Cart.order).\

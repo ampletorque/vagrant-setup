@@ -21,9 +21,9 @@
           % endif
           <p>
             % if item.stage == item.CROWDFUNDING:
-              <p>Crowdfunding pledge, expected to ship ${item.expected_ship_date.strftime('%B %Y')}</p>
+              <p>Crowdfunding pledge, expected to ship ${item.expected_ship_time.strftime('%B %Y')}</p>
             % elif item.stage == item.PREORDER:
-              <p>Pre-order, expected to ship ${item.expected_ship_date.strftime('%B %Y')}</p>
+              <p>Pre-order, expected to ship ${item.expected_ship_time.strftime('%B %Y')}</p>
             % elif item.stage == item.STOCK:
               <p>In Stock</p>
             % else:

@@ -41,6 +41,7 @@ def migrate_payment_methods(user_map):
             save=old_method.save,
             reference=old_method.reference,
             billing=utils.convert_address(old_method.billing),
+            stripe_js=True,
         )
         model.Session.add(method)
 

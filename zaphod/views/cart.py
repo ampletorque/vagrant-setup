@@ -257,6 +257,10 @@ class CartView(object):
             billing=billing,
             reference=profile.reference,
             save=ccf['save'],
+            stripe_js=False,
+            remote_addr=request.remote_addr,
+            user_agent=request.user_agent,
+            session_id=request.session.id,
         )
         model.Session.add(method)
 

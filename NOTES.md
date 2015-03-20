@@ -90,19 +90,8 @@ Plan:
   date of the batch, and add new batches to the end of the table.
 
 
-### Model Cleanup
-
-- Ensure consistent table naming.
-- Be consistent about using either ``_time`` or ``_date`` as the suffix for
-  DATETIME columns, but not both!
-
-
 ### Frontend Cleanup
 
-- Use .box-shadow() mixin instead of box-shadow rule directly
-- Switch to SVG logo??
-- Styling for breadcrumbs
-- Styleguide info for tiles
 - Use sticky sidebar on styleguide
 - Introduce an @hr-color variable and add it to the styleguide
 - Standardize colors for grey / lightened text, add vars, add to styleguide

@@ -6,6 +6,7 @@ import sys
 import transaction
 
 from sqlalchemy import MetaData, create_engine, engine_from_config
+from sqlalchemy.schema import DropConstraint, ForeignKeyConstraint
 from pyramid.paster import get_appsettings, setup_logging
 
 try:
@@ -32,7 +33,11 @@ def drop_existing_tables(engine):
     "Drop all tables, including tables that aren't defined in metadata."
     temp_metadata = MetaData()
     temp_metadata.reflect(bind=engine)
-    for table in reversed(temp_metadata.sorted_tables):
+    for table in temp_metadata.tables.values():
+        for constraint in table.constraints:
+            if isinstance(constraint, ForeignKeyConstraint):
+                engine.execute(DropConstraint(constraint))
+    for table in temp_metadata.tables.values():
         table.drop(bind=engine)
 
 

@@ -231,7 +231,9 @@ def migrate_projects(settings, creator_map, tag_map, user_map):
                             price_increase=old_value.price_increase,
                             gravity=old_value.gravity,
                             published=old_value.enabled,
-                            is_default=old_value == old_default_value,
+                            is_default=(True if
+                                        (old_value == old_default_value)
+                                        else None),
                         )
                         option.values.append(value)
                         option_value_map[old_value] = value

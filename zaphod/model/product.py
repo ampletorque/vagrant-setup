@@ -3,7 +3,7 @@ from __future__ import (absolute_import, division, print_function,
 
 from decimal import Decimal
 
-from sqlalchemy import Column, ForeignKey, types, orm
+from sqlalchemy import Column, ForeignKey, UniqueConstraint, types, orm
 from sqlalchemy.sql import func, not_
 
 from . import custom_types
@@ -155,12 +155,14 @@ class OptionValue(Base):
     A single possible 'choice' for an option.
     """
     __tablename__ = 'option_values'
+    __table_args__ = (UniqueConstraint('option_id', 'is_default'),
+                      {'mysql_engine': 'InnoDB'})
     id = Column(types.Integer, primary_key=True)
     option_id = Column(None, ForeignKey('options.id'), nullable=False)
     description = Column(types.Unicode(255), nullable=False, default=u'')
     price_increase = Column(custom_types.Money, nullable=False, default=0)
     gravity = Column(types.Integer, nullable=False, default=0)
-    is_default = Column(types.Boolean, nullable=False, default=False)
+    is_default = Column(types.Boolean, nullable=True)
     published = Column(types.Boolean, nullable=False, default=False)
 
     option = orm.relationship('Option', backref='values')

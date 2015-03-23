@@ -1,6 +1,8 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import logging
+
 try:
     from scrappy import model as scrappy_model
     from crowdsupply import model as cs_model
@@ -10,11 +12,13 @@ except ImportError:
 
 from ... import model
 
+log = logging.getLogger(__name__)
+
 
 def migrate_inventory_adjustments():
     for old_adj in \
             scrappy_meta.Session.query(scrappy_model.InventoryAdjustment):
-        print("  inventory adjustment %s" % old_adj.id)
+        log.warn("  inventory adjustment %s", old_adj.id)
         adj = model.InventoryAdjustment(
             id=old_adj.id,
             sku_id=old_adj.sku_id,
@@ -29,7 +33,7 @@ def migrate_inventory_adjustments():
 
 def migrate_items(cart_item_map):
     for old_item in scrappy_meta.Session.query(scrappy_model.Item):
-        print("  item %s" % old_item.id)
+        log.warn("  item %s", old_item.id)
         if old_item.cart_item in cart_item_map:
             cart_item = cart_item_map[old_item.cart_item]
         else:

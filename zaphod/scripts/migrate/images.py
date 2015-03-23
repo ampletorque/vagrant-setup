@@ -1,6 +1,8 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import logging
+
 try:
     from scrappy import model as scrappy_model
     from scrappy.model import meta as scrappy_meta
@@ -9,11 +11,13 @@ except ImportError:
 
 from ... import model
 
+log = logging.getLogger(__name__)
+
 
 def migrate_images(settings):
     image_map = {}
     for old_im in scrappy_meta.Session.query(scrappy_model.ImageMeta):
-        print("image %s" % old_im.name)
+        log.warn("image %s" % old_im.name)
         new_im = model.ImageMeta(
             id=old_im.id,
             name=old_im.name,

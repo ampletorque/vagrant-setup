@@ -1,5 +1,8 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
+
+import logging
+
 import os.path
 import sys
 
@@ -17,6 +20,8 @@ except ImportError:
 from ... import model
 
 from . import images, users, content, orders, vendors, stock
+
+log = logging.getLogger(__name__)
 
 
 old_url = 'mysql+pymysql://crowdsupply:quux@localhost/crowdsupply?charset=utf8'

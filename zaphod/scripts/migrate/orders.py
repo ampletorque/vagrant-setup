@@ -1,6 +1,8 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import logging
+
 from decimal import Decimal
 
 try:
@@ -14,11 +16,13 @@ from ... import model
 
 from . import utils
 
+log = logging.getLogger(__name__)
+
 
 def migrate_payment_gateways():
     for old_gateway in \
             scrappy_meta.Session.query(scrappy_model.PaymentGateway):
-        print("  gateway %s" % old_gateway.comment)
+        log.warn("  gateway %s", old_gateway.comment)
         gateway = model.PaymentGateway(
             id=old_gateway.id,
             dev=old_gateway.dev,
@@ -33,7 +37,7 @@ def migrate_payment_gateways():
 
 def migrate_payment_methods(user_map):
     for old_method in scrappy_meta.Session.query(scrappy_model.PaymentMethod):
-        print("  method %s" % old_method.id)
+        log.warn("  method %s", old_method.id)
         method = model.PaymentMethod(
             id=old_method.id,
             user=user_map[old_method.account],
@@ -215,7 +219,7 @@ def migrate_orders(settings, product_map, option_value_map,
     utcnow = model.utcnow()
     cart_item_map = {}
     for old_order in scrappy_meta.Session.query(scrappy_model.Order):
-        print("  order %s" % old_order.id)
+        log.warn("  order %s", old_order.id)
         order = model.Order(
             id=old_order.id,
             user=user_map[old_order.account],

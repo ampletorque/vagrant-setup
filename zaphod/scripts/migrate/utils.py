@@ -1,6 +1,8 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import logging
+
 try:
     from scrappy import model as scrappy_model
     from crowdsupply import model as cs_model
@@ -10,11 +12,13 @@ except ImportError:
 
 from ... import model
 
+log = logging.getLogger(__name__)
+
 
 def migrate_aliases(settings, old_node, new_node):
     canonical_path = None
     for alias in old_node.aliases:
-        print("      path: %r" % alias.path)
+        log.debug("      path: %r", alias.path)
         if alias.canonical:
             canonical_path = alias.path
         new_node.update_path(alias.path)
@@ -33,7 +37,7 @@ def migrate_comments(old_obj, new_obj, user_map):
 
 def migrate_image_associations(settings, old_obj, new_obj):
     for old_assoc in old_obj._image_associations:
-        print("      image assoc %s" % old_assoc.image_meta_id)
+        log.debug("      image assoc %s", old_assoc.image_meta_id)
         new_obj.image_associations.append(new_obj.ImageAssociation(
             image_meta_id=old_assoc.image_meta_id,
             gravity=old_assoc.gravity,

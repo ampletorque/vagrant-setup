@@ -1,6 +1,8 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import logging
+
 try:
     from scrappy import model as scrappy_model
     from crowdsupply import model as cs_model
@@ -11,6 +13,8 @@ except ImportError:
 from ... import model, helpers as h
 
 from . import utils
+
+log = logging.getLogger(__name__)
 
 
 def lookup_location(old_user):
@@ -33,7 +37,7 @@ def migrate_users(settings):
     email_to_user_map = {}
     for old_user in scrappy_meta.Session.query(scrappy_model.Account).\
             order_by(scrappy_model.Account.id.desc()):
-        print("  user %s" % old_user.email)
+        log.warn("  user %s", old_user.email)
 
         if old_user.id == 1:
             user_map[old_user] = model.User.get(1)

@@ -143,6 +143,12 @@ class Option(Base):
         # XXX Turn into a relationship
         return [val for val in self.values if val.published]
 
+    @property
+    def default_value(self):
+        for ov in self.values:
+            if ov.is_default:
+                return ov
+
 
 class OptionValue(Base):
     """
@@ -154,7 +160,7 @@ class OptionValue(Base):
     description = Column(types.Unicode(255), nullable=False, default=u'')
     price_increase = Column(custom_types.Money, nullable=False, default=0)
     gravity = Column(types.Integer, nullable=False, default=0)
-    is_default = Column(types.Boolean, nullable=True)
+    is_default = Column(types.Boolean, nullable=False, default=False)
     published = Column(types.Boolean, nullable=False, default=False)
 
     option = orm.relationship('Option', backref='values')

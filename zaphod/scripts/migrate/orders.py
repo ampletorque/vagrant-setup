@@ -240,10 +240,10 @@ def migrate_orders(settings, product_map, option_value_map,
             if old_batch:
                 ship_time = old_ci.batch.delivery_date
             product = product_map[old_ci.product]
-            sku = model.sku_for_option_value_ids_sloppy(
+            sku = utils.sku_for_option_values(
                 product,
-                set(option_value_map[old_ov].id
-                    for old_ov in old_ci.option_values))
+                set(option_value_map[old_ov] for old_ov in
+                    old_ci.option_values))
             ci = model.CartItem(
                 id=old_ci.id,
                 cart=order.cart,

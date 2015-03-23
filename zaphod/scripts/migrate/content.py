@@ -201,25 +201,40 @@ def migrate_projects(settings, creator_map, tag_map, user_map):
             for old_option in old_pledge_level.all_options:
                 print("      option %s" % old_option.name)
                 option = model.Option(
+                    id=old_option.id,
                     name=old_option.name,
                     gravity=old_option.gravity,
                     published=old_option.enabled,
                 )
                 product.options.append(option)
-                for old_value in old_option.all_values:
-                    print("        value %s" % old_value.description)
+                if old_option.customize:
                     value = model.OptionValue(
-                        description=old_value.description,
-                        price_increase=old_value.price_increase,
-                        gravity=old_value.gravity,
-                        is_default=old_value.is_default,
-                        published=old_value.enabled,
+                        description='No Customization',
+                        published=True,
+                        is_default=True,
                     )
                     option.values.append(value)
-                    option_value_map[old_value] = value
+                    for old_value in old_option.all_values:
+                        option_value_map[old_value] = value
+                else:
+                    old_default_value = utils.default_for_option(old_option)
+                    assert old_default_value
+                    for old_value in old_option.all_values:
+                        print("        value %s" % old_value.description)
+                        value = model.OptionValue(
+                            id=old_value.id,
+                            description=old_value.description,
+                            price_increase=old_value.price_increase,
+                            gravity=old_value.gravity,
+                            published=old_value.enabled,
+                            is_default=old_value == old_default_value,
+                        )
+                        option.values.append(value)
+                        option_value_map[old_value] = value
             for old_batch in old_pledge_level.batches:
                 print("      batch %s" % old_batch.id)
                 batch = model.Batch(
+                    id=old_batch.id,
                     qty=old_batch.qty,
                     ship_time=old_batch.delivery_date,
                 )

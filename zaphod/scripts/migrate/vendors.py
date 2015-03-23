@@ -61,9 +61,9 @@ def migrate_vendor_orders(settings, product_map, option_value_map, user_map):
             vendor_shipment_map[old_vs] = vs
         for old_voi in old_vo.items:
             print("    voi %d" % old_voi.id)
-            sku = model.sku_for_option_value_ids_sloppy(
+            sku = utils.sku_for_option_values(
                 product_map[old_voi.product],
-                set(option_value_map[old_ov].id
+                set(option_value_map[old_ov]
                     for old_ov in old_voi.option_values))
             voi = model.VendorOrderItem(
                 id=old_voi.id,

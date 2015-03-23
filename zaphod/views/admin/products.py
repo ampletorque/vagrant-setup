@@ -17,8 +17,20 @@ class ScheduleForm(Schema):
     allow_extra_fields = False
 
 
+class OptionValueSchema(Schema):
+    allow_extra_fields = False
+    description = validators.UnicodeString()
+    price_increase = validators.Number(if_empty=0.0)
+    published = validators.Bool()
+
+
 class OptionSchema(Schema):
     allow_extra_fields = False
+    name = validators.UnicodeString()
+    gravity = validators.Int(not_empty=True)
+    default_value_id = validators.Int(if_missing=0)
+    published = validators.Bool()
+    values = ForEach(OptionValueSchema)
 
 
 class OptionsForm(Schema):

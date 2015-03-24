@@ -107,14 +107,20 @@ class ProductEditView(BaseEditView):
             if option_id.startswith('new'):
                 option = model.Option()
                 product.options.append(option)
+                is_new = True
             else:
                 option = model.Option.get(option_id)
                 options_remaining.remove(option)
+                is_new = False
             for value in option.values:
                 value.is_default = None
             assert option.product == product
             self._update_option_values(option_params, option)
             crud_update(option, option_params)
+            model.Session.flush()
+            if is_new:
+                for sku in product.skus:
+                    sku.option_values.add(option.default_value)
         # XXX
         assert not options_remaining, \
             "didn't get options %r" % options_remaining

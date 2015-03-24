@@ -14,7 +14,7 @@ define(['jquery'], function ($) {
 
   function clearErrors($form) {
     // Remove all existing errors that have been rendered in the DOM.
-    $form.find('.form-group').removeClass('has-error').find('ul.error').remove();
+    $form.find('.form-group, td').removeClass('has-error').find('ul.error').remove();
   }
 
   function renderErrors($form, errors) {
@@ -24,10 +24,13 @@ define(['jquery'], function ($) {
       var
         $input = $form
           .find('input, select, textarea')
-          .filter('[name=' + name + ']'),
-        $group = $input.closest('.form-group');
+          .filter('[name="' + name + '"]'),
+        $group = $input.closest('td, .form-group');
       $group.addClass('has-error');
-      $group.find('> div').append('<ul class="error"><li>' + error + '</li></ul>');
+      if($group.prop('tagName') !== 'TD') {
+        $group = $group.find('> div');
+      }
+      $group.append('<ul class="error"><li>' + error + '</li></ul>');
     });
   }
 

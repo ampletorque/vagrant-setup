@@ -9,7 +9,8 @@ require([
   'teal/datepicker',
   'teal/images',
   'teal/daterange',
-  'teal/ajaxvalidate'
+  'teal/ajaxvalidate',
+  'teal/options'
 
 ], function ($) {
   $(function () {

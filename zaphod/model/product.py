@@ -5,6 +5,7 @@ from decimal import Decimal
 
 from sqlalchemy import Column, ForeignKey, UniqueConstraint, types, orm
 from sqlalchemy.sql import func, not_
+from sqlalchemy.ext.orderinglist import ordering_list
 
 from . import custom_types
 from .base import Base, Session
@@ -56,6 +57,20 @@ class Product(Base, ImageMixin):
     box_height = Column(types.Float, nullable=False, default=0)
 
     batches = orm.relationship('Batch', backref='product')
+
+    options = orm.relationship(
+        'Option',
+        backref='product',
+        collection_class=ordering_list('gravity'),
+        order_by='Option.gravity',
+    )
+    published_options = orm.relationship(
+        'Option',
+        primaryjoin=('and_(Option.product_id == Product.id,'
+                     'Option.published == True)'),
+        order_by='Option.gravity',
+        viewonly=True,
+    )
 
     def select_batch(self, qty):
         """
@@ -110,11 +125,6 @@ class Product(Base, ImageMixin):
             scalar() or 0
 
     @property
-    def published_options(self):
-        # XXX Turn into a relationship
-        return [opt for opt in self.options if opt.published]
-
-    @property
     def is_available(self):
         return self.non_physical or self.in_stock or bool(self.current_batch)
 
@@ -136,12 +146,22 @@ class Option(Base):
     gravity = Column(types.Integer, nullable=False, default=0)
     published = Column(types.Boolean, nullable=False, default=False)
 
-    product = orm.relationship('Product', backref='options')
+    values = orm.relationship(
+        'OptionValue',
+        backref='option',
+        collection_class=ordering_list('gravity'),
+        order_by='OptionValue.gravity',
+    )
+    published_values = orm.relationship(
+        'OptionValue',
+        primaryjoin=('and_(OptionValue.option_id == Option.id,'
+                     'OptionValue.published == True)'),
+        viewonly=True,
+        order_by='OptionValue.gravity',
+    )
 
-    @property
-    def published_values(self):
-        # XXX Turn into a relationship
-        return [val for val in self.values if val.published]
+    def __repr__(self):
+        return '<Option(id=%r, name=%r)>' % (self.id, self.name)
 
     @property
     def default_value(self):
@@ -165,4 +185,6 @@ class OptionValue(Base):
     is_default = Column(types.Boolean, nullable=True)
     published = Column(types.Boolean, nullable=False, default=False)
 
-    option = orm.relationship('Option', backref='values')
+    def __repr__(self):
+        return '<OptionValue(id=%r, description=%r)>' % (self.id,
+                                                         self.description)

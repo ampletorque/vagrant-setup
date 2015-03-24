@@ -316,20 +316,24 @@
           ${h.hidden('product_id', product.id)}
           ${h.hidden('qty', 1)}
 
-          % for option in product.published_options:
-            <div class="form-group">
-              <label for="option-${option.id}">${option.name}</label>
-              <select id="option-${option.id}" name="options-${loop.index}" class="form-control">
-                % for value in option.published_values:
-                  <option value="${value.id}">
-                    ${value.description}
-                    % if value.price_increase:
-                      (+${h.currency(value.price_increase)})
-                    % endif
-                  </option>
-                % endfor
-              </select>
-            </div>
+          % for option in product.options:
+            % if option.published:
+              <div class="form-group">
+                <label for="option-${option.id}">${option.name}</label>
+                <select id="option-${option.id}" name="options-${loop.index}" class="form-control">
+                  % for value in option.published_values:
+                    <option value="${value.id}">
+                      ${value.description}
+                      % if value.price_increase:
+                        (+${h.currency(value.price_increase)})
+                      % endif
+                    </option>
+                  % endfor
+                </select>
+              </div>
+            % else:
+              ${h.hidden('option-%d' % option.id, option.default_value.id)}
+            % endif
           % endfor
 
           % if project.status == 'crowdfunding':

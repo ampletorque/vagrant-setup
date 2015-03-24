@@ -54,6 +54,7 @@ class BaseEditView(object):
                 im = model.ImageMeta.get(image_params['id'])
             im.title = image_params['title']
             im.alt = image_params['alt']
+            self._touch_obj(im)
             obj.image_associations.append(obj.ImageAssociation(
                 image_meta=im,
                 gravity=image_params['gravity'],
@@ -96,6 +97,7 @@ class BaseEditView(object):
         obj = self._get_object()
         form = Form(request, schema=self.UpdateForm)
         if form.validate():
+            self._touch_obj(obj)
             self._update_obj(form, obj)
             return {
                 'status': 'ok',

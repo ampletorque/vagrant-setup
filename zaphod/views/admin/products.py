@@ -124,6 +124,7 @@ class ProductEditView(BaseEditView):
         # XXX
         assert not options_remaining, \
             "didn't get options %r" % options_remaining
+        self._touch_obj(product)
         self.request.flash("Saved options.", 'success')
 
     @view_config(route_name='admin:product:options',

@@ -172,7 +172,13 @@ class TealTheme(Theme):
     @reify
     def cache_regions(self):
         settings = self.settings
-        default = make_region().configure_from_config(settings, 'cache.')
+
+        def key_mangler(value):
+            return settings.get('cache.prefix', '') + value
+
+        default = make_region(
+            key_mangler=key_mangler,
+        ).configure_from_config(settings, 'cache.')
 
         # Enable this to log cache gets and sets, useful for debugging.
         # default.wrap(LoggingProxy)

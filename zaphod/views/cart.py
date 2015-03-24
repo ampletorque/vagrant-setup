@@ -387,6 +387,10 @@ class CartView(object):
         order_id = request.session.get('new_order_id')
         if order_id:
             order = model.Order.get(order_id)
+            del request.session['new_order_id']
         else:
             raise HTTPBadRequest
-        return dict(order=order)
+        return {
+            'order': order,
+            'first_load': True,
+        }

@@ -2,6 +2,7 @@
 
 <%namespace name="blocks" file="common/blocks.html"/>
 <%namespace name="cart_table" file="common/cart_table.html"/>
+<%namespace name="analytics" file="common/analytics.html"/>
 
 
 <%def name="title()">Order ${order.id} Confirmation</%def>
@@ -81,3 +82,8 @@
 
   </div>
 </section>
+
+
+% if first_load:
+  ${analytics.google_analytics_ecommerce(order)}
+% endif

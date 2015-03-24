@@ -29,13 +29,8 @@
 
 <%def name="option_value_list(obj)">
   <ul>
-    % for ov in sorted(obj.option_values, key=lambda ov: ov.option.gravity):
-      <li>
-        ${ov.option.name}: ${ov.description}
-        % if ov.price_increase:
-          (+${h.currency(ov.price_increase)})
-        % endif
-      </li>
+    % for el in h.variant_list(obj):
+      <li>${el}</li>
     % endfor
   </ul>
 </%def>

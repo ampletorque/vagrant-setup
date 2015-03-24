@@ -97,7 +97,7 @@ class UserView(object):
         request = self.request
         order_id = request.matchdict['id']
         order = model.Order.get(order_id)
-        return {'order': order}
+        return {'order': order, 'first_load': False}
 
     @view_config(route_name='settings', renderer='settings.html',
                  permission='authenticated')

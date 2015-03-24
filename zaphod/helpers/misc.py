@@ -2,6 +2,7 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from datetime import date
+from operator import itemgetter
 import re
 import hashlib
 import string
@@ -369,3 +370,43 @@ def allowed_countries():
     ret.extend([(c.alpha2.lower(), c.name) for c in countries
                 if (c.alpha2.lower(), c.name) not in ret])
     return ret
+
+
+def option_value_description(option_value, show_price_changes=True):
+    """
+    Return a string describing the value of a ProductOptionValue, including
+    any price difference.
+    """
+    price_str = u''
+    if show_price_changes and option_value.price_increase != 0:
+        price_str = currency(option_value.price_increase)
+        if price_str.endswith('00'):
+            price_str = price_str[:-3]
+        if option_value.price_increase > 0:
+            price_str = u" +%s" % price_str
+        else:
+            price_str = u" %s" % price_str
+    return option_value.description + price_str
+
+
+def variant_list(item, show_defaults=True, show_price_changes=True):
+    opts_gravity = []
+    for ov in item.option_values:
+        opt = ov.option
+
+        if show_defaults or (opt.default_value != ov):
+            desc = option_value_description(
+                ov, show_price_changes=show_price_changes)
+            line = "%s: %s" % (opt.name, desc)
+            opts_gravity.append((line, opt.gravity))
+
+    opts_gravity.sort(key=itemgetter(1))
+    return [description for description, gravity in opts_gravity]
+
+
+def variant_string(item, show_price_changes=True):
+    """
+    Return a human-readable description of an item's variant selections. Works
+    on any instance with associated option values.
+    """
+    return ", ".join(variant_list(item, show_price_changes=show_price_changes))

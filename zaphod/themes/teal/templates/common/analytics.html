@@ -22,3 +22,32 @@
     </script>
   % endif
 </%def>
+
+
+<%def name="google_analytics_ecommerce(order)">
+  <script>
+    ga('require', 'ec');
+
+    % for item in order.cart.items:
+      ga('ec:addProduct', {
+        'id': '${item.product_id}',
+        'name': ${h.json.dumps(item.product.name) | n},
+        'category': ${h.json.dumps(item.product.project.name) | n},
+        'brand': ${h.json.dumps(item.product.project.creator.name) | n},
+        'variant': ${h.json.dumps(h.variant_string(item)) | n},
+        'price': '${item.price_each}',
+        'quantity': ${item.qty_desired}
+      });
+    % endfor
+
+    ga('ec:setAction', 'purchase', {
+      'id': '${order.id}',
+      'affiliation': 'Web',
+      'revenue': '${order.total_amount}',
+      'tax': '0',
+      'shipping': '${order.shipping_amount}'
+    });
+
+    ga('send', 'event', 'Checkout', 'complete');
+  </script>
+</%def>

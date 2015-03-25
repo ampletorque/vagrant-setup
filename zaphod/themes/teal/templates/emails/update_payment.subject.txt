@@ -1,1 +1,0 @@
-Your Crowd Supply payment to ${project.name} has been rejected

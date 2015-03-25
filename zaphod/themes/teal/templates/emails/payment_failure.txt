@@ -1,43 +1,17 @@
-A payment error occurred during checkout on ${order.site.settings['name']}
+<%inherit file="base.txt"/>\
+Your payment on Crowd Supply has been rejected.
 
-The error was:
-${exc}
+Your payment to the ${project.name} campaign on Crowd Supply was declined by your credit card company. This payment was for order ${order.id}.
 
-<%def name="address_fields(address, pickup=False)">
-% if address:
-Name    ${address.first_name} ${address.last_name}
-% if address.company != '':
-Company ${address.company}
-% endif
-Phone   ${address.phone}
-% if not pickup:
-Address ${address.address1}
-        ${address.address2}
-        ${address.city}, ${address.state} ${address.postal_code}
-        ${address.country}
-% endif
-% endif
-</%def>
+The ${project.name} team is counting on these funds to deliver their product. Please resolve this issue by ${h.format_datetime(request, due_date, 'calendar')} to prevent your shipment from being delayed.
 
-Session
--------
-${session_id}
+Use the URL below to submit the payment again or provide new payment information:
 
-Email
------
-${customer_email}
+${link}
 
-Shipping Information
---------------------
-${self.address_fields(order.shipping)}
+You will receive a separate shipping confirmation e-mail with a tracking number once the order actually ships.
 
-Billing Information
--------------------
-${self.address_fields(billing)}
+On behalf of the ${project.name} team, thanks for your support.
 
-Order Items
------------
-% for item in order.cart.root_items:
-${item.name}    ${item.price_each}  ${item.qty_reserved}    ${item.total}
-% endfor
-Order Total             ${order.total_amount}
+Thank you,
+Crowd Supply Team

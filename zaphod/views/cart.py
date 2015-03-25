@@ -239,7 +239,7 @@ class CartView(object):
             log.info('payment_failed order:%d cart:%s', order.id, cart.id)
 
             mail.send_with_admin(request,
-                                 'payment_failure',
+                                 'checkout_failure',
                                  vars=dict(
                                      billing=billing,
                                      customer_email=email,

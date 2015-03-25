@@ -1,1 +1,1 @@
-Crowd Supply Payment Failure - Session ${session_id}
+Your Crowd Supply payment to ${project.name} has been rejected

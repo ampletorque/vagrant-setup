@@ -145,8 +145,7 @@ def send_with_admin(request, template_name, vars, to=None, from_=None,
 
 
 def send_order_confirmation(request, order):
-    recipient = [(order.shipping.full_name,
-                  order.user.email)]
+    recipient = [(order.user.name, order.user.email)]
     items_by_project = {}
     for item in order.cart.items:
         this_project = items_by_project.setdefault(item.product.project, [])
@@ -156,3 +155,40 @@ def send_order_confirmation(request, order):
         'items_by_project': items_by_project,
     }
     send_with_admin(request, 'order_confirmation', vars=vars, to=recipient)
+
+
+def send_cancellation_confirmation(request, order):
+    recipient = [(order.user.name, order.user.email)]
+    # XXX
+    vars = {
+        'order': order,
+    }
+    send_with_admin(request, 'cancellation_confirmation', vars=vars,
+                    to=recipient)
+
+
+def send_shipping_confirmation(request, order):
+    recipient = [(order.user.name, order.user.email)]
+    # XXX
+    vars = {
+        'order': order,
+    }
+    send_with_admin(request, 'shipping_confirmation', vars=vars, to=recipient)
+
+
+def send_payment_failure(request, project, order):
+    recipient = [(order.user.name, order.user.email)]
+    # XXX
+    vars = {
+        'order': order,
+    }
+    send_with_admin(request, 'payment_failure', vars=vars, to=recipient)
+
+
+def send_payment_confirmation(request, project, order):
+    recipient = [(order.user.name, order.user.email)]
+    # XXX
+    vars = {
+        'order': order,
+    }
+    send_with_admin(request, 'payment_confirmation', vars=vars, to=recipient)

@@ -2,15 +2,12 @@
 define([
   'jquery',
   'underscore',
-  'text!teal/options-row.erb.html',
-  'text!teal/options-value-row.erb.html'
-], function ($, _, optionRowTemplateRaw, valueRowTemplateRaw) {
+  'tpl!teal/options-row.erb.html',
+  'tpl!teal/options-value-row.erb.html'
+], function ($, _, optionRowTemplate, valueRowTemplate) {
   // This module handles the product options admin interface.
 
   "use strict";
-
-  var optionRowTemplate = _.template(optionRowTemplateRaw);
-  var valueRowTemplate = _.template(valueRowTemplateRaw);
 
   function OptionWidget(selector) {
     this.$container = $(selector);

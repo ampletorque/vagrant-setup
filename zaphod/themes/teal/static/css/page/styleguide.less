@@ -53,6 +53,7 @@
 
 // Colors
 .styleguide-color {
+    .clearfix();
     clear: both;
     padding-bottom: 10px;
 }
@@ -103,5 +104,13 @@
     }
     code:before {
         content: "@cs-offwhite: @{cs-offwhite}";
+    }
+}
+.styleguide-color-border {
+    .styleguide-color-block {
+        background-color: @cs-border-color;
+    }
+    code:before {
+        content: "@cs-border-color: @{cs-border-color}";
     }
 }

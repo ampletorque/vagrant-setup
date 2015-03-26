@@ -1,6 +1,8 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+from datetime import datetime, time
+
 from pyramid.view import view_defaults, view_config
 from pyramid.httpexceptions import HTTPFound
 from venusian import lift
@@ -42,6 +44,20 @@ class OptionsForm(Schema):
     options = ForEach(OptionSchema)
 
 
+class BatchSchema(Schema):
+    allow_extra_fields = False
+    id = validators.String(not_empty=True)
+    qty = validators.Int(not_empty=False)
+    orig_qty_claimed = validators.Int(not_empty=False)
+    ship_time = validators.DateConverter(month_style='yyyy/mm/dd')
+
+
+class ScheduleForm(Schema):
+    allow_extra_fields = False
+    pre_validators = [NestedVariables()]
+    batches = ForEach(BatchSchema)
+
+
 @view_defaults(route_name='admin:product', renderer='admin/product.html',
                permission='admin')
 @lift()
@@ -63,6 +79,43 @@ class ProductEditView(BaseEditView):
         BaseEditView._update_obj(self, form, obj)
         self.request.theme.invalidate_project(obj.project.id)
 
+    def _update_schedule(self, form, product):
+        batches = form.data['batches']
+        batches_remaining = set(product.batches)
+        for ii, batch_params in enumerate(batches):
+            batch_id = batch_params['id']
+            new_ship_time = datetime.combine(batch_params['ship_time'], time())
+            if batch_id.startswith('new'):
+                batch = model.Batch(ship_time=new_ship_time)
+                product.batches.append(batch)
+            else:
+                batch = model.Batch.get(batch_id)
+                batch.ship_time = new_ship_time
+                batches_remaining.remove(batch)
+            assert batch.product == product
+            assert batch.qty_claimed == batch_params['orig_qty_claimed'], \
+                "qty claimed changed while editing"
+            new_qty = batch_params['qty']
+            if new_qty is None:
+                assert (ii + 1) == len(batches), \
+                    "infinite qty can only be last batch"
+            else:
+                assert new_qty > batch.qty_claimed, \
+                    "new batch qty must be greater than already claimed"
+            batch.qty = new_qty
+
+        for batch in batches_remaining:
+            assert batch.qty_claimed == 0, \
+                "can't delete batch that has been allocated"
+            model.Session.delete(batch)
+
+        model.Session.flush()
+        product.validate_schedule()
+
+        self._touch_obj(product)
+        self.request.theme.invalidate_project(product.project.id)
+        self.request.flash("Saved options.", 'success')
+
     @view_config(route_name='admin:product:schedule',
                  renderer='admin/product_schedule.html')
     def schedule(self):
@@ -71,7 +124,7 @@ class ProductEditView(BaseEditView):
 
         form = Form(request, ScheduleForm)
         if form.validate():
-            # XXX
+            self._update_schedule(form, product)
             request.flash("Saved schedule.", 'success')
             return HTTPFound(location=request.current_route_url())
 
@@ -79,6 +132,25 @@ class ProductEditView(BaseEditView):
             'obj': product,
             'renderer': FormRenderer(form),
         }
+
+    @view_config(route_name='admin:product:schedule', request_method='POST',
+                 xhr=True, renderer='json')
+    def schedule_ajax(self):
+        request = self.request
+        product = self._get_object()
+
+        form = Form(request, ScheduleForm)
+        if form.validate():
+            self._update_schedule(form, product)
+            return {
+                'status': 'ok',
+                'location': request.current_route_url(),
+            }
+        else:
+            return {
+                'status': 'fail',
+                'errors': form.errors,
+            }
 
     def _update_option_values(self, option_params, option):
         values_remaining = set(option.values)
@@ -125,6 +197,7 @@ class ProductEditView(BaseEditView):
         assert not options_remaining, \
             "didn't get options %r" % options_remaining
         self._touch_obj(product)
+        self.request.theme.invalidate_project(product.project.id)
         self.request.flash("Saved options.", 'success')
 
     @view_config(route_name='admin:product:options',

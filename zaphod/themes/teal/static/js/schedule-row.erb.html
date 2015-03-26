@@ -1,0 +1,14 @@
+<tr>
+  <td class="table-remove">
+    <a href="#" class="js-batch-remove">
+      <i class="fa fa-minus-circle"></i>
+    </a>
+  </td>
+  <td>0</td>
+  <td>
+    <input type="hidden" name="batches-<%= idx %>.orig_qty_claimed" value="0">
+    <input type="hidden" name="batches-<%= idx %>.id" value="<%= id %>">
+    <input type="text" name="batches-<%= idx %>.qty" value="<%= qty %>" class="form-control" placeholder="&infin;">
+  </td>
+  <td><input type="text" name="batches-<%= idx %>.ship_time" value="<%= shipTime %>" class="form-control js-datepicker"></td>
+</tr>

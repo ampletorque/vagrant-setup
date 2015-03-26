@@ -1,6 +1,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+from datetime import datetime
 from decimal import Decimal
 
 from sqlalchemy import Column, ForeignKey, UniqueConstraint, types, orm
@@ -23,6 +24,15 @@ class Batch(Base):
     # None for qty means infinite units can be delivered in this batch.
     qty = Column(types.Integer, nullable=True)
     ship_time = Column(types.DateTime, nullable=False)
+
+    @property
+    def qty_claimed(self):
+        # XXX performance
+        # XXX Should this exclude cancelled or fraudulent orders?
+        return Session.query(func.sum(CartItem.qty_desired)).\
+            filter(CartItem.batch == self).\
+            filter(CartItem.status != 'cancelled').\
+            scalar() or 0
 
 
 class Product(Base, ImageMixin):
@@ -117,11 +127,12 @@ class Product(Base, ImageMixin):
     @property
     def qty_claimed(self):
         # XXX Performance
+        # XXX Should this exclude other item statuses?
         return Session.query(func.sum(CartItem.qty_desired)).\
             join(CartItem.cart).\
             join(Cart.order).\
             filter(CartItem.product == self).\
-            filter(not_(CartItem.status.in_(['canc', 'frau']))).\
+            filter(CartItem.status != 'cancelled').\
             scalar() or 0
 
     @property
@@ -133,6 +144,23 @@ class Product(Base, ImageMixin):
 
     def update_in_stock(self):
         self.in_stock = self.calculate_in_stock()
+
+    def validate_schedule(self):
+        """
+        Validate this product's production schedule.
+        """
+        assert self.batches, "schedule must have at least one batch"
+
+        last_time = datetime(1970, 1, 1)
+        for ii, batch in enumerate(self.batches, start=1):
+            assert batch.ship_time > last_time, \
+                "batch dates must monotonically increase"
+            if batch.qty is None:
+                assert ii == len(self.batches), \
+                    "only the last batch can have infinite qty"
+            else:
+                assert batch.qty > 0, \
+                    "batch qty must be greater than zero"
 
 
 class Option(Base):

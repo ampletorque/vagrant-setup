@@ -19,27 +19,48 @@ ${regions.product_header(obj)}
         ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped js-ajax-validate')}
 
           <div class="table-responsive">
-            <table class="table">
+            <table class="table js-schedule-widget">
               <thead>
                 <tr>
+                  <th></th>
+                  <th>Qty Claimed</th>
+                  <th>Qty Available</th>
                   <th>Delivery Date</th>
-                  <th>Qty</th>
                 </tr>
               </thead>
               <tbody>
                 % for batch in obj.batches:
+                  <%
+                    qty_claimed = batch.qty_claimed
+                  %>
                   <tr>
-                    <td>${batch.ship_time}</td>
-                    <td>
-                      % if batch.qty:
-                        ${batch.qty}
-                      % else:
-                        Infinite
+                    <td class="table-remove">
+                      % if qty_claimed == 0:
+                        <a href="#" class="js-batch-remove">
+                          <i class="fa fa-minus-circle"></i>
+                        </a>
                       % endif
                     </td>
+                    <td>${qty_claimed}</td>
+                    <td>
+                      ${renderer.hidden('batches-%d.orig_qty_claimed' % loop.index, qty_claimed)}
+                      ${renderer.hidden('batches-%d.id' % loop.index, batch.id)}
+                      ${renderer.text('batches-%d.qty' % loop.index, batch.qty, class_='form-control', placeholder=h.literal('&infin;'))}
+                    </td>
+                    <td>${forms.datepicker('batches-%d.ship_time' % loop.index, batch.ship_time, class_='form-control js-datepicker')}
                   </tr>
                 % endfor
               </tbody>
+              <tfoot>
+                <tr>
+                  <td class="table-add">
+                    <a href="#" class="js-batch-add">
+                      <i class="fa fa-plus-circle"></i>
+                    </a>
+                  </td>
+                  <td colspan="3"><a href="#" class="js-batch-add">Add New Batch</a></td>
+                </tr>
+              </tfoot>
             </table>
           </div>
 

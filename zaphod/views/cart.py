@@ -29,7 +29,7 @@ class CheckoutForm(Schema):
     billing_same_as_shipping = validators.Bool()
     billing = custom_validators.AddressSchema
 
-    email = validators.Email(not_empty=True)
+    email = validators.Email(not_empty=True, strip=True)
     comments = validators.UnicodeString()
 
     cc = custom_validators.SelectValidator(

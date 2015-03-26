@@ -133,15 +133,15 @@ class AddressSchema(Schema):
         national.PostalCodeInCountryFormat('country_code', 'postal_code'),
         PhoneNumberInCountryFormat('country_code', 'phone')]
 
-    first_name = validators.UnicodeString(not_empty=True)
-    last_name = validators.UnicodeString(not_empty=True)
-    company = validators.UnicodeString()
-    phone = validators.UnicodeString(not_empty=True)
-    address1 = validators.UnicodeString(not_empty=True)
-    address2 = validators.UnicodeString()
-    city = validators.UnicodeString(not_empty=True)
-    state = validators.UnicodeString(not_empty=True)
-    postal_code = validators.UnicodeString(not_empty=True)
+    first_name = validators.UnicodeString(not_empty=True, strip=True)
+    last_name = validators.UnicodeString(not_empty=True, strip=True)
+    company = validators.UnicodeString(strip=True)
+    phone = validators.UnicodeString(not_empty=True, strip=True)
+    address1 = validators.UnicodeString(not_empty=True, strip=True)
+    address2 = validators.UnicodeString(strip=True)
+    city = validators.UnicodeString(not_empty=True, strip=True)
+    state = validators.UnicodeString(not_empty=True, strip=True)
+    postal_code = validators.UnicodeString(not_empty=True, strip=True)
     country_code = validators.UnicodeString(not_empty=True)
 
 
@@ -271,12 +271,14 @@ class CreditCardSchema(Schema):
             cc_expires_month_field='expires_month',
             cc_expires_year_field='expires_year')]
     number = validators.String(not_empty=True,
+                               strip=True,
                                messages={
                                    'empty': "Credit card number required"
                                })
     expires_month = validators.String()
     expires_year = validators.String()
     code = validators.String(not_empty=True,
+                             strip=True,
                              messages={
                                  'empty': "Security code required"
                              })

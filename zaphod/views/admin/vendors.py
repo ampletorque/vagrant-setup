@@ -11,7 +11,7 @@ from ...admin import BaseEditView, BaseListView, BaseCreateView
 
 
 @view_defaults(route_name='admin:vendor',
-               renderer='admin/vendor.html')
+               renderer='admin/vendor.html', permission='admin')
 @lift()
 class VendorEditView(BaseEditView):
     cls = model.Vendor
@@ -22,14 +22,14 @@ class VendorEditView(BaseEditView):
 
 
 @view_defaults(route_name='admin:vendors',
-               renderer='admin/vendors.html')
+               renderer='admin/vendors.html', permission='admin')
 @lift()
 class VendorListView(BaseListView):
     cls = model.Vendor
 
 
 @view_defaults(route_name='admin:vendors:new',
-               renderer='admin/vendors_new.html')
+               renderer='admin/vendors_new.html', permission='admin')
 @lift()
 class VendorCreateView(BaseCreateView):
     cls = model.Vendor

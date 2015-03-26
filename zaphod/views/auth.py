@@ -12,8 +12,8 @@ from pyramid.security import forget, remember
 
 from pyramid_uniform import Form, FormRenderer
 
+from .. import mail, model, custom_validators
 
-from .. import mail, model
 
 log = logging.getLogger(__name__)
 
@@ -35,6 +35,14 @@ class SettingsForm(Schema):
     email = validators.UnicodeString(not_empty=True, strip=True)
     password = validators.UnicodeString(not_empty=False, min=4, strip=True)
     password2 = validators.UnicodeString(not_empty=False, strip=True)
+
+    url_path = custom_validators.URLString()
+    twitter_username = validators.UnicodeString()
+
+    show_in_backers = validators.Bool()
+    show_name = validators.UnicodeString()
+    show_location = validators.UnicodeString()
+
     chained_validators = [validators.FieldsMatch('password', 'password2')]
 
 
@@ -89,7 +97,7 @@ class UserView(object):
         request = self.request
         order_id = request.matchdict['id']
         order = model.Order.get(order_id)
-        return {'order': order}
+        return {'order': order, 'first_load': False}
 
     @view_config(route_name='settings', renderer='settings.html',
                  permission='authenticated')
@@ -207,8 +215,8 @@ class UserView(object):
             ))
             vars = dict(user=user, link=link)
 
-            mail.send(request, 'forgot_password', vars, to=[(user.name,
-                                                             user.email)])
+            mail.send(request, 'reset_password', vars, to=[(user.name,
+                                                            user.email)])
 
             request.flash("An email has been sent with "
                           "instructions to reset your password.", 'error')

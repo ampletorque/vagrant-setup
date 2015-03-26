@@ -1,7 +1,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from pyramid.view import view_config
+from pyramid.view import view_config, view_defaults
 from sqlalchemy.sql import func
 
 from .... import model
@@ -9,10 +9,10 @@ from .... import model
 from .base import BaseReportsView
 
 
+@view_defaults(permission='admin')
 class PerformanceReportsView(BaseReportsView):
     @view_config(route_name='admin:reports:sales',
-                 renderer='admin/reports/sales.html',
-                 permission='authenticated')
+                 renderer='admin/reports/sales.html')
     def sales(self):
         utcnow, start_date, end_date, start, end = self._range()
         # over time range
@@ -77,8 +77,7 @@ class PerformanceReportsView(BaseReportsView):
         }
 
     @view_config(route_name='admin:reports:project-launches',
-                 renderer='admin/reports/project_launches.html',
-                 permission='authenticated')
+                 renderer='admin/reports/project_launches.html')
     def project_launches(self):
         utcnow, start_date, end_date, start, end = self._range()
 
@@ -100,8 +99,7 @@ class PerformanceReportsView(BaseReportsView):
         }
 
     @view_config(route_name='admin:reports:user-behavior',
-                 renderer='admin/reports/user_behavior.html',
-                 permission='authenticated')
+                 renderer='admin/reports/user_behavior.html')
     def user_behavior(self):
         # 'up to now', not time range or time specific
 
@@ -154,8 +152,7 @@ class PerformanceReportsView(BaseReportsView):
         }
 
     @view_config(route_name='admin:reports:funding-success',
-                 renderer='admin/reports/funding_success.html',
-                 permission='authenticated')
+                 renderer='admin/reports/funding_success.html')
     def funding_success(self):
         utcnow, start_date, end_date, start, end = self._range()
 

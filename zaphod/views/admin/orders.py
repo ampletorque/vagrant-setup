@@ -53,7 +53,8 @@ class AddItemForm(Schema):
     # XXX
 
 
-@view_defaults(route_name='admin:order', renderer='admin/order.html')
+@view_defaults(route_name='admin:order', renderer='admin/order.html',
+               permission='admin')
 @lift()
 class OrderEditView(BaseEditView):
     cls = model.Order
@@ -68,6 +69,7 @@ class OrderEditView(BaseEditView):
     def resend_confirmation(self):
         request = self.request
         order = self._get_object()
+        self._touch_object(order)
         mail.send_order_confirmation(request, order)
         request.flash("Resent order confirmation to %s." % order.user.email,
                       'success')
@@ -78,6 +80,7 @@ class OrderEditView(BaseEditView):
     def resend_shipping_confirmation(self):
         request = self.request
         order = self._get_object()
+        self._touch_object(order)
         mail.send_shipping_confirmation(request, order)
         request.flash("Resent shipping confirmation to %s." % order.user.email,
                       'success')
@@ -111,6 +114,7 @@ class OrderEditView(BaseEditView):
                              reason=form.data['reason'],
                              user=request.user)
                 request.flash("Order cancelled.", 'warning')
+                self._touch_object(order)
                 return HTTPFound(location=request.route_url('admin:order',
                                                             id=order.id))
             else:
@@ -138,6 +142,7 @@ class OrderEditView(BaseEditView):
                     shipped_by_creator=form.data['shipped_by_creator'],
                     user=request.user)
                 request.flash("Order updated.", 'success')
+                self._touch_object(order)
                 return HTTPFound(location=request.route_url('admin:order',
                                                             id=order.id))
             else:
@@ -156,6 +161,7 @@ class OrderEditView(BaseEditView):
             # XXX
 
             request.flash("Added '%s' to order." % product.name, 'success')
+            self._touch_object(order)
             return HTTPFound(location=request.route_url('admin:order',
                                                         id=order.id))
 
@@ -171,6 +177,7 @@ class OrderEditView(BaseEditView):
         if form.validate():
             form.bind(order)
             request.flash("Updated address.", 'success')
+            self._touch_object(order)
             return HTTPFound(location=request.route_url('admin:order',
                                                         id=order.id))
 
@@ -186,6 +193,7 @@ class OrderEditView(BaseEditView):
         if form.validate():
             form.bind(order)
             request.flash("Updated user.", 'success')
+            self._touch_object(order)
             return HTTPFound(location=request.route_url('admin:order',
                                                         id=order.id))
 
@@ -200,6 +208,7 @@ class OrderEditView(BaseEditView):
         form = Form(request, schema=AddPaymentForm)
         if form.validate():
             # XXX do stuff
+            self._touch_object(order)
             return HTTPFound(location=request.route_url('admin:order',
                                                         id=order.id))
 
@@ -214,13 +223,15 @@ class OrderEditView(BaseEditView):
         form = Form(request, schema=AddRefundForm)
         if form.validate():
             # XXX do stuff
+            self._touch_object(order)
             return HTTPFound(location=request.route_url('admin:order',
                                                         id=order.id))
 
         return {'obj': order, 'renderer': FormRenderer(form)}
 
 
-@view_defaults(route_name='admin:orders', renderer='admin/orders.html')
+@view_defaults(route_name='admin:orders', renderer='admin/orders.html',
+               permission='admin')
 @lift()
 class OrderListView(BaseListView):
     cls = model.Order
@@ -236,7 +247,7 @@ class OrderListView(BaseListView):
 
 
 @view_defaults(route_name='admin:orders:new',
-               renderer='admin/orders_new.html')
+               renderer='admin/orders_new.html', permission='admin')
 @lift()
 class OrderCreateView(BaseCreateView):
     cls = model.Order

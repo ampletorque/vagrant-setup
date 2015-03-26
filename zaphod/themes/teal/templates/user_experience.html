@@ -1,0 +1,66 @@
+<%inherit file="base.html"/>
+
+<%def name="title()">Tailored User Experience</%def>
+
+
+<section class="section-user-experience">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        <h3 class="text-tagline">
+          <strong>Details matter.</strong> We work hard to make things easy.
+        </h3>
+        <hr>
+
+        <h1>Tailored User Experience</h1>
+
+        <img src="/_teal/images/launch/icons-tailored.png" alt="" class="hidden-xs pull-right">
+        <p>A good user experience on Crowd Supply translates directly into more funds raised and happier backers and customers.</p>
+
+        <h2>Product Presentation</h2>
+
+        <p>Here are just some of the ways Crowd Supply offers you the flexibility you need to present your product to the world:</p>
+
+        <ul>
+          <li><strong>Configuration Options:</strong> A single pledge level can have multiple configuration options, like size and color.</li>
+          <li><strong>Dynamic Pricing:</strong> The price of pledge level can vary according the configuration options selected by the backer.</li>
+          <li><strong>Dynamic Ship Dates:</strong> The expected ship date displayed to potential backers varies according to how many people have already backed the campaign.</li>
+        </ul>
+
+        <h2>Checkout Process</h2>
+
+        <p>Crowd Supply uses e-commerce best practices. For example:</p>
+        <ul>
+          <li><strong>Familiar Shopping Cart:</strong> Customers can add items to their car, update the quantities, and save their cart for later.</li>
+          <li><strong>Simple:</strong> All payment and customer information is collected on a single page to minimize the chance of incomplete checkouts.</li>
+          <li><strong>No Accounts Required:</strong> Customers never need to create a Crowd Supply account or a third-party payment account in order to complete a purchase.</li>
+        </ul>
+
+        <h2>Customer Service</h2>
+
+        <p>Crowd Supply handles much of the back-office logistics necessary for building a loyal customer base for your product:</p>
+        <ul>
+          <li><strong>Stay Informed:</strong> Your customers will receive order confirmations, project updates, and shipping confirmations with tracking numbers.</li>
+          <li><strong>Changes to Orders:</strong> Customers can contact Crowd Supply to update shipping and billing information or change their order.</li>
+          <li><strong>Returns:</strong> Crowd Supply offers a generous <a href="/returns">returns policy</a>.</li>
+          <li><strong>Failed Payments:</strong> Crowd Supply helps maximize your funds raised by offering backers an automated payment information updater in cases of failed credit card payments (e.g. the card expired since the pledge was made).</li>
+        </ul>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section-ready-to-launch">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Ready to Launch?</h1>
+        <h3>
+          <a class="btn btn-primary btn-large" href="${request.route_path('launch', _anchor='launch-form')}">Tell us about your project.</a>
+        </h3>
+      </div>
+    </div>
+  </div>
+</section>

@@ -10,8 +10,8 @@ class MailTemplateView(object):
 
     @view_config(route_name='admin:mail_template',
                  match_param='template_name=forgot-password',
-                 renderer='emails/forgot_password.html',
-                 permission='authenticated')
+                 renderer='emails/reset_password.html',
+                 permission='admin')
     def reset_password(self):
         request = self.request
         user = request.user

@@ -49,7 +49,7 @@ class SKU(Base):
             filter(Item.destroy_time == None,
                    Acquisition.sku == self).\
             filter(or_(Item.cart_item_id == None,
-                       CartItem.shipped_date == None)).\
+                       CartItem.shipped_time == None)).\
             count()
 
     @property
@@ -83,12 +83,16 @@ class SKU(Base):
             # Get the N oldest in-stock items for this SKU to destroy.
             q = Session.query(Item).\
                 join(Item.acquisition).\
+                outerjoin(Item.cart_item).\
                 filter(Acquisition.sku == self).\
-                filter(Item.cart_item_id == None).\
+                filter(or_(Item.cart_item_id == None,
+                           CartItem.shipped_time == None)).\
                 filter(Item.destroy_time == None).\
                 order_by(Item.id).\
                 limit(-qty_diff)
-            for item in q:
+            items = q.all()
+            assert len(items) == -qty_diff
+            for item in items:
                 item.destroy_time = utcnow
         Session.flush()
 
@@ -111,22 +115,3 @@ def sku_for_option_value_ids(product, ov_ids):
             sku.option_values.add(ov)
         Session.add(sku)
         return sku
-
-
-def sku_for_option_value_ids_sloppy(product, ov_ids):
-    """
-    From a list of option value IDs, return the corresponding SKU, or create a
-    new one. This is the 'sloppy version' that allows for loosely specified
-    objects.
-    """
-    q = Session.query(SKU).filter_by(product=product)
-    for ov_id in ov_ids:
-        q = q.filter(SKU.option_values.any(id=ov_id))
-    sku = q.first()
-    if not sku:
-        sku = SKU(product=product)
-        for ov_id in ov_ids:
-            ov = OptionValue.get(ov_id)
-            sku.option_values.add(ov)
-        Session.add(sku)
-    return sku

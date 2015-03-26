@@ -3,8 +3,9 @@ from __future__ import (absolute_import, division, print_function,
 
 from decimal import Decimal
 
-from sqlalchemy import Column, ForeignKey, types, orm
+from sqlalchemy import Column, ForeignKey, UniqueConstraint, types, orm
 from sqlalchemy.sql import func, not_
+from sqlalchemy.ext.orderinglist import ordering_list
 
 from . import custom_types
 from .base import Base, Session
@@ -21,7 +22,7 @@ class Batch(Base):
     product_id = Column(None, ForeignKey('products.id'), nullable=False)
     # None for qty means infinite units can be delivered in this batch.
     qty = Column(types.Integer, nullable=True)
-    ship_date = Column(types.DateTime, nullable=False)
+    ship_time = Column(types.DateTime, nullable=False)
 
 
 class Product(Base, ImageMixin):
@@ -57,6 +58,20 @@ class Product(Base, ImageMixin):
 
     batches = orm.relationship('Batch', backref='product')
 
+    options = orm.relationship(
+        'Option',
+        backref='product',
+        collection_class=ordering_list('gravity'),
+        order_by='Option.gravity',
+    )
+    published_options = orm.relationship(
+        'Option',
+        primaryjoin=('and_(Option.product_id == Product.id,'
+                     'Option.published == True)'),
+        order_by='Option.gravity',
+        viewonly=True,
+    )
+
     def select_batch(self, qty):
         """
         Return the batch that a new order of qty ``qty`` should be allocated
@@ -76,11 +91,11 @@ class Product(Base, ImageMixin):
         return self.select_batch(qty=1)
 
     @property
-    def current_ship_date(self):
+    def current_ship_time(self):
         """
         Return the delivery date for the currently 'open' batch.
         """
-        return self.current_batch.ship_date
+        return self.current_batch.ship_time
 
     @property
     def qty_available(self):
@@ -110,17 +125,14 @@ class Product(Base, ImageMixin):
             scalar() or 0
 
     @property
-    def published_options(self):
-        # XXX Turn into a relationship
-        return [opt for opt in self.options if opt.published]
-
-    @property
     def is_available(self):
         return self.non_physical or self.in_stock or bool(self.current_batch)
 
+    def calculate_in_stock(self):
+        return any(sku.qty_available > 0 for sku in self.skus)
+
     def update_in_stock(self):
-        # XXX FIXME
-        pass
+        self.in_stock = self.calculate_in_stock()
 
 
 class Option(Base):
@@ -134,12 +146,28 @@ class Option(Base):
     gravity = Column(types.Integer, nullable=False, default=0)
     published = Column(types.Boolean, nullable=False, default=False)
 
-    product = orm.relationship('Product', backref='options')
+    values = orm.relationship(
+        'OptionValue',
+        backref='option',
+        collection_class=ordering_list('gravity'),
+        order_by='OptionValue.gravity',
+    )
+    published_values = orm.relationship(
+        'OptionValue',
+        primaryjoin=('and_(OptionValue.option_id == Option.id,'
+                     'OptionValue.published == True)'),
+        viewonly=True,
+        order_by='OptionValue.gravity',
+    )
+
+    def __repr__(self):
+        return '<Option(id=%r, name=%r)>' % (self.id, self.name)
 
     @property
-    def published_values(self):
-        # XXX Turn into a relationship
-        return [val for val in self.values if val.published]
+    def default_value(self):
+        for ov in self.values:
+            if ov.is_default:
+                return ov
 
 
 class OptionValue(Base):
@@ -147,6 +175,8 @@ class OptionValue(Base):
     A single possible 'choice' for an option.
     """
     __tablename__ = 'option_values'
+    __table_args__ = (UniqueConstraint('option_id', 'is_default'),
+                      {'mysql_engine': 'InnoDB'})
     id = Column(types.Integer, primary_key=True)
     option_id = Column(None, ForeignKey('options.id'), nullable=False)
     description = Column(types.Unicode(255), nullable=False, default=u'')
@@ -155,4 +185,6 @@ class OptionValue(Base):
     is_default = Column(types.Boolean, nullable=True)
     published = Column(types.Boolean, nullable=False, default=False)
 
-    option = orm.relationship('Option', backref='values')
+    def __repr__(self):
+        return '<OptionValue(id=%r, description=%r)>' % (self.id,
+                                                         self.description)

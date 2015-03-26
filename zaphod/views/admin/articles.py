@@ -11,7 +11,8 @@ from ...admin import (NodeListView, NodeEditView, NodeUpdateForm,
                       NodeCreateView)
 
 
-@view_defaults(route_name='admin:article', renderer='admin/article.html')
+@view_defaults(route_name='admin:article', renderer='admin/article.html',
+               permission='admin')
 @lift()
 class ArticleEditView(NodeEditView):
     cls = model.Article
@@ -23,14 +24,15 @@ class ArticleEditView(NodeEditView):
         show_article_list = validators.Bool()
 
 
-@view_defaults(route_name='admin:articles', renderer='admin/articles.html')
+@view_defaults(route_name='admin:articles', renderer='admin/articles.html',
+               permission='admin')
 @lift()
 class ArticleListView(NodeListView):
     cls = model.Article
 
 
 @view_defaults(route_name='admin:articles:new',
-               renderer='admin/articles_new.html')
+               renderer='admin/articles_new.html', permission='admin')
 @lift()
 class ArticleCreateView(NodeCreateView):
     cls = model.Article

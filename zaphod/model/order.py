@@ -19,7 +19,7 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
     __tablename__ = 'orders'
     id = Column(types.Integer, primary_key=True)
     cart_id = Column(None, ForeignKey('carts.id'), nullable=False, unique=True)
-    user_id = Column(None, ForeignKey('users.id'), nullable=True)
+    user_id = Column(None, ForeignKey('users.id'), nullable=False)
     closed = Column(types.Boolean, nullable=False, default=False)
     shipping = make_address_columns('shipping')
 
@@ -34,6 +34,10 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
         associated surcharges charged to the customer.
         """
         return self.cart.items_total + self.cart.shipping_total
+
+    @property
+    def shipping_amount(self):
+        return self.cart.shipping_total
 
     @property
     def paid_amount(self):
@@ -69,7 +73,6 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
         Retrun any billing address that is associated with this order, or None
         if no billing addresses are associated.
         """
-        return None
         for payment in self.payments:
             if hasattr(payment, 'method'):
                 return payment.method.billing
@@ -111,7 +114,7 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
         )
         self.shipments.append(shipment)
         for item in items:
-            item.shipped_date = utcnow
+            item.shipped_time = utcnow
             item.shipment = shipment
             item.update_status('shipped')
         self.update_status()

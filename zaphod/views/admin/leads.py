@@ -10,7 +10,8 @@ from ... import model, custom_validators
 from ...admin import BaseListView, BaseEditView, BaseCreateView
 
 
-@view_defaults(route_name='admin:lead', renderer='admin/lead.html')
+@view_defaults(route_name='admin:lead', renderer='admin/lead.html',
+               permission='admin')
 @lift()
 class LeadEditView(BaseEditView):
     cls = model.Lead
@@ -40,13 +41,15 @@ class LeadEditView(BaseEditView):
         next_contact_days = validators.Int()
 
 
-@view_defaults(route_name='admin:leads', renderer='admin/leads.html')
+@view_defaults(route_name='admin:leads', renderer='admin/leads.html',
+               permission='admin')
 @lift()
 class LeadListView(BaseListView):
     cls = model.Lead
 
 
-@view_defaults(route_name='admin:leads:new', renderer='admin/leads_new.html')
+@view_defaults(route_name='admin:leads:new', renderer='admin/leads_new.html',
+               permission='admin')
 @lift()
 class LeadCreateView(BaseCreateView):
     cls = model.Lead

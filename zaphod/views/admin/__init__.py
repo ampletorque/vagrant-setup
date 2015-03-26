@@ -110,4 +110,6 @@ def includeme(config):
     config.add_route('admin:help:markdown', '/help/markdown')
     config.add_route('admin:help:image-tags', '/help/image-tags')
 
+    config.add_route('admin:docs', '/docs/{path:.*}')
+
     config.include('.reports', route_prefix='/reports')

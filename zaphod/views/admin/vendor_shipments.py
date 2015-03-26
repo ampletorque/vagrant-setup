@@ -16,7 +16,7 @@ class ItemForm(Schema):
 
 
 @view_defaults(route_name='admin:vendor-shipment',
-               renderer='admin/vendor_shipment.html')
+               renderer='admin/vendor_shipment.html', permission='admin')
 @lift()
 class VendorShipmentEditView(BaseEditView):
     cls = model.VendorShipment

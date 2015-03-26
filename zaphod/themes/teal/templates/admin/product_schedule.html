@@ -29,7 +29,7 @@ ${regions.product_header(obj)}
               <tbody>
                 % for batch in obj.batches:
                   <tr>
-                    <td>${batch.ship_date}</td>
+                    <td>${batch.ship_time}</td>
                     <td>
                       % if batch.qty:
                         ${batch.qty}

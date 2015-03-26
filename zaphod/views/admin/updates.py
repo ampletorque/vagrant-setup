@@ -9,7 +9,8 @@ from ... import model
 from ...admin import NodeEditView
 
 
-@view_defaults(route_name='admin:update', renderer='admin/update.html')
+@view_defaults(route_name='admin:update', renderer='admin/update.html',
+               permission='admin')
 @lift()
 class UpdateEditView(NodeEditView):
     cls = model.ProjectUpdate

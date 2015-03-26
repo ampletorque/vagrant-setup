@@ -59,7 +59,7 @@
             </span>
             <br />
 
-            % if items[0].crowdfunding:
+            % if items[0].stage == items[0].CROWDFUNDING:
               This is a pledge to a crowdfunding campaign, and may not be processed immediately. Payment for this item will be collected when the project is successful. If the crowdfunding campaign is not successful, you will not be charged.
               <br /><br />
             % endif
@@ -86,12 +86,10 @@
                 </tr>
                 <tr>
                   <td colspan="3">
-                    % if not item.crowdfunding:
-                      % if item.qty_reserved:
-                        This item is currently in stock.
-                      % else:
-                        This item is a pre-order and will be shipped at a later date. Please not that your transaction will be processed immediately.
-                      % endif
+                    % if item.stage == item.STOCK:
+                      This item is currently in stock.
+                    % elif item.stage == item.PREORDER:
+                      This item is a pre-order and will be shipped at a later date. Please not that your transaction will be processed immediately.
                     % endif
                   </td>
                 </tr>

@@ -1,7 +1,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import urllib
+from six.moves.urllib.parse import quote
 
 from pyramid.httpexceptions import HTTPNotFound, HTTPMovedPermanently
 from pyramid.view import view_config
@@ -33,7 +33,7 @@ class NodeView(object):
                 lookup_path = path
             lookup_path = '/'.join(lookup_path)
             lookup_path = lookup_path.encode('utf8', 'replace')
-            lookup_path = urllib.quote(lookup_path)
+            lookup_path = quote(lookup_path)
             try:
                 alias = model.Session.query(model.Alias).\
                     filter_by(path=lookup_path).\

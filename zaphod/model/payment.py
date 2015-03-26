@@ -52,6 +52,13 @@ class PaymentMethod(Base):
     save = Column(types.Boolean, nullable=False, default=False)
     reference = Column(custom_types.JSON(255), nullable=False)
     billing = make_address_columns('billing')
+    # True for payment methods created with Stripe.js, False otherwise.
+    stripe_js = Column(types.Boolean, nullable=False)
+    # Note that this is a long string so that it works for IPv6 addresses,
+    # which can be up to 45 characters.
+    remote_addr = Column(types.String(50), nullable=True)
+    user_agent = Column(types.Unicode(255), nullable=True)
+    session_id = Column(types.String(255), nullable=True)
 
     user = orm.relationship('User', backref='payment_methods')
     gateway = orm.relationship('PaymentGateway')
@@ -359,6 +366,10 @@ class CreditCardRefund(Refund):
                                            backref='refunds')
 
     payment_type = CreditCardPayment
+
+    processed_by = orm.relationship(
+        'User',
+        primaryjoin='User.id == CreditCardRefund.processed_by_id')
 
     def can_be_voided(self):
         if not self.processed_time and not self.voided_time:

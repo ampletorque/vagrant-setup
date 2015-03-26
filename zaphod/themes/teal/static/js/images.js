@@ -1,5 +1,5 @@
 /*globals define*/
-define(['jquery', 'underscore', 'text!teal/images-row.erb.html'], function ($, _, rowTemplateRaw) {
+define(['jquery', 'underscore', 'tpl!teal/images-row.erb.html'], function ($, _, rowTemplate) {
   // This module handles the admin interface's image association widget.
 
   // TODO:
@@ -17,8 +17,6 @@ define(['jquery', 'underscore', 'text!teal/images-row.erb.html'], function ($, _
   // - Rename this?
 
   "use strict";
-
-  var rowTemplate = _.template(rowTemplateRaw);
 
   function ImageWidget(selector) {
     this.$container = $(selector);

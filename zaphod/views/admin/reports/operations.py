@@ -1,15 +1,15 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from pyramid.view import view_config
+from pyramid.view import view_config, view_defaults
 
 from .base import BaseReportsView
 
 
+@view_defaults(permission='admin')
 class OperationsReportsView(BaseReportsView):
     @view_config(route_name='admin:reports:warehouse-transactions',
-                 renderer='admin/reports/warehouse_transactions.html',
-                 permission='authenticated')
+                 renderer='admin/reports/warehouse_transactions.html')
     def warehouse_transactions(self):
         utcnow, start_date, end_date, start, end = self._range()
 
@@ -24,8 +24,7 @@ class OperationsReportsView(BaseReportsView):
         }
 
     @view_config(route_name='admin:reports:delays',
-                 renderer='admin/reports/delays.html',
-                 permission='authenticated')
+                 renderer='admin/reports/delays.html')
     def delays(self):
         utcnow, start_date, end_date, start, end = self._range()
 

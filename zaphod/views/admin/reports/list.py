@@ -10,6 +10,6 @@ class ReportsView(object):
 
     @view_config(route_name='admin:reports',
                  renderer='admin/reports/list.html',
-                 permission='authenticated')
+                 permission='admin')
     def list(self):
         return {}

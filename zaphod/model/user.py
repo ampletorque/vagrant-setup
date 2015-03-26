@@ -42,8 +42,8 @@ class User(Base, ImageMixin, UserMixin, CommentMixin, ElasticMixin):
 
     twitter_username = Column(types.String(255), nullable=True)
 
-    show_location = Column(types.Unicode(255), nullable=False, default=u'')
     show_in_backers = Column(types.Boolean, nullable=False, default=True)
+    show_location = Column(types.Unicode(255), nullable=False, default=u'')
     show_name = Column(types.Unicode(255), nullable=False, default=u'')
 
     @staticmethod
@@ -142,10 +142,6 @@ class User(Base, ImageMixin, UserMixin, CommentMixin, ElasticMixin):
         hsh = self.hashed_password
         manager = BCRYPTPasswordManager()
         return hsh and manager.check(hsh, password)
-
-    def has_permission(self, permission_name):
-        # XXX Implement this, obviously.
-        return True
 
     @classmethod
     def elastic_mapping(cls):

@@ -39,10 +39,19 @@ requires = [
     'WebHelpers2>=2.0',
     'dogpile.cache>=0.5.6',
     'FormEncode>=1.3',
+    'stripe>=1.19.1',
 
     # Keep repoze.sendmail pinned at 4.1 to deal with this bug:
     # https://github.com/repoze/repoze.sendmail/issues/31
     'repoze.sendmail==4.1',
+
+    # Testing / development tools.
+    'mock>=1.0.1',
+    'nose>=1.3.4',
+    'nose-cov>=1.6',
+    'WebTest>=2.0.16',
+    'tox>=1.9.0',
+    'flake8>=2.4.0',
 ]
 
 

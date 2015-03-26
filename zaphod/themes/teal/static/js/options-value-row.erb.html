@@ -1,0 +1,25 @@
+<tr>
+  <td class="js-value-drag-handle table-drag-handle"></td>
+  <td class="table-remove">
+    <a href="#" class="js-value-remove">
+      <i class="fa fa-minus-circle"></i>
+    </a>
+  </td>
+  <td>
+    <input type="hidden" name="options-<%= optionIdx %>.values-<%= valueIdx %>.id" value="<%= id %>">
+    <input type="hidden" name="options-<%= optionIdx %>.values-<%= valueIdx %>.gravity" value="<%= valueIdx %>">
+    <input type="checkbox" name="options-<%= optionIdx %>.values-<%= valueIdx %>.published" checked="checked">
+  </td>
+  <td>
+    <input type="radio" name="options-<%= optionIdx %>.default_value_id" value="<%= id %>">
+  </td>
+  <td>
+    <input type="text" name="options-<%= optionIdx %>.values-<%= valueIdx %>.description" class="form-control">
+  </td>
+  <td>
+    <div class="input-group">
+      <div class="input-group-addon">$</div>
+      <input type="text" name="options-<%= optionIdx %>.values-<%= valueIdx %>.price_increase" value="0.00" class="form-control">
+    </div>
+  </td>
+</tr>

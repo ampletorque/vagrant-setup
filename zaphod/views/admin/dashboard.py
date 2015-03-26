@@ -15,7 +15,7 @@ class DashboardView(object):
         self.request = request
 
     @view_config(route_name='admin:dashboard', renderer='admin/dashboard.html',
-                 permission='authenticated')
+                 permission='admin')
     def index(self):
         utcnow = datetime.utcnow()
 

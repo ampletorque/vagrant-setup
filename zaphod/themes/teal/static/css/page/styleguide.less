@@ -2,6 +2,25 @@
     margin-top: 20px;
 }
 
+@media (min-width: @screen-sm-min) {
+    .list-styleguide {
+        position: fixed;
+        width: 95px;
+    }
+}
+
+@media (min-width: @screen-md-min) {
+    .list-styleguide {
+        width: 132px;
+    }
+}
+
+@media (min-width: @screen-lg-min) {
+    .list-styleguide {
+        width: 165px;
+    }
+}
+
 // Logos
 .styleguide-logo-light, .styleguide-logo-dark, .styleguide-logo-white {
     width: @cs-logo-width + 40px;
@@ -34,6 +53,7 @@
 
 // Colors
 .styleguide-color {
+    .clearfix();
     clear: both;
     padding-bottom: 10px;
 }
@@ -84,5 +104,13 @@
     }
     code:before {
         content: "@cs-offwhite: @{cs-offwhite}";
+    }
+}
+.styleguide-color-border {
+    .styleguide-color-block {
+        background-color: @cs-border-color;
+    }
+    code:before {
+        content: "@cs-border-color: @{cs-border-color}";
     }
 }

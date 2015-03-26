@@ -54,6 +54,7 @@ class BaseEditView(object):
                 im = model.ImageMeta.get(image_params['id'])
             im.title = image_params['title']
             im.alt = image_params['alt']
+            self._touch_obj(im)
             obj.image_associations.append(obj.ImageAssociation(
                 image_meta=im,
                 gravity=image_params['gravity'],
@@ -71,9 +72,12 @@ class BaseEditView(object):
         if 'images' in form.data:
             self._handle_images(form, obj)
         form.bind(obj)
+        if hasattr(obj, 'elastic_document'):
+            client = get_client(request)
+            client.index_object(obj)
         request.flash('Saved changes.', 'success')
 
-    @view_config(permission='authenticated', xhr=False)
+    @view_config(permission='admin', xhr=False)
     def edit(self):
         request = self.request
         obj = self._get_object()
@@ -87,12 +91,13 @@ class BaseEditView(object):
             'renderer': FormRenderer(form),
         }
 
-    @view_config(permission='authenticated', xhr=True, renderer='json')
+    @view_config(permission='admin', xhr=True, renderer='json')
     def edit_ajax(self):
         request = self.request
         obj = self._get_object()
         form = Form(request, schema=self.UpdateForm)
         if form.validate():
+            self._touch_obj(obj)
             self._update_obj(form, obj)
             return {
                 'status': 'ok',
@@ -111,7 +116,7 @@ class BaseListView(object):
     def __init__(self, request):
         self.request = request
 
-    @view_config(permission='authenticated')
+    @view_config(permission='admin')
     def index(self):
         request = self.request
 
@@ -140,7 +145,7 @@ class BaseCreateView(object):
     def __init__(self, request):
         self.request = request
 
-    @view_config(permission='authenticated')
+    @view_config(permission='admin')
     def create(self):
         request = self.request
 

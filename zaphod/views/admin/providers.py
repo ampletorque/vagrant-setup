@@ -10,7 +10,8 @@ from ...admin import (NodeListView, NodeEditView, NodeUpdateForm,
                       NodeCreateView)
 
 
-@view_defaults(route_name='admin:provider', renderer='admin/provider.html')
+@view_defaults(route_name='admin:provider', renderer='admin/provider.html',
+               permission='admin')
 @lift()
 class ProviderEditView(NodeEditView):
     cls = model.Provider
@@ -18,14 +19,15 @@ class ProviderEditView(NodeEditView):
     UpdateForm = NodeUpdateForm
 
 
-@view_defaults(route_name='admin:providers', renderer='admin/providers.html')
+@view_defaults(route_name='admin:providers', renderer='admin/providers.html',
+               permission='admin')
 @lift()
 class ProviderListView(NodeListView):
     cls = model.Provider
 
 
 @view_defaults(route_name='admin:providers:new',
-               renderer='admin/providers_new.html')
+               renderer='admin/providers_new.html', permission='admin')
 @lift()
 class ProviderCreateView(NodeCreateView):
     cls = model.Provider

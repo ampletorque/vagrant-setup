@@ -28,7 +28,8 @@ class ProjectSearchView(ProjectListView):
         phrase = self.phrase
 
         client = get_client(self.request)
-        q = client.query(model.Project, q=phrase)
+        q = client.query(model.Project, q=phrase).\
+            filter_term('published', True)
 
         result = q.execute()
         project_ids = [int(record._id) for record in result]

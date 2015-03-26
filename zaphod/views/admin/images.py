@@ -6,7 +6,7 @@ import os.path
 import shutil
 
 from formencode import Schema, validators
-from pyramid.view import view_config
+from pyramid.view import view_config, view_defaults
 from pyramid_uniform import Form
 
 
@@ -16,20 +16,19 @@ class UploadSchema(Schema):
     file = validators.FieldStorageUploadConverter()
 
 
+@view_defaults(permission='admin')
 class ImagesView(object):
     def __init__(self, request):
         self.request = request
 
     @view_config(route_name='admin:images',
-                 renderer='admin/images.html',
-                 permission='authenticated')
+                 renderer='admin/images.html')
     def index(self):
         return {}
 
     @view_config(route_name='admin:images:upload',
                  renderer='json',
-                 request_method='POST',
-                 permission='authenticated')
+                 request_method='POST')
     def upload(self):
         request = self.request
 

@@ -2,17 +2,17 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from sqlalchemy.sql import func
-from pyramid.view import view_config
+from pyramid.view import view_config, view_defaults
 
 from .base import BaseReportsView
 
 from .... import model
 
 
+@view_defaults(permission='admin')
 class AccountingReportsView(BaseReportsView):
     @view_config(route_name='admin:reports:revenue',
-                 renderer='admin/reports/revenue.html',
-                 permission='authenticated')
+                 renderer='admin/reports/revenue.html')
     def revenue(self):
         utcnow, start_date, end_date, start, end = self._range()
         # for a time range
@@ -50,8 +50,8 @@ class AccountingReportsView(BaseReportsView):
         q = model.Session.query(
             func.sum(model.CartItem.price_each * model.CartItem.qty_desired)).\
             filter(model.CartItem.stage == model.CartItem.STOCK,
-                   model.CartItem.shipped_date >= start,
-                   model.CartItem.shipped_date < end)
+                   model.CartItem.shipped_time >= start,
+                   model.CartItem.shipped_time < end)
 
         stock_items = q.scalar() or 0
 
@@ -60,8 +60,8 @@ class AccountingReportsView(BaseReportsView):
         q = model.Session.query(
             func.sum(model.CartItem.shipping_price)).\
             filter(model.CartItem.stage == model.CartItem.STOCK,
-                   model.CartItem.shipped_date >= start,
-                   model.CartItem.shipped_date < end)
+                   model.CartItem.shipped_time >= start,
+                   model.CartItem.shipped_time < end)
 
         stock_shipping = q.scalar()
 
@@ -97,8 +97,7 @@ class AccountingReportsView(BaseReportsView):
         }
 
     @view_config(route_name='admin:reports:cogs',
-                 renderer='admin/reports/cogs.html',
-                 permission='authenticated')
+                 renderer='admin/reports/cogs.html')
     def cogs(self):
         utcnow, start_date, end_date, start, end = self._range()
         # for a time range
@@ -124,8 +123,7 @@ class AccountingReportsView(BaseReportsView):
         }
 
     @view_config(route_name='admin:reports:inventory',
-                 renderer='admin/reports/inventory.html',
-                 permission='authenticated')
+                 renderer='admin/reports/inventory.html')
     def inventory(self):
         # for a certain date, show:
 
@@ -138,8 +136,7 @@ class AccountingReportsView(BaseReportsView):
         }
 
     @view_config(route_name='admin:reports:cashflow',
-                 renderer='admin/reports/cashflow.html',
-                 permission='authenticated')
+                 renderer='admin/reports/cashflow.html')
     def cashflow(self):
         utcnow, start_date, end_date, start, end = self._range()
 
@@ -153,8 +150,7 @@ class AccountingReportsView(BaseReportsView):
         }
 
     @view_config(route_name='admin:reports:payments',
-                 renderer='admin/reports/payments.html',
-                 permission='authenticated')
+                 renderer='admin/reports/payments.html')
     def payments(self):
         utcnow, start_date, end_date, start, end = self._range()
         # for a time range, show:

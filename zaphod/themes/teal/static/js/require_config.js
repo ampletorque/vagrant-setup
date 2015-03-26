@@ -23,6 +23,8 @@ var require = {
       'exports': 'd3'
     },
 
+    'jquery.caret': ['jquery'],
+
     'bootstrap3/affix': ['jquery'],
     'bootstrap3/alert': ['jquery'],
     'bootstrap3/button': ['jquery'],

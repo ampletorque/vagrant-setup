@@ -160,7 +160,7 @@
   <div class="factoids">
     <div class="fact">
       <p>${h.format_datetime(request, project.final_day, '%b %d')}</p>
-      <span>Funded on</span>
+      <span>funded on</span>
     </div>
     <div class="fact">
       <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
@@ -187,12 +187,12 @@
   </p>
   <div class="status-bar status-bar-primary">
     <span class="status-bar-left">Funded!</span>
-    <span class="status-bar-right">Pre-Order Now</span>
+    <span class="status-bar-right">Order Now</span>
   </div>
   <div class="factoids">
     <div class="fact">
       <p>${h.format_datetime(request, project.final_day, '%b %d')}</p>
-      <span>Funded on</span>
+      <span>funded on</span>
     </div>
     <div class="fact">
       <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
@@ -205,6 +205,37 @@
   </div>
   <div class="social-buttons">
     <p>Support this project on social media!</p>
+    ${self.social_buttons(project)}
+  </div>
+</%def>
+
+
+<%def name="stats_failed(project)">
+  <p class="project-pledged">
+    <span><sup>$</sup>${h.commas(project.pledged_amount)}</span>&nbsp;raised
+  </p>
+  <p class="project-goal">
+    of&nbsp;<span><sup>$</sup>${h.commas(project.target)}</span>&nbsp;goal
+  </p>
+  <div class="status-bar status-bar-light">
+    <div class="status-bar-left">Funding Unsuccessful</div>
+  </div>
+  <div class="factoids">
+    <div class="fact">
+      <p>${h.format_datetime(request, project.final_day, '%b %d')}</p>
+      <span>ended</span>
+    </div>
+    <div class="fact">
+      <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
+      <span>funded</span>
+    </div>
+    <div class="fact">
+      <p>${h.commas(project.num_pledges)}</p>
+      <span>pledges</span>
+    </div>
+  </div>
+  <div class="social-buttons">
+    <p>Share this project on social media!</p>
     ${self.social_buttons(project)}
   </div>
 </%def>
@@ -234,6 +265,8 @@
       ${self.stats_available(project)}
     % elif project.status == 'stock-only':
       ${self.stats_stock_only(project)}
+    % elif project.status == 'failed':
+      ${self.stats_failed(project)}
     % else:
       <% assert False, "don't know what stats tile to use for %r" % project.status %>
     % endif
@@ -254,7 +287,7 @@
             % elif product.in_stock:
               In Stock
             % elif product.is_available:
-              Ships ${product.current_ship_date.strftime('%B %Y')}
+              Ships ${product.current_ship_time.strftime('%B %Y')}
             % elif not product.batches:
               Preview only: check back soon!
             % else:
@@ -283,20 +316,24 @@
           ${h.hidden('product_id', product.id)}
           ${h.hidden('qty', 1)}
 
-          % for option in product.published_options:
-            <div class="form-group">
-              <label for="option-${option.id}">${option.name}</label>
-              <select id="option-${option.id}" name="options-${loop.index}" class="form-control">
-                % for value in option.published_values:
-                  <option value="${value.id}">
-                    ${value.description}
-                    % if value.price_increase:
-                      (+${h.currency(value.price_increase)})
-                    % endif
-                  </option>
-                % endfor
-              </select>
-            </div>
+          % for option in product.options:
+            % if option.published:
+              <div class="form-group">
+                <label for="option-${option.id}">${option.name}</label>
+                <select id="option-${option.id}" name="options-${loop.index}" class="form-control">
+                  % for value in option.published_values:
+                    <option value="${value.id}">
+                      ${value.description}
+                      % if value.price_increase:
+                        (+${h.currency(value.price_increase)})
+                      % endif
+                    </option>
+                  % endfor
+                </select>
+              </div>
+            % else:
+              ${h.hidden('option-%d' % option.id, option.default_value.id)}
+            % endif
           % endfor
 
           % if project.status == 'crowdfunding':
@@ -348,7 +385,7 @@
 <%def name="products(project)">
   <div class="project-block">
     <%blocks:collapse_on_mobile target="products" title="${'Pledge Now' if project.status == 'crowdfunding' else 'Product Choices'}">
-      % for product in project.published_levels:
+      % for product in project.published_products:
         ${self.product_level(project, product)}
         % if not loop.last:
           <hr>

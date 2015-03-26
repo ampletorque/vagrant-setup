@@ -15,4 +15,5 @@ settings = {
 
     'gimlet.secret': 's3krit',
     'cache.backend': 'dogpile.cache.memory',
+    'cache.prefix': 'test:',
 }

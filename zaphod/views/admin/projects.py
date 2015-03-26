@@ -44,13 +44,15 @@ class OwnerCreateForm(Schema):
     user_id = validators.Int(not_empty=True)
 
 
-@view_defaults(route_name='admin:projects', renderer='admin/projects.html')
+@view_defaults(route_name='admin:projects', renderer='admin/projects.html',
+               permission='admin')
 @lift()
 class ProjectListView(NodeListView):
     cls = model.Project
 
 
-@view_defaults(route_name='admin:project', renderer='admin/project.html')
+@view_defaults(route_name='admin:project', renderer='admin/project.html',
+               permission='admin')
 @lift()
 class ProjectEditView(NodeEditView):
     cls = model.Project
@@ -102,6 +104,7 @@ class ProjectEditView(NodeEditView):
             model.Session.flush()
             request.flash("Product created.", 'success')
             request.theme.invalidate_project(project.id)
+            self._touch_obj(project)
             return HTTPFound(location=request.route_url('admin:product',
                                                         id=product.id))
 
@@ -123,6 +126,7 @@ class ProjectEditView(NodeEditView):
                 crud_update(po, owner_params)
             request.flash("Updated owners.", 'success')
             request.theme.invalidate_project(project.id)
+            self._touch_obj(project)
             return HTTPFound(location=request.current_route_url())
 
         return {'obj': project, 'renderer': FormRenderer(form)}
@@ -139,6 +143,7 @@ class ProjectEditView(NodeEditView):
             form.bind(po)
             request.flash("Project owner added.", 'success')
             request.theme.invalidate_project(project.id)
+            self._touch_obj(project)
             return HTTPFound(
                 location=request.route_url('admin:project:owners',
                                            id=project.id))
@@ -164,6 +169,7 @@ class ProjectEditView(NodeEditView):
             model.Session.flush()
             request.flash("Project update created.", 'success')
             request.theme.invalidate_project(project.id)
+            self._touch_obj(project)
             return HTTPFound(location=request.route_url('admin:update',
                                                         id=update.id))
 
@@ -222,12 +228,12 @@ class ProjectEditView(NodeEditView):
 
         # - # of orders that are currently late
         late_orders_q = open_orders_q.\
-            filter(model.CartItem.expected_ship_date < utcnow)
+            filter(model.CartItem.expected_ship_time < utcnow)
         late_orders_count = late_orders_q.count()
 
         # - earliest open delivery date
-        earliest_open_ship_date = open_orders_q.with_entities(
-            func.min(model.CartItem.expected_ship_date)).\
+        earliest_open_ship_time = open_orders_q.with_entities(
+            func.min(model.CartItem.expected_ship_time)).\
             scalar()
 
         # - age of latest project update
@@ -243,7 +249,7 @@ class ProjectEditView(NodeEditView):
             'obj': project,
             'open_orders_count': open_orders_count,
             'late_orders_count': late_orders_count,
-            'earliest_open_ship_date': earliest_open_ship_date,
+            'earliest_open_ship_time': earliest_open_ship_time,
             'last_update_time': last_update_time,
         }
 
@@ -278,7 +284,7 @@ class ProjectEditView(NodeEditView):
 
         due_q = model.Session.query(
             model.SKU,
-            func.min(model.CartItem.expected_ship_date)).\
+            func.min(model.CartItem.expected_ship_time)).\
             join(model.SKU.cart_items).\
             join(model.CartItem.cart).\
             join(model.Cart.order).\
@@ -298,6 +304,7 @@ class ProjectEditView(NodeEditView):
                  renderer='admin/project_ship.html')
     def ship(self):
         project = self._get_object()
+        # self._touch_obj(project)
 
         return {
             'obj': project,
@@ -305,7 +312,7 @@ class ProjectEditView(NodeEditView):
 
 
 @view_defaults(route_name='admin:projects:new',
-               renderer='admin/projects_new.html')
+               renderer='admin/projects_new.html', permission='admin')
 @lift()
 class ProjectCreateView(NodeCreateView):
     cls = model.Project

@@ -3,6 +3,7 @@ from __future__ import (absolute_import, division, print_function,
 
 import re
 import itertools
+import copy
 from datetime import datetime, timedelta, time
 
 import pytz
@@ -38,6 +39,7 @@ class SelectValidator(validators.FancyValidator):
     If selector == 'a', ValidatorA will be used, if selector == 'b'
     ValidatorB will be used.
     """
+    accept_iterator = True
 
     def __init__(self, validator_dict, default, selector_field='selector',
                  **kw):
@@ -50,7 +52,7 @@ class SelectValidator(validators.FancyValidator):
         return self._to_python(value, {})
 
     def _to_python(self, value, state):
-        selector_field = value.get(self.selector_field)
+        selector_field = value.pop(self.selector_field, None)
         if selector_field in self.validator_dict:
             v = self.validator_dict[selector_field]
         else:
@@ -278,6 +280,7 @@ class CreditCardSchema(Schema):
                              messages={
                                  'empty': "Security code required"
                              })
+    save = validators.Bool()
 
 
 class CommentBody(validators.FancyValidator):
@@ -320,3 +323,27 @@ class UTCDateConverter(validators.DateConverter):
             dt_utc += timedelta(days=1)
 
         return dt_utc
+
+
+class CloneFields(FancyValidator):
+    """
+    A pre_validator to generalize copying one field (or set of fields) to
+    another field.
+
+    E.g.
+    CloneFields('from_fields', 'to_fields', when='field_same_as_field')
+    ->
+    CloneFields('shipping', 'billing', when='billing_same_as_shipping')
+    """
+
+    def __init__(self, from_fields, to_fields, when):
+        self.from_fields = from_fields
+        self.to_fields = to_fields
+        self.when = when
+
+    def _to_python(self, value, state):
+        if ((self.when in value) and
+                validators.Bool.to_python(value[self.when])):
+            from_val = value[self.from_fields]
+            value[self.to_fields] = copy.copy(from_val)
+        return value

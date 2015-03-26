@@ -1,23 +1,31 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import logging
+import socket
+
 from pyramid.httpexceptions import HTTPFound, HTTPBadRequest
 from pyramid.view import view_config
 
 from formencode import Schema, ForEach, NestedVariables, validators
 from pyramid_uniform import Form, FormRenderer
 
-from .. import model, custom_validators
+from .. import model, mail, custom_validators, payment
+from ..payment.exc import PaymentException
+
+log = logging.getLogger(__name__)
 
 
 class CheckoutForm(Schema):
     "Validates checkout submissions."
     allow_extra_fields = False
-    pre_validators = [NestedVariables]
+    pre_validators = [NestedVariables,
+                      custom_validators.CloneFields(
+                          'shipping', 'billing',
+                          when='billing_same_as_shipping')]
 
     shipping = custom_validators.AddressSchema
 
-    save_credit_card = validators.Bool()
     billing_same_as_shipping = validators.Bool()
     billing = custom_validators.AddressSchema
 
@@ -25,9 +33,9 @@ class CheckoutForm(Schema):
     comments = validators.UnicodeString()
 
     cc = custom_validators.SelectValidator(
-        {'empty': custom_validators.WildcardSchema()},
+        {'yes': validators.Constant('saved')},
         default=custom_validators.CreditCardSchema(),
-        selector_field='method')
+        selector_field='use_saved')
 
 
 class CartItemAddSchema(Schema):
@@ -80,22 +88,6 @@ class CartView(object):
             model.Session.flush()
             request.session['cart_id'] = cart.id
             return cart
-
-    @view_config(route_name='cart', renderer='cart.html')
-    def cart(self):
-        request = self.request
-        cart = self.get_cart()
-
-        if cart:
-            cart.refresh()
-
-        form = Form(request, schema=CheckoutForm)
-        if form.validate():
-            # XXX process order
-
-            return HTTPFound(location=request.route_url('cart:confirmed'))
-
-        return dict(cart=cart, renderer=FormRenderer(form))
 
     @view_config(route_name='cart:add')
     def add(self):
@@ -171,12 +163,234 @@ class CartView(object):
         else:
             raise HTTPBadRequest
 
+    def _get_or_create_user(self, email, shipping):
+        user = model.Session.query(model.User).\
+            filter_by(email=email).\
+            first()
+
+        if not user:
+            if shipping.country_code == 'us':
+                location = '%s, %s' % (shipping.city,
+                                       shipping.state)
+            else:
+                location = '%s, %s' % (shipping.city,
+                                       shipping.country_name)
+            user = model.User(
+                name=shipping.full_name,
+                email=email,
+                show_location=location,
+                show_name='%s %s' % (shipping.first_name,
+                                     shipping.last_name[0]))
+            model.Session.add(user)
+
+            # XXX Need to transactionally send a welcome email to this user.
+        return user
+
+    def _handle_existing_payment(self, order, payment_method):
+        request = self.request
+        pp = model.CreditCardPayment(
+            order_id=order.id,
+            method=payment_method,
+            amount=0,
+            comments=u'Placeholder to associate payment method.',
+            transaction_id=u'',
+            invoice_number=u'',
+            authorized_amount=0,
+            avs_result=u'',
+            ccv_result=u'',
+            card_type=payment_method.first_payment.card_type,
+            created_by_id=1)
+        pp.mark_as_captured(request.user, 0)
+
+    def _handle_new_payment(self, order, form, email, billing, user):
+        request = self.request
+        session = request.session
+        cart = order.cart
+
+        ccf = form.data['cc']
+
+        gateway_id = request.registry.settings['payment_gateway_id']
+        iface = payment.get_payment_interface(request.registry, gateway_id)
+
+        # XXX make sure we're not using a live gateway for now
+        assert iface.api_key.startswith('sk_test')
+
+        try:
+            profile = iface.create_profile(
+                card_number=ccf['number'],
+                expiration_date=(u'%s-%s' %
+                                 (ccf['expires_year'],
+                                  ccf['expires_month'])),
+                ccv=ccf['code'],
+                billing=billing,
+                email=email,
+            )
+        except (socket.error, PaymentException) as e:
+            request.visitor.goal('payment failed')
+            if isinstance(e, socket.error):
+                request.flash(
+                    "A error occured while attempting to process the "
+                    "transaction. Please try again.", 'error')
+            else:
+                request.flash(
+                    "That credit card could not be processed. Please double "
+                    "check that the information is correct.", 'error')
+
+            log.info('payment_failed order:%d cart:%s', order.id, cart.id)
+
+            mail.send_with_admin(request,
+                                 'checkout_failure',
+                                 vars=dict(
+                                     billing=billing,
+                                     customer_email=email,
+                                     session_id=session.id,
+                                     order=order,
+                                     exc=e,
+                                 ),
+                                 to=request.registry.settings['mailer.from'])
+
+            raise HTTPFound(location=request.route_url('cart'))
+
+        customer = profile.customer
+
+        method = model.PaymentMethod(
+            user=user,
+            payment_gateway_id=gateway_id,
+            billing=billing,
+            reference=profile.reference,
+            save=ccf['save'],
+            stripe_js=False,
+            remote_addr=request.remote_addr,
+            user_agent=request.user_agent,
+            session_id=request.session.id,
+        )
+        model.Session.add(method)
+
+        pp = model.CreditCardPayment(
+            order_id=order.id,
+            method=method,
+            amount=0,
+            comments=u'Placeholder to associate payment method.',
+            transaction_id=u'',
+            invoice_number=u'',
+            authorized_amount=0,
+            avs_result=profile.avs_result,
+            ccv_result=profile.ccv_result,
+            card_type=customer.active_card.type,
+            created_by_id=1)
+        pp.mark_as_captured(request.user, 0)
+
+    def _place_order(self, cart, form, payment_method):
+        request = self.request
+
+        email = form.data['email']
+        shipping = model.Address(**form.data['shipping'])
+        billing = model.Address(**form.data['billing'])
+        comments = form.data['comments']
+
+        # update item shipping prices in case of international
+        cart.set_international_shipping()
+
+        # update item statuses
+        cart.set_initial_statuses()
+
+        # fetch or create user
+        user = self._get_or_create_user(email, shipping)
+
+        # get ids to invalidate
+        project_ids = set(ci.product.project_id for ci in cart.items)
+
+        order = model.Order(
+            user=user,
+            cart=cart,
+            customer_comments=comments,
+            shipping=shipping,
+        )
+        model.Session.add(order)
+        model.Session.flush()
+
+        if form.data['cc'] == 'saved':
+            self._handle_existing_payment(order, payment_method)
+        else:
+            self._handle_new_payment(order, form, email, billing, user)
+
+        # Save the order ID
+        request.session['new_order_id'] = order.id
+
+        mail.send_order_confirmation(request, order)
+
+        request.flash('Order confirmed!', 'success')
+
+        # invalidate redis cache
+        request.theme.invalidate_index()
+        for project_id in project_ids:
+            request.theme.invalidate_project(project_id)
+
+        # XXX if account is new, send a separate welcome email
+
+    @view_config(route_name='cart', renderer='cart.html')
+    def cart(self):
+        request = self.request
+        registry = request.registry
+        cart = self.get_cart()
+
+        if cart:
+            cart.refresh()
+            for ci in cart.items:
+                if not ci.qty_desired:
+                    request.flash("'%s' is not available, it has "
+                                  "been removed from your cart." %
+                                  ci.product.name, 'warning')
+                    cart.items.remove(ci)
+            model.Session.flush()
+
+        billing = shipping = masked_card = None
+
+        if cart and request.user:
+            last_order = model.Session.query(model.Order).\
+                filter_by(user=request.user).\
+                order_by(model.Order.id.desc()).\
+                first()
+
+            if last_order:
+                shipping = last_order.shipping
+
+            payment_method = model.Session.query(model.PaymentMethod).\
+                filter_by(save=True, user=request.user).\
+                order_by(model.PaymentMethod.id.desc()).\
+                first()
+
+            if payment_method:
+                try:
+                    masked_card = \
+                        payment.get_masked_card(registry, payment_method)
+                    billing = payment_method.billing
+                except payment.UnknownGatewayException:
+                    pass
+
+        form = Form(request, schema=CheckoutForm)
+        if form.validate():
+            self._place_order(cart, form, payment_method)
+            return HTTPFound(location=request.route_url('cart:confirmed'))
+
+        return {
+            'cart': cart,
+            'renderer': FormRenderer(form),
+            'shipping': shipping,
+            'billing': billing,
+            'masked_card': masked_card,
+        }
+
     @view_config(route_name='cart:confirmed', renderer='order.html')
     def confirmed(self):
         request = self.request
-        order_id = request.session.get('order_id')
+        order_id = request.session.get('new_order_id')
         if order_id:
             order = model.Order.get(order_id)
+            del request.session['new_order_id']
         else:
             raise HTTPBadRequest
-        return dict(order=order)
+        return {
+            'order': order,
+            'first_load': True,
+        }

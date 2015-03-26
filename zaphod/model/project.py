@@ -84,7 +84,7 @@ class Project(Node, ElasticMixin):
         primaryjoin='ProjectUpdate.project_id == Project.node_id',
     )
 
-    levels = orm.relationship(
+    products = orm.relationship(
         'Product',
         backref='project',
         cascade='all, delete, delete-orphan',
@@ -217,11 +217,11 @@ class Project(Node, ElasticMixin):
         return [pu for pu in self.updates if pu.published]
 
     @property
-    def published_levels(self):
+    def published_products(self):
         # XXX FIXME turn into a relationship
-        levels = [pl for pl in self.levels if pl.published]
-        levels.sort(key=attrgetter('gravity'))
-        return levels
+        products = [pl for pl in self.products if pl.published]
+        products.sort(key=attrgetter('gravity'))
+        return products
 
     @property
     def published_ownerships(self):
@@ -230,12 +230,12 @@ class Project(Node, ElasticMixin):
 
     @property
     def price_range_low(self):
-        return min(pl.price for pl in self.levels
+        return min(pl.price for pl in self.products
                    if pl.published and not pl.non_physical)
 
     @property
     def price_range_high(self):
-        return max(pl.price for pl in self.levels
+        return max(pl.price for pl in self.products
                    if pl.published and not pl.non_physical)
 
     @classmethod
@@ -259,8 +259,8 @@ class Project(Node, ElasticMixin):
                 ESField('target'),
                 ESField('start_time'),
                 ESField('end_time'),
-                ESString('levels',
-                         filter=lambda levels: [pl.name for pl in levels]),
+                ESString('products',
+                         filter=lambda products: [pl.name for pl in products]),
                 creator=ESMapping(
                     properties=ESMapping(
                         ESString('name', boost=8),

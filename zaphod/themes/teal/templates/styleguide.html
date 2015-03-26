@@ -18,11 +18,6 @@
 <section class="section-styleguide">
   <div class="container">
     <div class="row">
-      <div class="col-lg-12">
-        <h1 class="text-center">${self.title()}</h1>
-      </div>
-    </div>
-    <div class="row">
       <div class="col-sm-2">
         <ul class="list-unstyled list-styleguide list-sidebar">
           <li><a href="#logos">Logos</a></li>
@@ -38,6 +33,8 @@
       </div>
 
       <div class="col-sm-10">
+        <h1>${self.title()}</h1>
+
         <%self:section anchor="logos" heading="Logos">
           <div class="row">
             <div class="col-sm-6 col-md-5">
@@ -138,6 +135,13 @@
             <h4>Off-White Light Background</h4>
             <p>Use as an alternate subtle background color for regions which should be visually delineated, but without a border.</p>
             <p>Pantone: 7541 U</p>
+          </div>
+
+          <div class="styleguide-color styleguide-color-border">
+            <div class="styleguide-color-block"></div>
+            <code></code>
+            <h4>Light Border</h4>
+            <p>Use for a light grey border or horizontal rule against a white background.</p>
           </div>
         </%self:section>
 

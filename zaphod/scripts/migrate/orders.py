@@ -1,6 +1,8 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import logging
+
 from decimal import Decimal
 
 try:
@@ -14,11 +16,13 @@ from ... import model
 
 from . import utils
 
+log = logging.getLogger(__name__)
+
 
 def migrate_payment_gateways():
     for old_gateway in \
             scrappy_meta.Session.query(scrappy_model.PaymentGateway):
-        print("  gateway %s" % old_gateway.comment)
+        log.warn("  gateway %s", old_gateway.comment)
         gateway = model.PaymentGateway(
             id=old_gateway.id,
             dev=old_gateway.dev,
@@ -31,16 +35,17 @@ def migrate_payment_gateways():
         model.Session.add(gateway)
 
 
-def migrate_payment_methods():
+def migrate_payment_methods(user_map):
     for old_method in scrappy_meta.Session.query(scrappy_model.PaymentMethod):
-        print("  method %s" % old_method.id)
+        log.warn("  method %s", old_method.id)
         method = model.PaymentMethod(
             id=old_method.id,
-            user_id=old_method.account_id,
+            user=user_map[old_method.account],
             payment_gateway_id=old_method.payment_gateway_id,
             save=old_method.save,
             reference=old_method.reference,
             billing=utils.convert_address(old_method.billing),
+            stripe_js=True,
         )
         model.Session.add(method)
 
@@ -74,22 +79,22 @@ def item_shipping_prices(old_order):
     return dict(item_prices)
 
 
-def migrate_payment(payment_map, old_payment):
+def migrate_payment(payment_map, old_payment, user_map):
     if isinstance(old_payment, scrappy_model.CreditCardRefund):
         return model.CreditCardRefund(
             credit_card_payment=payment_map[old_payment.credit_card_payment],
             processed_time=old_payment.processed_time,
-            processed_by_id=old_payment.processed_by_id,
+            processed_by=user_map[old_payment.processed_by],
             transaction_error_time=old_payment.transaction_error_time,
             transaction_error=old_payment.transaction_error,
             refund_amount=old_payment.refund_amount,
-            created_by_id=old_payment.created_by_id,
+            created_by=user_map[old_payment.created_by],
             amount=old_payment.amount,
             created_time=old_payment.created_time,
             voided_time=old_payment.voided_time,
-            voided_by_id=old_payment.voided_by_id,
+            voided_by=user_map[old_payment.voided_by],
             pending_action_time=old_payment.pending_action_time,
-            pending_action_by_id=old_payment.pending_action_by_id,
+            pending_action_by=user_map[old_payment.pending_action_by],
             pending_action=old_payment.pending_action,
             comments=old_payment.comments,
         )
@@ -97,26 +102,26 @@ def migrate_payment(payment_map, old_payment):
         return model.CheckRefund(
             reference=old_payment.reference,
             refund_amount=old_payment.refund_amount,
-            created_by_id=old_payment.created_by_id,
+            created_by=user_map[old_payment.created_by],
             amount=old_payment.amount,
             created_time=old_payment.created_time,
             voided_time=old_payment.voided_time,
-            voided_by_id=old_payment.voided_by_id,
+            voided_by=user_map[old_payment.voided_by],
             pending_action_time=old_payment.pending_action_time,
-            pending_action_by_id=old_payment.pending_action_by_id,
+            pending_action_by=user_map[old_payment.pending_action_by],
             pending_action=old_payment.pending_action,
             comments=old_payment.comments,
         )
     elif isinstance(old_payment, scrappy_model.CashRefund):
         return model.CashRefund(
             refund_amount=old_payment.refund_amount,
-            created_by_id=old_payment.created_by_id,
+            created_by=user_map[old_payment.created_by],
             amount=old_payment.amount,
             created_time=old_payment.created_time,
             voided_time=old_payment.voided_time,
-            voided_by_id=old_payment.voided_by_id,
+            voided_by=user_map[old_payment.voided_by],
             pending_action_time=old_payment.pending_action_time,
-            pending_action_by_id=old_payment.pending_action_by_id,
+            pending_action_by=user_map[old_payment.pending_action_by],
             pending_action=old_payment.pending_action,
             comments=old_payment.comments,
         )
@@ -134,18 +139,18 @@ def migrate_payment(payment_map, old_payment):
             transaction_error_time=old_payment.transaction_error_time,
             transaction_error=old_payment.transaction_error,
             chargeback_time=old_payment.chargeback_time,
-            chargeback_by_id=old_payment.chargeback_by_id,
+            chargeback_by=user_map[old_payment.chargeback_by],
             card_type_code=old_payment.card_type_code,
             expired=old_payment.expired,
             chargeback_state=old_payment.chargeback_state,
-            created_by_id=old_payment.created_by_id,
+            created_by=user_map[old_payment.created_by],
             amount=old_payment.amount,
             transaction_fee=fee,
             created_time=old_payment.created_time,
             voided_time=old_payment.voided_time,
-            voided_by_id=old_payment.voided_by_id,
+            voided_by=user_map[old_payment.voided_by],
             pending_action_time=old_payment.pending_action_time,
-            pending_action_by_id=old_payment.pending_action_by_id,
+            pending_action_by=user_map[old_payment.pending_action_by],
             pending_action=old_payment.pending_action,
             comments=old_payment.comments,
         )
@@ -154,26 +159,26 @@ def migrate_payment(payment_map, old_payment):
             reference=old_payment.reference,
             check_date=old_payment.check_date,
             bounced_time=old_payment.bounced_time,
-            bounced_by_id=old_payment.bounced_by_id,
-            created_by_id=old_payment.created_by_id,
+            bounced_by=user_map[old_payment.bounced_by],
+            created_by=user_map[old_payment.created_by],
             amount=old_payment.amount,
             created_time=old_payment.created_time,
             voided_time=old_payment.voided_time,
-            voided_by_id=old_payment.voided_by_id,
+            voided_by=user_map[old_payment.voided_by],
             pending_action_time=old_payment.pending_action_time,
-            pending_action_by_id=old_payment.pending_action_by_id,
+            pending_action_by=user_map[old_payment.pending_action_by],
             pending_action=old_payment.pending_action,
             comments=old_payment.comments,
         )
     elif isinstance(old_payment, scrappy_model.CashPayment):
         return model.CashPayment(
-            created_by_id=old_payment.created_by_id,
+            created_by=user_map[old_payment.created_by],
             amount=old_payment.amount,
             created_time=old_payment.created_time,
             voided_time=old_payment.voided_time,
-            voided_by_id=old_payment.voided_by_id,
+            voided_by=user_map[old_payment.voided_by],
             pending_action_time=old_payment.pending_action_time,
-            pending_action_by_id=old_payment.pending_action_by_id,
+            pending_action_by=user_map[old_payment.pending_action_by],
             pending_action=old_payment.pending_action,
             comments=old_payment.comments,
         )
@@ -210,23 +215,23 @@ def status_for_item(utcnow, product_map, old_order, old_ci):
 
 
 def migrate_orders(settings, product_map, option_value_map,
-                   batch_map):
+                   batch_map, user_map):
     utcnow = model.utcnow()
     cart_item_map = {}
     for old_order in scrappy_meta.Session.query(scrappy_model.Order):
-        print("  order %s" % old_order.id)
+        log.warn("  order %s", old_order.id)
         order = model.Order(
             id=old_order.id,
-            user_id=old_order.account_id,
-            created_by_id=old_order.created_by_id,
+            user=user_map[old_order.account],
+            created_by=user_map[old_order.created_by],
             created_time=old_order.created_time,
-            updated_by_id=old_order.updated_by_id,
+            updated_by=user_map[old_order.updated_by],
             updated_time=old_order.updated_time,
             shipping=utils.convert_address(old_order.shipping),
             customer_comments=old_order.customer_comments,
         )
         model.Session.add(order)
-        utils.migrate_comments(old_order, order)
+        utils.migrate_comments(old_order, order, user_map)
         cart = model.Cart(
             order=order,
             updated_time=old_order.cart.updated_time,
@@ -234,15 +239,15 @@ def migrate_orders(settings, product_map, option_value_map,
         model.Session.add(cart)
         shipping_prices = item_shipping_prices(old_order)
         for old_ci in old_order.cart.items:
-            ship_date = None
+            ship_time = None
             old_batch = getattr(old_ci, 'batch', None)
             if old_batch:
-                ship_date = old_ci.batch.delivery_date
+                ship_time = old_ci.batch.delivery_date
             product = product_map[old_ci.product]
-            sku = model.sku_for_option_value_ids_sloppy(
+            sku = utils.sku_for_option_values(
                 product,
-                set(option_value_map[old_ov].id
-                    for old_ov in old_ci.option_values))
+                set(option_value_map[old_ov] for old_ov in
+                    old_ci.option_values))
             ci = model.CartItem(
                 id=old_ci.id,
                 cart=order.cart,
@@ -254,8 +259,8 @@ def migrate_orders(settings, product_map, option_value_map,
                 sku=sku,
                 shipping_price=(shipping_prices[old_ci]
                                 if shipping_prices else 0),
-                shipped_date=old_ci.shipped_date,
-                expected_ship_date=ship_date,
+                shipped_time=old_ci.shipped_date,
+                expected_ship_time=ship_time,
             )
             cart_item_map[old_ci] = ci
             if old_batch:
@@ -274,7 +279,7 @@ def migrate_orders(settings, product_map, option_value_map,
             model.Session.add(shipment)
         payment_map = {}
         for old_payment in old_order.payments:
-            payment = migrate_payment(payment_map, old_payment)
+            payment = migrate_payment(payment_map, old_payment, user_map)
             payment_map[old_payment] = payment
             order.payments.append(payment)
         model.Session.flush()

@@ -1,8 +1,9 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
+
 from unittest import TestCase
 
-from zaphod import helpers as h
+from ... import helpers as h
 
 
 class TestHelpers(TestCase):

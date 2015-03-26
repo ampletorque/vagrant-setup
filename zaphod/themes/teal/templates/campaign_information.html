@@ -1,0 +1,206 @@
+<%inherit file="base.html"/>
+
+<%def name="title()">Campaign Checklist</%def>
+
+
+<section class="section-campaign-information">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        <h3 class="text-tagline">
+          <strong>Ready, set, go.</strong> Let's get your campaign started.
+        </h3>
+        <hr>
+
+        <h1>Campaign Checklist</h1>
+
+        <img src="/_teal/images/launch/icons-fulfillment.png" alt="" class="hidde-xs pull-right">
+
+        <p>Here's a comprehensive list of everything you will need to create your Crowd Supply campaign. One of our campaign experts will work with you to gather this information, turn it into a private campaign page for your review, and refine the campaign page until it is ready for launch.</p>
+
+        <h3>The Basics</h3>
+        <h5>Brand Name</h5>
+        <ul>
+          <li>Maximum of 24 characters.</li> 
+          <li>This will be used to create your Crowd Supply URL, as in crowdsupply.com/brand-name/product-name.</li>
+        </ul>
+        <h5>Product Name</h5>
+        <ul>
+          <li>Maximum of 36 characters.</li>
+          <li>This will be used to create your Crowd Supply URL, as in crowdsupply.com/brand-name/product-name.</li>
+        </ul>
+
+        <h5>Crowdfunding Goal</h5>
+        <p>Amount of US$ to raise.</p>
+        <h5>Campaign Dates</h5>
+        <p>Start and end dates between which the campaign collects pledges.</p>
+        <h5>Teaser</h5>
+        <p>This will be a short marketable description of your project that will show on your project’s campaign tile and directly below your video. Maximum of 120 characters.</p>
+        <h3>Video & Imagery</h3>
+        <h5>Video</h5>
+        <ul>
+          <li>Filename or URL of your campaign video.</li>
+          <li>Video length should be between one and five minutes.</li>
+        </ul>
+
+        <h5>Images</h5>
+        <ul>
+          <li>Provide all images in as high a resolution as possible/practical.</li>
+          <li>We will resize and pad images as needed for a variety of display sizes and contexts.</li>
+          <li>Where possible, images should have a pure white background.</li>
+          <li>Deliver images in person, by Dropbox, or by e-mail to joshua.lifton@crowdsupply.com.</li>
+          <li>Images will be referenced by filename.</li>
+          <li>Image filenames should be hypen-separated and descriptive (e.g. pet-rock-with-moss.png).</li>
+          <li>Where possible, provide images in PNG format, though other formats are fine.</li>
+        </ul>
+
+        <p><b>Video Still Image</b> Filename of the image to show when your video is not playing.</p>
+
+        <p><b>Main Body Images</b> Filenames of images to include in the main body of the page. Reference these images by filename in other sections.</p>
+
+        <p><b>Brand Logo Image</b> Filename of the image to use to represent your team and brand. This image will automatically be included in the “team” section at the bottom of the campaign page. </p>
+
+        <h3>Main Body Content</h3>
+
+        <h5>Product Narrative Text</h5>
+        <ul>
+          <li>Tell the story of your product.</li>
+          <li>This text is public-facing.</li>
+          <li>Reference images by filename.</li>
+        </ul>
+
+        <h5>Manufacturing Plan</h5>
+        <ul>
+          <li>Describe the logistics of manufacturing your product.</li>
+          <li>This text is public-facing.</li>
+          <li>Reference images by filename.</li>
+        </ul>
+
+        <h5>Risks and Challenges</h5>
+        <ul>
+          <li>Describe what could go wrong and the steps you’ve taken to prepare for those possibilities.</li>
+          <li>This text is public-facing.</li>
+          <li>Reference images by filename.</li>
+        </ul>
+
+        <h5>Product Specifications</h5>
+        <ul>
+          <li>Describe the physical and functional characteristics of your product.</li>
+          <li>This text is public-facing.</li>
+          <li>Reference images by filename.</li>
+        </ul>
+
+
+        <h3>Premiums & Pledge Levels</h3>
+        <p>Have as many or as few as you want, just ensure each one has a clear picture of perceived value.</p>
+        <p>Each pledge level must include the following:</p>
+        <ul>
+          <li>Name (maximum of 16 characters)</li>
+          <li>Full-size primary image filename (we will resize and pad as needed)</li>
+          <li>Price in whole dollar amounts</li>
+          <li>Quantity available and schedule of availability (see Delivery Schedule)</li>
+          <li>Pledge level description</li>
+          <li>Include any type, size, or color variables (we will create dropdowns for options)</li>
+          <li>Shipping weight in pounds</li>
+          <li>Shipping dimensions in inches (width x height x depth)</li>
+          <li>Special shipping and handling instructions</li>
+          <li>An international shipping surcharge, if you'd like to allow this pledge level to be ordered internationally. If you're not sure what to charge for international shipping, we can help you to determine the appropriate rate.</li>
+        </ul>
+
+        <h3>Delivery Schedule</h3>
+
+        <p>This schedule is used to determine how many units of your product are available to backers and the expected ship date told to backers.</p>
+
+        <p>Fill in with your own data. Add more rows as needed.</p>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Quantity</th>
+              <th>Price per Unit</th>
+              <th>Ship Date</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>0-100</td>
+            <td>5.99</td>
+            <td>August 15th 2020</td>
+          </tr>
+          <tr>
+            <td>101-500</td>
+            <td>3.99</td>
+            <td>September 15th 2020</td>
+          </tr>
+          </tbody>
+        </table>
+
+        <h3>Creator Details</h3>
+        <h5>Brand Description</h5>
+        <ul>
+          <li>Give a brief introduction to your brand.</li>
+          <li>This text is public-facing.</li>
+          <li>This text will be used for all projects created under this brand.</li>
+        </ul>
+
+        <h5>Team Members </h5>
+        <ul>
+          <li>Name and e-mail address.</li>
+          <li>Private members will not be listed on the campaign page, but will receive questions submitted through the campaign page.</li>
+          <li>Public members will both be listed on the campaign page and receive submitted questions.</li>
+          <li>Public members must have a gravatar.com account associated with their e-mail address.</li>
+          <li>You can create a Gravatar account at http://gravatar.com. </li>
+          <li>Be sure to use the same e-mail address for Gravatar as you provide to Crowd Supply.</li>
+          <li>The image you upload to Gravatar will be used to represent you on Crowd Supply.</li>
+          <li>Once your Gravatar account is created and the image is uploaded, you will need to associate that image with your e-mail address, which you can do at gravatar.com.</li>
+        </ul>
+
+        <h3>Outreach & Communications Plan</h3>
+
+        <h5>PR/Marketing Plan</h5>
+        <p>How do you plan to promote your campaign and draw in the crowd? Start here. We’ll help.</p>
+        <ul>
+          <li>Write a press release</li>
+          <li>Build a PR contact list - create a spreadsheet with all your desired media targets and ways to get into contact with them.</li>
+          <li>Select your top press targets and send a press kit to them.</li>
+          <li>Launch-day backers list: maintain a list of people who have been told about the campaign and have committed to backing your campaign on the day it launches. This not only validates your campaign, but also provides the vital initial push to get your campaign started.</li>
+        </ul>
+
+        <h5>Communication to Backers Plan</h5>
+        <p>Prepare a list of weekly or more frequent updates to send out to your backers and anyone who has signed up to be reminded of your campaign. Updates keep your backers happy and remind them to spread the word about your campaign.</p>
+
+
+        <h3>Further Details</h3>
+
+        <h5>Project Timeline</h5>
+        <p>This text is public-facing. Notable dates for this project both in the past and in the future. At a minimum include:</p>
+        <ul>
+          <li>date of first prototype or rendering</li>
+          <li>date first order is placed</li>
+          <li>date first order is shipped</li>
+        </ul>
+
+        <h5>Fulfillment Plan</h5>
+        <p>Describe how you will deliver your premiums to backers.
+        “Using Crowd Supply” is an acceptable answer, otherwise provide more detail.</p>
+
+        <h3>Setting Up Payment Information</h3>
+        <p>To create a Stripe account and connect it to your crowdfunding campaign, simply log in to your account, go to My Account (upper righthand corner), click the Manage Payment Information button, and follow the instructions from there to either sign into or create your Stripe account.</p>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section-ready-to-launch">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>Ready to Launch?</h1>
+        <h3>
+          <a class="btn btn-primary btn-large" href="${request.route_path('launch', _anchor='launch-form')}">Tell us about your project.</a>
+        </h3>
+      </div>
+    </div>
+  </div>
+</section>

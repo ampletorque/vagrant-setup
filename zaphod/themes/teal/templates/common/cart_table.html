@@ -6,6 +6,19 @@
 </%def>
 
 
+<%def name="cart_item_stage(item)">
+  % if item.stage == item.CROWDFUNDING:
+    <p>Crowdfunding pledge, expected to ship ${item.expected_ship_time.strftime('%B %Y')}</p>
+  % elif item.stage == item.PREORDER:
+    <p>Pre-order, expected to ship ${item.expected_ship_time.strftime('%B %Y')}</p>
+  % elif item.stage == item.STOCK:
+    <p>In Stock</p>
+  % else:
+    <% assert False %>
+  % endif
+</%def>
+
+
 <%def name="cart_table_row(cart, item, idx)">
   <div class="row row-cart-item">
     <div class="col-sm-6">
@@ -16,10 +29,8 @@
         <div class="col-xs-8">
           <h3><a href="${request.node_path(item.product.project)}">${item.product.name}</a></h3>
           <h4>${item.product.project.name}</h4>
-          % if item.sku and item.sku.option_values:
-            ${blocks.option_value_list(item.sku)}
-          % endif
-          <p>Ships ${item.expected_ship_date.strftime('%B %Y')}</p>
+          ${blocks.option_value_list(item.sku)}
+          <p>${self.cart_item_stage(item)}</p>
         </div>
       </div>
     </div>

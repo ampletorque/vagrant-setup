@@ -12,7 +12,8 @@ class SettingsForm(Schema):
     show_admin_bars = validators.Bool()
 
 
-@view_config(route_name='admin:settings', renderer='admin/settings.html')
+@view_config(route_name='admin:settings', renderer='admin/settings.html',
+             permission='admin')
 def settings_view(request):
     form = Form(request, schema=SettingsForm)
     if form.validate():

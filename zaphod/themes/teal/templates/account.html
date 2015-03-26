@@ -24,8 +24,11 @@
 
       <div class="col-md-10">
         <p>Welcome back, ${request.user.name} (${request.user.email})</p>
-        ##<p>Joined Mar 20, 2013</p>
+        <p>Joined ${h.format_datetime(request, request.user.created_time, '%b %d, %Y')}</p>
 
+        % if request.user.url_path:
+          <a class="btn btn-default" href="${request.route_path('profile', path=request.user.url_path)}">View Profile Page</a>
+        % endif
         <a class="btn btn-default" href="${request.route_path('settings')}">Edit Account Details</a>
         <a class="btn btn-default" href="https://en.gravatar.com">Update Avatar</a>
         <a class="btn btn-default" href="${request.route_path('logout')}">Sign Out</a>
@@ -57,23 +60,23 @@
             </h4>
             <p>
               Backed on ${h.format_datetime(request, cart_item.cart.order.created_time, '%b %d, %Y')}<br>
-              % if cart_item.shipped_date:
-                Shipped on ${h.format_datetime(request, cart_item.shipped_date, '%b %d, %Y')}<br>
-                % if cart_item.expected_ship_date:
-                  % if cart_item.shipped_date < cart_item.expected_ship_date:
-                    <strong>Shipped ${(cart_item.expected_ship_date - cart_item.shipped_date).days} days early!</strong>
+              % if cart_item.shipped_time:
+                Shipped on ${h.format_datetime(request, cart_item.shipped_time, '%b %d, %Y')}<br>
+                % if cart_item.expected_ship_time:
+                  % if cart_item.shipped_time < cart_item.expected_ship_time:
+                    <strong>Shipped ${(cart_item.expected_ship_time - cart_item.shipped_time).days} days early!</strong>
                   % else:
-                    <strong>Shipped ${(cart_item.shipped_date - cart_item.expected_ship_date).days} days late!</strong>
+                    <strong>Shipped ${(cart_item.shipped_time - cart_item.expected_ship_time).days} days late!</strong>
                   % endif
-                  Originally expected to ship on ${h.format_datetime(request, cart_item.expected_ship_date, '%B %Y')}
+                  Originally expected to ship on ${h.format_datetime(request, cart_item.expected_ship_time, '%B %Y')}
                 % endif
               % elif cart_item.product.non_physical:
                 No shipment
-              % elif cart_item.batch  and cart_item.expected_ship_date != cart_item.batch.ship_date:
-                <strong>This project has fallen behind schedule and is currently expecting to ship on ${h.format_datetime(request, cart_item.batch.ship_date, '%b %d, %Y')}. Please see project updates for more information.</strong><br>
-                Originally expected to ship on ${h.format_datetime(request, cart_item.expected_ship_date, '%B %Y')}
-              % elif cart_item.expected_ship_date:
-                Ships on ${h.format_datetime(request, cart_item.expected_ship_date, '%b %d, %Y')}
+              % elif cart_item.batch  and cart_item.expected_ship_time != cart_item.batch.ship_time:
+                <strong>This project has fallen behind schedule and is currently expecting to ship on ${h.format_datetime(request, cart_item.batch.ship_time, '%b %d, %Y')}. Please see project updates for more information.</strong><br>
+                Originally expected to ship on ${h.format_datetime(request, cart_item.expected_ship_time, '%B %Y')}
+              % elif cart_item.expected_ship_time:
+                Ships on ${h.format_datetime(request, cart_item.expected_ship_time, '%b %d, %Y')}
               % else:
                 Delivery date unknown
               % endif

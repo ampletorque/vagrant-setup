@@ -19,11 +19,12 @@
           </a>
         </li>
         % if request.user:
-          % if request.user.has_permission('admin'):
+          % if request.user.admin:
             <li class="divider"></li>
             <li><a href="${request.route_path('admin:help')}">Help</a></li>
             <li><a href="${request.route_path('admin:dashboard')}">Admin</a></li>
             <li><a href="${request.route_path('styleguide')}">Style Guide</a></li>
+            <li><a href="${request.route_path('admin:docs', path='')}">Developer Docs</a></li>
             <li class="divider"></li>
           % endif
           <li><a href="${request.route_path('logout')}">Sign Out</a></li>

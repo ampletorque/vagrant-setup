@@ -112,7 +112,9 @@ def send(request, template_name, vars, to=None, from_=None,
         debug_addr = settings.get('mailer.debug_addr')
         if debug_addr:
             log.info("debug: sending %s to %s", template_name, debug_addr)
-            subject += ' [was to %s]' % msg.recipients
+            subject += ' [was to %s]' % \
+                ', '.join(email.utils.parseaddr(addr)[1]
+                          for addr in msg.recipients)
             msg.subject = subject
             msg.recipients = [debug_addr]
             msg.cc = []

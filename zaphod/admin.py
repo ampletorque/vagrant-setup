@@ -54,7 +54,7 @@ class BaseEditView(object):
                 im = model.ImageMeta.get(image_params['id'])
             im.title = image_params['title']
             im.alt = image_params['alt']
-            self._touch_obj(im)
+            self._touch_object(im)
             obj.image_associations.append(obj.ImageAssociation(
                 image_meta=im,
                 gravity=image_params['gravity'],
@@ -62,12 +62,12 @@ class BaseEditView(object):
                 caption=image_params['caption'],
             ))
 
-    def _touch_obj(self, obj):
+    def _touch_object(self, obj):
         request = self.request
         obj.updated_by = request.user
         obj.updated_time = datetime.utcnow()
 
-    def _update_obj(self, form, obj):
+    def _update_object(self, form, obj):
         request = self.request
         if 'images' in form.data:
             self._handle_images(form, obj)
@@ -83,8 +83,8 @@ class BaseEditView(object):
         obj = self._get_object()
         form = Form(request, schema=self.UpdateForm)
         if form.validate():
-            self._touch_obj(obj)
-            self._update_obj(form, obj)
+            self._touch_object(obj)
+            self._update_object(form, obj)
             return HTTPFound(location=request.current_route_url())
         return {
             'obj': obj,
@@ -97,8 +97,8 @@ class BaseEditView(object):
         obj = self._get_object()
         form = Form(request, schema=self.UpdateForm)
         if form.validate():
-            self._touch_obj(obj)
-            self._update_obj(form, obj)
+            self._touch_object(obj)
+            self._update_object(form, obj)
             return {
                 'status': 'ok',
                 'location': request.current_route_url(),

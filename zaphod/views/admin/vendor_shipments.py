@@ -27,7 +27,7 @@ class VendorShipmentEditView(BaseEditView):
         description = validators.UnicodeString()
         items = ForEach(ItemForm)
 
-    def _update_obj(self, form, obj):
+    def _update_object(self, form, obj):
         request = self.request
         for item_params in form.data.pop('items'):
             vsi = model.VendorShipmentItem.get(item_params['id'])

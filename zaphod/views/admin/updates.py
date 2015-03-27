@@ -15,6 +15,6 @@ from ...admin import NodeEditView
 class UpdateEditView(NodeEditView):
     cls = model.ProjectUpdate
 
-    def _update_obj(self, form, obj):
-        NodeEditView._update_obj(self, form, obj)
+    def _update_object(self, form, obj):
+        NodeEditView._update_object(self, form, obj)
         self.request.theme.invalidate_project(obj.project.id)

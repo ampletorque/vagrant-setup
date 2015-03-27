@@ -71,8 +71,8 @@ class ProductEditView(BaseEditView):
         price = validators.Number()
         accepts_preorders = validators.Bool()
 
-    def _update_obj(self, form, obj):
-        BaseEditView._update_obj(self, form, obj)
+    def _update_object(self, form, obj):
+        BaseEditView._update_object(self, form, obj)
         self.request.theme.invalidate_project(obj.project.id)
 
     def _update_schedule(self, form, product):
@@ -108,7 +108,7 @@ class ProductEditView(BaseEditView):
         model.Session.flush()
         product.validate_schedule()
 
-        self._touch_obj(product)
+        self._touch_object(product)
         self.request.theme.invalidate_project(product.project.id)
         self.request.flash("Saved options.", 'success')
 
@@ -192,7 +192,7 @@ class ProductEditView(BaseEditView):
         # XXX
         assert not options_remaining, \
             "didn't get options %r" % options_remaining
-        self._touch_obj(product)
+        self._touch_object(product)
         self.request.theme.invalidate_project(product.project.id)
         self.request.flash("Saved options.", 'success')
 

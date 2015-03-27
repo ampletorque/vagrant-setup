@@ -81,8 +81,8 @@ class ProjectEditView(NodeEditView):
         pledged_elsewhere_amount = validators.Number()
         include_in_launch_stats = validators.Bool()
 
-    def _update_obj(self, form, obj):
-        NodeEditView._update_obj(self, form, obj)
+    def _update_object(self, form, obj):
+        NodeEditView._update_object(self, form, obj)
         self.request.theme.invalidate_project(obj.id)
 
     @view_config(route_name='admin:project:products',
@@ -104,7 +104,7 @@ class ProjectEditView(NodeEditView):
             model.Session.flush()
             request.flash("Product created.", 'success')
             request.theme.invalidate_project(project.id)
-            self._touch_obj(project)
+            self._touch_object(project)
             return HTTPFound(location=request.route_url('admin:product',
                                                         id=product.id))
 
@@ -126,7 +126,7 @@ class ProjectEditView(NodeEditView):
                 crud_update(po, owner_params)
             request.flash("Updated owners.", 'success')
             request.theme.invalidate_project(project.id)
-            self._touch_obj(project)
+            self._touch_object(project)
             return HTTPFound(location=request.current_route_url())
 
         return {'obj': project, 'renderer': FormRenderer(form)}
@@ -143,7 +143,7 @@ class ProjectEditView(NodeEditView):
             form.bind(po)
             request.flash("Project owner added.", 'success')
             request.theme.invalidate_project(project.id)
-            self._touch_obj(project)
+            self._touch_object(project)
             return HTTPFound(
                 location=request.route_url('admin:project:owners',
                                            id=project.id))
@@ -169,7 +169,7 @@ class ProjectEditView(NodeEditView):
             model.Session.flush()
             request.flash("Project update created.", 'success')
             request.theme.invalidate_project(project.id)
-            self._touch_obj(project)
+            self._touch_object(project)
             return HTTPFound(location=request.route_url('admin:update',
                                                         id=update.id))
 
@@ -304,7 +304,7 @@ class ProjectEditView(NodeEditView):
                  renderer='admin/project_ship.html')
     def ship(self):
         project = self._get_object()
-        # self._touch_obj(project)
+        # self._touch_object(project)
 
         return {
             'obj': project,

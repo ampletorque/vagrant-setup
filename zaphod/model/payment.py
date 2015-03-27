@@ -177,8 +177,9 @@ class CreditCardPayment(Payment):
     authorized_amount = Column(custom_types.Money, nullable=False)
     # Single-character AVS result code as returned by authorize.net, can be
     # decoded with the method below.
-    avs_result = Column(types.String(1), nullable=False, default='')
-    ccv_result = Column(types.String(1), nullable=False, default='')
+    avs_address1_result = Column(types.CHAR(4), nullable=False, default='')
+    avs_zip_result = Column(types.CHAR(4), nullable=False, default='')
+    ccv_result = Column(types.CHAR(9), nullable=False, default='')
     captured_time = Column(types.DateTime, nullable=True)
     captured_state = Column(types.String(2), nullable=False, default='un')
     transaction_error_time = Column(types.DateTime, nullable=True)

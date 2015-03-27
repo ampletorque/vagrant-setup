@@ -127,13 +127,17 @@ def migrate_payment(payment_map, old_payment, user_map):
         )
     elif isinstance(old_payment, scrappy_model.CreditCardPayment):
         fee = (old_payment.amount * Decimal('0.029')) + Decimal('0.30')
+        avs_address1_result, avs_zip_result = \
+            utils.recode_avs_result(old_payment.avs_result)
+        ccv_result = utils.recode_ccv_result(old_payment.ccv_result)
         return model.CreditCardPayment(
             payment_method_id=old_payment.payment_method_id,
             transaction_id=old_payment.transaction_id,
             invoice_number=old_payment.invoice_number,
             authorized_amount=old_payment.authorized_amount,
-            avs_result=old_payment.avs_result,
-            ccv_result=old_payment.ccv_result,
+            avs_address1_result=avs_address1_result,
+            avs_zip_result=avs_zip_result,
+            ccv_result=ccv_result,
             captured_time=old_payment.captured_time,
             captured_state=old_payment.captured_state,
             transaction_error_time=old_payment.transaction_error_time,

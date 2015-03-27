@@ -148,40 +148,16 @@ class StripePaymentProfile(object):
         return self.customer.email
 
     @property
-    def avs_result(self):
-        return self._recode_avs_result(self.customer.active_card)
+    def avs_address1_result(self):
+        return self.customer.active_card.address_line1_check
+
+    @property
+    def avs_zip_result(self):
+        return self.customer.active_card.address_zip_check
 
     @property
     def ccv_result(self):
-        return self._recode_cvc_result(self.customer.active_card)
-
-    def _recode_avs_result(self, card):
-        # address result, zip code result
-        result_map = {
-            ("pass", "pass"): "Y",
-            ("pass", "fail"): "A",
-            ("fail", "pass"): "Z",
-            ("fail", "fail"): "N",
-        }
-
-        result = (card.address_line1_check, card.address_zip_check)
-        return result_map.get(result, "S")
-
-    def _recode_cvc_result(self, card):
-        result_map = {
-            "pass": "M",
-            "fail": "N",
-            "unchecked": "P",
-            None: "P",
-        }
-        return result_map[card.cvc_check]
-
-    def _charge_status(self, charge):
-        return {
-            "avs_result": self._recode_avs_result(charge.card),
-            "ccv_result": self._recode_cvc_result(charge.card),
-            "card_type": charge.card.type
-        }
+        return self.customer.active_card.ccv_check
 
     def _to_cents(self, amount):
         # XXX assert that the amount has non-fractional cents

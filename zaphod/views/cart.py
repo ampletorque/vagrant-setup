@@ -274,7 +274,8 @@ class CartView(object):
             transaction_id=u'',
             invoice_number=u'',
             authorized_amount=0,
-            avs_result=profile.avs_result,
+            avs_address1_result=profile.avs_address1_result,
+            avs_zip_result=profile.avs_zip_result,
             ccv_result=profile.ccv_result,
             card_type=customer.active_card.type,
             created_by_id=1)

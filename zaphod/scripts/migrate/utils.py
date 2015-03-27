@@ -111,3 +111,29 @@ def sku_for_option_values(product, option_values):
         model.Session.add(sku)
 
     return sku
+
+
+def recode_avs_result(avs_result):
+    """
+    Recode the avs_result character to stripe pass/fail codes.
+    """
+    # address result, zip code result
+    result_map = {
+        'Y': ("pass", "pass"),
+        'A': ("pass", "fail"),
+        'Z': ("fail", "pass"),
+        'N': ("fail", "fail"),
+        'S': ('', ''),
+        '': ('', ''),
+    }
+    return result_map[avs_result]
+
+
+def recode_ccv_result(ccv_result):
+    result_map = {
+        'M': "pass",
+        'N': "fail",
+        'P': "unchecked",
+        '': 'unchecked',
+    }
+    return result_map[ccv_result]

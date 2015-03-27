@@ -15,10 +15,6 @@ from ... import model
 from ...admin import BaseEditView
 
 
-class ScheduleForm(Schema):
-    allow_extra_fields = False
-
-
 class OptionValueSchema(Schema):
     allow_extra_fields = False
     id = validators.String(not_empty=True)

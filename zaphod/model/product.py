@@ -5,7 +5,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from sqlalchemy import Column, ForeignKey, UniqueConstraint, types, orm
-from sqlalchemy.sql import func, not_
+from sqlalchemy.sql import func
 from sqlalchemy.ext.orderinglist import ordering_list
 
 from . import custom_types

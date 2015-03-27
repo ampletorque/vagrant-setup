@@ -95,7 +95,7 @@
     <td colspan="4">
       ${self.payment_description(payment)}<br>
       % if payment.discriminator == 'cc':
-        CCV: ${payment.ccv_result} - AVS: ${payment.avs_result}
+        CCV: ${payment.ccv_result} - AVS Address: ${payment.avs_address1_result} - AVS Zip: ${payment.avs_zip_result}
       % endif
     </td>
     <td>${h.currency(payment.amount)}</td>

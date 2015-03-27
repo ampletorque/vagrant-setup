@@ -3,6 +3,7 @@ from __future__ import (absolute_import, division, print_function,
 
 from datetime import date
 from operator import itemgetter
+import random
 import re
 import hashlib
 import string
@@ -410,3 +411,10 @@ def variant_string(item, show_price_changes=True):
     on any instance with associated option values.
     """
     return ", ".join(variant_list(item, show_price_changes=show_price_changes))
+
+
+def random_whitespace():
+    s = []
+    for ii in range(random.randint(20, 30)):
+        s.append(random.choice([' ', '\t', '\n']))
+    return literal(''.join(s))

@@ -244,12 +244,15 @@ ul li {
                   <a href="${request.route_url('contact')}">Contact</a>
                   <br /><br />
 
+                  ${h.random_whitespace()}
+
                   Crowd Supply<br />
                   <a href="${request.host_url}">${request.host_url}</a><br />
                   ${request.registry.settings['address.address1']}<br />
                   % if 'address.address2' in request.registry.settings:
                   ${request.registry.settings['address.address1']}<br />
                   % endif
+                  ${h.random_whitespace()}
                   ${request.registry.settings['address.city']}, ${request.registry.settings['address.state']} ${request.registry.settings['address.postal_code']}<br />
                   ${request.registry.settings['address.phone']}<br />
                 </td>

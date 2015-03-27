@@ -171,9 +171,11 @@ def send_cancellation_confirmation(request, order):
 
 def send_shipping_confirmation(request, order):
     recipient = [(order.user.name, order.user.email)]
-    # XXX
+    unshipped_items = [item for item in order.cart.items
+                       if item.status not in ('cancelled', 'shipped')]
     vars = {
         'order': order,
+        'unshipped_items': unshipped_items,
     }
     send_with_admin(request, 'shipping_confirmation', vars=vars, to=recipient)
 

@@ -123,21 +123,27 @@ class BaseListView(object):
         if 'q' in request.params:
             client = get_client(request)
             results = client.query(self.cls, q=request.params['q']).execute()
-            return dict(results=results)
+            objs = [self.cls.get(doc.id) for doc in results]
+            if self.paginate:
+                page = Page(request, objs,
+                            page=int(request.params.get('page', 1)),
+                            items_per_page=20,
+                            item_count=results.total)
+                return dict(page=page)
+            else:
+                return dict(objs=objs)
         else:
             q = model.Session.query(self.cls)
             final_q = q.order_by(self.cls.id.desc())
-        if self.paginate:
-            item_count = final_q.count()
-
-            page = Page(request, final_q,
-                        page=int(request.params.get('page', 1)),
-                        items_per_page=20,
-                        item_count=item_count)
-
-            return dict(page=page)
-        else:
-            return dict(objs=final_q.all())
+            if self.paginate:
+                item_count = final_q.count()
+                page = Page(request, final_q,
+                            page=int(request.params.get('page', 1)),
+                            items_per_page=20,
+                            item_count=item_count)
+                return dict(page=page)
+            else:
+                return dict(objs=final_q.all())
 
 
 class BaseCreateView(object):

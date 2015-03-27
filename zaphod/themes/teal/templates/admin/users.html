@@ -48,31 +48,17 @@
               </tr>
             </thead>
             <tbody>
-              % if page:
-                % for user in page:
-                  <tr>
-                    <td>
-                      <a href="${request.route_path('admin:user', id=user.id)}">Edit</a>
-                    </td>
-                    <td>${user.id}</td>
-                    <td>${user.name}</td>
-                    <td>${user.email}</td>
-                    <td>${h.format_datetime(request, user.created_time)}</td>
-                  </tr>
-                % endfor
-              % else:
-                % for record in results:
-                  <tr>
-                    <td>
-                      <a href="${request.route_path('admin:user', id=record.id)}">Edit</a>
-                    </td>
-                    <td>${record.id}</td>
-                    <td>${record.name}</td>
-                    <td>${record.email}</td>
-                    <td></td>
-                  </tr>
-                % endfor
-              % endif
+              % for user in page:
+                <tr>
+                  <td>
+                    <a href="${request.route_path('admin:user', id=user.id)}">Edit</a>
+                  </td>
+                  <td>${user.id}</td>
+                  <td>${user.name}</td>
+                  <td>${user.email}</td>
+                  <td>${h.format_datetime(request, user.created_time)}</td>
+                </tr>
+              % endfor
             </tbody>
           </table>
         </div>

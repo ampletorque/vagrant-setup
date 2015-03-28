@@ -152,7 +152,7 @@ class CartItem(Base):
             'unfunded': ('failed', 'cancelled', 'payment pending'),
             'payment pending': ('cancelled', 'waiting', 'payment failed'),
             'payment failed': ('waiting', 'cancelled', 'abandoned'),
-            'waiting': ('cancelled', 'in process'),
+            'waiting': ('cancelled', 'in process', 'being packed', 'shipped'),
             'in process': ('cancelled', 'being packed', 'shipped'),
             'being packed': ('shipped',),
         }

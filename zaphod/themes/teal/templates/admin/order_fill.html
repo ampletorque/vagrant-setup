@@ -46,6 +46,7 @@
           ${forms.ltext(renderer, 'tracking_number', label='Tracking Number', hint='Carrier-supplied package tracking number.')}
           ${forms.ltext(renderer, 'cost', prefix='$', hint="Crowd Supply's cost to ship this package.")}
           ${forms.lcheckbox(renderer, 'shipped_by_creator')}
+          ${forms.lcheckbox(renderer, 'send_tracking_email', checked=True)}
 
           <%forms:actions>
             <button class="btn btn-primary" type="submit">Save</button>

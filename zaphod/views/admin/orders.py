@@ -46,6 +46,7 @@ class FillForm(Schema):
     shipped_by_creator = validators.Bool()
     cost = validators.Number()
     item_ids = ForEach(validators.Int(not_empty=True))
+    send_tracking_email = validators.Bool()
 
 
 class AddItemForm(Schema):
@@ -141,7 +142,13 @@ class OrderEditView(BaseEditView):
                     cost=form.data['cost'],
                     shipped_by_creator=form.data['shipped_by_creator'],
                     user=request.user)
-                request.flash("Order updated.", 'success')
+                s = 'Order filled. '
+                if form.data['send_tracking_email']:
+                    mail.send_shipping_confirmation(request, order)
+                    s += 'Shipping confirmation email sent.'
+                else:
+                    s += 'Shipping confirmation email not sent.'
+                request.flash(s, 'success')
                 self._touch_object(order)
                 return HTTPFound(location=request.route_url('admin:order',
                                                             id=order.id))

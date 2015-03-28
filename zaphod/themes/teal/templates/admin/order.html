@@ -29,7 +29,12 @@
       Reserved: ${item.qty_reserved}<br>
       Original Delivery: ${item.expected_ship_time}<br>
       % if item.batch:
-        Current: ${item.batch.ship_time}
+        Current: ${item.batch.ship_time}<br>
+      % endif
+      % if item.shipment:
+        Shipment ${item.shipment.id}
+      % else:
+        No shipment
       % endif
     </td>
     <td style="width:125px">
@@ -149,6 +154,19 @@
             </div>
           </div>
         </div>
+
+        % if obj.shipments:
+          <div class="well">
+            % for shipment in obj.shipments:
+              <h5>Shipment ${shipment.id} - ${shipment.tracking_number or 'No Tracking'}</h5>
+              <ul>
+                % for item in shipment.items:
+                  <li>${item.id} - ${item.product.name}</li>
+                % endfor
+              </ul>
+            % endfor
+          </div>
+        % endif
 
         ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
 

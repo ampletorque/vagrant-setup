@@ -157,4 +157,4 @@ class Shipment(Base, UserMixin):
     tracking_email_sent = Column(types.Boolean, nullable=False, default=False)
 
     order = orm.relationship('Order', backref='shipments')
-    items = orm.relationship('CartItem', backref='shipments')
+    items = orm.relationship('CartItem', backref='shipment')

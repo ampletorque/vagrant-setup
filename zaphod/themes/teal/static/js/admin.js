@@ -11,7 +11,8 @@ require([
   'teal/daterange',
   'teal/ajaxvalidate',
   'teal/options',
-  'teal/schedule'
+  'teal/schedule',
+  'teal/additem'
 
 ], function ($) {
   $(function () {

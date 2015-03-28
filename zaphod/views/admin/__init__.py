@@ -30,10 +30,12 @@ def includeme(config):
     config.add_route('admin:project:reports:balance', '/project/{id}/balance')
     config.add_route('admin:project:reports:skus', '/project/{id}/skus')
 
+    config.add_route('admin:products:search', '/products/search')
     config.add_route('admin:product', '/product/{id}')
     config.add_route('admin:product:schedule', '/product/{id}/schedule')
     config.add_route('admin:product:options', '/product/{id}/options')
     config.add_route('admin:product:skus', '/product/{id}/skus')
+    config.add_route('admin:product:info', '/product/{id}/info')
 
     config.add_route('admin:adjust-inventory', '/adjust-inventory/{id}')
 
@@ -62,6 +64,8 @@ def includeme(config):
     config.add_route('admin:order:payment', '/order/{id}/payment')
     config.add_route('admin:order:refund', '/order/{id}/refund')
     config.add_route('admin:order:add-item', '/order/{id}/add-item')
+    config.add_route('admin:order:remove-item',
+                     '/order/{id}/remove-item/{item_id}')
 
     config.add_route('admin:vendors', '/vendors')
     config.add_route('admin:vendors:new', '/vendors/new')

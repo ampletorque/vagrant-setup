@@ -12,9 +12,23 @@
       <div class="col-lg-12">
         <h1 class="page-header">${self.title()}</h1>
 
-        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped js-ajax-validate')}
 
-        <p>WIP - show interface to select product, options, qty, and stage. default stage to current project stage.</p>
+          <div class="js-additem-widget" data-search-path="${request.route_path('admin:products:search')}">
+            <%forms:element label="Search">
+              <input type="text" class="form-control js-product-search" placeholder="Enter query terms...">
+              <div class="js-product-results">
+                <p>No product selected.</p>
+              </div>
+            </%forms:element>
+
+            <div class="js-product-form">
+            </div>
+          </div>
+
+          ${forms.ltext(renderer, 'qty', 1)}
+
+          ${forms.lselect(renderer, 'stage', None, [('crowdfunding', 'Crowdfunding'), ('pre-order', 'Pre-order'), ('stock', 'In Stock')], prompt='Select Stage')}
 
           <%forms:actions>
             <button class="btn btn-primary" type="submit">Save</button>

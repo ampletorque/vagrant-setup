@@ -8,6 +8,8 @@ from sqlalchemy import Column, ForeignKey, UniqueConstraint, types, orm
 from sqlalchemy.sql import func
 from sqlalchemy.ext.orderinglist import ordering_list
 
+from pyramid_es.mixin import ElasticMixin, ESMapping, ESField, ESString
+
 from . import custom_types
 from .base import Base, Session
 from .image import ImageMixin
@@ -35,7 +37,7 @@ class Batch(Base):
             scalar() or 0
 
 
-class Product(Base, ImageMixin):
+class Product(Base, ImageMixin, ElasticMixin):
     """
     A product associated with a product. This can be thought of as comparable
     to a 'pledge level', but is also used for projects which aren't and weren't
@@ -161,6 +163,20 @@ class Product(Base, ImageMixin):
             else:
                 assert batch.qty > 0, \
                     "batch qty must be greater than zero"
+
+    @classmethod
+    def elastic_mapping(cls):
+        return ESMapping(
+            analyzer='content',
+            properties=ESMapping(
+                ESField('id'),
+                ESString('name'),
+                project=ESMapping(
+                    properties=ESMapping(
+                        ESString('name', boost=4),
+                    ),
+                ),
+            ))
 
 
 class Option(Base):

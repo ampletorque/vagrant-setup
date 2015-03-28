@@ -52,7 +52,16 @@ class FillForm(Schema):
 
 class AddItemForm(Schema):
     allow_extra_fields = False
-    # XXX
+    pre_validators = [NestedVariables]
+    product_id = validators.Int(not_empty=True)
+    options = ForEach(validators.Int(not_empty=True))
+    qty = validators.Int(not_empty=True, min=1, max=99)
+    stage = validators.OneOf(['crowdfunding', 'pre-order', 'stock'],
+                             not_empty=True)
+
+
+class RemoveItemForm(Schema):
+    allow_extra_fields = False
 
 
 @view_defaults(route_name='admin:order', renderer='admin/order.html',
@@ -154,22 +163,84 @@ class OrderEditView(BaseEditView):
                                                         id=order.id))
         return {'obj': order, 'renderer': FormRenderer(form)}
 
+    def _process_add_item(self, form, order):
+        request = self.request
+        product = model.Product.get(form.data['product_id'])
+        stage = {
+            'crowdfunding': model.CartItem.CROWDFUNDING,
+            'pre-order': model.CartItem.PREORDER,
+            'stock': model.CartItem.STOCK,
+        }[form.data['stage']]
+
+        sku = model.sku_for_option_value_ids(product, form.data['options'])
+        item = model.CartItem(
+            cart=order.cart,
+            stage=stage,
+            product=product,
+            sku=sku,
+            qty_desired=form.data['qty'],
+            shipping_price=0,
+            price_each=product.price,
+        )
+        model.Session.add(item)
+        # XXX need to figure out how to update status and allocate stock here,
+        # but item.refresh() can't do it because that will update the stage
+
+        request.flash("Added '%s' to order." % product.name, 'success')
+        self._touch_object(order)
+
     @view_config(route_name='admin:order:add-item',
                  renderer='admin/order_add_item.html')
     def add_item(self):
         request = self.request
         order = self._get_object()
-        form = Form(request, schema=AddItemForm)
+        form = Form(request, AddItemForm)
         if form.validate():
-            product = model.Product.get(form.data['product_id'])
-            # XXX
-
-            request.flash("Added '%s' to order." % product.name, 'success')
-            self._touch_object(order)
+            self._process_add_item(form, order)
             return HTTPFound(location=request.route_url('admin:order',
                                                         id=order.id))
 
         return {'obj': order, 'renderer': FormRenderer(form)}
+
+    @view_config(route_name='admin:order:add-item', request_method='POST',
+                 xhr=True, renderer='json')
+    def add_item_ajax(self):
+        request = self.request
+        order = self._get_object()
+        form = Form(request, AddItemForm)
+        if form.validate():
+            self._process_add_item(form, order)
+            return {
+                'status': 'ok',
+                'location': request.route_url('admin:order', id=order.id),
+            }
+        else:
+            return {
+                'status': 'fail',
+                'errors': form.errors,
+            }
+
+    @view_config(route_name='admin:order:remove-item',
+                 renderer='admin/order_remove_item.html')
+    def remove_item(self):
+        request = self.request
+        order = self._get_object()
+        item = model.CartItem.get(request.matchdict['item_id'])
+        form = Form(request, RemoveItemForm)
+        assert item.cart.order == order
+        if form.validate():
+            request.flash("Removed '%s' to order." % item.product.name,
+                          'success')
+            model.Session.delete(item)
+            self._touch_object(order)
+            return HTTPFound(location=request.route_url('admin:order',
+                                                        id=order.id))
+
+        return {
+            'obj': order,
+            'item': item,
+            'renderer': FormRenderer(form)
+        }
 
     @view_config(route_name='admin:order:address',
                  renderer='admin/order_address.html')

@@ -1,0 +1,32 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="blocks" file="/common/blocks.html"/>
+
+<%def name="title()">Remove Item from Order ${obj.id}</%def>
+
+
+<section class="section-admin-order">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">${self.title()}</h1>
+
+        <p>Are you sure you wish to remove this item?</p>
+
+        <p><strong>If the item is simply being cancelled from the order, don't remove it.</strong></p>
+
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
+
+          ${forms.lvalue(item.product.name, label='Item')}
+          ${forms.lvalue(item.qty_desired, label='Qty')}
+
+          <%forms:actions>
+            <button class="btn btn-danger" type="submit">Confirm</button>
+            <a class="btn btn-default" href="${request.route_path('admin:order', id=obj.id)}">Cancel</a>
+          </%forms:actions>
+        ${renderer.end()}
+      </div>
+    </div>
+  </div>
+</section>

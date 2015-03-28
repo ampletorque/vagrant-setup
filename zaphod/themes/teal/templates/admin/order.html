@@ -9,7 +9,11 @@
 
 <%def name="item_row(item)">
   <tr>
-    <td></td>
+    <td class="table-remove">
+      <a href="${request.route_path('admin:order:remove-item', id=obj.id, item_id=item.id)}">
+        <i class="fa fa-minus-circle"></i>
+      </a>
+    </td>
     <td>
       % if item.stage == item.CROWDFUNDING:
         <span class="label label-success">Crowdfunding</span>
@@ -190,7 +194,11 @@
             </tbody>
             <tbody>
               <tr>
-                <td></td>
+                <td class="table-add">
+                  <a href="${request.route_path('admin:order:add-item', id=obj.id)}">
+                    <i class="fa fa-plus-circle"></i>
+                  </a>
+                </td>
                 <td colspan="4">
                   <a href="${request.route_path('admin:order:add-item', id=obj.id)}">Add Item</a>
                 </td>

@@ -9,6 +9,7 @@ from venusian import lift
 from formencode import Schema, NestedVariables, ForEach, validators
 
 from pyramid_uniform import Form, FormRenderer, crud_update
+from pyramid_es import get_client
 
 from ... import model
 
@@ -236,3 +237,56 @@ class ProductEditView(BaseEditView):
     def skus(self):
         product = self._get_object()
         return {'obj': product}
+
+    @view_config(route_name='admin:products:search', renderer='json')
+    def search(self):
+        request = self.request
+        q = request.params.get('q')
+
+        client = get_client(request)
+        results = client.query(model.Product, q=q).limit(40).execute()
+
+        return {
+            'total': results.total,
+            'products': [
+                {
+                    'id': product.id,
+                    'name': product.name,
+                    'project_name': product.project.name,
+                    'info_path': request.route_path('admin:product:info',
+                                                    id=product.id),
+                }
+                for product in results
+            ]
+        }
+
+    @view_config(route_name='admin:product:info', renderer='json')
+    def info(self):
+        request = self.request
+        product = model.Product.get(request.matchdict['id'])
+        return {
+            'id': product.id,
+            'name': product.name,
+            'price': product.price,
+            'international_available': product.international_available,
+            'international_surcharge': product.international_surcharge,
+            'non_physical': product.non_physical,
+            'in_stock': product.in_stock,
+            'options': [
+                {
+                    'id': option.id,
+                    'name': option.name,
+                    'values': [
+                        {
+                            'id': value.id,
+                            'description': value.description,
+                            'published': value.published,
+                        }
+                        for value in option.values
+                    ],
+                    'published': option.published,
+                    'default_value_id': option.default_value.id,
+                }
+                for option in product.options
+            ],
+        }

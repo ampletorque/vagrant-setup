@@ -113,6 +113,7 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
             shipping=self.shipping,
         )
         self.shipments.append(shipment)
+        assert items
         for item in items:
             item.shipped_time = utcnow
             item.shipment = shipment

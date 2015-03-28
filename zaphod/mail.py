@@ -173,6 +173,8 @@ def send_shipping_confirmation(request, order):
     recipient = [(order.user.name, order.user.email)]
     unshipped_items = [item for item in order.cart.items
                        if item.status not in ('cancelled', 'shipped')]
+    for shipment in order.shipments:
+        shipment.tracking_email_sent = True
     vars = {
         'order': order,
         'unshipped_items': unshipped_items,

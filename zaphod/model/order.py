@@ -154,6 +154,7 @@ class Shipment(Base, UserMixin):
     cost = Column(custom_types.Money, nullable=True)
     shipped_by_creator = Column(types.Boolean, nullable=False)
     shipping = make_address_columns('shipping')
+    tracking_email_sent = Column(types.Boolean, nullable=False, default=False)
 
     order = orm.relationship('Order', backref='shipments')
     items = orm.relationship('CartItem', backref='shipments')

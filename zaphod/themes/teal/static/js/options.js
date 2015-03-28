@@ -1,10 +1,9 @@
 /*globals define*/
 define([
   'jquery',
-  'underscore',
   'tpl!teal/options-row.erb.html',
   'tpl!teal/options-value-row.erb.html'
-], function ($, _, optionRowTemplate, valueRowTemplate) {
+], function ($, optionRowTemplate, valueRowTemplate) {
   // This module handles the product options admin interface.
 
   "use strict";

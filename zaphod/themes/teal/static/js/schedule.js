@@ -1,10 +1,9 @@
 /*globals define*/
 define([
   'jquery',
-  'underscore',
   'moment',
   'tpl!teal/schedule-row.erb.html',
-], function ($, _, moment, rowTemplate) {
+], function ($, moment, rowTemplate) {
   // This module handles the product schedule admin interface.
 
   "use strict";

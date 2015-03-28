@@ -9,14 +9,7 @@ var require = {
 
   shim: {
     underscore: {
-      exports: '_',
-      init: function () {
-         this._.templateSettings = {
-          evaluate    : /\{\{(.+?)\}\}/g,
-          interpolate : /\{\{=(.+?)\}\}/g,
-          escape      : /\{\{-(.+?)\}\}/g,
-        };
-      }
+      exports: '_'
     },
 
     'd3': {

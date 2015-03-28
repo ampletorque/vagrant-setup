@@ -10,8 +10,6 @@ log = logging.getLogger(__name__)
 
 
 class StripeInterface(object):
-    key = 'stripe'
-
     def __init__(self, credentials):
         self.api_key = credentials['api_key']
         self.prefix = credentials.get('prefix')
@@ -105,8 +103,6 @@ class StripeInterface(object):
 
 
 class StripePaymentProfile(object):
-    is_paypal = False
-
     def __init__(self, customer_id, interface, customer=None):
         self.customer_id = customer_id
         self.interface = interface
@@ -163,6 +159,13 @@ class StripePaymentProfile(object):
         # XXX assert that the amount has non-fractional cents
         return int(amount * 100)
 
+    def _charge_status(self, charge):
+        return {
+            'avs_address1_result': charge.card.address_line1_check,
+            'avs_zip_result': charge.card.address_zip_check,
+            'ccv_result': charge.card.ccv_check,
+        }
+
     def update(self, **kwargs):
         self.interface.log.info("update\tcustomer_id:%s\tkw:%r",
                                 self.customer_id, kwargs)
@@ -176,42 +179,40 @@ class StripePaymentProfile(object):
         resp = self.customer.save()
         self.interface.log.info("update\tresponse:\n%r", resp)
 
-    def authorize(self, amount, invoice_number, ccv=None):
+    def authorize(self, amount, description, ccv=None):
         """
         Authorize a transaction, and return a dict with response info.
         """
         self.interface.log.info("authorize\tcustomer_id:%s\t"
-                                "amount:%0.2f\tinvoice_number:%s",
-                                self.customer_id, amount, invoice_number)
+                                "amount:%0.2f\tdescription:%s",
+                                self.customer_id, amount, description)
         amount_cents = self._to_cents(amount)
         assert amount_cents > 50, "can't make a charge for less than $0.50"
 
         if self.interface.prefix:
-            invoice_number = '%s:%s' % (self.interface.prefix, invoice_number)
+            description = '%s:%s' % (self.interface.prefix, description)
 
         charge = self.interface._wrap_call(
             stripe.Charge.create,
             amount=amount_cents,
             currency='usd',
             customer=self.customer_id,
-            description=invoice_number,
+            description=description,
             capture=False)
 
         self.interface.log.info("authorize response:\n%r", charge)
 
         return dict(
             transaction_id=charge.id,
-            approval_code="",
             **self._charge_status(charge))
 
-    def prior_auth_capture(self, amount, invoice_number, transaction_id):
+    def prior_auth_capture(self, amount, transaction_id):
         """
         Capture a previously authorized transaction by transaction id.
         """
         self.interface.log.info("prior_auth_capture\tcustomer_id:%s\t"
-                                "amount:%0.2f\tinvoice_number:%s\t"
-                                "transaction_id:%s",
-                                self.customer_id, amount, invoice_number,
+                                "amount:%0.2f\ttransaction_id:%s",
+                                self.customer_id, amount,
                                 transaction_id)
 
         charge = self.interface._wrap_call(
@@ -223,76 +224,25 @@ class StripePaymentProfile(object):
 
         return self._charge_status(resp)
 
-    def capture(self, amount, invoice_number, approval_code, ccv=None):
-        """
-        Capture a transaction, using approval code only. Returns nothing.
-        """
-        raise NotImplementedError("stripe doesn't support capture-only txns")
-
-    def connect_auth_capture(self, amount, invoice_number, application_fee):
-        """
-        Authorize and capture a transaction on a Stripe Connect gateway.
-
-        TODO: Consolidate this into the .auth_capture() method, collecting
-              the additional parameters from more stored state in the gateway
-              credentials or settings (like application fee and parent gw).
-        """
-        self.interface.log.info("connect_auth_capture\tcustomer_id:%s\t"
-                                "amount:%0.2f\tinvoice_number:%s\t"
-                                "application_fee:%s",
-                                self.customer_id, amount, invoice_number,
-                                application_fee)
-        token = self.interface._wrap_call(
-            stripe.Token.create,
-            customer=self.customer_id)
-        self.interface.log.info("connect_auth_capture token:\n%r", token)
-        amount_cents = self._to_cents(amount)
-        assert amount_cents > 50, "can't make a charge for less than $0.50"
-
-        application_fee_cents = self._to_cents(application_fee)
-
-        if self.interface.prefix:
-            invoice_number = '%s:%s' % (self.interface.prefix, invoice_number)
-
-        charge = self.interface._wrap_call(
-            stripe.Charge.create,
-            amount=amount_cents,
-            currency='usd',
-            card=token.id,
-            description=invoice_number,
-            application_fee=application_fee_cents)
-
-        self.interface.log.info("connect_auth_capture response:\n%r", charge)
-
-        fees = {}
-        for fee_detail in charge.fee_details:
-            fees[fee_detail.type] = fee_detail.amount
-
-        return dict(
-            transaction_id=charge.id,
-            approval_code="",
-            fees=fees,
-            **self._charge_status(charge))
-
-    def auth_capture(self, amount, invoice_number, ccv=None):
+    def auth_capture(self, amount, description, ccv=None):
         """
         Authorize and capture a transaction.
         """
         self.interface.log.info("auth_capture\tcustomer_id:%s\t"
-                                "amount:%0.2f\tinvoice_number:%s\t",
-                                self.customer_id, amount, invoice_number)
+                                "amount:%0.2f\tdescription:%s\t",
+                                self.customer_id, amount, description)
         amount_cents = self._to_cents(amount)
         assert amount_cents > 50, "can't make a charge for less than $0.50"
 
         if self.interface.prefix:
-            invoice_number = '%s:%s' % (self.interface.prefix, invoice_number)
+            description = '%s:%s' % (self.interface.prefix, description)
 
         charge = self.interface._wrap_call(
             stripe.Charge.create,
             amount=amount_cents,
             currency='usd',
             customer=self.customer_id,
-            description=invoice_number)
+            description=description)
 
         self.interface.log.info("auth_capture response:\n%r", charge)
 
@@ -301,14 +251,13 @@ class StripePaymentProfile(object):
             approval_code="",
             **self._charge_status(charge))
 
-    def refund(self, amount, invoice_number, transaction_id):
+    def refund(self, amount, transaction_id):
         """
         Refund a previously captured transaction.
         """
         self.interface.log.info("refund\tcustomer_id:%s\tamount:%0.2f\t"
-                                "invoice_number:%s\ttransaction_id:%s",
-                                self.customer_id, amount, invoice_number,
-                                transaction_id)
+                                "transaction_id:%s",
+                                self.customer_id, amount, transaction_id)
 
         charge = self.interface._wrap_call(
             stripe.Charge.retrieve,

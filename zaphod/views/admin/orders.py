@@ -209,14 +209,28 @@ class OrderEditView(BaseEditView):
         request = self.request
         order = self._get_object()
 
-        form = Form(request, schema=AddPaymentForm)
+        saved_methods = []
+        # gather payment methods from user and from this order
+        for method in order.user.payment_methods:
+            if method not in saved_methods:
+                saved_methods.append(method)
+        for payment in order.payments:
+            if hasattr(payment, 'method'):
+                if payment.method not in saved_methods:
+                    saved_methods.append(payment.method)
+
+        form = Form(request, AddPaymentForm)
         if form.validate():
             # XXX do stuff
             self._touch_object(order)
             return HTTPFound(location=request.route_url('admin:order',
                                                         id=order.id))
 
-        return {'obj': order, 'renderer': FormRenderer(form)}
+        return {
+            'saved_methods': saved_methods,
+            'obj': order,
+            'renderer': FormRenderer(form),
+        }
 
     @view_config(route_name='admin:order:refund',
                  renderer='admin/order_refund.html')

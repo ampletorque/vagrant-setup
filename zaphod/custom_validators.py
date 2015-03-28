@@ -349,3 +349,27 @@ class CloneFields(FancyValidator):
             from_val = value[self.from_fields]
             value[self.to_fields] = copy.copy(from_val)
         return value
+
+
+class ListNotEmpty(FancyValidator):
+    """
+    Test that the given field (which should be a list of items) isn't empty.
+    """
+    field_name = None
+
+    __unpackargs__ = ('field_name',)
+
+    messages = dict(
+        emptyList="Must specify at least one item.")
+
+    def validate_python(self, fields_dict, state):
+        collection = fields_dict[self.field_name]
+        if not collection:
+            message = self.message('emptyList', state)
+            raise Invalid(
+                message,
+                fields_dict,
+                state,
+                error_dict={
+                    self.field_name: message,
+                })

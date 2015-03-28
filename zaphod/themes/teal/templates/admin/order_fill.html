@@ -14,7 +14,7 @@
 
         ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
 
-          <%forms:element label="Items" hint="Select items in this shipment.">
+          <%forms:element renderer="${renderer}" name="item_ids" label="Items" hint="Select items in this shipment.">
             <div class="table-responsive">
               <table class="table">
                 <thead>

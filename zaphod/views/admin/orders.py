@@ -42,9 +42,10 @@ class CancelForm(Schema):
 
 class FillForm(Schema):
     allow_extra_fields = False
+    chained_validators = [custom_validators.ListNotEmpty('item_ids')]
     tracking_number = validators.UnicodeString()
     shipped_by_creator = validators.Bool()
-    cost = validators.Number()
+    cost = validators.Number(not_empty=True)
     item_ids = ForEach(validators.Int(not_empty=True))
     send_tracking_email = validators.Bool()
 
@@ -135,26 +136,22 @@ class OrderEditView(BaseEditView):
                 ci = model.CartItem.get(item_id)
                 assert ci.cart.order == order
                 items.add(ci)
-            if items:
-                order.ship_items(
-                    items=items,
-                    tracking_number=form.data['tracking_number'],
-                    cost=form.data['cost'],
-                    shipped_by_creator=form.data['shipped_by_creator'],
-                    user=request.user)
-                s = 'Order filled. '
-                if form.data['send_tracking_email']:
-                    mail.send_shipping_confirmation(request, order)
-                    s += 'Shipping confirmation email sent.'
-                else:
-                    s += 'Shipping confirmation email not sent.'
-                request.flash(s, 'success')
-                self._touch_object(order)
-                return HTTPFound(location=request.route_url('admin:order',
-                                                            id=order.id))
+            order.ship_items(
+                items=items,
+                tracking_number=form.data['tracking_number'],
+                cost=form.data['cost'],
+                shipped_by_creator=form.data['shipped_by_creator'],
+                user=request.user)
+            s = 'Order filled. '
+            if form.data['send_tracking_email']:
+                mail.send_shipping_confirmation(request, order)
+                s += 'Shipping confirmation email sent.'
             else:
-                request.flash("No items were selected.", 'error')
-
+                s += 'Shipping confirmation email not sent.'
+            request.flash(s, 'success')
+            self._touch_object(order)
+            return HTTPFound(location=request.route_url('admin:order',
+                                                        id=order.id))
         return {'obj': order, 'renderer': FormRenderer(form)}
 
     @view_config(route_name='admin:order:add-item',

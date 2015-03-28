@@ -1,9 +1,9 @@
 /*globals define*/
 define([
   'jquery',
-  'tpl!teal/additem-result.erb.html',
-  'tpl!teal/additem-form.erb.html',
-  'tpl!teal/additem-option.erb.html'
+  'tpl!teal/templates/additem-result.erb.html',
+  'tpl!teal/templates/additem-form.erb.html',
+  'tpl!teal/templates/additem-option.erb.html'
 ], function ($, resultTemplate, formTemplate, optionTemplate) {
   // This module handles the 'item adder' widget.
 

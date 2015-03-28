@@ -1,5 +1,5 @@
 /*globals define*/
-define(['jquery', 'tpl!teal/images-row.erb.html'], function ($, rowTemplate) {
+define(['jquery', 'tpl!teal/templates/images-row.erb.html'], function ($, rowTemplate) {
   // This module handles the admin interface's image association widget.
 
   // TODO:

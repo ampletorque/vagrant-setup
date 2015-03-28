@@ -2,7 +2,7 @@
 define([
   'jquery',
   'moment',
-  'tpl!teal/schedule-row.erb.html',
+  'tpl!teal/templates/schedule-row.erb.html',
 ], function ($, moment, rowTemplate) {
   // This module handles the product schedule admin interface.
 

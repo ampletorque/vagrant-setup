@@ -9,7 +9,7 @@
   $.fn.caret = function (options, opt2) {
     var
     t = this[0],
-    msie = $.browser.msie,
+    msie = navigator.userAgent.indexOf('MSIE') > 0,
     start, end, re,
     range, stored_range, s, e, val, selection, te;
 

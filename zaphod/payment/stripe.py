@@ -6,6 +6,8 @@ from decimal import Decimal
 
 import stripe
 
+stripe.api_version = '2012-11-07'
+
 from . import exc
 
 log = logging.getLogger(__name__)

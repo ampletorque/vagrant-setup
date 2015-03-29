@@ -20,6 +20,7 @@ def includeme(config):
     config.add_route('admin:reports:cashflow', '/cashflow')
     config.add_route('admin:reports:inventory', '/inventory')
     config.add_route('admin:reports:payments', '/payments')
+    config.add_route('admin:reports:chargebacks', '/chargebacks')
 
     config.add_route('admin:reports:warehouse-transactions',
                      '/warehouse-transactions')

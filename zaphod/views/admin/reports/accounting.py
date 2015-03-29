@@ -160,3 +160,48 @@ class AccountingReportsView(BaseReportsView):
             'start_date': start_date,
             'end_date': end_date,
         }
+
+    @view_config(route_name='admin:reports:chargebacks',
+                 renderer='admin/reports/chargebacks.html')
+    def chargebacks(self):
+        utcnow, start_date, end_date, start, end = self._range()
+
+        q = model.Session.query(model.CreditCardPayment).\
+            filter(model.CreditCardPayment.chargeback_state != None,
+                   model.CreditCardPayment.created_time >= start,
+                   model.CreditCardPayment.created_time < end)
+
+        chargeback_payments = q.all()
+
+        # number of chargebacks
+        chargeback_count = len(chargeback_payments)
+
+        # $ total of chargebacks
+        chargeback_amount = sum(pp.amount for pp in chargeback_payments)
+
+        # chargeback rate as % of transactions
+        total_count = model.Session.query(model.CreditCardPayment).\
+            filter(model.CreditCardPayment.amount > 0,
+                   model.CreditCardPayment.created_time >= start,
+                   model.CreditCardPayment.created_time < end).\
+            count()
+
+        # chargeback rate as % of payment amounts
+        total_amount = model.Session.query(
+            func.sum(model.CreditCardPayment.amount)).\
+            filter(model.CreditCardPayment.created_time >= start,
+                   model.CreditCardPayment.created_time < end).\
+            scalar()
+
+        # list of payments with chargebacks, linked to order pages
+
+        return {
+            'start_date': start_date,
+            'end_date': end_date,
+
+            'chargeback_payments': chargeback_payments,
+            'chargeback_count': chargeback_count,
+            'chargeback_amount': chargeback_amount,
+            'total_count': total_count,
+            'total_amount': total_amount,
+        }

@@ -6,22 +6,23 @@ from pyramid.settings import asbool
 from .. import model
 
 from .exc import UnknownGatewayException
-from .network_free import TestPaymentInterface
+from .mock import MockPaymentInterface
 from .stripe import StripeInterface
 
 
 def get_payment_interface(registry, gateway_id):
     settings = registry.settings
-    settings.setdefault('payment_interfaces', {})
-    payment_interfaces = settings['payment_interfaces']
+    if not hasattr(registry, 'payment_interfaces'):
+        registry.payment_interfaces = {}
+    payment_interfaces = registry.payment_interfaces
     if gateway_id not in payment_interfaces:
         gw = model.Session.query(model.PaymentGateway).\
             filter_by(dev=(asbool(settings.get('debug')) or
                            asbool(settings.get('testing'))),
                       enabled=True,
                       id=gateway_id).first()
-        if settings.get('payment.network_free'):
-            iface = TestPaymentInterface()
+        if asbool(settings.get('payment.mock')):
+            iface = MockPaymentInterface()
         elif gw is None:
             raise UnknownGatewayException()
         else:

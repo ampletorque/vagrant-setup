@@ -13,6 +13,8 @@ settings = {
     'pyramid_frontend.compiled_asset_dir': '/tmp/zaphod/compiled',
     'pyramid_frontend.theme': 'teal',
 
+    'payment.mock': 'true',
+
     'gimlet.secret': 's3krit',
     'cache.backend': 'dogpile.cache.memory',
     'cache.prefix': 'test:',

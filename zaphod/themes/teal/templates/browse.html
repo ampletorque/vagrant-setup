@@ -71,6 +71,10 @@
           <hr>
         % endif
 
+        % if not projects:
+          <p>No projects found!</p>
+        % endif
+
         % if feature_count:
           ${tiles.tile_row(projects[:feature_count], cols=feature_count)}
         % endif

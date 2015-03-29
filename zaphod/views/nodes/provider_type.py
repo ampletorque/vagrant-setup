@@ -3,8 +3,11 @@ from __future__ import (absolute_import, division, print_function,
 
 from ... import model
 
+from . import NodePredicate
 
-def provider_type_view(provider_type, system):
+
+def provider_type_view(context, request):
+    provider_type = context.node
     providers = model.Session.query(model.Provider).\
         filter(model.Provider.types.contains(provider_type)).\
         filter(model.Provider.published == True).\
@@ -18,5 +21,7 @@ def provider_type_view(provider_type, system):
 
 
 def includeme(config):
-    config.add_node_view(provider_type_view, model.ProviderType,
-                         renderer='provider_type.html')
+    config.add_view(provider_type_view,
+                    route_name='node',
+                    custom_predicates=[NodePredicate(model.ProviderType)],
+                    renderer='provider_type.html')

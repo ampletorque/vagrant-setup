@@ -54,7 +54,6 @@ def main(global_config, **settings):
     config.include('.renderers')
     config.include('.auth')
     config.include('.themes')
-    config.include('.nodes')
     config.include('.views')
     config.include('.tasks')
 

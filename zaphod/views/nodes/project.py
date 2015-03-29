@@ -7,6 +7,8 @@ from pyramid_uniform import Form, FormRenderer
 
 from ... import model, mail
 
+from . import NodePredicate
+
 
 class AskQuestionForm(Schema):
     allow_extra_fields = False
@@ -14,8 +16,8 @@ class AskQuestionForm(Schema):
     message = validators.UnicodeString(not_empty=True)
 
 
-def ask_question_view(project, system):
-    request = system['request']
+def ask_question_view(context, request):
+    project = context.node
     form = Form(request, schema=AskQuestionForm)
     if form.validate():
         email = form.data['email']
@@ -49,8 +51,8 @@ def ask_question_view(project, system):
     }
 
 
-def remind_me_view(project, system):
-    request = system['request']
+def remind_me_view(context, request):
+    project = context.node
     if not request.method == 'POST':
         raise HTTPNotFound
     pe = model.ProjectEmail(project=project,
@@ -64,8 +66,8 @@ def remind_me_view(project, system):
     return HTTPFound(location=request.node_url(project))
 
 
-def prelaunch_signup_view(project, system):
-    request = system['request']
+def prelaunch_signup_view(context, request):
+    project = context.node
     if not request.method == 'POST':
         raise HTTPNotFound
     pe = model.ProjectEmail(project=project,
@@ -79,14 +81,16 @@ def prelaunch_signup_view(project, system):
     return HTTPFound(location=request.node_url(project))
 
 
-def updates_view(project, system):
+def updates_view(context, request):
+    project = context.node
     return {
         'action': 'updates',
         'project': project,
     }
 
 
-def backers_view(project, system):
+def backers_view(context, request):
+    project = context.node
     q = model.Session.query(model.User).\
         join(model.User.orders).\
         join(model.Order.cart).\
@@ -106,7 +110,8 @@ def backers_view(project, system):
     }
 
 
-def project_base_view(project, system):
+def project_base_view(context, request):
+    project = context.node
     return {
         'action': None,
         'project': project,
@@ -114,18 +119,33 @@ def project_base_view(project, system):
 
 
 def includeme(config):
-    config.add_node_view(project_base_view, model.Project,
-                         renderer='project.html')
-    config.add_node_view(remind_me_view, model.Project,
-                         suffix=['remind-me'])
-    config.add_node_view(ask_question_view, model.Project,
-                         suffix=['ask-question'],
-                         renderer='ask_question.html')
-    config.add_node_view(updates_view, model.Project,
-                         suffix=['updates'],
-                         renderer='updates.html')
-    config.add_node_view(backers_view, model.Project,
-                         suffix=['backers'],
-                         renderer='backers.html')
-    config.add_node_view(prelaunch_signup_view, model.Project,
-                         suffix=['prelaunch-signup'])
+    config.add_view(
+        project_base_view,
+        route_name='node',
+        custom_predicates=[NodePredicate(model.Project)],
+        renderer='project.html')
+    config.add_view(
+        remind_me_view,
+        route_name='node',
+        custom_predicates=[NodePredicate(model.Project, suffix='remind-me')])
+    config.add_view(
+        ask_question_view,
+        route_name='node',
+        custom_predicates=[NodePredicate(model.Project,
+                                         suffix='ask-question')],
+        renderer='ask_question.html')
+    config.add_view(
+        updates_view,
+        route_name='node',
+        custom_predicates=[NodePredicate(model.Project, suffix='updates')],
+        renderer='updates.html')
+    config.add_view(
+        backers_view,
+        route_name='node',
+        custom_predicates=[NodePredicate(model.Project, suffix='backers')],
+        renderer='backers.html')
+    config.add_view(
+        prelaunch_signup_view,
+        route_name='node',
+        custom_predicates=[NodePredicate(model.Project,
+                                         suffix='prelaunch-signup')])

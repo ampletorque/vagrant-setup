@@ -3,8 +3,11 @@ from __future__ import (absolute_import, division, print_function,
 
 from ... import model
 
+from . import NodePredicate
 
-def article_view(article, system):
+
+def article_view(context, request):
+    article = context.node
     if article.show_article_list:
         related_articles = model.Session.query(model.Article).\
             filter_by(category=article.category).\
@@ -19,4 +22,7 @@ def article_view(article, system):
 
 
 def includeme(config):
-    config.add_node_view(article_view, model.Article, renderer='article.html')
+    config.add_view(article_view,
+                    route_name='node',
+                    custom_predicates=[NodePredicate(model.Article)],
+                    renderer='article.html')

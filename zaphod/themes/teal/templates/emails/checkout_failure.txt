@@ -1,4 +1,4 @@
-A payment error occurred during checkout on ${order.site.settings['name']}
+A payment error occurred during checkout on Crowd Supply
 
 The error was:
 ${exc}

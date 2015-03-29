@@ -1,0 +1,28 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="blocks" file="/common/blocks.html"/>
+
+<%def name="title()">Add Check Payment to Order ${obj.id}</%def>
+
+
+<section class="section-admin-order-payment">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">${self.title()}</h1>
+
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
+          ${forms.ldatepicker(renderer, 'check_date', hint='The date on the check.')}
+          ${forms.ltext(renderer, 'reference', hint='Include the full check number here.')}
+          ${forms.ltext(renderer, 'amount', obj.unpaid_amount, prefix='$')}
+
+          <%forms:actions>
+            <button class="btn btn-primary" type="submit">Add Payment</button>
+            <a class="btn btn-default" href="${request.route_path('admin:order', id=obj.id)}">Cancel</a>
+          </%forms:actions>
+        ${renderer.end()}
+      </div>
+    </div>
+  </div>
+</section>

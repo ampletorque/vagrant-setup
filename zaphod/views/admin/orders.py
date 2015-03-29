@@ -24,9 +24,22 @@ class EditUserForm(Schema):
     user_id = validators.Int(not_empty=True)
 
 
-class AddPaymentForm(Schema):
+class AddCCPaymentForm(Schema):
     allow_extra_fields = False
-    # XXX
+    amount = validators.Number(not_empty=True, min=0)
+
+
+class AddCashPaymentForm(Schema):
+    allow_extra_fields = False
+    amount = validators.Number(not_empty=True, min=0)
+
+
+class AddCheckPaymentForm(Schema):
+    allow_extra_fields = False
+    amount = validators.Number(not_empty=True, min=0)
+    reference = validators.UnicodeString(not_empty=True)
+    check_date = validators.DateConverter(month_style='yyyy/mm/dd',
+                                          not_empty=True)
 
 
 class AddRefundForm(Schema):
@@ -274,9 +287,53 @@ class OrderEditView(BaseEditView):
 
         return {'obj': order, 'renderer': FormRenderer(form)}
 
-    @view_config(route_name='admin:order:payment',
-                 renderer='admin/order_payment.html')
-    def payment(self):
+    @view_config(route_name='admin:order:payment-cash',
+                 renderer='admin/order_payment_cash.html')
+    def payment_cash(self):
+        request = self.request
+        order = self._get_object()
+        form = Form(request, AddCashPaymentForm)
+        if form.validate():
+            order.payments.append(model.CashPayment(
+                amount=form.data['amount'],
+                created_by=request.user,
+            ))
+            request.flash("Added cash payment.", 'success')
+            self._touch_object(order)
+            return HTTPFound(location=request.route_url('admin:order',
+                                                        id=order.id))
+
+        return {
+            'obj': order,
+            'renderer': FormRenderer(form),
+        }
+
+    @view_config(route_name='admin:order:payment-check',
+                 renderer='admin/order_payment_check.html')
+    def payment_check(self):
+        request = self.request
+        order = self._get_object()
+        form = Form(request, AddCheckPaymentForm)
+        if form.validate():
+            order.payments.append(model.CheckPayment(
+                amount=form.data['amount'],
+                reference=form.data['reference'],
+                check_date=form.data['check_date'],
+                created_by=request.user,
+            ))
+            request.flash("Added check payment.", 'success')
+            self._touch_object(order)
+            return HTTPFound(location=request.route_url('admin:order',
+                                                        id=order.id))
+
+        return {
+            'obj': order,
+            'renderer': FormRenderer(form),
+        }
+
+    @view_config(route_name='admin:order:payment-cc',
+                 renderer='admin/order_payment_cc.html')
+    def payment_cc(self):
         request = self.request
         registry = request.registry
         order = self._get_object()
@@ -305,7 +362,7 @@ class OrderEditView(BaseEditView):
                     saved_order_methods.append(pp.method)
                     load(pp.method)
 
-        form = Form(request, AddPaymentForm)
+        form = Form(request, AddCCPaymentForm)
         if form.validate():
             # XXX do stuff
             self._touch_object(order)

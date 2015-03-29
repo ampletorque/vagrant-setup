@@ -126,7 +126,9 @@
         </h1>
 
         <div class="well">
-          <a class="btn btn-primary" href="${request.route_path('admin:order:print', id=obj.id)}">Print Invoice</a>
+          % if not obj.unpaid_amount:
+            <a class="btn btn-primary" href="${request.route_path('admin:order:print', id=obj.id)}">Print Invoice</a>
+          % endif
           <a class="btn btn-primary" href="${request.route_path('admin:order:resend-confirmation', id=obj.id)}">Resend Order Confirmation</a>
 
           % if any(item.status == 'shipped' for item in obj.cart.items):
@@ -135,7 +137,9 @@
 
           % if not obj.closed:
             <a class="btn btn-danger" href="${request.route_path('admin:order:cancel', id=obj.id)}">Cancel Order</a>
-            <a class="btn btn-default" href="${request.route_path('admin:order:fill', id=obj.id)}">Fill Order</a>
+            % if not obj.unpaid_amount:
+              <a class="btn btn-default" href="${request.route_path('admin:order:fill', id=obj.id)}">Fill Order</a>
+            % endif
           % endif
         </div>
 
@@ -218,7 +222,10 @@
               <tr>
                 <td></td>
                 <td colspan="4">
-                  <a href="${request.route_path('admin:order:payment', id=obj.id)}">Add Payment</a>
+                  Add Payment:
+                  <a href="${request.route_path('admin:order:payment-cc', id=obj.id)}">Credit Card</a> -
+                  <a href="${request.route_path('admin:order:payment-cash', id=obj.id)}">Cash</a> -
+                  <a href="${request.route_path('admin:order:payment-check', id=obj.id)}">Check</a>
                   /
                   <a href="${request.route_path('admin:order:refund', id=obj.id)}">Add Refund</a>
                 </td>

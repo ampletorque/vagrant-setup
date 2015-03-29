@@ -1,0 +1,13 @@
+<%inherit file="base.txt"/>\
+Welcome to Crowd Supply!
+
+An account has been created for you. If you would like to set your password now, visit the following URL:
+
+${link}
+
+You can also click the "Forgot Password" link next to the account login form at any time in the future.
+
+As always, feel free to contact us for assistance or concerns.
+
+Thank You,
+Crowd Supply Support

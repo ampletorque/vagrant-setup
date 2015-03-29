@@ -198,3 +198,24 @@ def send_payment_confirmation(request, project, order):
         'order': order,
     }
     send_with_admin(request, 'payment_confirmation', vars=vars, to=recipient)
+
+
+def _send_reset_email(request, user, token, template_name):
+    recipient = [(user.name, user.email)]
+    link = request.route_url('forgot-reset', _query=dict(
+        email=user.email,
+        token=token,
+    ))
+    vars = {
+        'link': link,
+        'user': user,
+    }
+    send(request, template_name, vars, to=recipient)
+
+
+def send_password_reset(request, user, token):
+    _send_reset_email(request, user, token, 'reset_password')
+
+
+def send_welcome_email(request, user, token):
+    _send_reset_email(request, user, token, 'welcome_email')

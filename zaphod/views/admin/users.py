@@ -5,7 +5,7 @@ from pyramid.view import view_defaults
 from venusian import lift
 from formencode import Schema, validators
 
-from ... import model, custom_validators
+from ... import mail, model, custom_validators
 
 from ...admin import BaseEditView, BaseListView, BaseCreateView
 
@@ -53,3 +53,19 @@ class UserCreateView(BaseCreateView):
     class CreateForm(Schema):
         allow_extra_fields = False
         name = validators.UnicodeString(not_empty=True)
+        email = validators.Email(not_empty=True)
+        password = validators.UnicodeString()
+        password2 = validators.UnicodeString()
+        admin = validators.Bool()
+        send_welcome_email = validators.Bool()
+        chained_validators = [validators.FieldsMatch('password', 'password2')]
+
+    def _create_object(self, form):
+        request = self.request
+        del form.data['password2']
+        send_email = form.data.pop('send_welcome_email')
+        obj = BaseCreateView._create_object(self, form)
+        if send_email:
+            token = obj.set_reset_password_token()
+            mail.send_welcome_email(request, obj, token)
+        return obj

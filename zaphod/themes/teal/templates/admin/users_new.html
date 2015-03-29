@@ -14,6 +14,12 @@
 
         ${renderer.begin(id='create-form', class_='form-horizontal form-wrapped')}
           ${forms.ltext(renderer, 'name')}
+          ${forms.ltext(renderer, 'email')}
+          ${forms.lpassword(renderer, 'password')}
+          ${forms.lpassword(renderer, 'password2', label='Confirm', hint='Password optional: leave blank to require the user to set a password.')}
+
+          ${forms.lcheckbox(renderer, 'admin', checked=False, label='Admin user')}
+          ${forms.lcheckbox(renderer, 'send_welcome_email', checked=False, label='Send a welcome email to this user')}
 
           <%forms:actions>
             <button class="btn btn-primary" type="submit">Save</button>

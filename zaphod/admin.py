@@ -151,14 +151,18 @@ class BaseCreateView(object):
     def __init__(self, request):
         self.request = request
 
+    def _create_object(self, form):
+        obj = self.cls(**form.data)
+        model.Session.add(obj)
+        return obj
+
     @view_config(permission='admin')
     def create(self):
         request = self.request
 
         form = Form(request, schema=self.CreateForm)
         if form.validate():
-            obj = self.cls(**form.data)
-            model.Session.add(obj)
+            obj = self._create_object(form)
             model.Session.flush()
             request.flash("Created.", 'success')
             return HTTPFound(location=request.route_url(self.obj_route_name,

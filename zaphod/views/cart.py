@@ -21,13 +21,12 @@ class CheckoutForm(Schema):
     allow_extra_fields = False
     pre_validators = [NestedVariables,
                       custom_validators.CloneFields(
-                          'shipping', 'billing',
+                          'shipping', 'cc.billing',
                           when='billing_same_as_shipping')]
 
     shipping = custom_validators.AddressSchema
 
     billing_same_as_shipping = validators.Bool()
-    billing = custom_validators.AddressSchema
 
     email = validators.Email(not_empty=True, strip=True)
     comments = validators.UnicodeString()
@@ -186,12 +185,13 @@ class CartView(object):
             # XXX Need to transactionally send a welcome email to this user.
         return user
 
-    def _handle_new_payment(self, order, form, email, billing, user):
+    def _handle_new_payment(self, order, form, email, user):
         request = self.request
         session = request.session
         cart = order.cart
 
         ccf = form.data['cc']
+        billing = model.Address(**ccf['billing'])
 
         gateway_id = request.registry.settings['payment_gateway_id']
         iface = payment.get_payment_interface(request.registry, gateway_id)
@@ -253,7 +253,6 @@ class CartView(object):
 
         email = form.data['email']
         shipping = model.Address(**form.data['shipping'])
-        billing = model.Address(**form.data['billing'])
         comments = form.data['comments']
 
         # update item shipping prices in case of international
@@ -280,7 +279,7 @@ class CartView(object):
         if form.data['cc'] == 'saved':
             order.initial_payment_method = payment_method
         else:
-            self._handle_new_payment(order, form, email, billing, user)
+            self._handle_new_payment(order, form, email, user)
 
         # Save the order ID
         request.session['new_order_id'] = order.id

@@ -13,7 +13,7 @@
         <h1 class="page-header">${self.title()}</h1>
 
         ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
-          ${forms.ltext(renderer, 'amount', obj.unpaid_amount, prefix='$')}
+          ${forms.ltext(renderer, 'amount', obj.unauthorized_amount, prefix='$')}
 
           <%forms:actions>
             <button class="btn btn-primary" type="submit">Add Payment</button>

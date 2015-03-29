@@ -1,6 +1,8 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+from decimal import Decimal
+
 from pyramid.httpexceptions import HTTPFound
 from pyramid.view import view_defaults, view_config
 from venusian import lift
@@ -24,9 +26,17 @@ class EditUserForm(Schema):
     user_id = validators.Int(not_empty=True)
 
 
-class AddCCPaymentForm(Schema):
+class AddNewCCPaymentForm(Schema):
+    allow_extra_fields = False
+    pre_validators = [NestedVariables]
+    amount = validators.Number(not_empty=True, min=0)
+    cc = custom_validators.CreditCardSchema
+
+
+class AddExistingCCPaymentForm(Schema):
     allow_extra_fields = False
     amount = validators.Number(not_empty=True, min=0)
+    method_id = validators.Int(not_empty=True)
 
 
 class AddCashPaymentForm(Schema):
@@ -331,9 +341,34 @@ class OrderEditView(BaseEditView):
             'renderer': FormRenderer(form),
         }
 
-    @view_config(route_name='admin:order:payment-cc',
-                 renderer='admin/order_payment_cc.html')
-    def payment_cc(self):
+    def _authorize_payment(self, order, method, amount):
+        request = self.request
+        registry = request.registry
+        iface = payment.get_payment_interface(registry, method.gateway.id)
+        profile = iface.get_profile(method.reference)
+        resp = profile.authorize(
+            amount=Decimal(amount),
+            description='order-%d' % order.id,
+            ip=method.remote_addr,
+            user_agent=request.user_agent,
+            referrer=request.route_url('cart'),
+        )
+        order.payments.append(model.CreditCardPayment(
+            method=method,
+            transaction_id=resp['transaction_id'],
+            invoice_number='%d-unknown' % order.id,
+            authorized_amount=amount,
+            amount=0,
+            avs_address1_result=resp['avs_address1_result'],
+            avs_zip_result=resp['avs_zip_result'],
+            ccv_result=resp['ccv_result'],
+            card_type=resp['card_type'],
+            created_by=request.user,
+        ))
+
+    @view_config(route_name='admin:order:payment-cc-existing',
+                 renderer='admin/order_payment_cc_existing.html')
+    def payment_cc_existing(self):
         request = self.request
         registry = request.registry
         order = self._get_object()
@@ -362,9 +397,10 @@ class OrderEditView(BaseEditView):
                     saved_order_methods.append(pp.method)
                     load(pp.method)
 
-        form = Form(request, AddCCPaymentForm)
+        form = Form(request, AddExistingCCPaymentForm)
         if form.validate():
-            # XXX do stuff
+            method = model.PaymentMethod.get(form.data['method_id'])
+            self._authorize_payment(order, method, form.data['amount'])
             self._touch_object(order)
             return HTTPFound(location=request.route_url('admin:order',
                                                         id=order.id))
@@ -373,6 +409,50 @@ class OrderEditView(BaseEditView):
             'masked_cards': masked_cards,
             'saved_user_methods': saved_user_methods,
             'saved_order_methods': saved_order_methods,
+            'obj': order,
+            'renderer': FormRenderer(form),
+        }
+
+    @view_config(route_name='admin:order:payment-cc-new',
+                 renderer='admin/order_payment_cc_new.html')
+    def payment_cc_new(self):
+        request = self.request
+        registry = request.registry
+        order = self._get_object()
+
+        form = Form(request, AddNewCCPaymentForm)
+        if form.validate():
+            ccf = form.data['cc']
+            billing = model.Address(**ccf['billing'])
+            gateway_id = registry.settings['payment_gateway_id']
+            iface = payment.get_payment_interface(registry, gateway_id)
+            profile = iface.create_profile(
+                card_number=ccf['number'],
+                exp_year=ccf['expires_year'],
+                exp_month=ccf['expires_month'],
+                ccv=ccf['code'],
+                billing=billing,
+                email=order.user.email,
+            )
+            method = model.PaymentMethod(
+                user=order.user,
+                payment_gateway_id=gateway_id,
+                billing=billing,
+                reference=profile.reference,
+                save=False,
+                stripe_js=False,
+                remote_addr=request.remote_addr,
+                user_agent=request.user_agent,
+                session_id=request.session.id,
+            )
+            model.Session.add(method)
+            model.Session.flush()
+            self._authorize_payment(order, method, form.data['amount'])
+            self._touch_object(order)
+            return HTTPFound(location=request.route_url('admin:order',
+                                                        id=order.id))
+
+        return {
             'obj': order,
             'renderer': FormRenderer(form),
         }

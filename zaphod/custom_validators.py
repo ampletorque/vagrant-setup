@@ -283,6 +283,7 @@ class CreditCardSchema(Schema):
                                  'empty': "Security code required"
                              })
     save = validators.Bool()
+    billing = AddressSchema
 
 
 class CommentBody(validators.FancyValidator):
@@ -347,7 +348,13 @@ class CloneFields(FancyValidator):
         if ((self.when in value) and
                 validators.Bool.to_python(value[self.when])):
             from_val = value[self.from_fields]
-            value[self.to_fields] = copy.copy(from_val)
+            tree = value
+            pieces = self.to_fields.split('.')
+            head = pieces[:-1]
+            tail = pieces[-1]
+            for piece in head:
+                tree = tree[piece]
+            tree[tail] = copy.copy(from_val)
         return value
 
 

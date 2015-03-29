@@ -3,23 +3,7 @@
 <%namespace name="forms" file="/common/forms.html"/>
 <%namespace name="blocks" file="/common/blocks.html"/>
 
-<%def name="title()">Add CC Payment to Order ${obj.id}</%def>
-
-
-<%def name="saved_method(renderer, masked_cards, method, checked)">
-  <p>
-    <label>
-      ${renderer.radio('cc.use_saved', method.id, checked=checked)}
-      &nbsp;
-      Use credit card on file ending in ${masked_cards.get(method, '????')} -
-      % if method.save:
-        Saved by customer
-      % else:
-        Not saved by customer
-      % endif
-    </label>
-  </p>
-</%def>
+<%def name="title()">Add Payment On New CC to Order ${obj.id}</%def>
 
 
 <section class="section-admin-order">
@@ -29,39 +13,7 @@
         <h1 class="page-header">${self.title()}</h1>
 
         ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
-
-          % if masked_cards:
-            <%forms:element renderer="${renderer}" name="cc.use_saved" label="Use Saved Method">
-
-              <p>
-                <label>
-                  ${renderer.radio('cc.use_saved', None, checked=False)}
-                  &nbsp;
-                  Input new credit card
-                </label>
-              </p>
-
-              % if obj.initial_payment_method:
-                <h5>Initial checkout payment method</h5>
-                ${self.saved_method(renderer, masked_cards, obj.initial_payment_method, checked=True)}
-              % endif
-
-              % if saved_user_methods:
-                <h5>User's saved payment methods</h5>
-                % for method in saved_user_methods:
-                  ${self.saved_method(renderer, masked_cards, method, checked=False)}
-                % endfor
-              % endif
-
-              % if saved_order_methods:
-                <h5>Payment methods used on order</h5>
-                % for method in saved_order_methods:
-                  ${self.saved_method(renderer, masked_cards, method, checked=False)}
-                % endfor
-              % endif
-
-            </%forms:element>
-          % endif
+          ${forms.ltext(renderer, 'amount', obj.unauthorized_amount, prefix='$')}
 
           <div class="credit-card-fields">
             <%forms:element renderer="${renderer}" name="cc.number" label="Card Number">
@@ -94,15 +46,14 @@
             </%forms:element>
 
             ${forms.lcheckbox(renderer, 'cc.save', checked=True, label='Save credit card information for future use')}
-            ${forms.lcheckbox(renderer, 'billing_same_as_shipping', checked=False, label='Credit card billing address is the same as the shipping address')}
 
             <div class="billing-fields">
-              ${forms.address_fields(renderer, 'billing', None)}
+              ${forms.address_fields(renderer, 'cc.billing', obj.shipping)}
             </div>
           </div>
 
           <%forms:actions>
-            <button class="btn btn-primary" type="submit">Save</button>
+            <button class="btn btn-primary" type="submit">Process Payment</button>
             <a class="btn btn-default" href="${request.route_path('admin:order', id=obj.id)}">Cancel</a>
           </%forms:actions>
         ${renderer.end()}

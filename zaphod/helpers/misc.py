@@ -390,9 +390,9 @@ def option_value_description(option_value, show_price_changes=True):
     return option_value.description + price_str
 
 
-def variant_list(item, show_defaults=True, show_price_changes=True):
+def variant_list(obj, show_defaults=True, show_price_changes=True):
     opts_gravity = []
-    for ov in item.option_values:
+    for ov in obj.option_values:
         opt = ov.option
 
         if show_defaults or (opt.default_value != ov):
@@ -405,12 +405,12 @@ def variant_list(item, show_defaults=True, show_price_changes=True):
     return [description for description, gravity in opts_gravity]
 
 
-def variant_string(item, show_price_changes=True):
+def variant_string(obj, show_price_changes=True):
     """
     Return a human-readable description of an item's variant selections. Works
     on any instance with associated option values.
     """
-    return ", ".join(variant_list(item, show_price_changes=show_price_changes))
+    return ", ".join(variant_list(obj, show_price_changes=show_price_changes))
 
 
 def random_whitespace():

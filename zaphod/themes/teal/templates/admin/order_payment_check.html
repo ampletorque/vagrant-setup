@@ -15,7 +15,7 @@
         ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
           ${forms.ldatepicker(renderer, 'check_date', hint='The date on the check.')}
           ${forms.ltext(renderer, 'reference', hint='Include the full check number here.')}
-          ${forms.ltext(renderer, 'amount', obj.unpaid_amount, prefix='$')}
+          ${forms.ltext(renderer, 'amount', obj.unauthorized_amount, prefix='$')}
 
           <%forms:actions>
             <button class="btn btn-primary" type="submit">Add Payment</button>

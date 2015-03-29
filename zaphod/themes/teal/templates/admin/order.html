@@ -181,7 +181,6 @@
 
         ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
 
-          ## XXX FIXME
           <table class="table">
             <thead>
               <tr>
@@ -223,11 +222,12 @@
                 <td></td>
                 <td colspan="4">
                   Add Payment:
-                  <a href="${request.route_path('admin:order:payment-cc', id=obj.id)}">Credit Card</a> -
+                  <a href="${request.route_path('admin:order:payment-cc-new', id=obj.id)}">New Credit Card</a> -
+                  <a href="${request.route_path('admin:order:payment-cc-existing', id=obj.id)}">Existing Credit Card</a> -
                   <a href="${request.route_path('admin:order:payment-cash', id=obj.id)}">Cash</a> -
                   <a href="${request.route_path('admin:order:payment-check', id=obj.id)}">Check</a>
-                  /
-                  <a href="${request.route_path('admin:order:refund', id=obj.id)}">Add Refund</a>
+                  <br>
+                  Add Refund: <a href="${request.route_path('admin:order:refund', id=obj.id)}">Credit Card</a>
                 </td>
                 <td>Balance Due</td>
                 <td>${h.currency(obj.unauthorized_amount)}</td>

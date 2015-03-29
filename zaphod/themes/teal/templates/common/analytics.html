@@ -34,7 +34,7 @@
         'name': ${h.json.dumps(item.product.name) | n},
         'category': ${h.json.dumps(item.product.project.name) | n},
         'brand': ${h.json.dumps(item.product.project.creator.name) | n},
-        'variant': ${h.json.dumps(h.variant_string(item)) | n},
+        'variant': ${h.json.dumps(h.variant_string(item.sku)) | n},
         'price': '${item.price_each}',
         'quantity': ${item.qty_desired}
       });

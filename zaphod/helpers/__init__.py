@@ -1,6 +1,8 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import json
+
 from webhelpers2.constants import *
 from webhelpers2.html.tags import *
 from webhelpers2.html import *
@@ -16,4 +18,4 @@ from .paginate import *
 from .xsrf import *
 from .markdown import *
 
-used = [datetime]
+used = [json, datetime]

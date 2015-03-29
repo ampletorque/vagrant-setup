@@ -130,6 +130,10 @@ class StripePaymentProfile(object):
         return active_card['last4']
 
     @property
+    def reference(self):
+        return {'customer_id': self.customer_id}
+
+    @property
     def avs_address1_result(self):
         return self.customer.active_card.address_line1_check
 
@@ -139,7 +143,7 @@ class StripePaymentProfile(object):
 
     @property
     def ccv_result(self):
-        return self.customer.active_card.ccv_check
+        return self.customer.active_card.cvc_check
 
     def _to_cents(self, amount):
         # XXX assert that the amount has non-fractional cents
@@ -153,7 +157,8 @@ class StripePaymentProfile(object):
         return {
             'avs_address1_result': charge.card.address_line1_check,
             'avs_zip_result': charge.card.address_zip_check,
-            'ccv_result': charge.card.ccv_check,
+            'ccv_result': charge.card.cvc_check,
+            'card_type': charge.card.type,
         }
 
     def update(self, **kwargs):

@@ -61,8 +61,10 @@ def includeme(config):
     config.add_route('admin:order:fill', '/order/{id}/fill')
     config.add_route('admin:order:address', '/order/{id}/address')
     config.add_route('admin:order:user', '/order/{id}/user')
-    config.add_route('admin:order:payment-cc',
-                     '/order/{id}/credit-card-payment')
+    config.add_route('admin:order:payment-cc-existing',
+                     '/order/{id}/existing-credit-card-payment')
+    config.add_route('admin:order:payment-cc-new',
+                     '/order/{id}/new-credit-card-payment')
     config.add_route('admin:order:payment-cash', '/order/{id}/cash-payment')
     config.add_route('admin:order:payment-check', '/order/{id}/check-payment')
     config.add_route('admin:order:refund', '/order/{id}/refund')

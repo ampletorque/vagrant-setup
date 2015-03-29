@@ -58,7 +58,7 @@
     ${forms.lcheckbox(renderer, 'billing_same_as_shipping', billing == shipping, label='Credit card billing address is the same as the shipping address')}
 
     <div class="billing-fields">
-      ${forms.address_fields(renderer, 'billing', billing)}
+      ${forms.address_fields(renderer, 'cc.billing', billing)}
     </div>
   </div>
 </%def>

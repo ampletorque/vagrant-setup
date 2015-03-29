@@ -25,12 +25,14 @@ def _log_query_time(total, statement):
         level = querylog.debug
         msg = ""
 
-    level("Query Time: %0.2fms %s [%s]", (total * 1000.), msg, statement)
+    request = get_current_request()
+    level("query time: %0.2fms %s [%s] at %s",
+          (total * 1000.), msg, statement,
+          request.path if request else '-')
 
     # Wrap this in a try/except so that it can still be run even when we're not
     # being used inside an actual web request (e.g. during setup-app or
     # maintenance scripts).
-    request = get_current_request()
     if request:
         env = request.environ
         if 'querytimer.elapsed' not in env:

@@ -20,12 +20,15 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
     id = Column(types.Integer, primary_key=True)
     cart_id = Column(None, ForeignKey('carts.id'), nullable=False, unique=True)
     user_id = Column(None, ForeignKey('users.id'), nullable=False)
+    initial_payment_method_id = Column(None, ForeignKey('payment_methods.id'),
+                                       nullable=True)
     closed = Column(types.Boolean, nullable=False, default=False)
     shipping = make_address_columns('shipping')
 
     customer_comments = Column(types.UnicodeText, nullable=False, default=u'')
 
     user = orm.relationship('User', backref='orders', foreign_keys=user_id)
+    initial_payment_method = orm.relationship('PaymentMethod')
 
     @property
     def total_amount(self):
@@ -73,9 +76,8 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
         Retrun any billing address that is associated with this order, or None
         if no billing addresses are associated.
         """
-        for payment in self.payments:
-            if hasattr(payment, 'method'):
-                return payment.method.billing
+        if self.initial_payment_method:
+            return self.initial_payment_method.billing
 
     def update_status(self):
         """

@@ -14,7 +14,7 @@
     <%forms:element renderer="${renderer}" name="cc.use_saved" label=" ">
       <label for="cc-use-saved-yes">
         ${renderer.radio('cc.use_saved', 'yes', checked=True, id='cc-use-saved-yes')}
-        Use credit card on file ending in ${masked_card[-4:]}
+        Use credit card on file ending in ${masked_card}
       </label>
       <br>
       <label for="cc-use-saved-no">

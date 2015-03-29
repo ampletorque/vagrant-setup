@@ -224,6 +224,10 @@ def migrate_orders(settings, product_map, option_value_map,
     cart_item_map = {}
     for old_order in scrappy_meta.Session.query(scrappy_model.Order):
         log.warn("  order %s", old_order.id)
+        if old_order.ccpayments:
+            old_initial_method_id = old_order.ccpayments[0].method.id
+        else:
+            old_initial_method_id = None
         order = model.Order(
             id=old_order.id,
             user=user_map[old_order.account],
@@ -233,6 +237,7 @@ def migrate_orders(settings, product_map, option_value_map,
             updated_time=old_order.updated_time,
             shipping=utils.convert_address(old_order.shipping),
             customer_comments=old_order.customer_comments,
+            initial_payment_method_id=old_initial_method_id,
         )
         model.Session.add(order)
         utils.migrate_comments(old_order, order, user_map)
@@ -284,9 +289,11 @@ def migrate_orders(settings, product_map, option_value_map,
             model.Session.add(shipment)
         payment_map = {}
         for old_payment in old_order.payments:
-            payment = migrate_payment(payment_map, old_payment, user_map)
-            payment_map[old_payment] = payment
-            order.payments.append(payment)
+            if not (isinstance(old_payment, scrappy_model.CreditCardPayment)
+                    and old_payment.authorized_amount == 0):
+                payment = migrate_payment(payment_map, old_payment, user_map)
+                payment_map[old_payment] = payment
+                order.payments.append(payment)
         model.Session.flush()
         order.update_status()
     return cart_item_map

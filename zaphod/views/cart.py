@@ -186,22 +186,6 @@ class CartView(object):
             # XXX Need to transactionally send a welcome email to this user.
         return user
 
-    def _handle_existing_payment(self, order, payment_method):
-        request = self.request
-        pp = model.CreditCardPayment(
-            order_id=order.id,
-            method=payment_method,
-            amount=0,
-            comments=u'Placeholder to associate payment method.',
-            transaction_id=u'',
-            invoice_number=u'',
-            authorized_amount=0,
-            avs_result=u'',
-            ccv_result=u'',
-            card_type=payment_method.first_payment.card_type,
-            created_by_id=1)
-        pp.mark_as_captured(request.user, 0)
-
     def _handle_new_payment(self, order, form, email, billing, user):
         request = self.request
         session = request.session
@@ -218,15 +202,13 @@ class CartView(object):
         try:
             profile = iface.create_profile(
                 card_number=ccf['number'],
-                expiration_date=(u'%s-%s' %
-                                 (ccf['expires_year'],
-                                  ccf['expires_month'])),
+                exp_year=ccf['expires_year'],
+                exp_month=ccf['expires_month'],
                 ccv=ccf['code'],
                 billing=billing,
                 email=email,
             )
         except (socket.error, PaymentException) as e:
-            request.visitor.goal('payment failed')
             if isinstance(e, socket.error):
                 request.flash(
                     "A error occured while attempting to process the "
@@ -251,8 +233,6 @@ class CartView(object):
 
             raise HTTPFound(location=request.route_url('cart'))
 
-        customer = profile.customer
-
         method = model.PaymentMethod(
             user=user,
             payment_gateway_id=gateway_id,
@@ -266,20 +246,7 @@ class CartView(object):
         )
         model.Session.add(method)
 
-        pp = model.CreditCardPayment(
-            order_id=order.id,
-            method=method,
-            amount=0,
-            comments=u'Placeholder to associate payment method.',
-            transaction_id=u'',
-            invoice_number=u'',
-            authorized_amount=0,
-            avs_address1_result=profile.avs_address1_result,
-            avs_zip_result=profile.avs_zip_result,
-            ccv_result=profile.ccv_result,
-            card_type=customer.active_card.type,
-            created_by_id=1)
-        pp.mark_as_captured(request.user, 0)
+        order.initial_payment_method = method
 
     def _place_order(self, cart, form, payment_method):
         request = self.request
@@ -311,7 +278,7 @@ class CartView(object):
         model.Session.flush()
 
         if form.data['cc'] == 'saved':
-            self._handle_existing_payment(order, payment_method)
+            order.initial_payment_method = payment_method
         else:
             self._handle_new_payment(order, form, email, billing, user)
 

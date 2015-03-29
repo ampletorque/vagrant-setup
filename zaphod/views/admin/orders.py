@@ -8,7 +8,7 @@ from formencode import Schema, ForEach, NestedVariables, validators
 
 from pyramid_uniform import Form, FormRenderer
 
-from ... import model, mail, custom_validators
+from ... import model, mail, custom_validators, payment
 
 from ...admin import BaseEditView, BaseListView, BaseCreateView
 
@@ -278,17 +278,32 @@ class OrderEditView(BaseEditView):
                  renderer='admin/order_payment.html')
     def payment(self):
         request = self.request
+        registry = request.registry
         order = self._get_object()
 
-        saved_methods = []
-        # gather payment methods from user and from this order
+        masked_cards = {}
+
+        def load(method):
+            if method not in masked_cards:
+                try:
+                    masked_cards[method] = \
+                        payment.get_masked_card(registry, method)
+                except payment.UnknownGatewayException:
+                    pass
+
+        load(order.initial_payment_method)
+
+        saved_user_methods = []
         for method in order.user.payment_methods:
-            if method not in saved_methods:
-                saved_methods.append(method)
-        for payment in order.payments:
-            if hasattr(payment, 'method'):
-                if payment.method not in saved_methods:
-                    saved_methods.append(payment.method)
+            saved_user_methods.append(method)
+            load(method)
+
+        saved_order_methods = []
+        for pp in order.payments:
+            if hasattr(pp, 'method'):
+                if pp.method not in saved_order_methods:
+                    saved_order_methods.append(pp.method)
+                    load(pp.method)
 
         form = Form(request, AddPaymentForm)
         if form.validate():
@@ -298,7 +313,9 @@ class OrderEditView(BaseEditView):
                                                         id=order.id))
 
         return {
-            'saved_methods': saved_methods,
+            'masked_cards': masked_cards,
+            'saved_user_methods': saved_user_methods,
+            'saved_order_methods': saved_order_methods,
             'obj': order,
             'renderer': FormRenderer(form),
         }

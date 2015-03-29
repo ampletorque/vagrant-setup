@@ -2,6 +2,8 @@ from __future__ import absolute_import, print_function, division
 
 import logging
 
+from decimal import Decimal
+
 import stripe
 
 from . import exc
@@ -48,15 +50,13 @@ class StripeInterface(object):
             new_e.original_exception = e
             raise new_e
 
-    def create_profile(self, card_number, expiration_date,
-                       ccv, billing, email=u'',
-                       description=u''):
+    def create_profile(self, card_number, exp_year, exp_month, ccv,
+                       billing, email=u'', description=u''):
         """
         Create a new profile, returning a PaymentProfile instance.
         """
         self.log.info("create_profile\email:%s", email)
         name = "%s %s" % (billing.first_name, billing.last_name)
-        exp_year, exp_month = expiration_date.split('-')
 
         if self.prefix:
             description = '%s:%s' % (self.prefix, description)
@@ -124,24 +124,10 @@ class StripePaymentProfile(object):
                 self.customer.id)
 
     @property
-    def reference(self):
-        return dict(customer_id=self.customer_id)
-
-    @property
     def card_masked(self):
         self._load_customer()
         active_card = self.customer.active_card
-        return 'XXXX' + active_card['last4']
-
-    @property
-    def description(self):
-        self._load_customer()
-        return self.customer.description
-
-    @property
-    def email(self):
-        self._load_customer()
-        return self.customer.email
+        return active_card['last4']
 
     @property
     def avs_address1_result(self):
@@ -157,7 +143,11 @@ class StripePaymentProfile(object):
 
     def _to_cents(self, amount):
         # XXX assert that the amount has non-fractional cents
-        return int(amount * 100)
+        assert isinstance(amount, Decimal)
+        amount = amount * 100
+        just_cents = amount.quantize(Decimal(1))
+        assert amount == just_cents
+        return amount
 
     def _charge_status(self, charge):
         return {
@@ -179,7 +169,7 @@ class StripePaymentProfile(object):
         resp = self.customer.save()
         self.interface.log.info("update\tresponse:\n%r", resp)
 
-    def authorize(self, amount, description, ccv=None):
+    def authorize(self, amount, description, ip, user_agent, referrer):
         """
         Authorize a transaction, and return a dict with response info.
         """
@@ -198,7 +188,12 @@ class StripePaymentProfile(object):
             currency='usd',
             customer=self.customer_id,
             description=description,
-            capture=False)
+            capture=False,
+            ip=ip,
+            user_agent=user_agent,
+            referrer=referrer,
+            payment_user_agent='Crowd Supply Web Platform',
+        )
 
         self.interface.log.info("authorize response:\n%r", charge)
 
@@ -224,7 +219,7 @@ class StripePaymentProfile(object):
 
         return self._charge_status(resp)
 
-    def auth_capture(self, amount, description, ccv=None):
+    def auth_capture(self, amount, description, ip, user_agent, referrer):
         """
         Authorize and capture a transaction.
         """
@@ -242,7 +237,12 @@ class StripePaymentProfile(object):
             amount=amount_cents,
             currency='usd',
             customer=self.customer_id,
-            description=description)
+            description=description,
+            ip=ip,
+            user_agent=user_agent,
+            referrer=referrer,
+            payment_user_agent='Crowd Supply Web Platform',
+        )
 
         self.interface.log.info("auth_capture response:\n%r", charge)
 

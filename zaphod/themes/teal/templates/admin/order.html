@@ -150,11 +150,14 @@
               <h4>User</h4>
               <p>
                 <a href="${request.route_path('admin:user', id=obj.user.id)}">
-                  ${obj.user.id} - ${obj.user.name}
+                  ${obj.user.id}
                 </a>
+                - ${obj.user.name}
+                - ${obj.user.email}
               </p>
-              <p>${obj.user.email}</p>
               <p><a href="${request.route_path('admin:order:user', id=obj.id)}">Change User</a></p>
+              <h4>Initial Payment Method</h4>
+              <p>${obj.initial_payment_method.id} - ${obj.initial_payment_method.reference['customer_id']}</p>
             </div>
           </div>
         </div>

@@ -87,6 +87,34 @@
           <p>This user has not placed any orders.</p>
         % endif
 
+        <h3>Payment Methods</h3>
+        % if obj.payment_methods:
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Payment Method ID</th>
+                  <th>Gateway ID</th>
+                  <th>Customer ID</th>
+                  <th>Save</th>
+                </tr>
+              </thead>
+              <tbody>
+                % for method in obj.payment_methods:
+                  <tr>
+                    <td>${method.id}</td>
+                    <td>${method.payment_gateway_id}</td>
+                    <td>${method.reference['customer_id']}</td>
+                    <td>${method.save}</td>
+                  </tr>
+                % endfor
+              </tbody>
+            </table>
+          </div>
+        % else:
+          <p>This user has no payment methods.</p>
+        % endif
+
       </div>
     </div>
   </div>

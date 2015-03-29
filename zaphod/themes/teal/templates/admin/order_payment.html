@@ -6,6 +6,22 @@
 <%def name="title()">Add Payment to Order ${obj.id}</%def>
 
 
+<%def name="saved_method(renderer, masked_cards, method, checked)">
+  <p>
+    <label>
+      ${renderer.radio('cc.use_saved', method.id, checked=checked)}
+      &nbsp;
+      Use credit card on file ending in ${masked_cards.get(method, '????')} -
+      % if method.save:
+        Saved by customer
+      % else:
+        Not saved by customer
+      % endif
+    </label>
+  </p>
+</%def>
+
+
 <section class="section-admin-order">
   <div class="container">
     <div class="row">
@@ -14,21 +30,36 @@
 
         ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
 
-          % if saved_methods:
-            <%forms:element renderer="${renderer}" name="cc.use_saved" label=" ">
-              % for method in saved_methods:
-                <p>
-                  <label>
-                    ${renderer.radio('cc.use_saved', method.id, checked=loop.last)}
-                    Use credit card on file ending in ???? -
-                    % if method.save:
-                      Saved by customer
-                    % else:
-                      Not saved by customer
-                    % endif
-                  </label>
-                </p>
-              % endfor
+          % if masked_cards:
+            <%forms:element renderer="${renderer}" name="cc.use_saved" label="Use Saved Method">
+
+              <p>
+                <label>
+                  ${renderer.radio('cc.use_saved', None, checked=False)}
+                  &nbsp;
+                  Input new credit card
+                </label>
+              </p>
+
+              % if obj.initial_payment_method:
+                <h5>Initial checkout payment method</h5>
+                ${self.saved_method(renderer, masked_cards, obj.initial_payment_method, checked=True)}
+              % endif
+
+              % if saved_user_methods:
+                <h5>User's saved payment methods</h5>
+                % for method in saved_user_methods:
+                  ${self.saved_method(renderer, masked_cards, method, checked=False)}
+                % endfor
+              % endif
+
+              % if saved_order_methods:
+                <h5>Payment methods used on order</h5>
+                % for method in saved_order_methods:
+                  ${self.saved_method(renderer, masked_cards, method, checked=False)}
+                % endfor
+              % endif
+
             </%forms:element>
           % endif
 

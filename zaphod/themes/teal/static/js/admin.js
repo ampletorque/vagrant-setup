@@ -12,7 +12,8 @@ require([
   'teal/ajaxvalidate',
   'teal/options',
   'teal/schedule',
-  'teal/additem'
+  'teal/additem',
+  'teal/addressfields'
 
 ], function ($) {
   $(function () {

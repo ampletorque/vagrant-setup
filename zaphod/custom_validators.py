@@ -126,22 +126,64 @@ class PhoneNumberInCountryFormat(FancyValidator):
                     })
 
 
+class USCanadaState(validators.Regex):
+    regex = '^[A-Z]{2}$'
+
+    messages = dict(invalid="Please enter two uppercase letters.")
+
+
+class StateInCountryFormat(FancyValidator):
+    country_field = 'country_code'
+    state_field = 'state'
+
+    __unpackargs__ = ('country_field', 'state_field')
+
+    messages = dict(
+        badFormat="Given state does not match the country's format.")
+
+    _vd = {
+        'US': USCanadaState,
+        'CA': USCanadaState,
+    }
+
+    default_validator = None
+
+    def validate_python(self, fields_dict, state):
+        country_code = fields_dict[self.country_field].upper()
+        state_validator = self._vd.get(country_code, self.default_validator)
+        if state_validator:
+            try:
+                fields_dict[self.state_field] = state_validator.to_python(
+                    fields_dict[self.state_field])
+            except Invalid as e:
+                message = self.message('badFormat', state)
+                raise Invalid(
+                    message, fields_dict, state,
+                    error_dict={
+                        self.state_field: e.msg,
+                        self.country_field: message,
+                    })
+
+
 class AddressSchema(Schema):
     "Validates a standard set of address fields."
     allow_extra_fields = True
     chained_validators = [
         national.PostalCodeInCountryFormat('country_code', 'postal_code'),
-        PhoneNumberInCountryFormat('country_code', 'phone')]
+        # Skip this for now.
+        # PhoneNumberInCountryFormat('country_code', 'phone'),
+        StateInCountryFormat('country_code', 'state'),
+    ]
 
     first_name = validators.UnicodeString(not_empty=True, strip=True)
     last_name = validators.UnicodeString(not_empty=True, strip=True)
     company = validators.UnicodeString(strip=True)
-    phone = validators.UnicodeString(not_empty=True, strip=True)
+    phone = validators.UnicodeString(not_empty=True, strip=True, min=5)
     address1 = validators.UnicodeString(not_empty=True, strip=True)
     address2 = validators.UnicodeString(strip=True)
     city = validators.UnicodeString(not_empty=True, strip=True)
-    state = validators.UnicodeString(not_empty=True, strip=True)
-    postal_code = validators.UnicodeString(not_empty=True, strip=True)
+    state = validators.UnicodeString(strip=True)
+    postal_code = validators.UnicodeString(strip=True)
     country_code = validators.UnicodeString(not_empty=True)
 
 

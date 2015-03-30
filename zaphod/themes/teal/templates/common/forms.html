@@ -192,36 +192,62 @@
 
 
 <%def name="address_fields(renderer, name, addr=None)">
-  <%self:element renderer="${renderer}" name="${'%s.country_code' % name}" label="Country">
-    <div class="row">
-      <div class="col-xs-8">
-        ${renderer.select('%s.country_code' % name, addr and addr.country_code, h.allowed_countries(), class_='form-control')}
+  <div class="address-fields">
+    <%self:element renderer="${renderer}" name="${'%s.country_code' % name}" label="Country">
+      <div class="row">
+        <div class="col-xs-8">
+          ${renderer.select('%s.country_code' % name, addr and addr.country_code, h.allowed_countries(), class_='form-control')}
+        </div>
       </div>
-    </div>
-  </%self:element>
+    </%self:element>
 
-  <%self:element renderer="${renderer}" names="${['%s.first_name' % name, '%s.last_name' % name]}" label="Name">
-    <div class="row">
-      <div class="col-xs-6">
-        ${renderer.text('%s.first_name' % name, addr and addr.first_name, placeholder='First', class_='form-control')}
+    <%self:element renderer="${renderer}" names="${['%s.first_name' % name, '%s.last_name' % name]}" label="Name">
+      <div class="row">
+        <div class="col-xs-6">
+          ${renderer.text('%s.first_name' % name, addr and addr.first_name, placeholder='First', class_='form-control')}
+        </div>
+        <div class="col-xs-6">
+          ${renderer.text('%s.last_name' % name, addr and addr.last_name, placeholder='Last', class_='form-control')}
+        </div>
       </div>
-      <div class="col-xs-6">
-        ${renderer.text('%s.last_name' % name, addr and addr.last_name, placeholder='Last', class_='form-control')}
+    </%self:element>
+
+    ${self.ltext(renderer, '%s.company' % name, addr and addr.company, label='Company')}
+
+    <%self:element renderer="${renderer}" names="${['%s.address1', '%s.address2']}" label="Address">
+      ${renderer.text('%s.address1' % name, addr and addr.address1, class_='form-control')}
+      ${renderer.text('%s.address2' % name, addr and addr.address2, class_='form-control')}
+    </%self:element>
+
+    ${self.ltext(renderer, '%s.city' % name, addr and addr.city, label='City')}
+
+    <%self:element renderer="${renderer}" name="${'%s.state' % name}" label="State / Province">
+      <div class="row">
+        <div class="col-sm-6">
+          ${renderer.text('%s.state' % name, addr and addr.state, class_='form-control state-field-int')}
+          ${renderer.select('%s.state' % name, addr and addr.state, h.us_states() + h.us_territories(), prompt='Select State', disabled='disabled', class_='form-control state-field-us', style='display:none;')}
+          ${renderer.select('%s.state' % name, addr and addr.state, h.canada_provinces(), prompt='Select Province', disabled='disabled', class_='form-control state-field-ca', style='display:none;')}
+
+        </div>
       </div>
-    </div>
-  </%self:element>
+    </%self:element>
 
-  ${self.ltext(renderer, '%s.company' % name, addr and addr.company, label='Company')}
+    <%self:element renderer="${renderer}" name="${'%s.postal_code' % name}" label="Postal Code">
+      <div class="row">
+        <div class="col-sm-6">
+          ${renderer.text('%s.postal_code' % name, addr and addr.postal_code, class_='form-control')}
+        </div>
+      </div>
+    </%self:element>
 
-  <%self:element renderer="${renderer}" names="${['%s.address1', '%s.address2']}" label="Address">
-    ${renderer.text('%s.address1' % name, addr and addr.address1, class_='form-control')}
-    ${renderer.text('%s.address2' % name, addr and addr.address2, class_='form-control')}
-  </%self:element>
-
-  ${self.ltext(renderer, '%s.city' % name, addr and addr.city, label='City')}
-  ${self.ltext(renderer, '%s.state' % name, addr and addr.state, label='State')}
-  ${self.ltext(renderer, '%s.postal_code' % name, addr and addr.postal_code, label='Postal Code')}
-  ${self.ltext(renderer, '%s.phone' % name, addr and addr.phone, label='Phone')}
+    <%self:element renderer="${renderer}" name="${'%s.phone' % name}" label="Phone">
+      <div class="row">
+        <div class="col-sm-6">
+          ${renderer.text('%s.phone' % name, addr and addr.phone, class_='form-control')}
+        </div>
+      </div>
+    </%self:element>
+  </div>
 </%def>
 
 

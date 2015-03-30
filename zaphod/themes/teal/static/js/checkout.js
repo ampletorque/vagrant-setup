@@ -17,7 +17,7 @@ define(['jquery', 'teal/ccfield'], function ($) {
     var $checkbox = $("#billing_same_as_shipping");
 
     function updateBillingVisibility(e) {
-      var same = $checkbox.attr('checked') || ($checkbox.attr('type') === 'hidden');
+      var same = $checkbox.prop('checked') || ($checkbox.attr('type') === 'hidden');
       $('.billing-fields').toggle(!same);
     }
 

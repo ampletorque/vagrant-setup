@@ -8,7 +8,8 @@ require([
   'bootstrap3/dropdown',
 
   'teal/countdowns',
-  'teal/checkout'
+  'teal/checkout',
+  'teal/addressfields'
 
 ], function ($) {
   $(function () {

@@ -77,8 +77,21 @@ class Cart(Base):
     def set_initial_statuses(self):
         """
         Set initial item statuses for a new order.
+
+        For a crowdfunding project, set to 'unfunded' or 'payment pending'
+        depending on whether or not the project is successful.
+
+        For a pre-order or stock project, set to 'in process'.
         """
-        pass
+        for item in self.items:
+            project = item.product.project
+            if item.stage == item.CROWDFUNDING:
+                if project.successful:
+                    item.update_status('payment pending')
+                else:
+                    item.update_status('unfunded')
+            else:
+                item.update_status('in process')
 
     def refresh(self):
         """
@@ -151,6 +164,7 @@ class CartItem(Base):
         Update the status of this item. Validates acceptable transitions.
         """
         valid_transitions = {
+            'cart': ('unfunded', 'payment pending', 'in process'),
             'unfunded': ('failed', 'cancelled', 'payment pending'),
             'payment pending': ('cancelled', 'waiting', 'payment failed'),
             'payment failed': ('waiting', 'cancelled', 'abandoned'),

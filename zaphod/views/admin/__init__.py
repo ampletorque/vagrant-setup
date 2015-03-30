@@ -23,6 +23,10 @@ def includeme(config):
     config.add_route('admin:project:updates:new', '/project/{id}/updates/new')
     config.add_route('admin:project:emails', '/project/{id}/emails')
     config.add_route('admin:project:ship', '/project/{id}/ship')
+    config.add_route('admin:project:mark-successful',
+                     '/project/{id}/mark-successful')
+    config.add_route('admin:project:capture-funds',
+                     '/project/{id}/capture-funds')
 
     config.add_route('admin:project:reports', '/project/{id}/reports')
     config.add_route('admin:project:reports:funding', '/project/{id}/funding')

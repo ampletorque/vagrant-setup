@@ -182,20 +182,23 @@ def send_shipping_confirmation(request, order):
     send_with_admin(request, 'shipping_confirmation', vars=vars, to=recipient)
 
 
-def send_payment_failure(request, project, order):
+def send_update_payment(request, project, order, due_date, link):
     recipient = [(order.user.name, order.user.email)]
-    # XXX
     vars = {
         'order': order,
+        'project': project,
+        'link': link,
+        'due_date': due_date,
     }
-    send_with_admin(request, 'payment_failure', vars=vars, to=recipient)
+    send_with_admin(request, 'update_payment', vars=vars, to=recipient)
 
 
-def send_payment_confirmation(request, project, order):
+def send_payment_confirmation(request, project, order, amount):
     recipient = [(order.user.name, order.user.email)]
-    # XXX
     vars = {
+        'project': project,
         'order': order,
+        'amount': amount,
     }
     send_with_admin(request, 'payment_confirmation', vars=vars, to=recipient)
 

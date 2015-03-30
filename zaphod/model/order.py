@@ -58,8 +58,8 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
         The amount currently owed for this order: excludes cancelled items and
         items where the project has failed or has yet to succeed.
         """
-        return [ci.total for ci in self.cart.items
-                if ci.status not in ('unfunded', 'failed', 'cancelled')]
+        return sum(ci.total for ci in self.cart.items
+                   if ci.status not in ('unfunded', 'failed', 'cancelled'))
 
     @property
     def authorized_amount(self):

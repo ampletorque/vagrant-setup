@@ -2,11 +2,9 @@
 
 Thank you for your Crowd Supply payment.
 
-## TODO
+The ${h.currency(amount)} payment for your pledge to ${project.name} on Crowd Supply has been successfully processed. Your order ID is ${order.id}.
 
-This payment was for order ${order.id}.
-
-Please reply to this email if you have any questions or comments. We appreciate your support!
+You will receive an additional email confirmation when your order ships. Please reply to this email if you have any questions or comments. We appreciate your support!
 
 Thank you,
 Crowd Supply Team

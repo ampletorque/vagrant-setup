@@ -9,7 +9,7 @@ from pyramid.httpexceptions import HTTPFound
 
 from pyramid_uniform import Form, FormRenderer, crud_update
 
-from ... import model
+from ... import model, funds
 
 from ...admin import (NodeEditView, NodeListView, NodeUpdateForm,
                       NodeCreateView, NodeCreateForm)
@@ -308,6 +308,62 @@ class ProjectEditView(NodeEditView):
 
         return {
             'obj': project,
+        }
+
+    @view_config(route_name='admin:project:mark-successful',
+                 request_method='POST')
+    def mark_successful(self):
+        request = self.request
+        project = self._get_object()
+
+        form = Form(request, Schema)
+        if form.validate():
+            self._touch_object(project)
+            assert project.pledged_amount >= project.target
+            project.successful = True
+
+            q = model.Session.query(model.CartItem).\
+                join(model.Order.cart).\
+                join(model.Cart.items).\
+                join(model.CartItem.product).\
+                filter(model.Product.project == project).\
+                filter(model.CartItem.status == 'unfunded')
+
+            for item in q:
+                item.status = 'payment pending'
+
+            request.flash("Marked project as successful.", 'success')
+            return HTTPFound(
+                    location=request.route_url('admin:project:capture-funds',
+                                               id=project.id))
+
+        return {
+        }
+
+    @view_config(route_name='admin:project:capture-funds',
+                 renderer='admin/project_capture_funds.html')
+    def capture_funds(self):
+        request = self.request
+        project = self._get_object()
+
+        form = Form(request, Schema)
+        if form.validate():
+            self._touch_object(project)
+            count = funds.capture_funds(request, project)
+            request.flash("Processed %d orders." % count, 'success')
+            return HTTPFound(location=request.current_route_url())
+        else:
+            pending_q = model.Session.query(model.Order).\
+                join(model.Order.cart).\
+                join(model.Cart.items).\
+                join(model.CartItem.product).\
+                filter(model.Product.project == project).\
+                filter(model.CartItem.status == 'payment pending')
+            pending_count = pending_q.count()
+
+        return {
+            'obj': project,
+            'pending_count': pending_count,
         }
 
 

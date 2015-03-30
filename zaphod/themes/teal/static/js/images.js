@@ -24,6 +24,7 @@ define(['jquery', 'tpl!teal/templates/images-row.erb.html'], function ($, rowTem
       .proxy('handleNewFile')
       .proxy('handleNewFiles')
       .proxy('handleFileDrop')
+      .proxy('handleFileDragOver')
       .proxy('handleFileSelect')
       .proxy('placeTarget')
       .proxy('grabHandler')
@@ -51,6 +52,10 @@ define(['jquery', 'tpl!teal/templates/images-row.erb.html'], function ($, rowTem
         .on('click', '.js-image-remove', this.removeHandler)
         .find('input[type=file]')
           .on('change', this.handleFileSelect);
+
+      this.$target = $('<tr>')
+        .addClass('table-drop-target')
+        .append('<td colspan="6"></td>');
     },
 
     makeID: function() {
@@ -94,7 +99,11 @@ define(['jquery', 'tpl!teal/templates/images-row.erb.html'], function ($, rowTem
           id: imageID,
           name: file.name
         }));
-        $('.js-image-widget-images').append($el);
+        if(this.$target.is(':visible')) {
+          this.$target.after($el);
+        } else {
+          $('.js-image-widget-images').append($el);
+        }
 
         this.loadThumbnail(file, $el);
 
@@ -137,16 +146,45 @@ define(['jquery', 'tpl!teal/templates/images-row.erb.html'], function ($, rowTem
       e.stopPropagation();
       e.preventDefault();
       this.handleNewFiles(e.originalEvent.dataTransfer.files);
+      this.$target.detach();
+      this.setGravity();
     },
 
     handleFileDragOver: function(e) {
       e.stopPropagation();
       e.preventDefault();
       e.originalEvent.dataTransfer.dropEffect = 'copy';
+      this.placeFileTarget(e);
     },
 
     doNothing: function(e) {
       e.preventDefault();
+    },
+
+    placeFileTarget: function(e) {
+      var $over = $(e.target).closest('tr');
+
+      // If we're not over the container, return.
+      if(!($.contains(this.$container[0], $over[0]))) {
+        return;
+      }
+
+      // If we're over the existing target, return.
+      if($over[0] === this.$target[0]) {
+        return;
+      }
+
+      this.$target.detach();
+
+      // Otherwise, place the target either before or after the row we're over.
+      var h = $over.height(),
+          off = $over.offset(),
+          threshold = off.top + h / 2;
+      if (e.pageY < threshold) {
+        $over.before(this.$target);
+      } else  {
+        $over.after(this.$target);
+      }
     },
 
     placeTarget: function(e) {
@@ -162,7 +200,7 @@ define(['jquery', 'tpl!teal/templates/images-row.erb.html'], function ($, rowTem
         return;
       }
 
-      this.$target.remove();
+      this.$target.detach();
 
       // If we're over the row being dragged, hide the target.
       if($over[0] === this.$movingRow[0]) {
@@ -191,10 +229,6 @@ define(['jquery', 'tpl!teal/templates/images-row.erb.html'], function ($, rowTem
         .append(this.$movingRow.clone());
       this.$movingRow.css('opacity', 0.5);
 
-      this.$target = $('<tr>')
-        .addClass('table-drop-target')
-        .append('<td colspan="' + this.$movingRow.find('td').length + '"></td>');
-
       $('body')
         .on('mousemove', this.dragHandler)
         .on('selectstart', this.doNothing)
@@ -222,7 +256,7 @@ define(['jquery', 'tpl!teal/templates/images-row.erb.html'], function ($, rowTem
         // Actually move item and finalize
         this.$movingRow.css('opacity', 1.0);
         this.$target.after(this.$movingRow);
-        this.$target.remove();
+        this.$target.detach();
         this.setGravity();
       } else {
         this.$movingRow.css('opacity', 1.0);

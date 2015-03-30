@@ -211,6 +211,9 @@
 
         <%self:section anchor="forms" heading="Forms">
           <form class="form-horizontal form-wrapped">
+            <div class="form-alerts">
+              <p>There are 2 form errors below.</p>
+            </div>
             ${forms.ltext(renderer, 'email', label='Email Address')}
             ${forms.lpassword(renderer, 'password1', label='Password')}
             ${forms.lcheckbox(renderer, 'remember_me', label='Remember me')}

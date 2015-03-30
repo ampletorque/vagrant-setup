@@ -13,6 +13,7 @@
         <h1 class="page-header">${self.title()}</h1>
 
         ${renderer.begin(id='create-form', class_='form-horizontal form-wrapped')}
+          ${forms.alerts(renderer)}
           ${forms.ltext(renderer, 'name')}
           ${forms.ltext(renderer, 'email')}
           ${forms.lpassword(renderer, 'password')}

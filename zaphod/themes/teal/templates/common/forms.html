@@ -223,3 +223,12 @@
   ${self.ltext(renderer, '%s.postal_code' % name, addr and addr.postal_code, label='Postal Code')}
   ${self.ltext(renderer, '%s.phone' % name, addr and addr.phone, label='Phone')}
 </%def>
+
+
+<%def name="alerts(renderer, msg='')">
+  % if renderer.errors:
+    <div class="form-alerts">
+      <p>There are ${len(renderer.errors)} form ${h.plural(len(renderer.errors), 'error', with_number=False)} below. ${msg}</p>
+    </div>
+  % endif
+</%def>

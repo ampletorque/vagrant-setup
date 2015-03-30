@@ -1,6 +1,9 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import random
+import string
+
 from pyramid.settings import asbool
 
 from .. import model
@@ -37,3 +40,14 @@ def get_masked_card(registry, payment_method):
     interface = get_payment_interface(registry, gateway_id)
     profile = interface.get_profile(payment_method.reference)
     return profile.card_masked
+
+
+def make_descriptor(registry, description):
+    """
+    Make a descriptor, up to 22 chars, to be used for a payment of a given
+    project.
+    """
+    chars = string.uppercase + string.digits
+    random_code = ''.join(random.choice(chars) for __ in range(3))
+    s = 'CROWDSUPPLY %s %s' % (random_code, description)
+    return s.upper()[:22]

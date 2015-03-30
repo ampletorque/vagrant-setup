@@ -345,10 +345,12 @@ class OrderEditView(BaseEditView):
         request = self.request
         registry = request.registry
         iface = payment.get_payment_interface(registry, method.gateway.id)
+        descriptor = payment.make_descriptor(registry, 'Order %d' % order.id)
         profile = iface.get_profile(method.reference)
         resp = profile.authorize(
             amount=Decimal(amount),
             description='order-%d' % order.id,
+            statement_descriptor=descriptor,
             ip=method.remote_addr,
             user_agent=request.user_agent,
             referrer=request.route_url('cart'),
@@ -356,7 +358,7 @@ class OrderEditView(BaseEditView):
         order.payments.append(model.CreditCardPayment(
             method=method,
             transaction_id=resp['transaction_id'],
-            invoice_number='%d-unknown' % order.id,
+            invoice_number=descriptor,
             authorized_amount=amount,
             amount=0,
             avs_address1_result=resp['avs_address1_result'],

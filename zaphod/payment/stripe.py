@@ -180,7 +180,8 @@ class StripePaymentProfile(object):
         resp = self.customer.save()
         self.interface.log.info("update\tresponse:\n%r", resp)
 
-    def authorize(self, amount, description, ip, user_agent, referrer):
+    def authorize(self, amount, description, statement_descriptor,
+                  ip, user_agent, referrer):
         """
         Authorize a transaction, and return a dict with response info.
         """
@@ -199,6 +200,7 @@ class StripePaymentProfile(object):
             currency='usd',
             customer=self.customer_id,
             description=description,
+            statement_descriptor=statement_descriptor,
             capture=False,
             ip=ip,
             user_agent=user_agent,
@@ -230,7 +232,8 @@ class StripePaymentProfile(object):
 
         return self._charge_status(resp)
 
-    def auth_capture(self, amount, description, ip, user_agent, referrer):
+    def auth_capture(self, amount, description, statement_descriptor,
+                     ip, user_agent, referrer):
         """
         Authorize and capture a transaction.
         """
@@ -249,6 +252,7 @@ class StripePaymentProfile(object):
             currency='usd',
             customer=self.customer_id,
             description=description,
+            statement_descriptor=statement_descriptor,
             ip=ip,
             user_agent=user_agent,
             referrer=referrer,

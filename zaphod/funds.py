@@ -57,10 +57,14 @@ def capture_order(request, project, order):
     # - get payment profile.
     profile = iface.get_profile(method.reference)
 
+    # - make descriptor
+    descriptor = payment.make_descriptor(registry, project.name)
+
     # - try to run transaction.
     try:
         resp = profile.auth_capture(amount=amount,
                                     description='order-%d' % order.id,
+                                    statement_descriptor=descriptor,
                                     ip=method.remote_addr,
                                     user_agent=request.user_agent,
                                     referrer=request.route_url('cart'))
@@ -80,7 +84,7 @@ def capture_order(request, project, order):
         order.payments.append(model.CreditCardPayment(
             method=method,
             transaction_id=resp['transaction_id'],
-            invoice_number='%d-unknown' % order.id,
+            invoice_number=descriptor,
             authorized_amount=amount,
             amount=amount,
             avs_address1_result=resp['avs_address1_result'],

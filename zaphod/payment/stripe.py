@@ -6,7 +6,7 @@ from decimal import Decimal
 
 import stripe
 
-stripe.api_version = '2012-11-07'
+stripe.api_version = '2015-03-24'
 
 from . import exc
 
@@ -126,10 +126,14 @@ class StripePaymentProfile(object):
                 self.customer.id)
 
     @property
-    def card_masked(self):
+    def default_source(self):
         self._load_customer()
-        active_card = self.customer.active_card
-        return active_card['last4']
+        sources = {source.id: source for source in self.customer.sources.data}
+        return sources[self.customer.default_source]
+
+    @property
+    def card_masked(self):
+        return self.default_source.last4
 
     @property
     def reference(self):
@@ -137,15 +141,15 @@ class StripePaymentProfile(object):
 
     @property
     def avs_address1_result(self):
-        return self.customer.active_card.address_line1_check
+        return self.default_source.address_line1_check
 
     @property
     def avs_zip_result(self):
-        return self.customer.active_card.address_zip_check
+        return self.default_source.address_zip_check
 
     @property
     def ccv_result(self):
-        return self.customer.active_card.cvc_check
+        return self.default_source.cvc_check
 
     def _to_cents(self, amount):
         # XXX assert that the amount has non-fractional cents
@@ -157,10 +161,10 @@ class StripePaymentProfile(object):
 
     def _charge_status(self, charge):
         return {
-            'avs_address1_result': charge.card.address_line1_check,
-            'avs_zip_result': charge.card.address_zip_check,
-            'ccv_result': charge.card.cvc_check,
-            'card_type': charge.card.type,
+            'avs_address1_result': charge.source.address_line1_check,
+            'avs_zip_result': charge.source.address_zip_check,
+            'ccv_result': charge.source.cvc_check,
+            'card_type': charge.source.brand,
         }
 
     def update(self, **kwargs):

@@ -6,15 +6,9 @@ define(['jquery', 'tpl!teal/templates/images-row.erb.html'], function ($, rowTem
   // - Block form submission until all image uploads have completed.
   // - Listen for form resets and reset image data back to the original
   // (requires storing the original data).
-  // - Don't allow dragging images 'out of position' (outside the main tbody
-  // for images).
   // - Improve performmance, particularly of progress indicator updates and
   // thumbnail showing.
-  // - Highlight rows somehow if they're still unsaved.
-  // - Don't allow dragging at all if there is only one row in the table.
   // - Handle searching for additional (existing) images and associating them.
-  // - Show a special message for 'no images are associated'
-  // - Rename this?
 
   "use strict";
 
@@ -52,6 +46,8 @@ define(['jquery', 'tpl!teal/templates/images-row.erb.html'], function ($, rowTem
         .on('click', '.js-image-remove', this.removeHandler)
         .find('input[type=file]')
           .on('change', this.handleFileSelect);
+
+      this.$imagesBody = this.$container.find('> tbody');
 
       this.$target = $('<tr>')
         .addClass('table-drop-target')
@@ -165,7 +161,7 @@ define(['jquery', 'tpl!teal/templates/images-row.erb.html'], function ($, rowTem
       var $over = $(e.target).closest('tr');
 
       // If we're not over the container, return.
-      if(!($.contains(this.$container[0], $over[0]))) {
+      if(!($.contains(this.$imagesBody[0], $over[0]))) {
         return;
       }
 
@@ -191,7 +187,7 @@ define(['jquery', 'tpl!teal/templates/images-row.erb.html'], function ($, rowTem
       var $over = $(e.target).closest('tr');
 
       // If we're not over the container, return.
-      if(!($.contains(this.$container[0], $over[0]))) {
+      if(!($.contains(this.$imagesBody[0], $over[0]))) {
         return;
       }
 

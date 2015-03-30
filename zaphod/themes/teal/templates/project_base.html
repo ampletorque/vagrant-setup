@@ -276,7 +276,6 @@
 
 <%def name="product_level(project, product)">
   <form method="post" action="${request.route_path('cart:add')}">
-    ${h.auth_token_hidden_field(request)}
     <div class="pledge-level">
       <div class="clearfix">
         <div class="pull-left">

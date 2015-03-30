@@ -225,9 +225,11 @@ def migrate_orders(settings, product_map, option_value_map,
     for old_order in scrappy_meta.Session.query(scrappy_model.Order):
         log.warn("  order %s", old_order.id)
         if old_order.ccpayments:
-            old_initial_method_id = old_order.ccpayments[0].method.id
+            # XXX is this really the right thing? we probably want the most
+            # recent cc payment that has a gateway that has no parent
+            old_active_method_id = old_order.ccpayments[0].method.id
         else:
-            old_initial_method_id = None
+            old_active_method_id = None
         order = model.Order(
             id=old_order.id,
             user=user_map[old_order.account],
@@ -237,7 +239,7 @@ def migrate_orders(settings, product_map, option_value_map,
             updated_time=old_order.updated_time,
             shipping=utils.convert_address(old_order.shipping),
             customer_comments=old_order.customer_comments,
-            initial_payment_method_id=old_initial_method_id,
+            active_payment_method_id=old_active_method_id,
         )
         model.Session.add(order)
         utils.migrate_comments(old_order, order, user_map)

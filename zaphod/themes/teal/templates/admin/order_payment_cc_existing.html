@@ -34,9 +34,9 @@
           % if masked_cards:
             <%forms:element renderer="${renderer}" name="method_id" label="Select Method">
 
-              % if obj.initial_payment_method:
+              % if obj.active_payment_method:
                 <h5>Initial checkout payment method</h5>
-                ${self.saved_method(renderer, masked_cards, obj.initial_payment_method, checked=True)}
+                ${self.saved_method(renderer, masked_cards, obj.active_payment_method, checked=True)}
               % endif
 
               % if saved_user_methods:

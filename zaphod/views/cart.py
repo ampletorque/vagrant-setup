@@ -246,7 +246,7 @@ class CartView(object):
         )
         model.Session.add(method)
 
-        order.initial_payment_method = method
+        order.active_payment_method = method
 
     def _place_order(self, cart, form, payment_method):
         request = self.request
@@ -277,7 +277,7 @@ class CartView(object):
         model.Session.flush()
 
         if form.data['cc'] == 'saved':
-            order.initial_payment_method = payment_method
+            order.active_payment_method = payment_method
         else:
             self._handle_new_payment(order, form, email, user)
 

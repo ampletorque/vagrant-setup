@@ -383,7 +383,7 @@ class OrderEditView(BaseEditView):
                 except payment.UnknownGatewayException:
                     pass
 
-        load(order.initial_payment_method)
+        load(order.active_payment_method)
 
         saved_user_methods = []
         for method in order.user.payment_methods:

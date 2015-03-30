@@ -41,7 +41,7 @@ class NodePredicate(object):
             except NoResultFound:
                 pass
             else:
-                return alias, suffix
+                return alias, '/'.join(suffix) if suffix else None
         raise HTTPNotFound
 
     def load_node(self, request):

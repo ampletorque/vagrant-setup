@@ -124,7 +124,7 @@ define(['jquery', 'tpl!teal/templates/images-row.erb.html'], function ($, rowTem
             if (e.loaded === e.total) {
               $status.text('Unsaved');
             } else{
-              $progress.text(e.loaded / e.total * 100);
+              $progress.text((e.loaded / e.total * 100).toFixed(0));
             }
           }
         };

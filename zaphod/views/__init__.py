@@ -54,6 +54,8 @@ def includeme(config):
     config.add_route('settings', '/account/settings')
     config.add_route('profile', '/people/{path}')
 
+    config.add_route('update-payment', '/update-payment')
+
     # This needs to stay the last route registered.
     config.add_route('node', '/*path')
 

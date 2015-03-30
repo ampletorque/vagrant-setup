@@ -2,13 +2,34 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 import logging
+import time
 
 from . import model
 
 log = logging.getLogger(__name__)
 
 
-def capture_order(registry, order):
+def generate_update_token(order_id, project_id, timestamp):
+    # XXX
+    return 'abcdef'
+
+
+def verify_update_token(token, order_id, project_id, timestamp):
+    # XXX
+    return True
+
+
+def update_payment_url(request, order, project):
+    timestamp = int(time.time())
+    sig = generate_update_token(order.id, project.id, timestamp)
+    params = dict(order_id=order.id,
+                  project_id=project.id,
+                  timestamp=timestamp,
+                  sig=sig)
+    return request.route_url('update-payment', _query=params)
+
+
+def capture_order(registry, project, order):
     """
     Ensure that the specified order has captured payments for all crowdfunding
     projects which are successful or pre-order/stock items.

@@ -53,6 +53,15 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
         return self.total_amount - self.paid_amount
 
     @property
+    def current_due_amount(self):
+        """
+        The amount currently owed for this order: excludes cancelled items and
+        items where the project has failed or has yet to succeed.
+        """
+        return [ci.total for ci in self.cart.items
+                if ci.status not in ('unfunded', 'failed', 'cancelled')]
+
+    @property
     def authorized_amount(self):
         "The amount that could be paid if we captured all payments."
         tot = 0

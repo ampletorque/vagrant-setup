@@ -29,15 +29,17 @@ class Cart(Base):
 
     @property
     def total(self):
-        return sum(ci.total for ci in self.items)
+        return sum(ci.total for ci in self.items if ci.status != 'cancelled')
 
     @property
     def items_total(self):
-        return sum((ci.price_each * ci.qty_desired) for ci in self.items)
+        return sum((ci.price_each * ci.qty_desired) for ci in self.items
+                   if ci.status != 'cancelled')
 
     @property
     def shipping_total(self):
-        return sum(ci.shipping_price for ci in self.items)
+        return sum(ci.shipping_price for ci in self.items
+                   if ci.status != 'cancelled')
 
     @property
     def non_physical(self):

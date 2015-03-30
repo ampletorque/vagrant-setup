@@ -208,7 +208,7 @@ class UserView(object):
                 raise HTTPFound(location=request.current_route_url())
 
             token = user.set_reset_password_token()
-            mail.send_password_reset(request, user)
+            mail.send_password_reset(request, user, token)
 
             request.flash("An email has been sent with "
                           "instructions to reset your password.", 'error')

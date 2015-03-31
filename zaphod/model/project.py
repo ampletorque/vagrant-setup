@@ -156,13 +156,13 @@ class Project(Node, ElasticMixin):
         """
         Amount raised in crowdfunding and preorder stages.
         """
-        # XXX FIXME Filter out cancelled orders.
         base = Session.query(func.sum(CartItem.qty_desired *
                                       CartItem.price_each)).\
             join(CartItem.cart).\
             join(Cart.order).\
             join(CartItem.product).\
             filter(Product.project == self).\
+            filter(CartItem.status != 'cancelled').\
             scalar() or 0
         elsewhere_amount = self.pledged_elsewhere_amount or 0
         return base + elsewhere_amount
@@ -179,16 +179,15 @@ class Project(Node, ElasticMixin):
 
     @property
     def num_pledges(self):
-        # XXX Performance
         if (self.status != 'fundraising' and
                 self.pledged_elsewhere_count > 0):
             return self.pledged_elsewhere_count
-        # XXX FIXME Filter out cancelled orders.
         return Session.query(func.sum(CartItem.qty_desired)).\
             join(CartItem.cart).\
             join(Cart.order).\
             join(CartItem.product).\
             filter(Product.project == self).\
+            filter(CartItem.status != 'cancelled').\
             scalar() or 0
 
     @property

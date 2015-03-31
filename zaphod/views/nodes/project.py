@@ -1,7 +1,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from pyramid.httpexceptions import HTTPFound, HTTPNotFound
+from pyramid.httpexceptions import HTTPFound
 from pyramid.view import view_config
 from formencode import Schema, validators
 from pyramid_uniform import Form, FormRenderer
@@ -72,8 +72,8 @@ class ProjectView(object):
         model.Session.add(pe)
 
         request.flash(
-            "Thanks, we'll remind you when this project is nearing the end of its "
-            "campaign.", 'success')
+            "Thanks, we'll remind you when this project is nearing the end "
+            "of its campaign.", 'success')
         return HTTPFound(location=request.node_url(project))
 
     @view_config(route_name='node', request_method='POST',
@@ -113,12 +113,10 @@ class ProjectView(object):
             join(model.Cart.items).\
             join(model.CartItem.product).\
             filter(model.Product.project == project).\
+            filter(model.CartItem.status != 'cancelled').\
             filter(model.User.show_in_backers == True).\
             order_by(model.Order.id.desc())
-        # XXX filter out cancelled orders
-
         backers = q.all()
-
         return {
             'action': 'backers',
             'project': project,

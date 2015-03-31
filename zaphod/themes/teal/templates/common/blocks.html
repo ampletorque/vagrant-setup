@@ -268,3 +268,24 @@
     </div>
   </div>
 </%def>
+
+
+<%def name="social_buttons(project, description)">
+  <div class="row">
+    <div class="col-xs-4">
+      <a href="${h.project_facebook_url(request, project, description)}">
+        <i class="fa fa-facebook"></i>
+      </a>
+    </div>
+    <div class="col-xs-4">
+      <a href="${h.project_twitter_url(request, project, description)}">
+        <i class="fa fa-twitter"></i>
+      </a>
+    </div>
+    <div class="col-xs-4">
+      <a href="${h.project_pin_it_url(request, project, description)}">
+        <i class="fa fa-pinterest"></i>
+      </a>
+    </div>
+  </div>
+</%def>

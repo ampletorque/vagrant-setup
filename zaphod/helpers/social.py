@@ -92,7 +92,8 @@ def gplus_share_url(url):
         urlencode(dict(url=url)))
 
 
-def project_facebook_url(request, project):
+def project_facebook_url(request, project,
+                         description='Check out this Crowd Supply project'):
     """
     Return an appropriately-prepared Facebook share URL for a Project instance.
     """
@@ -100,23 +101,25 @@ def project_facebook_url(request, project):
         text=project.teaser,
         url=request.node_url(project),
         name=project.name,
-        caption='Funding on Crowd Supply',
+        caption=description,
         image_url=project.img_url(request, 'project-main'),
         app_id=request.registry.settings['facebook.app_id'],
         redirect_uri=request.url)
 
 
-def project_twitter_url(request, project):
+def project_twitter_url(request, project,
+                        description='Check out this Crowd Supply project'):
     """
     Return an appropriately-prepared Twitter tweet URL for a Project instance.
     """
     return twitter_tweet_url(
-        text='Check out this crowdfunding project!',
+        text=description,
         via='crowd_supply',
         url=request.node_url(project))
 
 
-def project_pin_it_url(request, project):
+def project_pin_it_url(request, project,
+                       description='Check out this Crowd Supply project'):
     """
     Return an appropriately-prepared Pinterest pin URL for a Project instance.
     """
@@ -125,5 +128,5 @@ def project_pin_it_url(request, project):
         dst_url=request.node_url(project),
         media=project.img_url(request, 'project-main'),
         # media=request.route_url('pinset', id=project.id),
-        description='Funding on Crowd Supply',
+        description=description,
     )

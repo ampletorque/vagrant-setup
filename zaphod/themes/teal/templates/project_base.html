@@ -62,27 +62,6 @@
 </%def>
 
 
-<%def name="social_buttons(project)">
-  <div class="row">
-    <div class="col-xs-4">
-      <a href="${h.project_facebook_url(request, project)}">
-        <i class="fa fa-facebook"></i>
-      </a>
-    </div>
-    <div class="col-xs-4">
-      <a href="${h.project_twitter_url(request, project)}">
-        <i class="fa fa-twitter"></i>
-      </a>
-    </div>
-    <div class="col-xs-4">
-      <a href="${h.project_pin_it_url(request, project)}">
-        <i class="fa fa-pinterest"></i>
-      </a>
-    </div>
-  </div>
-</%def>
-
-
 <%def name="stats_crowdfunding(project)">
   <p class="project-pledged">
     <span><sup>$</sup>${h.commas(project.pledged_amount)}</span>&nbsp;raised
@@ -115,7 +94,7 @@
 
   <div class="social-buttons">
     <p>Support this project on social media!</p>
-    ${self.social_buttons(project)}
+    ${blocks.social_buttons(project, 'Check out this Crowd Supply project')}
   </div>
 </%def>
 
@@ -173,7 +152,7 @@
   </div>
   <div class="social-buttons">
     <p>Support this project on social media!</p>
-    ${self.social_buttons(project)}
+    ${blocks.social_buttons(project, 'Check out this Crowd Supply project')}
   </div>
 </%def>
 
@@ -205,7 +184,7 @@
   </div>
   <div class="social-buttons">
     <p>Support this project on social media!</p>
-    ${self.social_buttons(project)}
+    ${blocks.social_buttons(project, 'Check out this Crowd Supply project')}
   </div>
 </%def>
 
@@ -235,8 +214,8 @@
     </div>
   </div>
   <div class="social-buttons">
-    <p>Share this project on social media!</p>
-    ${self.social_buttons(project)}
+    <p>Support this project on social media!</p>
+    ${blocks.social_buttons(project, 'Check out this Crowd Supply project')}
   </div>
 </%def>
 
@@ -248,7 +227,7 @@
   </div>
   <div class="social-buttons">
     <p>Support this project on social media!</p>
-    ${self.social_buttons(project)}
+    ${blocks.social_buttons(project, 'Check out this Crowd Supply project')}
   </div>
 </%def>
 

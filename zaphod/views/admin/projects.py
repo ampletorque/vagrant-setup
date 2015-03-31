@@ -334,8 +334,8 @@ class ProjectEditView(NodeEditView):
 
             request.flash("Marked project as successful.", 'success')
             return HTTPFound(
-                    location=request.route_url('admin:project:capture-funds',
-                                               id=project.id))
+                location=request.route_url('admin:project:capture-funds',
+                                           id=project.id))
 
         return {
         }

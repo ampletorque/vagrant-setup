@@ -135,7 +135,8 @@ class ProjectView(object):
     def _verify_owner(self):
         request = self.request
         project = self.context.node
-        if not (request.user.admin or project.check_owner(request.user)):
+        if not (request.user and (request.user.admin or
+                project.check_owner(request.user))):
             raise HTTPForbidden
 
     @view_config(route_name='node', renderer='project_crowdfunding.html',

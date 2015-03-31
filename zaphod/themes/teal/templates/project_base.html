@@ -528,7 +528,7 @@
 </%blocks:admin_bar>
 
 
-% if (request.user.admin and request.user.show_admin_bars) or project.check_owner(request.user):
+% if request.user and (request.user.admin and request.user.show_admin_bars) or project.check_owner(request.user):
   <section class="section-project-owner-controls">
     <div class="container">
       <div class="row">

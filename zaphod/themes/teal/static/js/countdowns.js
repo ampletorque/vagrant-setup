@@ -6,10 +6,6 @@ define(['jquery', 'moment'], function ($, moment) {
   // element containing a <p> (used for the 'value') and a <span> (used for the
   // 'units').
 
-  // TODO
-  // - Improve performance: don't get new elements and such on every timer
-  // callback.
-
   "use strict";
 
   $(function () {

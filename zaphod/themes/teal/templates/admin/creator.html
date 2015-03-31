@@ -36,6 +36,40 @@
             <button class="btn btn-default" type="reset">Cancel</button>
           </%forms:actions>
         ${renderer.end()}
+
+        <h3>Projects</h3>
+        % if obj.projects:
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Project ID</th>
+                  <th>Name</th>
+                  <th>Published</th>
+                  <th>Start Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                % for project in obj.projects:
+                  <tr>
+                    <td><a href="${request.route_path('admin:project', id=project.id)}">Edit</a></td>
+                    <td>${project.id}</td>
+                    <td>${project.name}</td>
+                    <td>
+                      % if project.published:
+                        Yes
+                      % endif
+                    </td>
+                    <td>${h.format_datetime(request, project.start_time)}</td>
+                  </tr>
+                % endfor
+              </tbody>
+            </table>
+          </div>
+        % else:
+          <p>This creator has no projects.</p>
+        % endif
       </div>
     </div>
   </div>

@@ -18,22 +18,8 @@
 
 <section class="section-creator">
   <div class="container">
-    <div class="row">
-      <div class="col-sm-3">
-        ${creator.img(request, 'creator-profile')}
-      </div>
-
-      <div class="col-sm-9">
-        <h4>${creator.name}</h4>
-        <p class="creator-block-teaser">${creator.teaser}</p>
-        <p class="creator-block-metadata">
-          <i class="fa fa-map-marker"></i>&nbsp;${creator.location}
-          % if creator.home_url:
-            &nbsp;&middot;&nbsp;
-            <a href="${creator.home_url}">${creator.display_url}</a>
-          % endif
-        </p>
-      </div>
+    <div class="creator-tile">
+      ${blocks.creator_tile(creator)}
     </div>
   </div>
 </section>

@@ -1,23 +1,16 @@
 <%inherit file="base.html"/>
 
+<%namespace name="blocks" file="common/blocks.html"/>
+
 
 <%def name="title()">Creators</%def>
 
 
 <section class="section-creators">
   <div class="container">
-    % for row in h.grouper(3, creators):
-      <div class="row">
-        % for creator in row:
-          <div class="col-md-4">
-            <h3>
-              <a href="${request.node_path(creator)}">
-                ${creator.name}
-              </a>
-            </h3>
-            <p>${creator.teaser}</p>
-          </div>
-        % endfor
+    % for creator in creators:
+      <div class="creator-tile">
+        ${blocks.creator_tile(creator, link=True)}
       </div>
     % endfor
   </div>

@@ -58,7 +58,7 @@ def capture_order(request, project, order):
     profile = iface.get_profile(method.reference)
 
     # - make descriptor
-    descriptor = payment.make_descriptor(registry, project.name)
+    descriptor = payment.make_descriptor(registry, order.id)
 
     # - try to run transaction.
     try:

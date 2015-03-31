@@ -345,7 +345,7 @@ class OrderEditView(BaseEditView):
         request = self.request
         registry = request.registry
         iface = payment.get_payment_interface(registry, method.gateway.id)
-        descriptor = payment.make_descriptor(registry, 'Order %d' % order.id)
+        descriptor = payment.make_descriptor(registry, order.id)
         profile = iface.get_profile(method.reference)
         resp = profile.authorize(
             amount=Decimal(amount),

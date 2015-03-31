@@ -6,10 +6,6 @@ define(['jquery'], function ($) {
 
   // To use this module, set the .js-ajax-validate class on a <form>.
 
-  // TODO
-  // - Improve error handling.
-  // - Rename this?
-
   "use strict";
 
   function clearErrors($form) {

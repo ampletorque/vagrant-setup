@@ -60,5 +60,3 @@ def includeme(config):
     config.add_route('node', '/*path')
 
     config.scan('.')
-
-    config.include('.nodes')

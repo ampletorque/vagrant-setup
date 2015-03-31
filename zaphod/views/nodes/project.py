@@ -2,6 +2,7 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from pyramid.httpexceptions import HTTPFound, HTTPNotFound
+from pyramid.view import view_config
 from formencode import Schema, validators
 from pyramid_uniform import Form, FormRenderer
 
@@ -16,6 +17,9 @@ class AskQuestionForm(Schema):
     message = validators.UnicodeString(not_empty=True)
 
 
+@view_config(route_name='node', renderer='ask_question.html',
+             custom_predicates=[NodePredicate(model.Project,
+                                              suffix='ask-question')])
 def ask_question_view(context, request):
     project = context.node
     form = Form(request, schema=AskQuestionForm)
@@ -51,6 +55,9 @@ def ask_question_view(context, request):
     }
 
 
+@view_config(route_name='node',
+             custom_predicates=[NodePredicate(model.Project,
+                                              suffix='remind-me')])
 def remind_me_view(context, request):
     project = context.node
     if not request.method == 'POST':
@@ -66,6 +73,9 @@ def remind_me_view(context, request):
     return HTTPFound(location=request.node_url(project))
 
 
+@view_config(route_name='node',
+             custom_predicates=[NodePredicate(model.Project,
+                                              suffix='prelaunch-signup')])
 def prelaunch_signup_view(context, request):
     project = context.node
     if not request.method == 'POST':
@@ -81,6 +91,9 @@ def prelaunch_signup_view(context, request):
     return HTTPFound(location=request.node_url(project))
 
 
+@view_config(route_name='node', renderer='updates.html',
+             custom_predicates=[NodePredicate(model.Project,
+                                              suffix='updates')])
 def updates_view(context, request):
     project = context.node
     return {
@@ -89,6 +102,9 @@ def updates_view(context, request):
     }
 
 
+@view_config(route_name='node', renderer='backers.html',
+             custom_predicates=[NodePredicate(model.Project,
+                                              suffix='backers')])
 def backers_view(context, request):
     project = context.node
     q = model.Session.query(model.User).\
@@ -110,42 +126,11 @@ def backers_view(context, request):
     }
 
 
+@view_config(route_name='node', renderer='project.html',
+             custom_predicates=[NodePredicate(model.Project)])
 def project_base_view(context, request):
     project = context.node
     return {
         'action': None,
         'project': project,
     }
-
-
-def includeme(config):
-    config.add_view(
-        project_base_view,
-        route_name='node',
-        custom_predicates=[NodePredicate(model.Project)],
-        renderer='project.html')
-    config.add_view(
-        remind_me_view,
-        route_name='node',
-        custom_predicates=[NodePredicate(model.Project, suffix='remind-me')])
-    config.add_view(
-        ask_question_view,
-        route_name='node',
-        custom_predicates=[NodePredicate(model.Project,
-                                         suffix='ask-question')],
-        renderer='ask_question.html')
-    config.add_view(
-        updates_view,
-        route_name='node',
-        custom_predicates=[NodePredicate(model.Project, suffix='updates')],
-        renderer='updates.html')
-    config.add_view(
-        backers_view,
-        route_name='node',
-        custom_predicates=[NodePredicate(model.Project, suffix='backers')],
-        renderer='backers.html')
-    config.add_view(
-        prelaunch_signup_view,
-        route_name='node',
-        custom_predicates=[NodePredicate(model.Project,
-                                         suffix='prelaunch-signup')])

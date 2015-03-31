@@ -1,11 +1,15 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+from pyramid.view import view_config
+
 from ... import model
 
 from . import NodePredicate
 
 
+@view_config(route_name='node', renderer='article.html',
+             custom_predicates=[NodePredicate(model.Article)])
 def article_view(context, request):
     article = context.node
     if article.show_article_list:
@@ -19,10 +23,3 @@ def article_view(context, request):
         'article': article,
         'related_articles': related_articles,
     }
-
-
-def includeme(config):
-    config.add_view(article_view,
-                    route_name='node',
-                    custom_predicates=[NodePredicate(model.Article)],
-                    renderer='article.html')

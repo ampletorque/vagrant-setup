@@ -60,13 +60,3 @@ class NodePredicate(object):
             context.node, context.suffix = self.load_node(request)
         return (isinstance(context.node, self.cls) and
                 context.suffix == self.suffix)
-
-
-def includeme(config):
-    config.include('.article')
-    config.include('.creator')
-    config.include('.project')
-    config.include('.update')
-    config.include('.tag')
-    config.include('.provider')
-    config.include('.provider_type')

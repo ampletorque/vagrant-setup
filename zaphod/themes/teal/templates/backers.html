@@ -4,21 +4,28 @@
 <%def name="title()">Backers of ${project.name}</%def>
 
 
-<div class="project-block project-block-backers">
-  <h2>Backers</h2>
-  % if backers:
-    <ul class="list-unstyled">
-    % for backer in backers:
-    <li class="backer">
-      <img class="pull-left img-avatar" src="${h.gravatar_url(backer.email, size=64, default='mm')}" alt="">
-      <p>${backer.show_name}</p>
-      % if backer.show_location:
-        <p class="backer-location"><i class="fa fa-map-marker"></i> ${backer.show_location}</p>
+<div class="row">
+  <div class="col-sm-8">
+    <div class="project-block project-block-backers">
+      <h2>Backers</h2>
+      % if backers:
+        <ul class="list-unstyled">
+          % for backer in backers:
+            <li class="backer">
+              <img class="pull-left img-avatar" src="${h.gravatar_url(backer.email, size=64, default='mm')}" alt="">
+              <p>${backer.show_name}</p>
+              % if backer.show_location:
+                <p class="backer-location"><i class="fa fa-map-marker"></i> ${backer.show_location}</p>
+              % endif
+            </li>
+          % endfor
+        </ul>
+      % else:
+        <p>Once a certain number of people have backed this project, a list of backers will be shown here.</p>
       % endif
-    </li>
-    % endfor
-  </ul>
-  % else:
-  <p>Once a certain number of people have backed this project, a list of backers will be shown here.</p>
-  % endif
+    </div>
+  </div>
+  <div class="col-sm-4 project-sidebar">
+    ${self.sidebar(project)}
+  </div>
 </div>

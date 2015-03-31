@@ -1,7 +1,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPFound, HTTPForbidden
 from pyramid.view import view_config
 from formencode import Schema, validators
 from pyramid_uniform import Form, FormRenderer
@@ -129,5 +129,39 @@ class ProjectView(object):
         project = self.context.node
         return {
             'action': None,
+            'project': project,
+        }
+
+    def _verify_owner(self):
+        request = self.request
+        project = self.context.node
+        if not (request.user.admin or project.check_owner(request.user)):
+            raise HTTPForbidden
+
+    @view_config(route_name='node', renderer='project_crowdfunding.html',
+                 custom_predicates=[NodePredicate(model.Project,
+                                                  suffix='crowdfunding')])
+    def crowdfunding(self):
+        request = self.request
+        project = self.context.node
+        if project.status == 'crowdfunding':
+            raise HTTPFound(location=request.node_url(project))
+        self._verify_owner()
+        return {
+            'action': 'crowdfunding',
+            'project': project,
+        }
+
+    @view_config(route_name='node', renderer='project_available.html',
+                 custom_predicates=[NodePredicate(model.Project,
+                                                  suffix='available')])
+    def available(self):
+        request = self.request
+        project = self.context.node
+        if project.status == 'available':
+            raise HTTPFound(location=request.node_url(project))
+        self._verify_owner()
+        return {
+            'action': 'available',
             'project': project,
         }

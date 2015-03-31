@@ -146,6 +146,33 @@ class Project(Node, ElasticMixin):
             return 'funded'
 
     @property
+    def current_vimeo_id(self):
+        if self.status == 'prelaunch':
+            return self.prelaunch_vimeo_id
+        elif self.status == 'available':
+            return self.available_vimeo_id
+        else:
+            return self.crowdfunding_vimeo_id
+
+    @property
+    def current_body(self):
+        if self.status == 'prelaunch':
+            return self.prelaunch_body
+        elif self.status == 'available':
+            return self.available_body
+        else:
+            return self.crowdfunding_body
+
+    @property
+    def current_teaser(self):
+        if self.status == 'prelaunch':
+            return self.prelaunch_teaser
+        elif self.status == 'available':
+            return self.available_teaser
+        else:
+            return self.crowdfunding_teaser
+
+    @property
     def progress_percent(self):
         if self.target:
             return self.pledged_amount * 100 / self.target
@@ -236,6 +263,9 @@ class Project(Node, ElasticMixin):
     def price_range_high(self):
         return max(pl.price for pl in self.products
                    if pl.published and not pl.non_physical)
+
+    def check_owner(self, user):
+        return any(user == po.user for po in self.ownerships)
 
     @classmethod
     def elastic_mapping(cls):

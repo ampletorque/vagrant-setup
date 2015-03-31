@@ -10,7 +10,7 @@
   <ol class="breadcrumb breadcrumb-project">
     <li>Creators</li>
     <li>
-      <a href="${request.node_url(project.creator)}">
+      <a href="${request.node_path(project.creator)}">
         ${project.creator.name}
       </a>
     </li>
@@ -25,7 +25,7 @@
     </li>
   % else:
     <li>
-      <a href="${request.node_url(project, suffix=[suffix] if suffix else None)}">${caller.body()}</a>
+      <a href="${request.node_path(project, suffix=[suffix] if suffix else None)}">${caller.body()}</a>
     </li>
   % endif
 </%def>
@@ -246,6 +246,9 @@
       ${self.stats_stock_only(project)}
     % elif project.status == 'failed':
       ${self.stats_failed(project)}
+    % elif project.status == 'prelaunch':
+      ## This will only be shown for admin or owner previews.
+      ${self.stats_crowdfunding(project)}
     % else:
       <% assert False, "don't know what stats tile to use for %r" % project.status %>
     % endif
@@ -469,6 +472,53 @@
 </%def>
 
 
+<%def name="remind_me_form(project)">
+  % if project.status == 'crowdfunding':
+    <div class="project-remind-me">
+      <p><strong>Funding ends</strong> on ${h.format_datetime(request, project.final_day, '%b %d, %Y')} at 11:59pm PDT</p>
+      <form id="remind-me-form" class="form-inline" action="${request.node_path(project, suffix=['remind-me'])}" method="POST">
+        <div class="input-group">
+          ${h.text('email', None, placeholder='me@example.com', class_='form-control')}
+          <span class="input-group-btn">
+            <button type="submit" class="btn btn-default">Remind Me</button>
+          </span>
+        </div>
+      </form>
+    </div>
+  % endif
+</%def>
+
+
+<%def name="ask_question_block(project)">
+  <div class="project-block">
+    <%blocks:collapse_on_mobile target="faq" title="Ask a Question">
+      <p>Have a question not answered in the description above or in the <a href="#">Updates</a>?</p>
+      <p>
+        <a class="btn btn-primary" href="${request.node_path(project, suffix=['ask-question'])}">Ask ${project.creator.name} a Question</a>
+        or
+        <a href="${request.route_path('questions')}">Browse Crowd Supply Questions &amp; Answers</a>
+      </p>
+    </%blocks:collapse_on_mobile>
+  </div>
+</%def>
+
+
+<%def name="owner_controls(project)">
+  % if project.status in ('prelaunch', 'crowdfunding'):
+    <p>
+      View page preview:
+      % if project.status == 'prelaunch':
+        <a href="${request.node_path(project, suffix=['crowdfunding'])}">Crowdfunding Page</a>
+        |
+      % endif
+      % if project.status in ('prelaunch', 'crowdfunding'):
+        <a href="${request.node_path(project, suffix=['available'])}">Pre-order / Available Page</a>
+      % endif
+    </p>
+  % endif
+</%def>
+
+
 <%blocks:admin_bar>
   <p>
     <a href="${request.route_path('admin:project', id=project.id)}">
@@ -478,7 +528,21 @@
 </%blocks:admin_bar>
 
 
-% if project.status == 'prelaunch':
+% if (request.user.admin and request.user.show_admin_bars) or project.check_owner(request.user):
+  <section class="section-project-owner-controls">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <h4>You are an owner of this project</h4>
+          ${self.owner_controls(project)}
+        </div>
+      </div>
+    </div>
+  </section>
+% endif
+
+
+% if (project.status == 'prelaunch') and (not action):
   <section class="section-project-prelaunch">
     <div class="container">
       <div class="row">
@@ -530,36 +594,16 @@
             <%self:tab suffix="backers">
               Backers
             </%self:tab>
+            % if project.status == 'available':
+              <%self:tab suffix="crowdfunding">
+                Crowdfunding
+              </%self:tab>
+            % endif
           </ul>
         </div>
       </div>
 
-      % if not action:
-        <div class="row">
-          <div class="col-md-8 project-media">
-            % if project.crowdfunding_vimeo_id:
-              ${blocks.vimeo_embed(project.crowdfunding_vimeo_id)}
-            % else:
-              ${project.img(request, 'project-tile')}
-            % endif
-          </div>
-          <div class="col-sm-4 project-sidebar">
-            ${self.sidebar(project)}
-          </div>
-          <div class="col-sm-8">
-            ${next.body()}
-          </div>
-        </div>
-      % else:
-        <div class="row">
-          <div class="col-sm-8">
-            ${next.body()}
-          </div>
-          <div class="col-sm-4 project-sidebar">
-            ${self.sidebar(project)}
-          </div>
-        </div>
-      % endif
+      ${next.body()}
 
       ${self.creator_block(project)}
     </div>

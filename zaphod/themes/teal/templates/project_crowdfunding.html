@@ -1,6 +1,6 @@
 <%inherit file="project_base.html"/>
 
-## <%page cached="True" cache_region="default" cache_key="project-${str(project.id)}-body" />
+<%page cached="True" cache_region="default" cache_key="project-${str(project.id)}-body-crowdfunding" />
 
 
 <%namespace name="tiles" file="common/tiles.html"/>
@@ -8,6 +8,11 @@
 
 
 <%def name="title()">${project.name}</%def>
+
+
+<%def name="additional_head()">
+  <meta name="robots" content="noindex">
+</%def>
 
 
 <%def name="owner_controls(project)">

@@ -201,6 +201,8 @@ class TealTheme(Theme):
         cache = self.cache_regions['default']
         cache.invalidate('project-%d-tile' % project_id)
         cache.invalidate('project-%d-body' % project_id)
+        cache.invalidate('project-%d-body-crowdfunding' % project_id)
+        cache.invalidate('project-%d-body-available' % project_id)
         cache.invalidate('project-%d-sidebar' % project_id)
         cache.invalidate('project-%d-leader' % project_id)
         self.invalidate_index()

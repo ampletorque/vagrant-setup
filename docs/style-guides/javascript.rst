@@ -1,8 +1,8 @@
-Javascript Style Guide
+JavaScript Style Guide
 ======================
 
 
-This page describes conventions for javascript and plugins.
+This page describes conventions for JavaScript and plugins.
 
 Indents
 -------

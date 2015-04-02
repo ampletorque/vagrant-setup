@@ -146,3 +146,47 @@
     </ul>
   </div>
 </%def>
+
+
+<%def name="project_association(renderer, name, collection, label=None)">
+  <%forms:element name="${name}" label="${label}">
+    <div class="form-control-static">
+      <ul class="list-association js-project-association">
+        % for obj in collection:
+          <li>
+            <a href="#"><i class="fa fa-minus-circle"></i></a>
+            ${obj.name}
+          </li>
+        % endfor
+        <li>
+          <a href="#">
+            <i class="fa fa-plus-circle"></i>
+            Add Project
+          </a>
+        </li>
+      </ul>
+    </div>
+  </%forms:element>
+</%def>
+
+
+<%def name="tag_association(renderer, name, collection, label=None)">
+  <%forms:element name="${name}" label="${label}">
+    <div class="form-control-static">
+      <ul class="list-association js-tag-association">
+        % for obj in collection:
+          <li>
+            <a href="#"><i class="fa fa-minus-circle"></i></a>
+            ${obj.name}
+          </li>
+        % endfor
+        <li>
+          <a href="#">
+            <i class="fa fa-plus-circle"></i>
+            Add Tag
+          </a>
+        </li>
+      </ul>
+    </div>
+  </%forms:element>
+</%def>

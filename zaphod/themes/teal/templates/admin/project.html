@@ -34,24 +34,28 @@ ${regions.project_header(obj)}
 
           ${forms.ltextarea(renderer, 'keywords', obj.keywords, rows=3, hint='Included in a keywords meta tag and used for search.')}
 
+          ${widgets.tag_association(renderer, 'tags', obj.tags)}
+          ${widgets.project_association(renderer, 'related_projects', obj.related_projects)}
+
           ${forms.lcheckbox(renderer, 'listed', obj.listed)}
           ${forms.lcheckbox(renderer, 'published', obj.published)}
 
-          <h2>Prelaunch</h2>
+          <legend>Prelaunch</legend>
           ${forms.ltext(renderer, 'prelaunch_vimeo_id', obj.prelaunch_vimeo_id, label='Vimeo ID')}
           ${forms.ltextarea(renderer, 'prelaunch_teaser', obj.prelaunch_teaser, rows=3, label='Teaser', hint='Optional summary.')}
           ${widgets.lcontent(renderer, 'prelaunch_body', obj.prelaunch_body)}
 
-          <h2>Crowdfunding</h2>
+          <legend>Crowdfunding</legend>
           ${forms.ltext(renderer, 'crowdfunding_vimeo_id', obj.crowdfunding_vimeo_id, label='Vimeo ID')}
           ${forms.ltextarea(renderer, 'teaser', obj.teaser, rows=3, label='Teaser', hint='Optional summary.')}
           ${widgets.lcontent(renderer, 'body', obj.body)}
 
-          <h2>Available</h2>
+          <legend>Available</legend>
           ${forms.ltext(renderer, 'available_vimeo_id', obj.available_vimeo_id, label='Vimeo ID')}
           ${forms.ltextarea(renderer, 'available_teaser', obj.available_teaser, rows=3, label='Teaser', hint='Optional summary.')}
           ${widgets.lcontent(renderer, 'available_body', obj.available_body)}
 
+          <legend>Images</legend>
           ${widgets.images(renderer, obj)}
           ${widgets.comments(renderer, obj)}
 

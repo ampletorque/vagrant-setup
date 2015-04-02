@@ -21,7 +21,7 @@ Don't use things like ``each`` for loop variables.
 
 For integer iterators, use a doubled character (e.g. ``ii``) instead of a single character (``i``) so that it can be grepped for or replaced.
 
-If you have a comment on the first line of a function, consider if it should be a doctoring.
+If you have a comment on the first line of a function, consider if it should be a docstring.
 
 Use docstrings to describe the basic purpose of a function, use comments for implementation. docstrings are for the user (or caller), comments are for author/editor.
 

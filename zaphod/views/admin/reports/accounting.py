@@ -63,7 +63,7 @@ class AccountingReportsView(BaseReportsView):
                    model.CartItem.shipped_time >= start,
                    model.CartItem.shipped_time < end)
 
-        stock_shipping = q.scalar()
+        stock_shipping = q.scalar() or 0
 
         # fulfillment fees, recognized at the time of shipment
         # XXX

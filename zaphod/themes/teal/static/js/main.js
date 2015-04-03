@@ -9,7 +9,9 @@ require([
 
   'teal/countdowns',
   'teal/checkout',
-  'teal/addressfields'
+  'teal/addressfields',
+  'teal/tags',
+  'teal/relatedprojects'
 
 ], function ($) {
   $(function () {

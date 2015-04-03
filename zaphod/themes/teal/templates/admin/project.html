@@ -30,6 +30,29 @@ ${regions.project_header(obj)}
           ${forms.lcheckbox(renderer, 'accepts_preorders', obj.accepts_preorders, label='Accepts Pre-Orders', hint='Check if the project will continue to accept orders after the crowdfunding campaign is over.')}
           ${forms.ltext(renderer, 'pledged_elsewhere_amount', obj.pledged_elsewhere_amount, label='Amount Pledged Elsewhere', prefix='$')}
           ${forms.ltext(renderer, 'pledged_elsewhere_count', obj.pledged_elsewhere_count, label='Count Pledged Elsewhere')}
+
+          <%forms:element name="crowdfunding_fee_percent" label="Crowdfunding Fee">
+            <div class="row">
+              <div class="col-xs-6 col-sm-4 col-md-3">
+                <div class="input-group">
+                  ${renderer.text('crowdfunding_fee_percent', obj.crowdfunding_fee_percent, class_='form-control')}
+                  <span class="input-group-addon">%</span>
+                </div>
+              </div>
+            </div>
+          </%forms:element>
+
+          <%forms:element name="preorder_fee_percent" label="Pre-Order Fee">
+            <div class="row">
+              <div class="col-xs-6 col-sm-4 col-md-3">
+                <div class="input-group">
+                  ${renderer.text('preorder_fee_percent', obj.preorder_fee_percent, class_='form-control')}
+                  <span class="input-group-addon">%</span>
+                </div>
+              </div>
+            </div>
+          </%forms:element>
+
           ${forms.lcheckbox(renderer, 'include_in_launch_stats', obj.include_in_launch_stats, label='Include in Launch Stats', hint='Check if this project launched or will launch as a crowdfunding campaign on Crowd Supply.')}
 
           ${forms.ltextarea(renderer, 'keywords', obj.keywords, rows=3, hint='Included in a keywords meta tag and used for search.')}

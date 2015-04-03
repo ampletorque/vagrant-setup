@@ -80,6 +80,8 @@ class ProjectEditView(NodeEditView):
         pledged_elsewhere_count = validators.Int()
         pledged_elsewhere_amount = validators.Number()
         include_in_launch_stats = validators.Bool()
+        crowdfunding_fee_percent = validators.Number()
+        preorder_fee_percent = validators.Number()
 
     def _update_object(self, form, obj):
         NodeEditView._update_object(self, form, obj)

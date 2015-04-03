@@ -191,6 +191,7 @@ class CreditCardPayment(Payment):
     expired = Column(types.Boolean, nullable=False, default=False)
     # Possible states are open, won, lost.
     chargeback_state = Column(types.String(4), nullable=True)
+    descriptor = Column(types.String(255), nullable=True)
 
     chargeback_by = orm.relationship(
         'User',

@@ -92,6 +92,7 @@ def capture_order(request, project, order):
             ccv_result=resp['ccv_result'],
             card_type=resp['card_type'],
             created_by=request.user,
+            descriptor=descriptor,
         ))
 
     # - commit transaction asap after this!

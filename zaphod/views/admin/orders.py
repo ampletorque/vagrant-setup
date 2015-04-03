@@ -366,6 +366,7 @@ class OrderEditView(BaseEditView):
             ccv_result=resp['ccv_result'],
             card_type=resp['card_type'],
             created_by=request.user,
+            descriptor=descriptor,
         ))
 
     @view_config(route_name='admin:order:payment-cc-existing',

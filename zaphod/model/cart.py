@@ -4,6 +4,7 @@ from __future__ import (absolute_import, division, print_function,
 import logging
 
 from sqlalchemy import Column, ForeignKey, types, orm
+from sqlalchemy.sql import func
 
 from . import custom_types, utils
 from .base import Base, Session
@@ -102,9 +103,12 @@ class Cart(Base):
             item.refresh()
 
 
+# These definitions should probably go away and be replaced with only the
+# CartItem.x ones.
 CROWDFUNDING = 0
 PREORDER = 1
 STOCK = 2
+INACTIVE = 3
 
 
 class CartItem(Base):
@@ -122,6 +126,7 @@ class CartItem(Base):
     price_each = Column(custom_types.Money, nullable=False)
     qty_desired = Column(types.Integer, nullable=False, default=1)
     shipping_price = Column(custom_types.Money, nullable=False)
+
     stage = Column(types.Integer, nullable=False)
 
     expected_ship_time = Column(types.DateTime, nullable=True)
@@ -137,6 +142,8 @@ class CartItem(Base):
     CROWDFUNDING = 0
     PREORDER = 1
     STOCK = 2
+    # This is used for carts which have 'expired' without checking out.
+    INACTIVE = 3
 
     available_statuses = [
         ('cart', 'Pre-checkout'),
@@ -243,6 +250,139 @@ class CartItem(Base):
         for item in items:
             item.cart_item = self
 
+    def _refresh_crowdfunding(self):
+        log.info('refresh %s: selecting crowdfunding', self.id)
+        self.stage = CROWDFUNDING
+        self.release_stock()
+
+        if self.product.non_physical:
+            self.batch = None
+            self.expected_ship_date = None
+            log.info('refresh %s: non-physical', self.id)
+            return True
+
+        # Read and lock all the batch rows for this product.
+        Batch = utils.relationship_class(CartItem.batch)
+        batches = Session.query(Batch).\
+            filter_by(product=self.product).\
+            with_for_update().\
+            all()
+
+        # Determine what qty is available, or infinite. Note that this is a bit
+        # different from product.qty_claimed because we don't want to clobber
+        # reservations for carts that haven't checked out, but are still
+        # active.
+        cf_consumed = Session.query(func.sum(CartItem.qty_desired)).\
+            filter(CartItem.product == self.product,
+                   CartItem.id != self.id,
+                   CartItem.stage == CartItem.CROWDFUNDING,
+                   CartItem.status != 'cancelled').\
+            scalar() or 0
+
+        if any(batch.qty is None for batch in batches):
+            cf_available = None
+        else:
+            cf_total = sum(batch.qty for batch in batches)
+            cf_available = cf_total - cf_consumed
+            log.info('refresh %s: crowdfunding consumed: %s, available: %s',
+                     self.id, cf_consumed, cf_available)
+
+        # If less qty is available than desired, bump down desired.
+        success = (cf_available is None) or (cf_available >= self.qty_desired)
+        if not success:
+            self.qty_desired = cf_available
+            log.info('refresh %s: reducing crowdfunding qty %s',
+                     self.id, cf_available)
+
+        # Allocate pledge batch
+        for batch in batches:
+            if ((not batch.qty) or
+                    ((cf_consumed + self.qty_desired) < batch.qty)):
+                self.batch = batch
+                log.info('refresh %s: selecting batch %s', self.id, batch.id)
+                break
+            cf_consumed -= batch.qty
+
+        assert self.batch, "no batch assigned for cart item %s" % self.id
+        self.expected_ship_time = self.batch.ship_time
+        log.info('refresh %s: success:%s', self.id, success)
+        return success
+
+    def _refresh_available(self):
+        # XXX Use locking and try to avoid reservation churn
+
+        project = self.product.project
+
+        self.release_stock()
+        if self.product.non_physical:
+            self.batch = None
+            self.expected_ship_time = None
+            self.stage = CartItem.STOCK
+            log.info('refresh %s: non-physical', self.id)
+            return True
+
+        # Make sure that the product is available.
+        accepts_preorders = (project.accepts_preorders and
+                             self.product.accepts_preorders)
+        stock_available = self.sku.qty_available
+
+        if accepts_preorders and self.product.batches:
+            preorder_available = self.product.qty_remaining
+            if preorder_available is None:
+                # This means a non-qty-limited product
+                preorder_available = self.qty_desired
+        else:
+            preorder_available = 0
+
+        log.info('refresh %s: preorder_available: %s', self.id,
+                 preorder_available)
+        log.info('refresh %s: stock_available: %s', self.id,
+                 stock_available)
+
+        if stock_available >= self.qty_desired:
+            log.info('refresh %s: selecting stock', self.id)
+            self.reserve_stock()
+            self.stage = STOCK
+            self.batch = None
+            self.expected_ship_time = utils.shipping_day()
+            log.info('refresh %s: good', self.id)
+            return True
+
+        if stock_available >= preorder_available:
+            log.info('refresh %s: selecting stock', self.id)
+            self.qty_desired = stock_available
+            self.reserve_stock()
+            self.stage = STOCK
+            self.batch = None
+            self.expected_ship_time = utils.shipping_day()
+            log.info('refresh %s: partial', self.id)
+            return False
+
+        if preorder_available > 0:
+            log.info('refresh %s: selecting preorder', self.id)
+            if preorder_available < self.qty_desired:
+                self.qty_desired = preorder_available
+                log.info('refresh %s: partial', self.id)
+                partial = True
+            else:
+                log.info('refresh %s: good', self.id)
+                partial = False
+            self.batch = self.product.select_batch(self.qty_desired)
+            assert self.batch
+            self.stage = PREORDER
+            self.expected_ship_time = self.batch.ship_time
+            self.release_stock()
+            return (not partial)
+
+        # This thing is no longer available.
+        log.info('refresh %s: unavailable', self.id)
+        self.qty_desired = 0
+        self.batch = None
+        self.expected_ship_time = None
+        self.release_stock()
+        log.info('refresh %s: fail', self.id)
+        return False
+
     def refresh(self):
         """
         Refresh status and reservations. For a stock item, ensure that
@@ -260,88 +400,23 @@ class CartItem(Base):
         accordingly, and False will be returned. Otherwise, True will be
         returned.
         """
-        log.info('refresh %s: begin', self.id)
+        log.info('refresh %s: begin qty:%s product:%s name:%s',
+                 self.id, self.qty_desired, self.product_id, self.product.name)
         assert not self.cart.order, \
             "cannot refresh cart item that has a placed order"
-
-        # XXX Lock existing items.
-
-        # XXX The batch allocation needs to take into account qty-- e.g. if
-        # there is only a certain qty available in crowdfunding, decrement the
-        # qty.
-
         self.price_each = self.calculate_price()
-
         project = self.product.project
         if project.status == 'crowdfunding':
-            log.info('refresh %s: selecting crowdfunding', self.id)
-            self.stage = CROWDFUNDING
-            self.batch = self.product.select_batch(self.qty_desired)
-            assert self.batch
-            self.expected_ship_time = self.batch.ship_time
-            self.release_stock()
-            log.info('refresh %s: good', self.id)
-            return True
+            return self._refresh_crowdfunding()
         else:
-            self.release_stock()
-            # Make sure that the product is available.
-            accepts_preorders = (project.accepts_preorders and
-                                 self.product.accepts_preorders)
-            stock_available = self.sku.qty_available
+            return self._refresh_available()
 
-            if accepts_preorders and self.product.batches:
-                preorder_available = self.product.qty_remaining
-                if preorder_available is None:
-                    # This means a non-qty-limited product
-                    preorder_available = self.qty_desired
-            else:
-                preorder_available = 0
-
-            log.info('refresh %s: preorder_available: %s', self.id,
-                     preorder_available)
-            log.info('refresh %s: stock_available: %s', self.id,
-                     stock_available)
-
-            if stock_available >= self.qty_desired:
-                log.info('refresh %s: selecting stock', self.id)
-                self.reserve_stock()
-                self.stage = STOCK
-                self.batch = None
-                self.expected_ship_time = utils.shipping_day()
-                log.info('refresh %s: good', self.id)
-                return True
-
-            if stock_available >= preorder_available:
-                log.info('refresh %s: selecting stock', self.id)
-                self.qty_desired = stock_available
-                self.reserve_stock()
-                self.stage = STOCK
-                self.batch = None
-                self.expected_ship_time = utils.shipping_day()
-                log.info('refresh %s: partial', self.id)
-                return False
-
-            if preorder_available > 0:
-                log.info('refresh %s: selecting preorder', self.id)
-                if preorder_available < self.qty_desired:
-                    self.qty_desired = preorder_available
-                    log.info('refresh %s: partial', self.id)
-                    partial = True
-                else:
-                    log.info('refresh %s: good', self.id)
-                    partial = False
-                self.batch = self.product.select_batch(self.qty_desired)
-                assert self.batch
-                self.stage = PREORDER
-                self.expected_ship_time = self.batch.ship_time
-                self.release_stock()
-                return (not partial)
-
-            # This thing is no longer available.
-            log.info('refresh %s: unavailable', self.id)
-            self.qty_desired = 0
-            self.batch = None
-            self.expected_ship_time = None
-            self.release_stock()
-            log.info('refresh %s: fail', self.id)
-            return False
+    def expire(self):
+        """
+        Expire a 'stale' cart item.
+        """
+        log.info('expire %s', self.id)
+        self.batch = None
+        self.expected_ship_time = None
+        self.release_stock()
+        self.stage = INACTIVE

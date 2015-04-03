@@ -97,3 +97,10 @@ def shipping_day():
     FIXME XXX Implement this
     """
     return utcnow().date()
+
+
+def relationship_class(rel):
+    """
+    Given a relationship property ``rel``, return the target class.
+    """
+    return rel.property.mapper.class_

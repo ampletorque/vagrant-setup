@@ -278,8 +278,8 @@ def migrate_projects(settings, creator_map, tag_map, user_map):
         model.Session.flush()
 
     for old_project, new_project in project_map.items():
-        new_project.related_projects[:] = [project_map[old_rel] for old_rel in
-                                           old_project.related_projects]
+        for old_rel in old_project.related_projects:
+            new_project.related_projects.add(project_map[old_rel])
 
     return project_map, product_map, option_value_map, batch_map
 

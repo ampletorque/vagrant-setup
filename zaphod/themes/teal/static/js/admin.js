@@ -13,7 +13,9 @@ require([
   'teal/options',
   'teal/schedule',
   'teal/additem',
-  'teal/addressfields'
+  'teal/addressfields',
+  'teal/tags',
+  'teal/relatedprojects'
 
 ], function ($) {
   $(function () {

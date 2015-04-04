@@ -109,6 +109,7 @@ def includeme(config):
 
     config.add_route('admin:tags', '/tags')
     config.add_route('admin:tags:new', '/tags/new')
+    config.add_route('admin:tags:ajax-list', '/tags/ajax-list')
     config.add_route('admin:tag', '/tag/{id}')
 
     config.add_route('admin:leads', '/leads')

@@ -154,12 +154,12 @@
       <ul class="list-association js-project-association">
         % for obj in collection:
           <li>
-            <a href="#"><i class="fa fa-minus-circle"></i></a>
+            <a class="js-project-remove" href="#"><i class="fa fa-minus-circle"></i></a>
             ${obj.name}
           </li>
         % endfor
         <li>
-          <a href="#">
+          <a class="js-project-add" href="#">
             <i class="fa fa-plus-circle"></i>
             Add Project
           </a>
@@ -173,18 +173,21 @@
 <%def name="tag_association(renderer, name, collection, label=None)">
   <%forms:element name="${name}" label="${label}">
     <div class="form-control-static">
-      <ul class="list-association js-tag-association">
-        % for obj in collection:
+      <ul class="list-association js-tag-association" data-path="${request.route_path('admin:tags:ajax-list')}">
+        % for tag in collection:
           <li>
-            <a href="#"><i class="fa fa-minus-circle"></i></a>
-            ${obj.name}
+            <a class="js-tag-remove" href="#"><i class="fa fa-minus-circle"></i></a>
+            ${renderer.hidden('tag_ids', tag.id)}
+            ${tag.name}
           </li>
         % endfor
-        <li>
-          <a href="#">
+        <li class="list-association-add">
+          <a class="js-tag-add" href="#">
             <i class="fa fa-plus-circle"></i>
             Add Tag
           </a>
+          <select class="form-control">
+          </select>
         </li>
       </ul>
     </div>

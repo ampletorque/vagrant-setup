@@ -98,6 +98,7 @@ class Project(Node, ElasticMixin):
     related_projects = orm.relationship(
         'Project',
         secondary=related_projects,
+        collection_class=set,
         primaryjoin='related_projects.c.source_id == Project.node_id',
         secondaryjoin='related_projects.c.dest_id == Project.node_id')
 

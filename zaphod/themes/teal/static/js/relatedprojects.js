@@ -117,7 +117,7 @@ define(['jquery'], function ($) {
           '<a class="js-project-remove" href="#">' +
             '<i class="fa fa-minus-circle"></i>' +
           '</a>\n' +
-          '<input type="hidden" name="project_ids" value="' + projectID + '">\n' +
+          '<input type="hidden" name="related_project_ids" value="' + projectID + '">\n' +
           projectName +
         '\n</li>'
       );

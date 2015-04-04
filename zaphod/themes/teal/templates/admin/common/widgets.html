@@ -152,10 +152,11 @@
   <%forms:element name="${name}" label="${label}">
     <div class="form-control-static">
       <ul class="list-association js-project-association" data-path="${request.route_path('admin:projects:search')}">
-        % for obj in collection:
+        % for project in collection:
           <li>
             <a class="js-project-remove" href="#"><i class="fa fa-minus-circle"></i></a>
-            ${obj.name}
+            ${renderer.hidden('related_project_ids', project.id)}
+            ${project.name}
           </li>
         % endfor
         <li>

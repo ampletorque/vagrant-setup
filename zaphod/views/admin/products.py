@@ -63,6 +63,7 @@ class ProductEditView(BaseEditView):
 
     class UpdateForm(Schema):
         allow_extra_fields = False
+        pre_validators = [NestedVariables]
         name = validators.UnicodeString(not_empty=True)
         international_available = validators.Bool()
         international_surcharge = validators.Number()
@@ -77,7 +78,6 @@ class ProductEditView(BaseEditView):
         box_length = validators.Number()
         box_width = validators.Number()
         box_height = validators.Number()
-
         images = ForEach(custom_validators.ImageAssociation())
 
     def _update_object(self, form, obj):

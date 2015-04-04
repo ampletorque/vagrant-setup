@@ -103,7 +103,18 @@ class ProjectEditView(NodeEditView):
         crowdfunding_fee_percent = validators.Number()
         preorder_fee_percent = validators.Number()
 
+        tag_ids = ForEach(validators.Int)
+        related_project_ids = ForEach(validators.Int)
+
     def _update_object(self, form, obj):
+        obj.tags.clear()
+        for tag_id in  form.data.pop('tag_ids'):
+            obj.tags.add(model.Tag.get(tag_id))
+
+        obj.related_projects.clear()
+        for project_id in form.data.pop('related_project_ids'):
+            obj.related_projects.add(model.Project.get(project_id))
+
         NodeEditView._update_object(self, form, obj)
         self.request.theme.invalidate_project(obj.id)
 

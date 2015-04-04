@@ -151,7 +151,7 @@
 <%def name="project_association(renderer, name, collection, label=None)">
   <%forms:element name="${name}" label="${label}">
     <div class="form-control-static">
-      <ul class="list-association js-project-association">
+      <ul class="list-association js-project-association" data-path="${request.route_path('admin:projects:search')}">
         % for obj in collection:
           <li>
             <a class="js-project-remove" href="#"><i class="fa fa-minus-circle"></i></a>
@@ -163,6 +163,11 @@
             <i class="fa fa-plus-circle"></i>
             Add Project
           </a>
+          <div class="searcher">
+            <input type="text" class="form-control" placeholder="Search projects...">
+            <ul class="searcher-menu js-project-menu">
+            </ul>
+          </div>
         </li>
       </ul>
     </div>

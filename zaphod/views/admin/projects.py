@@ -8,6 +8,7 @@ from formencode import Schema, NestedVariables, ForEach, validators
 from pyramid.httpexceptions import HTTPFound
 
 from pyramid_uniform import Form, FormRenderer, crud_update
+from pyramid_es import get_client
 
 from ... import model, funds
 
@@ -49,6 +50,25 @@ class OwnerCreateForm(Schema):
 @lift()
 class ProjectListView(NodeListView):
     cls = model.Project
+
+    @view_config(route_name='admin:projects:search', renderer='json', xhr=True)
+    def search(self):
+        request = self.request
+        q = request.params.get('q')
+
+        client = get_client(request)
+        results = client.query(model.Project, q=q).limit(40).execute()
+
+        return {
+            'total': results.total,
+            'projects': [
+                {
+                    'id': project._id,
+                    'name': project.name,
+                }
+                for project in results
+            ]
+        }
 
 
 @view_defaults(route_name='admin:project', renderer='admin/project.html',

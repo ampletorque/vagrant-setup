@@ -93,7 +93,7 @@ define(['jquery'], function ($) {
             console.log("tag ajax success");
             that.allTags = data.tags;
             that.populateOptions();
-          },
+          }
         });
       }
     },

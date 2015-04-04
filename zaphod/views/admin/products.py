@@ -238,7 +238,7 @@ class ProductEditView(BaseEditView):
         product = self._get_object()
         return {'obj': product}
 
-    @view_config(route_name='admin:products:search', renderer='json')
+    @view_config(route_name='admin:products:search', renderer='json', xhr=True)
     def search(self):
         request = self.request
         q = request.params.get('q')

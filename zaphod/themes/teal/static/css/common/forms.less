@@ -82,3 +82,46 @@ input[type=text], input[type=number], select {
     }
 
 }
+
+.searcher {
+    position: relative;
+}
+.searcher-menu {
+    display: none;
+    position: absolute;
+    top: 40px;
+    list-style-type: none;
+    background-color: @cs-teal;
+    padding-left: 0;
+    .box-shadow(0 1px 3px rgba(0, 0, 0, 0.2));
+    z-index: @zindex-dropdown;
+
+    &:before {
+        display: inherit;
+        content: "";
+        border-left: 7px solid transparent;
+        border-bottom: 7px solid @cs-teal;
+        border-right: 7px solid transparent;
+        position: absolute;
+        top: -7px;
+        left: 15px;
+    }
+
+    a {
+        color: #ffffff;
+        font-weight: bold;
+        display: block;
+        padding: 5px 10px;
+        &:hover {
+            background-color: darken(@cs-teal, 10%);
+            text-decoration: none;
+        }
+    }
+    p {
+        color: #cccccc;
+        font-weight: bold;
+        padding: 5px 10px;
+        margin: 0;
+    }
+
+}

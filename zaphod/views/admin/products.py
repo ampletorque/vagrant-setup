@@ -11,7 +11,7 @@ from formencode import Schema, NestedVariables, ForEach, validators
 from pyramid_uniform import Form, FormRenderer, crud_update
 from pyramid_es import get_client
 
-from ... import model
+from ... import model, custom_validators
 
 from ...admin import BaseEditView
 
@@ -71,6 +71,14 @@ class ProductEditView(BaseEditView):
         published = validators.Bool()
         price = validators.Number()
         accepts_preorders = validators.Bool()
+        hs_code = validators.String()
+        fulfillment_fee = validators.Number()
+        shipping_weight = validators.Number()
+        box_length = validators.Number()
+        box_width = validators.Number()
+        box_height = validators.Number()
+
+        images = ForEach(custom_validators.ImageAssociation())
 
     def _update_object(self, form, obj):
         BaseEditView._update_object(self, form, obj)

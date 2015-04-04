@@ -26,6 +26,23 @@ ${regions.product_header(obj)}
           ${forms.ltext(renderer, 'gravity', obj.gravity, type='number', hint='Determines the sort order of this product on the project page.')}
           ${forms.lcheckbox(renderer, 'non_physical', obj.non_physical, label='Non-physical item', hint='Check if this product is a non-physical thing, like a donation or a digital copy.')}
 
+          ${forms.ltext(renderer, 'hs_code', obj.hs_code, label='HS Code')}
+          ${forms.ltext(renderer, 'fulfillment_fee', obj.fulfillment_fee, label='Fulfillment Fee', prefix='$')}
+          ${forms.ltext(renderer, 'shipping_weight', obj.shipping_weight, label='Shipping Weight', hint='In kilograms.')}
+          <%forms:element names="${['box_length', 'box_width', 'box_height']}" label="Dimensions">
+            <div class="row">
+              <div class="col-xs-4">
+                ${renderer.text('box_length', obj.box_length, class_='form-control')}
+              </div>
+              <div class="col-xs-4">
+                ${renderer.text('box_width', obj.box_width, class_='form-control')}
+              </div>
+              <div class="col-xs-4">
+                ${renderer.text('box_height', obj.box_height, class_='form-control')}
+              </div>
+            </div>
+            ${forms.hint('LxWxH in centimeters.')}
+          </%forms:element>
 
           ${forms.lcheckbox(renderer, 'accepts_preorders', obj.accepts_preorders, hint='Check if this product will be available for pre-order or stock orders after crowdfunding.')}
           ${forms.lcheckbox(renderer, 'published', obj.published)}

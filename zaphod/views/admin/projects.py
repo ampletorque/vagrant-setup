@@ -108,7 +108,7 @@ class ProjectEditView(NodeEditView):
 
     def _update_object(self, form, obj):
         obj.tags.clear()
-        for tag_id in  form.data.pop('tag_ids'):
+        for tag_id in form.data.pop('tag_ids'):
             obj.tags.add(model.Tag.get(tag_id))
 
         obj.related_projects.clear()

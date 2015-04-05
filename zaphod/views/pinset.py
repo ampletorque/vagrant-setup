@@ -2,7 +2,7 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 import pkg_resources
-from cStringIO import StringIO
+from six import StringIO
 
 from pyramid.view import view_config
 from pyramid.response import Response

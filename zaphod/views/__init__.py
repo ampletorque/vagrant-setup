@@ -56,6 +56,8 @@ def includeme(config):
 
     config.add_route('update-payment', '/update-payment')
 
+    config.add_route('pinset', '/pinset/{id}.jpg')
+
     # This needs to stay the last route registered.
     config.add_route('node', '/*path')
 

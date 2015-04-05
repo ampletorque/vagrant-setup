@@ -126,7 +126,6 @@ def project_pin_it_url(request, project,
     # XXX Consider adding 'pinset' support to this.
     return pin_it_url(
         dst_url=request.node_url(project),
-        media=project.img_url(request, 'project-main'),
-        # media=request.route_url('pinset', id=project.id),
+        media=request.route_url('pinset', id=project.id),
         description=description,
     )

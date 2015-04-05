@@ -167,6 +167,8 @@ class TealTheme(Theme):
             extension='png'),
     ]
 
+    tile_filter = 'project-tile'
+
     cache_impl = 'dogpile.cache'
 
     @reify

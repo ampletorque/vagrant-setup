@@ -165,7 +165,7 @@
     project = getters.get_project(project_id)
   %>
   <a class="project-tile" href="${request.node_url(project)}">
-    ${project.img(request, 'project-tile')}
+    ${project.img(request, request.theme.tile_filter)}
     <div class="project-tile-overview">
       % if project.status == 'prelaunch':
         <h3>${project.name}</h3>

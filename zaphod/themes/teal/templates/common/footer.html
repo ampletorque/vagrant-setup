@@ -1,8 +1,7 @@
 <%def name="email_signup()">
-  <form method="post" action="${request.route_path('subscribe')}" id="email-signup-form" class="form-inline">
+  <form method="POST" action="${request.route_path('subscribe')}" id="email-signup-form" class="form-inline">
     <div class="input-group">
       ${h.text('email', maxlength=320, placeholder='email@example.com', class_='form-control input-lg', type='email', id='signup-email')}
-      ${h.hidden('source', 'signup')}
       <span class="input-group-btn">
         <button type="submit" class="btn btn-dark btn-lg">Subscribe</button>
       </span>

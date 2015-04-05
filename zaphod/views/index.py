@@ -2,7 +2,6 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from pyramid.view import view_config
-from pyramid.settings import asbool
 
 
 @view_config(route_name='index', renderer='index.html')

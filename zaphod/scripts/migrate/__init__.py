@@ -71,6 +71,7 @@ def main(argv=sys.argv):
         model.Session.add(root_user)
         model.Session.flush()
 
+        users.migrate_emails()
         user_map = users.migrate_users(settings)
         images.migrate_images(settings)
         users.migrate_user_data(settings, user_map)

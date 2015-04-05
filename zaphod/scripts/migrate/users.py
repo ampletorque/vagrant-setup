@@ -81,3 +81,17 @@ def migrate_user_data(settings, user_map):
             new_user.created_by = user_map[old_user.created_by]
             utils.migrate_comments(old_user, new_user, user_map)
             utils.migrate_image_associations(settings, old_user, new_user)
+
+
+def migrate_emails():
+    for old_email in scrappy_meta.Session.query(scrappy_model.EmailAddress).\
+            join(scrappy_model.EmailAddress.subscriptions):
+        log.warn("  email %s", old_email.email)
+        email = model.NewsletterEmail(
+            id=old_email.id,
+            email=old_email.email,
+            source=old_email.source,
+            created_time=old_email.created_time,
+        )
+        model.Session.add(email)
+    model.Session.flush()

@@ -7,47 +7,17 @@ from pyramid.settings import asbool
 
 @view_config(route_name='index', renderer='index.html')
 def index_view(request):
-    if asbool(request.registry.settings.get('testing')):
-        def get_groups():
-            return [
-                ('Recently Launched', []),
-                ('Recently Funded', []),
-                ('Crowd Favorites', []),
-            ]
-    else:
-        def get_groups():
-            recently_launched = [
-                [
-                    1530,  # otium rack
-                    1497,  # fold-up eating set
-                    1492,  # key switches
-                ],
-            ]
-
-            recently_funded = [
-                [
-                    1364,  # librem
-                    1329,  # usb armory
-                ],
-                [
-                    1430,  # a weather walked in
-                    1224,  # goodwell
-                    1259,  # hydrogen
-                ],
-            ]
-
-            crowd_favorites = [
-                [
-                    236,  # portland press
-                    746,  # circuit stickers
-                    962,  # novena
-                ],
-            ]
-
-            return [
-                ('Recently Launched', recently_launched),
-                ('Recently Funded', recently_funded),
-                ('Crowd Favorites', crowd_favorites),
-            ]
+    def get_groups():
+        settings = request.registry.settings
+        rows = []
+        for ii in range(10):
+            key = 'index.row-%d' % ii
+            heading_key = key + '.heading'
+            if heading_key in settings:
+                project_ids = []
+                for row_s in settings[key + '.projects'].split('/'):
+                    project_ids.append([int(piece) for piece in row_s.split()])
+                rows.append((settings[heading_key], project_ids))
+        return rows
 
     return dict(get_groups=get_groups)

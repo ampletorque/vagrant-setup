@@ -1,12 +1,16 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from sqlalchemy.sql import func
+import logging
+
+from sqlalchemy.sql import func, or_
 from pyramid.view import view_config, view_defaults
 
 from .base import BaseReportsView
 
 from .... import model
+
+log = logging.getLogger(__name__)
 
 
 @view_defaults(permission='admin')
@@ -103,21 +107,24 @@ class AccountingReportsView(BaseReportsView):
         # for a time range
 
         # in-stock product cost
-        # XXX
-        stock_items = 0
+        q = model.Session.query(func.sum(model.Item.cost)).\
+            join(model.Item.cart_item).\
+            filter(model.CartItem.shipped_time >= start,
+                   model.CartItem.shipped_time < end)
+        stock_item_cost = q.scalar() or 0
 
         # outbound freight cost
-        # XXX
-        shipping = 0
+        q = model.Session.query(func.sum(model.Shipment.cost)).\
+            filter(model.Shipment.created_time >= start,
+                   model.Shipment.created_time < end)
+        outbound_shipping_cost = q.scalar() or 0
 
-        # we want to show fulfillment cost on this report
-
-        total = stock_items + shipping
+        total_cost = stock_item_cost + outbound_shipping_cost
 
         return {
-            'stock_items': stock_items,
-            'shipping': shipping,
-            'total': total,
+            'stock_item_cost': stock_item_cost,
+            'outbound_shipping_cost': outbound_shipping_cost,
+            'total_cost': total_cost,
             'start_date': start_date,
             'end_date': end_date,
         }
@@ -125,14 +132,45 @@ class AccountingReportsView(BaseReportsView):
     @view_config(route_name='admin:reports:inventory',
                  renderer='admin/reports/inventory.html')
     def inventory(self):
+        utcnow, start_date, end_date, start, end = self._range()
         # for a certain date, show:
 
         # confirmed inventory value
+        base_q = model.Session.query(func.sum(model.Item.cost)).\
+            outerjoin(model.Item.cart_item).\
+            filter(model.Item.create_time < start).\
+            filter(or_(model.Item.destroy_time == None,
+                       model.Item.destroy_time > end)).\
+            filter(or_(model.CartItem.shipped_time == None,
+                       model.CartItem.shipped_time > end))
+
         # unconfirmed inventory value
+        confirmed_q = base_q.\
+            filter(model.Item.vendor_invoice_item_id == None)
+        confirmed_value = confirmed_q.scalar() or 0
+
+        unconfirmed_q = base_q.\
+            filter(model.Item.vendor_invoice_item_id != None)
+        unconfirmed_value = unconfirmed_q.scalar() or 0
+
+        total_value = confirmed_value + unconfirmed_value
 
         # top projects by inventory value
+        project_q = base_q.\
+            join(model.Item.acquisition).\
+            join(model.Acquisition.sku).\
+            join(model.SKU.product).\
+            join(model.Product.project).\
+            add_entity(model.Project).\
+            group_by(model.Project.id).\
+            order_by(func.sum(model.Item.cost).desc())
+        value_by_project = [(project, value) for value, project in project_q]
 
         return {
+            'confirmed_value': confirmed_value,
+            'unconfirmed_value': unconfirmed_value,
+            'total_value': total_value,
+            'value_by_project': value_by_project,
         }
 
     @view_config(route_name='admin:reports:cashflow',
@@ -140,7 +178,7 @@ class AccountingReportsView(BaseReportsView):
     def cashflow(self):
         utcnow, start_date, end_date, start, end = self._range()
 
-        # for a time range, show:
+        # for a time range, show
         # total payments in by type
         # total payments out to creators
 
@@ -153,12 +191,36 @@ class AccountingReportsView(BaseReportsView):
                  renderer='admin/reports/payments.html')
     def payments(self):
         utcnow, start_date, end_date, start, end = self._range()
-        # for a time range, show:
-        # payments by cc type
-        # payments by gateway
+
+        # for a time range, show payments captured by (gateway, type)
+        q = model.Session.query(model.PaymentGateway,
+                                model.CreditCardPayment.card_type_code,
+                                func.sum(model.CreditCardPayment.amount)).\
+            join(model.CreditCardPayment.method).\
+            join(model.PaymentMethod.gateway).\
+            filter(model.CreditCardPayment.captured_time != None,
+                   model.CreditCardPayment.captured_time >= start,
+                   model.CreditCardPayment.captured_time < end).\
+            group_by(model.PaymentGateway.id,
+                     model.CreditCardPayment.card_type_code)
+
+        payments = {}
+        card_type_codes = set()
+        for gateway, card_type_code, amount in q:
+            card_type_codes.add(card_type_code)
+            gw_payments = payments.setdefault(gateway, {})
+            gw_payments[card_type_code] = amount
+
+        card_types = list(card_type_codes)
+
+        payments = payments.items()
+        payments.sort(key=lambda row: row[0].id)
+
         return {
             'start_date': start_date,
             'end_date': end_date,
+            'payments': payments,
+            'card_types': card_types,
         }
 
     @view_config(route_name='admin:reports:chargebacks',

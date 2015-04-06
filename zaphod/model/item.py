@@ -132,6 +132,9 @@ class Item(Base):
     create_time = Column(types.DateTime, nullable=False, default=utils.utcnow)
     cart_item_id = Column(None, ForeignKey('cart_items.id'), nullable=True)
     cost = Column(custom_types.Money, nullable=True)
+    vendor_invoice_item_id = Column(None,
+                                    ForeignKey('vendor_invoice_items.id'),
+                                    nullable=True)
     destroy_time = Column(types.DateTime, nullable=True)
     destroy_adjustment_id = Column(
         None,
@@ -139,5 +142,7 @@ class Item(Base):
         nullable=True)
 
     cart_item = orm.relationship('CartItem')
+    vendor_invoice_item = orm.relationship('VendorInvoiceItem',
+                                           backref='items')
     destroy_adjustment = orm.relationship('InventoryAdjustment',
                                           foreign_keys=[destroy_adjustment_id])

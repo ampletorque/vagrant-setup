@@ -8,6 +8,50 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
+
+        <div class="table-responsive">
+          <table class="table">
+            <tbody>
+              <tr>
+                <td><strong>Confirmed Inventory Value</strong></td>
+                <td>${h.currency(confirmed_value)}</td>
+              </tr>
+              <tr>
+                <td><strong>Estimated (Unconfirmed) Inventory Value</strong></td>
+                <td>${h.currency(unconfirmed_value)}</td>
+              </tr>
+              <tr class="table-divider"><td colspan="2"></td></tr>
+              <tr>
+                <td><strong>Total Estimated Inventory Value</strong></td>
+                <td>${h.currency(total_value)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Project ID</th>
+                <th>Name</th>
+                <th>Inventory Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              % for project, value in value_by_project:
+                <tr>
+                  <td><a href="${request.route_path('admin:project', id=project.id)}">Edit</a></td>
+                  <td>${project.id}</td>
+                  <td>${project.name}</td>
+                  <td>${h.currency(value)}</td>
+                </tr>
+              % endfor
+            </tbody>
+          </table>
+        </div>
+
       </div>
     </div>
   </div>

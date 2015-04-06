@@ -285,6 +285,10 @@ def migrate_orders(settings, product_map, option_value_map,
                 cost=old_shipment.cost,
                 shipped_by_creator=False,
                 tracking_email_sent=True,
+                created_by=user_map[old_shipment.created_by],
+                created_time=old_shipment.created_time,
+                updated_by=user_map[old_shipment.updated_by],
+                updated_time=old_shipment.updated_time,
             )
             for old_ci in old_shipment.items:
                 shipment.items.append(cart_item_map[old_ci])

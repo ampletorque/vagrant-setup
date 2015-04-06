@@ -8,6 +8,30 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
+
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                % for card_type in card_types:
+                  <th>${card_type}</th>
+                % endfor
+              </tr>
+            </thead>
+            <tbody>
+              % for gateway, by_card_type in payments:
+                <tr>
+                  <td>${gateway.comment}</td>
+                  % for card_type in card_types:
+                    <td>${h.currency(by_card_type.get(card_type, 0))}</td>
+                  % endfor
+                </tr>
+              % endfor
+            </tbody>
+          </table>
+        </div>
+
       </div>
     </div>
   </div>

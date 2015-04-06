@@ -1,7 +1,6 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from operator import attrgetter
 from datetime import datetime
 from decimal import Decimal
 
@@ -83,15 +82,34 @@ class Project(Node, ElasticMixin):
         backref='project',
         primaryjoin='ProjectUpdate.project_id == Project.node_id',
     )
+    published_updates = orm.relationship(
+        'ProjectUpdate',
+        viewonly=True,
+        primaryjoin=('and_(ProjectUpdate.project_id == Project.node_id,'
+                     'ProjectUpdate.published == True)'),
+    )
 
     products = orm.relationship(
         'Product',
         backref='project',
         cascade='all, delete, delete-orphan',
     )
+    published_products = orm.relationship(
+        'Product',
+        viewonly=True,
+        primaryjoin=('and_(Product.project_id == Project.node_id,'
+                     'Product.published == True)'),
+        order_by='Product.gravity',
+    )
 
     ownerships = orm.relationship('ProjectOwner', backref='project',
                                   cascade='all, delete, delete-orphan')
+    published_ownerships = orm.relationship(
+        'ProjectOwner',
+        viewonly=True,
+        primaryjoin=('and_(ProjectOwner.project_id == Project.node_id,'
+                     'ProjectOwner.show_on_campaign == True)'),
+    )
 
     # XXX Might be able to clean this up with the new SQLAlchemy relationship
     # APIs and/or annotations.
@@ -237,23 +255,6 @@ class Project(Node, ElasticMixin):
         else:
             hours = int(round((diff.seconds / 3600) + (diff.days * 24)))
             return hours, 'hours'
-
-    @property
-    def published_updates(self):
-        # XXX FIXME turn into a relationship
-        return [pu for pu in self.updates if pu.published]
-
-    @property
-    def published_products(self):
-        # XXX FIXME turn into a relationship
-        products = [pl for pl in self.products if pl.published]
-        products.sort(key=attrgetter('gravity'))
-        return products
-
-    @property
-    def published_ownerships(self):
-        # XXX FIXME turn into a relationship
-        return [owner for owner in self.ownerships if owner.show_on_campaign]
 
     @property
     def price_range_low(self):

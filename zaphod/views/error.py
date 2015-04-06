@@ -25,9 +25,7 @@ def forbidden_view(context, request):
     permissions necessary to view the resource. In this case, show an
     error page.
 
-    If no user is logged in, redirect to the login page (unless signups
-    are enabled via the ``accounts.allow_signup`` setting, in which case
-    redirect to the signup page).
+    If no user is logged in, redirect to the login page.
 
     NOTE: This usage of 403s is dictated by Pyramid's auth machinery. It
     uses 403s to indicate any unauthorized access to a protected resource,
@@ -37,9 +35,6 @@ def forbidden_view(context, request):
     depending on the circumstances).
 
     """
-    # FIXME: Ultimately, it would be good to pass the current URL in the
-    # redirect, so that the login handler can return the user to the originally
-    # requested page.
     if not request.user:
         return HTTPFound(location=request.route_url('login'))
     return error_view(context, request)

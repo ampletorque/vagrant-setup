@@ -3,8 +3,8 @@ from __future__ import (absolute_import, division, print_function,
 
 from sqlalchemy.orm.exc import NoResultFound
 from formencode import validators, Schema
-from pyramid.httpexceptions import HTTPFound
-from pyramid_uniform import Form, FormRenderer
+from pyramid.httpexceptions import HTTPFound, HTTPBadRequest
+from pyramid_uniform import Form
 from pyramid.view import view_config
 
 from .. import model
@@ -39,4 +39,4 @@ def subscribe_view(request):
         request.flash("Thanks for signing up!", 'success')
         return HTTPFound(location=request.route_url('index'))
 
-    return dict(renderer=FormRenderer(form))
+    raise HTTPBadRequest

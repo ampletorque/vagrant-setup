@@ -2,14 +2,6 @@
 define(['jquery', 'tpl!teal/templates/images-row.erb.html'], function ($, rowTemplate) {
   // This module handles the admin interface's image association widget.
 
-  // TODO:
-  // - Block form submission until all image uploads have completed.
-  // - Listen for form resets and reset image data back to the original
-  // (requires storing the original data).
-  // - Improve performmance, particularly of progress indicator updates and
-  // thumbnail showing.
-  // - Handle searching for additional (existing) images and associating them.
-
   "use strict";
 
   function ImageWidget(selector) {
@@ -112,7 +104,6 @@ define(['jquery', 'tpl!teal/templates/images-row.erb.html'], function ($, rowTem
         formData.append("id", imageID);
         formData.append("_authentication_token", xsrf);
 
-        // FIXME The form submission should collect these and block if any are not complete
         var xhr = new XMLHttpRequest();
         xhr.open('POST', uploadPath, true);
         xhr.upload.onprogress = function (e) {

@@ -2,10 +2,6 @@
 define(['jquery'], function ($) {
   // This module handles the admin interface's tag association widget.
 
-  // TODO
-  // - Support form resets
-  // - Add loading spinner when getting tag data via AJAX
-
   "use strict";
 
   function TagWidget(selector) {

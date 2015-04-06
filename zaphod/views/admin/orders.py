@@ -127,7 +127,6 @@ class OrderEditView(BaseEditView):
         order = self._get_object()
         assert order.unauthorized_amount == 0, \
             "cannot print an invoice for an unpaid order"
-        # FIXME We want to be able to print partial invoices.
         items = order.cart.items
         return {'order': order, 'items': items}
 

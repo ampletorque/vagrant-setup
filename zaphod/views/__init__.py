@@ -58,13 +58,6 @@ def includeme(config):
 
     config.add_route('pinset', '/pinset/{id}.jpg')
 
-    config.add_route('fail', '/fail')
-
-    def fail_view(request):
-        raise Exception('fail!')
-
-    config.add_view(fail_view, route_name='fail', permission='authenticated')
-
     # This needs to stay the last route registered.
     config.add_route('node', '/*path')
 

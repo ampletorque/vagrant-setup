@@ -25,3 +25,4 @@ def includeme(config):
     config.add_route('admin:reports:warehouse-transactions',
                      '/warehouse-transactions')
     config.add_route('admin:reports:delays', '/delays')
+    config.add_route('admin:reports:project-delays', '/project-delays')

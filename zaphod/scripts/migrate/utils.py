@@ -3,6 +3,8 @@ from __future__ import (absolute_import, division, print_function,
 
 import logging
 
+from datetime import datetime, timedelta
+
 try:
     from scrappy import model as scrappy_model
     from crowdsupply import model as cs_model
@@ -137,3 +139,14 @@ def recode_ccv_result(ccv_result):
         '': 'unchecked',
     }
     return result_map[ccv_result]
+
+
+def adjust_ship_time(d):
+    """
+    Convert a given date to the last day of the month.
+    """
+    if d.month == 12:
+        next_month = datetime(d.year + 1, 1, 1)
+    else:
+        next_month = datetime(d.year, d.month + 1, 1)
+    return next_month - timedelta(days=1)

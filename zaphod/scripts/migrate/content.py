@@ -242,7 +242,7 @@ def migrate_projects(settings, creator_map, tag_map, user_map):
                 batch = model.Batch(
                     id=old_batch.id,
                     qty=old_batch.qty,
-                    ship_time=old_batch.delivery_date,
+                    ship_time=utils.adjust_ship_time(old_batch.delivery_date),
                 )
                 batch_map[old_batch] = batch
                 product.batches.append(batch)

@@ -253,7 +253,7 @@ def migrate_orders(settings, product_map, option_value_map,
             ship_time = None
             old_batch = getattr(old_ci, 'batch', None)
             if old_batch:
-                ship_time = old_ci.batch.delivery_date
+                ship_time = utils.adjust_ship_time(old_ci.batch.delivery_date)
             product = product_map[old_ci.product]
             sku = utils.sku_for_option_values(
                 product,

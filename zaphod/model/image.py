@@ -1,7 +1,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from sqlalchemy import Column, ForeignKey, types, orm
+from sqlalchemy import Column, ForeignKey, types, orm, inspect
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.ext.orderinglist import ordering_list
@@ -11,7 +11,7 @@ from pyramid_es.mixin import ElasticMixin, ESMapping, ESField, ESString
 import six
 
 from . import utils
-from .base import Base
+from .base import Base, Session
 from .user_mixin import UserMixin
 
 __all__ = ['ImageMixin', 'ImageMeta']
@@ -80,6 +80,18 @@ class ImageMixin(object):
             im = self.image_metas[0]
             return request.image_url(im.name, im.original_ext, chain,
                                      qualified=qualified)
+
+    def img_safe(self, request, chain=None, class_=None, id=None,
+                 qualified=False):
+        """
+        Wraps .img() to work with instances that might be detached, by
+        reloading them if necessary.
+        """
+        if inspect(self).detached:
+            obj = Session.query(type(self)).get(self.id)
+        else:
+            obj = self
+        return obj.img(request, chain, class_, id, qualified)
 
 
 class ImageMeta(Base, UserMixin, ElasticMixin):

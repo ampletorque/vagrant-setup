@@ -82,7 +82,7 @@ def image_or_gravatar(request, obj, chain, title=None, class_=None, id=None,
     Try to return an image for the specified object. If one does not exist, try
     to return a gravatar using the ``obj.email`` address.
     """
-    img = obj.img(request, chain, class_=class_, id=id)
+    img = obj.img_safe(request, chain, class_=class_, id=id)
     if img:
         return img
     else:

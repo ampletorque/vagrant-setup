@@ -1,8 +1,7 @@
 ---
 - name: install uwsgi
   sudo: yes
-  executable: pip-3.4
-  pip: name=uwsgi state=present
+  pip: name=uwsgi state=present executable=pip-3.4
 
 - name: install uwsgi service script
   sudo: yes

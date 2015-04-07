@@ -30,7 +30,6 @@
     - name: checkout zaphod source
       git: repo="git@github.com:storborg/zaphod.git"
            dest=/var/sw/zaphod
-           version=py3
            accept_hostkey=yes
       notify:
         - run setup.py develop

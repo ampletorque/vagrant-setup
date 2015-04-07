@@ -30,6 +30,7 @@
     - name: checkout zaphod source
       git: repo="git@github.com:storborg/zaphod.git"
            dest=/var/sw/zaphod
+           version=py3
            accept_hostkey=yes
       notify:
         - run setup.py develop
@@ -64,13 +65,13 @@
 
   handlers:
     - name: run setup.py develop
-      command: /var/sw/pyramid27/bin/python setup.py develop chdir=/var/sw/zaphod
+      command: /var/sw/pyramid34/bin/python setup.py develop chdir=/var/sw/zaphod
 
     - name: recompile assets
-      command: /var/sw/pyramid27/bin/pcompile /var/sw/zaphod/site/conf/production.ini
+      command: /var/sw/pyramid34/bin/pcompile /var/sw/zaphod/site/conf/production.ini
 
     - name: run alembic migrations
-      command: /var/sw/pyramid27/bin/alembic -c /var/sw/zaphod/site/conf/alembic.ini upgrade head
+      command: /var/sw/pyramid34/bin/alembic -c /var/sw/zaphod/site/conf/alembic.ini upgrade head
 
     - name: reload uwsgi
       sudo: yes
@@ -85,4 +86,4 @@
       command: redis-cli flushall
 
     - name: build docs
-      command: /var/sw/pyramid27/bin/sphinx-build -d /var/sw/zaphod/docs/_build/doctrees -b html /var/sw/zaphod/docs /var/sw/zaphod/docs/_build/html
+      command: /var/sw/pyramid34/bin/sphinx-build -d /var/sw/zaphod/docs/_build/doctrees -b html /var/sw/zaphod/docs /var/sw/zaphod/docs/_build/html

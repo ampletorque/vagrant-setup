@@ -6,4 +6,4 @@
 
   tasks:
     - name: reindex elasticsearch
-      command: /var/sw/pyramid27/bin/reindex_zaphod /var/sw/zaphod/site/conf/production.ini
+      command: /var/sw/pyramid34/bin/reindex_zaphod /var/sw/zaphod/site/conf/production.ini

@@ -38,6 +38,10 @@ define([
         .on('click', '.js-value-add', this.valueAddHandler)
         .on('mousedown', '.js-option-drag-handle', this.optionGrabHandler)
         .on('mousedown', '.js-value-drag-handle', this.valueGrabHandler);
+
+      this.$optionsBody = this.$container.find('> tbody');
+
+      this.indexCounter = this.$optionsBody.find('> tr').length;
     },
 
     optionAddHandler: function(e) {
@@ -47,19 +51,18 @@ define([
 
       var $optionsBody = this.$container.find('> tbody'),
           $options = $optionsBody.find('> tr'),
-          nextIndex = $options.length,
-          newID = 'new-' + nextIndex;
+          newID = 'new-' + this.indexCounter;
 
       // Make a new row, passing in the ID
       var $el = $(optionRowTemplate({
-        idx: nextIndex,
-        gravity: nextIndex,
+        idx: this.indexCounter,
+        gravity: this.indexCounter,
         id: newID
       }));
       $optionsBody.append($el);
 
       var $optionEl = $(valueRowTemplate({
-        optionIdx: nextIndex,
+        optionIdx: this.indexCounter,
         valueIdx: 0,
         gravity: 0,
         id: 'new-0'
@@ -67,6 +70,7 @@ define([
       $el.find('table > tbody').append($optionEl);
       $optionEl.find('input[type=radio]').prop('checked', 'checked');
 
+      this.indexCounter++;
     },
 
     optionRemoveHandler: function(e) {
@@ -105,15 +109,16 @@ define([
 
       var $valuesBody = $el.closest('table').find('> tbody'),
           $values = $valuesBody.find('> tr'),
-          nextIndex = $values.length,
-          newID = 'new-' + nextIndex;
+          newID = 'new-' + this.indexCounter;
 
       $valuesBody.append(valueRowTemplate({
         optionIdx: optionIdx,
-        valueIdx: nextIndex,
-        gravity: nextIndex,
+        valueIdx: this.indexCounter,
+        gravity: this.indexCounter,
         id: newID
       }));
+
+      this.indexCounter++;
     },
 
     valueRemoveHandler: function(e) {

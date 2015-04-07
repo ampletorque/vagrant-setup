@@ -161,7 +161,11 @@
               </p>
               <p><a href="${request.route_path('admin:order:user', id=obj.id)}">Change User</a></p>
               <h4>Initial Payment Method</h4>
-              <p>${obj.active_payment_method.id} - ${obj.active_payment_method.reference['customer_id']}</p>
+              % if obj.active_payment_method:
+                <p>${obj.active_payment_method.id} - ${obj.active_payment_method.reference['customer_id']}</p>
+              % else:
+                <p>None</p>
+              % endif
             </div>
           </div>
         </div>

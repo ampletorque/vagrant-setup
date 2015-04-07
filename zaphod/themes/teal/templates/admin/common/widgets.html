@@ -199,3 +199,16 @@
     </div>
   </%forms:element>
 </%def>
+
+
+<%def name="user_picker(renderer, name)">
+  <div class="searcher js-user-picker" data-path="${request.route_path('admin:users:search')}">
+    ${renderer.hidden(name, None)}
+    <div class="input-group">
+      <span class="input-group-addon">None Selected</span>
+      <input type="text" class="form-control" placeholder="Search users...">
+    </div>
+    <ul class="searcher-menu js-user-menu">
+    </ul>
+  </div>
+</%def>

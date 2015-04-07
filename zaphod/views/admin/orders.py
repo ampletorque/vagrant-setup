@@ -501,4 +501,10 @@ class OrderCreateView(BaseCreateView):
     class CreateForm(Schema):
         allow_extra_fields = False
         pre_validators = [NestedVariables()]
-        # XXX add lots here
+        user_id = validators.Int(not_empty=True)
+
+    def _create_object(self, form):
+        cart = model.Cart()
+        obj = self.cls(cart=cart, **form.data)
+        model.Session.add(obj)
+        return obj

@@ -37,16 +37,27 @@
 
 
 <%def name="address(addr)">
-  ${addr.full_name}<br>
-  % if addr.company != '':
+  % if addr.full_name:
+    ${addr.full_name}<br>
+  % endif
+  % if addr.company:
     ${addr.company}<br>
   % endif
-  ${addr.phone}<br>
-  ${addr.address1}<br>
+  % if addr.phone:
+    ${addr.phone}<br>
+  % endif
+  % if addr.address1:
+    ${addr.address1}<br>
+  % endif
   % if addr.address2:
     ${addr.address2}<br>
   % endif
-  ${addr.city}, ${addr.state} ${addr.postal_code}<br>
+  % if addr.city:
+    ${addr.city},
+  % endif
+  % if addr.state or addr.postal_code:
+    ${addr.state} ${addr.postal_code}<br>
+  % endif
   ${addr.country_name}
 </%def>
 

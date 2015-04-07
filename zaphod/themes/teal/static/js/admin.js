@@ -15,7 +15,8 @@ require([
   'teal/additem',
   'teal/addressfields',
   'teal/tags',
-  'teal/relatedprojects'
+  'teal/relatedprojects',
+  'teal/userpicker'
 
 ], function ($) {
   $(function () {

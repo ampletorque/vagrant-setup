@@ -1,9 +1,10 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from pyramid.view import view_defaults
+from pyramid.view import view_defaults, view_config
 from venusian import lift
 from formencode import Schema, validators
+from pyramid_es import get_client
 
 from ... import mail, model, custom_validators
 
@@ -41,6 +42,26 @@ class UserEditView(BaseEditView):
 class UserListView(BaseListView):
     cls = model.User
     paginate = True
+
+    @view_config(route_name='admin:users:search', xhr=True, renderer='json')
+    def search(self):
+        request = self.request
+        q = request.params.get('q')
+
+        client = get_client(request)
+        results = client.query(model.User, q=q).limit(40).execute()
+
+        return {
+            'total': results.total,
+            'users': [
+                {
+                    'id': user._id,
+                    'name': user.name,
+                    'email': user.email,
+                }
+                for user in results
+            ]
+        }
 
 
 @view_defaults(route_name='admin:users:new',

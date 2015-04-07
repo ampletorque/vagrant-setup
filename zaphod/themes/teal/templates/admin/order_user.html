@@ -2,6 +2,7 @@
 
 <%namespace name="forms" file="/common/forms.html"/>
 <%namespace name="blocks" file="/common/blocks.html"/>
+<%namespace name="widgets" file="common/widgets.html"/>
 
 <%def name="title()">Edit Order ${obj.id}</%def>
 
@@ -13,9 +14,9 @@
         <h1 class="page-header">${self.title()}</h1>
 
         ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
-
-          <p>WIP: allow searching for user by name, email, etc.</p>
-          ${forms.ltext(renderer, 'user_id', obj.user_id)}
+          <%forms:element renderer="${renderer}" name="user_id" label="User">
+            ${widgets.user_picker(renderer, 'user_id')}
+          </%forms:element>
 
           <%forms:actions>
             <button class="btn btn-primary" type="submit">Save</button>

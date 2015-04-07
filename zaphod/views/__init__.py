@@ -63,7 +63,7 @@ def includeme(config):
     def fail_view(request):
         raise Exception('fail!')
 
-    config.add_view(fail_view, route_name='fail')
+    config.add_view(fail_view, route_name='fail', permission='authenticated')
 
     # This needs to stay the last route registered.
     config.add_route('node', '/*path')

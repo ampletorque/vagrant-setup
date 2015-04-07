@@ -39,7 +39,7 @@
               <tr><td>Path</td><td>${':'.join(sorted(sys.path))}</td></tr>
 
               <tr><th colspan="2">Redis</th></tr>
-              % for param, val in redis_stats.iteritems():
+              % for param, val in redis_stats.items():
                 <tr>
                   <td>${param}</td>
                   <td>${val}</td>

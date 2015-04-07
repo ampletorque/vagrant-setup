@@ -1,4 +1,8 @@
-.section-hero {
+.section-recently-launched, .section-recently-funded {
+    border-bottom: 1px solid @cs-border-color;
+}
+
+.section-hero-collage {
     background-color: @cs-dark-teal;
     background-image: linear-gradient(rgba(255, 255, 255, 0.65) 2px, transparent 2px),
                       linear-gradient(90deg, rgba(255, 255, 255, 0.65) 2px, transparent 2px),
@@ -21,26 +25,21 @@
         font-size: 18px;
         line-height: 34px;
     }
-}
-
-.hero-quote-overlay {
-    .clearfix();
-    padding: 25px;
-    background-color: rgba(0, 0, 0, 0.65);
-    position: relative;
-
+    .hero-quote {
+        .clearfix();
+        padding: 25px;
+        background-color: rgba(0, 0, 0, 0.65);
+        position: relative;
+    }
     .btn {
         position: absolute;
         right: 15px;
         bottom: 15px;
     }
+
 }
 
-.section-recently-launched, .section-recently-funded {
-    border-bottom: 1px solid @cs-border-color;
-}
-
-@hero-quote-height: 160px;
+@hero-quote-novena-height: 165px;
 
 .section-hero-novena {
     border-bottom: 1px solid @cs-border-color;
@@ -50,53 +49,60 @@
         background-repeat: no-repeat;
         background-size: 336px 179px;
         background-position: center bottom;
-        height: 179px + @hero-quote-height;
+        height: 179px + @hero-quote-novena-height;
     }
 
-    .hero-quote-novena {
+    .hero-quote {
         text-align: center;
         padding-top: 15px;
         border-bottom: 1px solid @cs-border-color;
-        height: @hero-quote-height;
+        height: @hero-quote-novena-height;
     }
 
     h1 {
         font-size: 28px;
         margin-top: 0;
     }
-    .btn {
-        margin-top: 10px;
+}
+
+.section-hero-portland-press {
+    border-bottom: 1px solid @cs-border-color;
+
+    .hero-bg {
+        background-image: url(/_teal/images/index/banner-portland-press.jpg);
+        background-repeat: no-repeat;
+        background-size: 300px 187px;
+        background-position: center center;
+        height: 187px;
     }
-}
 
-#pDebug #pDebugToolbarHandle {
-    border: 1px solid transparent !important;
-}
+    .hero-quote {
+        text-align: center;
+        padding-bottom: 15px;
+        border-bottom: 1px solid @cs-border-color;
+    }
 
-#pDebug a#pShowToolBarButton {
-    opacity: 0.0 !important;
-    &:hover, &:active {
-        opacity: 1.0 !important;
+    h1 {
+        font-size: 28px;
     }
 }
 
 @media (min-width: @screen-sm-min) {
-    .section-hero {
+    .section-hero-collage {
         background-image: url(/_teal/images/index/banner-project-collage.jpg);
         background-repeat: no-repeat;
         background-size: 2000px 300px;
         background-position: center center;
         height: 250px;
         position: relative;
+        .hero-quote {
+            position: absolute;
+            width: 460px;
+            height: 210px;
+            top: 20px;
+            left: 30%;
+        }
     }
-    .hero-quote-overlay {
-        position: absolute;
-        width: 460px;
-        height: 210px;
-        top: 20px;
-        left: 30%;
-    }
-
     .section-hero-novena {
         .container {
             background-size: 413px 220px;
@@ -104,8 +110,7 @@
             height: 220px;
             position: relative;
         }
-
-        .hero-quote-novena {
+        .hero-quote {
             border: 0;
             text-align: right;
             width: 330px;
@@ -113,23 +118,50 @@
             margin-top: 50px;
         }
     }
+    .section-hero-portland-press {
+        .hero-bg {
+            background-size: 375px 233px;
+            height: 233px;
+        }
+        .hero-quote {
+            border: 0;
+            text-align: right;
+            margin-top: 40px;
+        }
+    }
 }
 
 @media (min-width: @screen-md-min) {
-    .hero-quote-overlay {
-        left: 50%;
+    .section-hero-collage {
+        .hero-quote {
+            left: 50%;
+        }
     }
     .section-hero-novena {
         .container {
             background-size: 563px 300px;
             height: 300px;
         }
-        .hero-quote-novena {
+        .hero-quote {
             width: 360px;
             margin-top: 70px;
         }
         h1 {
             font-size: 32px;
+        }
+    }
+    .section-hero-portland-press {
+        .hero-bg {
+            background-size: 482px 300px;
+            height: 300px;
+        }
+        .hero-quote {
+            margin-top: 70px;
+            margin-right: 50px;
+        }
+        h1 {
+            font-size: 32px;
+            line-height: 40px;
         }
     }
 }
@@ -139,8 +171,13 @@
         .container {
             background-position: 110px;
         }
-        .hero-quote-novena {
+        .hero-quote {
             margin-right: 110px;
+        }
+    }
+    .section-hero-portland-press {
+        .hero-quote {
+            margin-right: 100px;
         }
     }
 }

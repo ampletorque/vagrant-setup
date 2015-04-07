@@ -1,0 +1,43 @@
+<%def name="collage()">
+  <section class="section-hero-collage">
+    <div class="hero-quote">
+      <h3>Our projects raise an average of $52,200, over triple that of Kickstarter.</h3>
+      <p><a href="/launch">Find out why.</a></p>
+      <p class="hidden-xs">Your next big idea starts here.</p>
+      <a class="btn btn-primary" href="/launch">Launch Your Project</a>
+    </div>
+  </section>
+</%def>
+
+
+<%def name="novena()">
+  <section class="section-hero-novena">
+    <div class="container">
+      <div class="hero-quote">
+        <h1>Launch alongside the best of open hardware</h1>
+        <p><a href="/kosagi/novena">The Novena Open Laptop raised over $750,000</a></p>
+        <a class="btn btn-primary" href="${request.route_path('launch')}">Launch Your Project</a>
+      </div>
+    </div>
+  </section>
+</%def>
+
+
+<%def name="portland_press()">
+  <section class="section-hero-portland-press">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6 col-sm-push-6">
+          <div class="hero-quote">
+            <h1>Crowdfunding is just the beginning.</h1>
+            <p><a href="${request.route_path('launch')}">See how we're different.</a></p>
+            <a class="btn btn-primary" href="${request.route_path('launch')}">Launch Your Project</a>
+          </div>
+        </div>
+        <div class="col-sm-6 col-sm-pull-6">
+          <div class="hero-bg"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</%def>

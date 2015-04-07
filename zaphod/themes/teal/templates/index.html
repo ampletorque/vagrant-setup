@@ -1,34 +1,19 @@
 <%inherit file="base.html"/>
 
 
-<%page cached="True" cache_key="index" cache_region="default"/>
+##<%page cached="True" cache_key="index" cache_region="default"/>
 
 
 <%namespace name="tiles" file="common/tiles.html"/>
+<%namespace name="banners" file="common/banners.html"/>
 
 
 <%def name="title()">A Store and Crowdfunding Platform for Physical Stuff</%def>
 
 
-##<section class="section-hero">
-##  <div class="hero-quote-overlay">
-##    <h3>Our projects raise an average of $52,200, over triple that of Kickstarter.</h3>
-##    <p><a href="/launch">Find out why.</a></p>
-##    <p class="hidden-xs">Your next big idea starts here.</p>
-##    <a class="btn btn-primary" href="/launch">Launch Your Project</a>
-##  </div>
-##</section>
-
-
-<section class="section-hero-novena">
-  <div class="container">
-    <div class="hero-quote-novena">
-      <h1>Launch alongside the best of open hardware</h1>
-      <a href="/kosagi/novena">The Novena Open Laptop raised over $750,000</a>
-      <a class="btn btn-primary" href="${request.route_path('launch')}">Launch Your Project</a>
-    </div>
-  </div>
-</section>
+##${banners.collage()}
+##${banners.novena()}
+${banners.portland_press()}
 
 
 % for title, rows in get_groups():

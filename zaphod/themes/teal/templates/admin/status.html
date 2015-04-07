@@ -1,0 +1,56 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+
+<%def name="title()">Site Status</%def>
+
+
+<section class="section-admin-status">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">Status</h1>
+
+        <div class="table-responsive">
+          <table class="table">
+            <tbody>
+              <tr>
+                <td>Hostname</td>
+                <td>${hostname}</td>
+              </tr>
+              <tr>
+                <td>Virtual Host</td>
+                <td>${request.host}</td>
+              </tr>
+
+              <tr><th colspan="2">Database Info</th></tr>
+              <tr><td>URL</td><td>${engine_url}</td></tr>
+              <tr><td>DBAPI driver</td><td>${engine.driver}</td></tr>
+
+              <tr><th colspan="2">Pool Info</th></tr>
+              <tr><td>Size</td><td>${engine.pool.size()}</td></tr>
+              <tr><td>Checked in</td><td>${engine.pool.checkedin()}</td></tr>
+              <tr><td>Checked out</td><td>${engine.pool.checkedout()}</td></tr>
+              <tr><td>Overflow</td><td>${engine.pool.overflow()}</td></tr>
+
+              <tr><th colspan="2">Python Info</th></tr>
+              <tr><td>Version</td><td>${sys.version}</td></tr>
+              <tr><td>Executable</td><td>${sys.executable}</td></tr>
+              <tr><td>Path</td><td>${':'.join(sorted(sys.path))}</td></tr>
+
+              <tr><th colspan="2">Redis</th></tr>
+              % for param, val in redis_stats.iteritems():
+                <tr>
+                  <td>${param}</td>
+                  <td>${val}</td>
+                </tr>
+              % endfor
+
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>

@@ -128,5 +128,6 @@ def includeme(config):
     config.add_route('admin:help:image-tags', '/help/image-tags')
 
     config.add_route('admin:docs', '/docs/{path:.*}')
+    config.add_route('admin:status', '/status')
 
     config.include('.reports', route_prefix='/reports')

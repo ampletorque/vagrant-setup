@@ -1,7 +1,7 @@
 <%inherit file="base.html"/>
 
 
-##<%page cached="True" cache_key="index" cache_region="default"/>
+<%page cached="True" cache_key="index" cache_region="default"/>
 
 
 <%namespace name="tiles" file="common/tiles.html"/>
@@ -11,8 +11,6 @@
 <%def name="title()">A Store and Crowdfunding Platform for Physical Stuff</%def>
 
 
-##${banners.collage()}
-##${banners.novena()}
 ${banners.portland_press()}
 
 

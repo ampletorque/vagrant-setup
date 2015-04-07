@@ -34,3 +34,24 @@
         height: 34px;
     }
 }
+
+.image-search-results {
+    max-height: 300px;
+    overflow-y: scroll;
+
+    a {
+        .clearfix();
+        color: @cs-black;
+        display: block;
+        border: 1px solid transparent;
+
+        img {
+            float: left;
+            margin: 10px;
+        }
+        &:hover {
+            border: 1px solid #ccc;
+            text-decoration: none;
+        }
+    }
+}

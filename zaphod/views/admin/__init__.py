@@ -99,6 +99,7 @@ def includeme(config):
 
     config.add_route('admin:images', '/images')
     config.add_route('admin:images:upload', '/images/upload')
+    config.add_route('admin:images:search', '/images/search')
     config.add_route('admin:image', '/image/{id}')
 
     config.add_route('admin:provider-types', '/provider-types')

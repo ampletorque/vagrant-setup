@@ -46,7 +46,7 @@
 <%def name="images(renderer, obj)">
   <%forms:element label="Images">
     <div class="table-responsive">
-      <table class="table table-images js-image-widget" data-upload-path="${request.route_path('admin:images:upload')}">
+      <table class="table table-images js-image-widget" data-upload-path="${request.route_path('admin:images:upload')}" data-search-path="${request.route_path('admin:images:search')}">
         <tbody class="js-image-widget-images">
 
           % for assoc in obj.image_associations:
@@ -89,6 +89,25 @@
             </td>
             <td colspan="4">
               <a data-toggle="modal" data-target="#image-search-modal" href="#">Associate existing images</a>
+              <div class="modal fade" id="image-search-modal">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                      <h4 class="modal-title">Search Images</h4>
+                    </div>
+                    <div class="modal-body">
+                      <input type="text" class="form-control js-image-search" placeholder="Search...">
+                      <div class="js-image-search-results image-search-results">
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary">Save</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </td>
           </tr>
           <tr>
@@ -105,24 +124,6 @@
       </table>
     </div>
     <p class="help-block no-error">${forms.hint(self.image_hint())}</p>
-
-    <div class="modal fade" id="image-search-modal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Search Images</h4>
-          </div>
-          <div class="modal-body">
-            <p>WIP</p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save</button>
-          </div>
-        </div>
-      </div>
-    </div>
   </%forms:element>
 </%def>
 

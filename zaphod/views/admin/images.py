@@ -8,6 +8,9 @@ import shutil
 from formencode import Schema, validators
 from pyramid.view import view_config, view_defaults
 from pyramid_uniform import Form
+from pyramid_es import get_client
+
+from ... import model
 
 
 class UploadSchema(Schema):
@@ -44,3 +47,32 @@ class ImagesView(object):
             return {'status': 'ok'}
         else:
             return {'status': 'fail'}
+
+    @view_config(route_name='admin:images:search', renderer='json')
+    def search(self):
+        request = self.request
+        q = request.params.get('q')
+
+        client = get_client(request)
+        results = client.query(model.ImageMeta, q=q).limit(40).execute()
+
+        return {
+            'total': results.total,
+            'images': [
+                {
+                    'id': im._id,
+                    'name': im.name,
+                    'original_ext': im.original_ext,
+                    'alt': im.alt,
+                    'title': im.title,
+                    'width': im.width,
+                    'height': im.height,
+                    'path': request.image_url(im.name, im.original_ext,
+                                              request.params.get('filter')),
+                    'original_path': request.image_url(im.name,
+                                                       im.original_ext,
+                                                       None),
+                }
+                for im in results
+            ]
+        }

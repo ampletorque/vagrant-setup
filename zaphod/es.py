@@ -6,18 +6,13 @@ from pyramid_es import get_client
 from . import model
 
 
-default_doc_types = (
-    model.Project,
-    model.Product,
-    model.Order,
-    model.User,
-)
-
-
-def hard_reset(registry, doc_types=default_doc_types):
+def hard_reset(registry, doc_types=None):
     client = get_client(registry)
     client.ensure_index(recreate=True)
     client.ensure_all_mappings(model.Base, recreate=True)
+
+    doc_types = doc_types or model.Base._decl_class_registry.values()
     for doc_type in doc_types:
-        for obj in model.Session.query(doc_type):
-            client.index_object(obj, immediate=True)
+        if hasattr(doc_type, 'elastic_mapping'):
+            for obj in model.Session.query(doc_type):
+                client.index_object(obj, immediate=True)

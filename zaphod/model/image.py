@@ -6,6 +6,8 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.ext.orderinglist import ordering_list
 
+from pyramid_es.mixin import ElasticMixin, ESMapping, ESField, ESString
+
 import six
 
 from . import utils
@@ -80,7 +82,7 @@ class ImageMixin(object):
                                      qualified=qualified)
 
 
-class ImageMeta(Base, UserMixin):
+class ImageMeta(Base, UserMixin, ElasticMixin):
     """
     A record of an image associated with any content or used independently.
     Note that the actual image data is stored on disk as a normal image file,
@@ -106,3 +108,16 @@ class ImageMeta(Base, UserMixin):
     def validate_name(self, k, v):
         assert utils.is_url_name(v)
         return v
+
+    @classmethod
+    def elastic_mapping(cls):
+        return ESMapping(
+            analyzer='content',
+            properties=ESMapping(
+                ESString('name'),
+                ESString('alt'),
+                ESString('title'),
+                ESString('original_ext'),
+                ESField('width'),
+                ESField('height'),
+            ))

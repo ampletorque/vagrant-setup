@@ -1,5 +1,9 @@
 /*globals define*/
-define(['jquery', 'tpl!teal/templates/images-row.erb.html'], function ($, rowTemplate) {
+define(['jquery',
+        'tpl!teal/templates/images-row-existing.erb.html',
+        'tpl!teal/templates/images-row-new.erb.html',
+        'tpl!teal/templates/images-result.erb.html'],
+        function ($, existingRowTemplate, newRowTemplate, resultTemplate) {
   // This module handles the admin interface's image association widget.
 
   "use strict";
@@ -17,7 +21,9 @@ define(['jquery', 'tpl!teal/templates/images-row.erb.html'], function ($, rowTem
       .proxy('dragHandler')
       .proxy('dropHandler')
       .proxy('removeHandler')
-      .proxy('setGravity');
+      .proxy('setGravity')
+      .proxy('searchHandler')
+      .proxy('selectHandler');
     this.init();
   }
 
@@ -36,14 +42,23 @@ define(['jquery', 'tpl!teal/templates/images-row.erb.html'], function ($, rowTem
         .on('drop', this.handleFileDrop)
         .on('mousedown', '.js-image-drag-handle', this.grabHandler)
         .on('click', '.js-image-remove', this.removeHandler)
+        .on('click', '.js-image-select', this.selectHandler)
         .find('input[type=file]')
           .on('change', this.handleFileSelect);
 
+      this.$search = this.$container.find('.js-image-search')
+        .on('keyup', this.searchHandler);
+      this.$results = this.$container.find('.js-image-search-results');
       this.$imagesBody = this.$container.find('> tbody');
 
       this.$target = $('<tr>')
         .addClass('table-drop-target')
         .append('<td colspan="6"></td>');
+
+      this.indexCounter = this.$imagesBody.find('> tr').length;
+
+      this.activeRequest = null;
+      this.lastQuery = null;
     },
 
     makeID: function() {
@@ -77,13 +92,12 @@ define(['jquery', 'tpl!teal/templates/images-row.erb.html'], function ($, rowTem
 
       if (!!file.type.match(/image.*/)) {
         // Make a new random ID to refer to it.
-        var imageID = this.makeID(),
-            nextIndex = this.$container.find('.js-image-widget-images > tr').length;
+        var imageID = this.makeID();
 
         // Make a new row, passing in the ID
-        var $el = $(rowTemplate({
-          idx: nextIndex,
-          gravity: nextIndex,
+        var $el = $(newRowTemplate({
+          idx: this.indexCounter,
+          gravity: this.indexCounter,
           id: imageID,
           name: file.name
         }));
@@ -92,6 +106,8 @@ define(['jquery', 'tpl!teal/templates/images-row.erb.html'], function ($, rowTem
         } else {
           $('.js-image-widget-images').append($el);
         }
+
+        this.indexCounter++;
 
         this.loadThumbnail(file, $el);
 
@@ -263,6 +279,81 @@ define(['jquery', 'tpl!teal/templates/images-row.erb.html'], function ($, rowTem
       this.$container.find('.js-image-widget-images > tr').each(function (ii) {
         $(this).find('.js-image-gravity').val(ii);
       });
+    },
+
+    searchHandler: function(e) {
+      var that = this,
+          q = this.$search.val().trim();
+      console.log("image search", q);
+
+      if(q !== this.lastQuery) {
+        // This should cancel any currently pending ajax requests.
+        if(this.activeRequest) {
+          this.activeRequest.abort();
+        }
+        this.lastQuery = q;
+        this.activeRequest = $.ajax({
+          type: "GET",
+          url: this.$container.data('search-path') + '?filter=admin-tiny&q=' + q,
+          error: function (request, status, error) {
+            alert('Server Error');
+          },
+          success: function (data, status, xhr) {
+            var image, label;
+            that.activeRequest = null;
+            console.log("images ajax data", data.images);
+
+            // Populate a menu panel to pick user from
+            that.$results.empty();
+            if(data.images.length === 0) {
+              that.$results.append('<p>No results.</p>');
+            }
+
+            for(var ii = 0; ii < data.images.length; ii++) {
+              image = data.images[ii];
+              that.$results.append(resultTemplate({
+                image: image
+              }));
+            }
+            that.$results.show();
+          },
+
+        });
+      }
+
+    },
+
+    selectHandler: function(e) {
+      console.log("image select");
+      e.preventDefault();
+      e.stopPropagation();
+      // Add project to list, including hidden field.
+      var $el = $(e.target).closest('a'),
+          imageID = $el.data('image-id'),
+          imageName = $el.data('image-name'),
+          imageAlt = $el.data('image-alt'),
+          imageTitle = $el.data('image-title');
+
+      $('.js-image-widget-images').append(existingRowTemplate({
+        idx: this.indexCounter,
+        gravity: this.indexCounter,
+        id: $el.data('image-id'),
+        name: $el.data('image-name'),
+        alt: $el.data('image-alt'),
+        title: $el.data('image-title'),
+        width: $el.data('image-width'),
+        height: $el.data('image-height'),
+        path: $el.data('image-path'),
+        originalPath: $el.data('image-original-path'),
+      }));
+
+      $el.closest('.modal').modal('hide');
+
+      this.indexCounter++;
+
+      this.$search.val('');
+      this.lastQuery = null;
+
     }
 
   };

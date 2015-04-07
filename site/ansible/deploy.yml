@@ -32,7 +32,7 @@
            dest=/var/sw/zaphod
            accept_hostkey=yes
       notify:
-        - install package
+        - run setup.py develop
         - recompile assets
         - run alembic migrations
         - reload uwsgi
@@ -63,8 +63,8 @@
     # XXX set up /cron handler
 
   handlers:
-    - name: install package
-      command: /var/sw/pyramid27/bin/pip install -e . chdir=/var/sw/zaphod
+    - name: run setup.py develop
+      command: /var/sw/pyramid27/bin/python setup.py develop chdir=/var/sw/zaphod
 
     - name: recompile assets
       command: /var/sw/pyramid27/bin/pcompile /var/sw/zaphod/site/conf/production.ini

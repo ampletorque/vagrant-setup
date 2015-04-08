@@ -351,7 +351,7 @@ class ProjectEditView(NodeEditView):
                                 (project.crowdfunding_fee_percent / 100))
 
         po_item_count = item_count_q.\
-            filter(model.CartItem.stage == model.CartItem.CROWDFUNDING).\
+            filter(model.CartItem.stage == model.CartItem.PREORDER).\
             scalar() or 0
         # sum of pre-order commitments
         po_sales = sales_q.\

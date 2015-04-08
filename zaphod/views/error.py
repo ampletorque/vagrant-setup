@@ -53,6 +53,10 @@ def exc_view(context, request):
     return error_view(HTTPInternalServerError(str(context)), request)
 
 
+def fail_view(request):
+    raise Exception('fail!')
+
+
 def includeme(config):
     settings = config.registry.settings
 
@@ -68,3 +72,6 @@ def includeme(config):
             view=exc_view,
             context=Exception,
             permission=NO_PERMISSION_REQUIRED)
+
+    config.add_route('fail', '/fail')
+    config.add_view(fail_view, route_name='fail', permission='authenticated')

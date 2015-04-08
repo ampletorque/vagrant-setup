@@ -184,7 +184,7 @@
 
 
 <%def name="tile_row(project_ids, cols=None)">
-  <div class="project-row ${'project-row-2-cols' if cols == 2 else 'project-row-3-cols'}">
+  <div class="project-row">
     % for project_id in project_ids:
       ${self.tile(project_id)}
     % endfor

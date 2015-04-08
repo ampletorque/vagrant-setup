@@ -4,6 +4,7 @@ from __future__ import (absolute_import, division, print_function,
 from pyramid.config import Configurator
 from pyramid.settings import asbool
 from pyramid.events import BeforeRender, NewResponse
+from pyramid.paster import setup_logging
 from sqlalchemy import engine_from_config
 
 from gimlet.factories import session_factory_from_settings
@@ -26,6 +27,9 @@ def main(global_config, **settings):
     """
     This function returns a Pyramid WSGI application.
     """
+    if 'logging_config' in settings:
+        setup_logging(settings['logging_config'])
+
     engine = engine_from_config(settings, 'sqlalchemy.')
     init_querytimer(engine)
     model.init_model(engine,

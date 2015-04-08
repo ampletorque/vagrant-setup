@@ -22,11 +22,6 @@ class Root(object):
         self.request = request
 
 
-def new_response_subscriber(event):
-    request, response = event.request, event.response
-    request.session.response_callback(request, response)
-
-
 def main(global_config, **settings):
     """
     This function returns a Pyramid WSGI application.
@@ -57,7 +52,6 @@ def main(global_config, **settings):
     config.include('.views')
     config.include('.tasks')
 
-    config.add_subscriber(new_response_subscriber, NewResponse)
     config.add_subscriber(add_renderer_globals, BeforeRender)
 
     config.add_tween('.logging.request_log_tween_factory')

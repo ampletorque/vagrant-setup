@@ -174,6 +174,8 @@ class TestCart(ModelTest):
 
         sku = model.sku_for_option_value_ids(stock_product, [])
         self._make_stock(sku, 10)
+        model.Session.flush()
+        stock_product.update_in_stock()
 
         # add stock CI
         stock_ci = self._make_cart_item(cart, stock_product, 2)

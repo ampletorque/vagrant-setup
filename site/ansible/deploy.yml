@@ -28,7 +28,7 @@
             mode=2775
 
     - name: checkout zaphod source
-      git: repo="git@github.com:storborg/zaphod.git"
+      git: repo="git@github.com:crowdsupply/zaphod.git"
            dest=/var/sw/zaphod
            version=master
            accept_hostkey=yes

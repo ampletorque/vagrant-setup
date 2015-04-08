@@ -20,72 +20,73 @@ ${regions.project_header(obj)}
           <table class="table">
             <tbody>
               <tr>
-                <td>Crowdfunding Pledges</td>
-                <td></td>
+                <td>Crowdfunding Item Count</td>
+                <td>${cf_item_count}</td>
               </tr>
               <tr>
+                <td>Crowdfunding Order Count</td>
+                <td>${cf_order_count}</td>
+              </tr>
+              <tr>
+                <td>Crowdfunding Sales</td>
+                <td>${h.currency(cf_sales)}</td>
+              </tr>
+              <tr>
+                <td>Crowdfunding Shipping Collected</td>
+                <td>${h.currency(cf_shipping)}</td>
+              <tr>
                 <td>Crowdfunding Payment Fees</td>
-                <td></td>
+                <td>${h.currency(cf_transaction_fees)}</td>
               </tr>
               <tr>
                 <td>Crowdfunding Crowd Supply Fees</td>
-                <td></td>
+                <td>${h.currency(cf_crowd_supply_fees)}</td>
               </tr>
               <tr>
                 <td><strong>Net Crowdfunding Income</strong></td>
-                <td></td>
+                <td>${h.currency((cf_sales + cf_shipping) - (cf_transaction_fees + cf_crowd_supply_fees))}</td>
               </tr>
               <tr class="table-divider"><td colspan="2"></td></tr>
               <tr>
+                <td>Pre-Order Item Count</td>
+                <td>${po_item_count}</td>
+              </tr>
+              <tr>
+                <td>Pre-Order Order Count</td>
+                <td>${po_order_count}</td>
+              </tr>
+              <tr>
                 <td>Pre-Order Commitments</td>
-                <td></td>
+                <td>${h.currency(po_sales)}</td>
+              </tr>
+              <tr>
+                <td>Pre-Order Shipping Collected</td>
+                <td>${h.currency(po_shipping)}</td>
               </tr>
               <tr>
                 <td>Pre-Order Payment Fees</td>
-                <td></td>
+                <td>${h.currency(po_transaction_fees)}</td>
               </tr>
               <tr>
                 <td>Pre-Order Crowd Supply Fees</td>
-                <td></td>
+                <td>${h.currency(po_crowd_supply_fees)}</td>
               </tr>
               <tr>
                 <td><strong>Net Pre-Order Income</strong></td>
-                <td></td>
+                <td>${h.currency((po_sales + po_shipping) - (po_transaction_fees + po_crowd_supply_fees))}</td>
               </tr>
               <tr class="table-divider"><td colspan="2"></td></tr>
               <tr>
-                <td>Actual Fulfillment Fees</td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>Projected Fulfillment Fees</td>
-                <td></td>
+                <td>Incurred Fulfillment Fees</td>
+                <td>${h.currency(incurred_fulfillment_fees)}</td>
               </tr>
               <tr>
                 <td>Actual Freight Fees</td>
-                <td></td>
+                <td>${h.currency(freight_cost)}</td>
               </tr>
               <tr>
-                <td>Projected Freight Fees</td>
-                <td></td>
-              </tr>
-              <tr>
-                <td><strong>Net Total Income</strong></td>
-                <td></td>
-              </tr>
-              <tr class="table-divider"><td colspan="2"></td></tr>
-              <tr>
-                <td>Payment ___ on ____</td>
-                <td></td>
-              </tr>
-              <tr>
-                <td><strong>Total Paid to Project</strong></td>
-                <td></td>
-              </tr>
-              <tr class="table-divider"><td colspan="2"></td></tr>
-              <tr>
-                <td><strong>Balance Owed to Project</strong></td>
-                <td></td>
+                <td><strong>Current Net To Project</strong></td>
+                <td>${h.currency(total_owed)}</td>
               </tr>
             </tbody>
           </table>

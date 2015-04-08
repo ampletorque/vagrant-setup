@@ -1,6 +1,8 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+from decimal import Decimal
+
 from pyramid.view import view_defaults, view_config
 from venusian import lift
 from sqlalchemy.sql import func, not_
@@ -274,6 +276,7 @@ class ProjectEditView(NodeEditView):
             model.Session.query(model.ProjectUpdate.created_time).\
             filter(model.ProjectUpdate.project == project).\
             order_by(model.ProjectUpdate.id.desc()).\
+            limit(1).\
             scalar()
 
         # - warn if an update is "needed"
@@ -290,7 +293,129 @@ class ProjectEditView(NodeEditView):
                  renderer='admin/project_balance.html')
     def balance(self):
         project = self._get_object()
-        return {'obj': project}
+
+        # This hardcodes Stripe's pricing.
+        def stripe_fees(count, amount):
+            return (count * Decimal('0.30')) + (amount * Decimal('0.029'))
+
+        include_statuses = ['waiting', 'shipped', 'in process', 'being packed']
+        sales_q = model.Session.query(func.sum(model.CartItem.qty_desired *
+                                               model.CartItem.price_each)).\
+            join(model.CartItem.product).\
+            filter(model.CartItem.status.in_(include_statuses)).\
+            filter(model.Product.project == project)
+
+        shipping_q = model.Session.query(
+            func.sum(model.CartItem.shipping_price)).\
+            join(model.CartItem.product).\
+            filter(model.CartItem.status.in_(include_statuses)).\
+            filter(model.Product.project == project)
+
+        order_count_q = model.Session.query(
+            func.count(model.Order.id.distinct())).\
+            join(model.Order.cart).\
+            join(model.Cart.items).\
+            join(model.CartItem.product).\
+            filter(model.CartItem.status.in_(include_statuses)).\
+            filter(model.Product.project == project)
+
+        item_count_q = model.Session.query(
+            func.count(model.CartItem.id.distinct())).\
+            join(model.CartItem.product).\
+            filter(model.CartItem.status.in_(include_statuses)).\
+            filter(model.Product.project == project)
+
+        cf_item_count = item_count_q.\
+            filter(model.CartItem.stage == model.CartItem.CROWDFUNDING).\
+            scalar() or 0
+        # sum of crowdfunding pledges
+        cf_sales = sales_q.\
+            filter(model.CartItem.stage == model.CartItem.CROWDFUNDING).\
+            scalar() or 0
+        # sum of crowdfunding pledge shipping collected
+        cf_shipping = shipping_q.\
+            filter(model.CartItem.stage == model.CartItem.CROWDFUNDING).\
+            scalar() or 0
+        # sum of crowdfunding payment fees
+        cf_order_count = order_count_q.\
+            filter(model.CartItem.stage == model.CartItem.CROWDFUNDING).\
+            scalar() or 0
+        # NOTE: This gets pretty rocky, since it isn't really possible to
+        # attribute payments to a single project. So we just assume that each
+        # order incurs a $0.30 transaction fee.
+
+        cf_transaction_fees = stripe_fees(cf_order_count,
+                                          cf_sales + cf_shipping)
+        # sum of crowdfunding crowd supply fees
+        cf_crowd_supply_fees = ((cf_sales + cf_shipping) *
+                                (project.crowdfunding_fee_percent / 100))
+
+        po_item_count = item_count_q.\
+            filter(model.CartItem.stage == model.CartItem.CROWDFUNDING).\
+            scalar() or 0
+        # sum of pre-order commitments
+        po_sales = sales_q.\
+            filter(model.CartItem.stage == model.CartItem.PREORDER).\
+            scalar() or 0
+        # sum of pre-order shipping collected
+        po_shipping = shipping_q.\
+            filter(model.CartItem.stage == model.CartItem.PREORDER).\
+            scalar() or 0
+        # sum of pre-order payment fees
+        po_order_count = order_count_q.\
+            filter(model.CartItem.stage == model.CartItem.PREORDER).\
+            scalar() or 0
+        po_transaction_fees = stripe_fees(po_order_count,
+                                          po_sales + po_shipping)
+
+        # sum of pre-order crowd supply fees
+        po_crowd_supply_fees = ((po_sales + po_shipping) *
+                                (project.preorder_fee_percent / 100))
+
+        # fulfillment fees incurred so far
+        fulfillment_q = model.Session.query(
+            func.sum(model.Product.fulfillment_fee)).\
+            join(model.CartItem.product).\
+            filter(model.CartItem.status == 'shipped').\
+            filter(model.Product.project == project)
+        incurred_fulfillment_fees = fulfillment_q.scalar() or 0
+
+        # freight costs incurred so far
+        shipment_cost_q = model.Session.query(func.sum(model.Shipment.cost)).\
+            join(model.Shipment.items).\
+            join(model.CartItem.product).\
+            filter(model.Product.project == project)
+        freight_cost = shipment_cost_q.scalar() or 0
+
+        # total owed to project
+        total_owed = ((cf_sales + po_sales) -
+                      (cf_shipping + cf_transaction_fees +
+                       cf_crowd_supply_fees + po_shipping + po_transaction_fees
+                       + po_crowd_supply_fees + incurred_fulfillment_fees +
+                       freight_cost))
+
+        return {
+            'obj': project,
+
+            'cf_item_count': cf_item_count,
+            'cf_sales': cf_sales,
+            'cf_shipping': cf_shipping,
+            'cf_order_count': cf_order_count,
+            'cf_transaction_fees': cf_transaction_fees,
+            'cf_crowd_supply_fees': cf_crowd_supply_fees,
+
+            'po_item_count': po_item_count,
+            'po_sales': po_sales,
+            'po_shipping': po_shipping,
+            'po_order_count': po_order_count,
+            'po_transaction_fees': po_transaction_fees,
+            'po_crowd_supply_fees': po_crowd_supply_fees,
+
+            'incurred_fulfillment_fees': incurred_fulfillment_fees,
+            'freight_cost': freight_cost,
+
+            'total_owed': total_owed,
+        }
 
     @view_config(route_name='admin:project:reports:skus',
                  renderer='admin/project_skus.html')

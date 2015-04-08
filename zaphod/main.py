@@ -3,7 +3,7 @@ from __future__ import (absolute_import, division, print_function,
 
 from pyramid.config import Configurator
 from pyramid.settings import asbool
-from pyramid.events import BeforeRender, NewResponse
+from pyramid.events import BeforeRender
 from pyramid.paster import setup_logging
 from sqlalchemy import engine_from_config
 

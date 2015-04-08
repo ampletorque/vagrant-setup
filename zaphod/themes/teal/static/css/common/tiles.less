@@ -92,11 +92,18 @@
         width: 33%;
         position: relative;
         padding-bottom: @project-metadata-height;
+    }
 
-        // This explicit width override is needed in Firefox, because of
-        // https://bugzilla.mozilla.org/show_bug.cgi?id=35168
+    // This explicit width override is needed in Firefox, because of
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=35168
+    .project-row-3-cols {
         img {
             width: 294px;
+        }
+    }
+    .project-row-2-cols {
+        img {
+            width: 455px;
         }
     }
 
@@ -108,10 +115,15 @@
 }
 
 @media (min-width: @screen-lg-min) {
-    .project-tile {
-        // An additioanl explicit width override for Firefox.
+    // Additional explicit width overrides for Firefox.
+    .project-row-3-cols {
         img {
             width: 360px;
+        }
+    }
+    .project-row-2-cols {
+        img {
+            width: 555px;
         }
     }
 }

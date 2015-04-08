@@ -135,6 +135,7 @@ class CartView(object):
             ci = model.CartItem.get(form.data['id'])
             assert ci.cart == cart
             name = ci.product.name
+            ci.release_stock()
             model.Session.delete(ci)
             request.flash("Removed '%s' from your shopping cart." % name,
                           'info')
@@ -155,6 +156,7 @@ class CartView(object):
                 assert ci.cart == cart
                 ci.qty_desired = item_params['qty']
                 if ci.qty_desired == 0:
+                    ci.release_stock()
                     model.Session.delete(ci)
 
             request.flash("Updated item quantities.", 'success')

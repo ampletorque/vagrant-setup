@@ -23,7 +23,9 @@ define(['jquery',
       .proxy('removeHandler')
       .proxy('setGravity')
       .proxy('searchHandler')
-      .proxy('selectHandler');
+      .proxy('selectHandler')
+      .proxy('resetHandler')
+      .proxy('ajaxValidateCheck');
     this.init();
   }
 
@@ -51,14 +53,23 @@ define(['jquery',
       this.$results = this.$container.find('.js-image-search-results');
       this.$imagesBody = this.$container.find('> tbody');
 
+      this.$imagesBodyBackup = this.$imagesBody.clone();
+
       this.$target = $('<tr>')
         .addClass('table-drop-target')
         .append('<td colspan="6"></td>');
 
+      this.$form = this.$container.closest('form')
+        .on('reset', this.resetHandler);
+
+      this.$form.data('check-callback', this.ajaxValidateCheck);
+
       this.indexCounter = this.$imagesBody.find('> tr').length;
 
-      this.activeRequest = null;
-      this.lastQuery = null;
+      this.activeSearchRequest = null;
+      this.lastSearchQuery = null;
+
+      this.pendingUploads = [];
     },
 
     makeID: function() {
@@ -88,7 +99,8 @@ define(['jquery',
 
     handleNewFile: function(file) {
       var uploadPath = this.$container.data('upload-path'),
-          xsrf = $('#_authentication_token').val();
+          xsrf = $('#_authentication_token').val(),
+          that = this;
 
       if (!!file.type.match(/image.*/)) {
         // Make a new random ID to refer to it.
@@ -132,6 +144,15 @@ define(['jquery',
           }
         };
         xhr.send(formData);
+        xhr.onreadystatechange = function(e) {
+          // Remove this from the pending uploads once it's complete.
+          var idx = that.pendingUploads.indexOf(xhr);
+          if(idx != -1) {
+            that.pendingUploads.splice(idx, 1);
+          }
+        };
+
+        this.pendingUploads.push(xhr);
       }
     },
 
@@ -286,13 +307,13 @@ define(['jquery',
           q = this.$search.val().trim();
       console.log("image search", q);
 
-      if(q !== this.lastQuery) {
+      if(q !== this.lastSearchQuery) {
         // This should cancel any currently pending ajax requests.
-        if(this.activeRequest) {
-          this.activeRequest.abort();
+        if(this.activeSearchRequest) {
+          this.activeSearchRequest.abort();
         }
-        this.lastQuery = q;
-        this.activeRequest = $.ajax({
+        this.lastSearchQuery = q;
+        this.activeSearchRequest = $.ajax({
           type: "GET",
           url: this.$container.data('search-path') + '?filter=admin-tiny&q=' + q,
           error: function (request, status, error) {
@@ -300,7 +321,7 @@ define(['jquery',
           },
           success: function (data, status, xhr) {
             var image, label;
-            that.activeRequest = null;
+            that.activeSearchRequest = null;
             console.log("images ajax data", data.images);
 
             // Populate a menu panel to pick user from
@@ -352,8 +373,25 @@ define(['jquery',
       this.indexCounter++;
 
       this.$search.val('');
-      this.lastQuery = null;
+      this.lastSearchQuery = null;
 
+    },
+
+    resetHandler: function(e) {
+      console.log("image form reset");
+      // Restore initial image state.
+      this.$imagesBody.replaceWith(this.$imagesBodyBackup.clone());
+      this.pendingUploads = [];
+    },
+
+    ajaxValidateCheck: function() {
+      console.log("image form ajax validate check");
+      if(this.pendingUploads.length > 0) {
+        alert("Image uploads are still in progress.");
+        return false;
+      } else {
+        return true;
+      }
     }
 
   };

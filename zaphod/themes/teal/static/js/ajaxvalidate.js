@@ -57,11 +57,15 @@ define(['jquery'], function ($) {
 
   $(function () {
     $('.js-ajax-validate').on('submit', function (e) {
+      console.log("ajax validate submit");
       e.stopPropagation();
       e.preventDefault();
 
-      var $form = $(this);
-      ajaxValidate($form);
+      var $form = $(this),
+          checkCallback = $form.data('check-callback');
+      if(!checkCallback || checkCallback()) {
+        ajaxValidate($form);
+      }
     });
   });
 

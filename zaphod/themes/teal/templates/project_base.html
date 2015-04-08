@@ -560,7 +560,7 @@
 
           <form method="POST" action="${request.node_path(project, suffix=['prelaunch-signup'])}" id="project-signup-form" class="form-inline">
             <div>
-              ${h.text('email', placeholder='email@example.com', class_='form-control input-lg', type='email')}
+              ${h.text('email', type='email', placeholder='email@example.com', class_='form-control input-lg', type='email')}
               <button type="submit" class="btn btn-lg btn-primary">Subscribe</button>
             </div>
           </form>

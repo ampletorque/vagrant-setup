@@ -10,7 +10,7 @@ Links & Buttons
     * **Red** deletes data or performs a destructive action
     * **Blue** creates or modifies data
     * **Grey** for everything else
-* Link are always **blue**
+* Links are always **blue**
 * Don't use blue text for something that is not a link
 * When a link is used to show additional hidden data, the "shown data" should be slightly greyed, to indicate a visual difference between it and the previously-shown data. This makes it easier for the user to tell what was "just shown".
 

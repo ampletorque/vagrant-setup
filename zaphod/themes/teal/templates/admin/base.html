@@ -81,6 +81,7 @@
               <li><a href="${request.route_path('admin:providers')}">Providers</a></li>
             </ul>
           </li>
+
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Buying <span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
@@ -117,12 +118,12 @@
             My Account
           </a>
         </li>
-        <li><a href="${request.route_path('admin:settings')}">Settings</a></li>
         <li class="divider"></li>
+        <li><a href="${request.route_path('admin:settings')}">Settings</a></li>
         <li><a href="${request.route_path('admin:help')}">Help</a></li>
-        <li><a href="${request.route_path('index')}">View Public Site</a></li>
         <li><a href="${request.route_path('styleguide')}">Style Guide</a></li>
         <li><a href="${request.route_path('admin:docs', path='')}">Developer Docs</a></li>
+        <li><a href="${request.route_path('index')}">View Public Site</a></li>
         <li class="divider"></li>
         <li><a href="${request.route_path('logout')}">Sign Out</a></li>
       </ul>

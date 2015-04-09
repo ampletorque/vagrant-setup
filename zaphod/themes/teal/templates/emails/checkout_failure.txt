@@ -37,7 +37,8 @@ ${self.address_fields(billing)}
 
 Order Items
 -----------
-% for item in order.cart.root_items:
-${item.name}    ${item.price_each}  ${item.qty_reserved}    ${item.total}
+% for item in order.cart.items:
+${item.product.project.name}
+${item.product.name}    ${item.price_each}  ${item.qty_desired}    ${item.total}
 % endfor
 Order Total             ${order.total_amount}

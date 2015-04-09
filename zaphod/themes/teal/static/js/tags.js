@@ -10,7 +10,8 @@ define(['jquery'], function ($) {
       .proxy('addHandler')
       .proxy('populateOptions')
       .proxy('selectHandler')
-      .proxy('removeHandler');
+      .proxy('removeHandler')
+      .proxy('resetHandler');
     this.init();
   }
 
@@ -29,6 +30,11 @@ define(['jquery'], function ($) {
         .on('click', this.addHandler);
       this.$select = this.$container.find('select')
         .on('change', this.selectHandler);
+
+      this.$backup = this.$container.find('.list-association-item').clone();
+
+      this.$form = this.$container.closest('form')
+        .on('reset', this.resetHandler);
 
       this.allTags = [];
     },
@@ -108,7 +114,7 @@ define(['jquery'], function ($) {
       $selected.removeProp('selected');
 
       $lastItem.before(
-        '<li>\n' +
+        '<li class="list-association-item">\n' +
           '<a class="js-tag-remove" href="#">' +
             '<i class="fa fa-minus-circle"></i>' +
           '</a>\n' +
@@ -119,6 +125,12 @@ define(['jquery'], function ($) {
 
       this.$select.hide();
       this.$addLink.show();
+    },
+
+    resetHandler: function(e) {
+      console.log("tag reset");
+      this.$container.find('.list-association-item').remove();
+      this.$container.prepend(this.$backup.clone());
     }
 
   };

@@ -154,7 +154,7 @@
     <div class="form-control-static">
       <ul class="list-association js-project-association" data-path="${request.route_path('admin:projects:search')}">
         % for project in collection:
-          <li>
+          <li class="list-association-item">
             <a class="js-project-remove" href="#"><i class="fa fa-minus-circle"></i></a>
             ${renderer.hidden('related_project_ids', project.id)}
             ${project.name}
@@ -182,7 +182,7 @@
     <div class="form-control-static">
       <ul class="list-association js-tag-association" data-path="${request.route_path('admin:tags:ajax-list')}">
         % for tag in collection:
-          <li>
+          <li class="list-association-item">
             <a class="js-tag-remove" href="#"><i class="fa fa-minus-circle"></i></a>
             ${renderer.hidden('tag_ids', tag.id)}
             ${tag.name}

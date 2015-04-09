@@ -10,7 +10,8 @@ define(['jquery'], function ($) {
       .proxy('addHandler')
       .proxy('selectHandler')
       .proxy('searchHandler')
-      .proxy('removeHandler');
+      .proxy('removeHandler')
+      .proxy('resetHandler');
     this.init();
   }
 
@@ -33,6 +34,11 @@ define(['jquery'], function ($) {
       this.$addLink = this.$container.find('.js-project-add')
         .on('click', this.addHandler);
       this.$menu = this.$container.find('.js-project-menu');
+
+      this.$backup = this.$container.find('.list-association-item').clone();
+
+      this.$form = this.$container.closest('form')
+        .on('reset', this.resetHandler);
 
       this.activeRequest = null;
       this.lastQuery = null;
@@ -113,7 +119,7 @@ define(['jquery'], function ($) {
           $lastItem = this.$addLink.parent('li');
 
       $lastItem.before(
-        '<li>\n' +
+        '<li class="list-association-item">\n' +
           '<a class="js-project-remove" href="#">' +
             '<i class="fa fa-minus-circle"></i>' +
           '</a>\n' +
@@ -126,6 +132,12 @@ define(['jquery'], function ($) {
       this.$search.val('');
       this.$addLink.show();
       this.$menu.hide();
+    },
+
+    resetHandler: function(e) {
+      console.log("project reset");
+      this.$container.find('.list-association-item').remove();
+      this.$container.prepend(this.$backup.clone());
     }
 
   };

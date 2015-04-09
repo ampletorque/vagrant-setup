@@ -14,7 +14,7 @@ Phone   ${address.phone}
 Address ${address.address1}
         ${address.address2}
         ${address.city}, ${address.state} ${address.postal_code}
-        ${address.country}
+        ${address.country_name}
 % endif
 % endif
 </%def>

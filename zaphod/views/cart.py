@@ -313,7 +313,7 @@ class CartView(object):
                     cart.items.remove(ci)
             model.Session.flush()
 
-        billing = shipping = masked_card = None
+        billing = shipping = masked_card = payment_method = None
 
         if cart and request.user:
             last_order = model.Session.query(model.Order).\
@@ -338,7 +338,7 @@ class CartView(object):
                     pass
 
         form = Form(request, schema=CheckoutForm)
-        if form.validate():
+        if cart and form.validate():
             self._place_order(cart, form, payment_method)
             return HTTPFound(location=request.route_url('cart:confirmed'))
 

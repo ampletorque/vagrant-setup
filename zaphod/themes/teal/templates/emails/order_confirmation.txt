@@ -1,5 +1,5 @@
 <%inherit file="base.txt"/>\
-Your Crowd Supply order has been confirmed. On behalf of the team here and all of the project creators on Crowd Supply, we appreciate your support!
+Thank you for your order!
 
 Please double-check the shipping information below to make sure it is accurate. If you have any questions or need to make changes to this order, please email us at support@crowdsupply.com or call (800) 554-2014.
 

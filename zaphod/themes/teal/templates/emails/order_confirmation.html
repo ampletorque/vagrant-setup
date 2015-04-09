@@ -6,7 +6,7 @@
     <table>
       <tr>
         <td>
-          Your Crowd Supply order has been confirmed. On behalf of the team here and all of the project creators on Crowd Supply, we appreciate your support!
+          Thank you for your order!
           <br /><br />
 
           Please double-check the shipping information below to make sure it is accurate. If you have any questions or need to make changes to this order, please email us at <a href="mailto:support@crowdsupply.com">support@crowdsupply.com</a> or call (800) 554-2014.
@@ -54,14 +54,14 @@
         <td>
           % for project, items in items_by_project.items():
             <br />
-            <span class="h4">
+            <span class="h5">
               <a href="${request.node_url(project)}">${project.name}</a>
             </span>
-            <br />
+            <br /><br />
 
             % if items[0].stage == items[0].CROWDFUNDING:
               This is a pledge to a crowdfunding campaign, and may not be processed immediately. Payment for this item will be collected when the project is successful. If the crowdfunding campaign is not successful, you will not be charged.
-              <br /><br />
+              <br />
             % endif
 
             <table>

@@ -165,6 +165,7 @@ class CartView(object):
             raise HTTPBadRequest
 
     def _get_or_create_user(self, email, shipping):
+        request = self.request
         user = model.Session.query(model.User).\
             filter_by(email=email).\
             first()
@@ -183,8 +184,9 @@ class CartView(object):
                 show_name='%s %s' % (shipping.first_name,
                                      shipping.last_name[0]))
             model.Session.add(user)
+            token = user.set_reset_password_token()
+            mail.send_welcome_email(request, user, token)
 
-            # XXX Need to transactionally send a welcome email to this user.
         return user
 
     def _handle_new_payment(self, order, form, email, user):

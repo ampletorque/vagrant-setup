@@ -317,7 +317,10 @@ define(['jquery',
           type: "GET",
           url: this.$container.data('search-path') + '?filter=admin-tiny&q=' + q,
           error: function (request, status, error) {
-            alert('Server Error');
+            if(status !== 'abort') {
+              console.log("images ajax error", status, error);
+              alert('Server Error');
+            }
           },
           success: function (data, status, xhr) {
             var image, label;

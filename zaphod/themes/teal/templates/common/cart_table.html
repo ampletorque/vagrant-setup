@@ -8,7 +8,11 @@
 
 <%def name="cart_item_stage(item)">
   % if item.stage == item.CROWDFUNDING:
-    <p>Crowdfunding pledge, expected to ship ${item.expected_ship_time.strftime('%B %Y')}</p>
+    % if item.expected_ship_time:
+      <p>Crowdfunding pledge, expected to ship ${item.expected_ship_time.strftime('%B %Y')}</p>
+    % else:
+      <p>Crowdfunding pledge</p>
+    % endif
   % elif item.stage == item.PREORDER:
     <p>Pre-order, expected to ship ${item.expected_ship_time.strftime('%B %Y')}</p>
   % elif item.stage == item.STOCK:

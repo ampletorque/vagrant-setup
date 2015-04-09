@@ -10,12 +10,17 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        <h1>
+        <h1 class="page-header">
           ${self.title()}
           % if obj == request.user:
             <small>This is you!</small>
           % endif
         </h1>
+
+        <div class="well">
+          <a class="btn btn-primary" href="${request.route_path('admin:user:send-password-reset', id=obj.id)}">Send Password Reset</a>
+          <a class="btn btn-primary" href="${request.route_path('admin:user:send-welcome-email', id=obj.id)}">Send Welcome Email</a>
+        </div>
 
         ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped js-ajax-validate')}
           ${forms.ltext(renderer, 'name', obj.name)}

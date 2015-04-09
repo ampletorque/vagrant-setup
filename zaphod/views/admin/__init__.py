@@ -50,6 +50,10 @@ def includeme(config):
     config.add_route('admin:users:new', '/users/new')
     config.add_route('admin:users:search', '/users/search')
     config.add_route('admin:user', '/user/{id}')
+    config.add_route('admin:user:send-password-reset',
+                     '/user/{id}/send-password-reset')
+    config.add_route('admin:user:send-welcome-email',
+                     '/usr/{id}/send-welcome-email')
 
     config.add_route('admin:articles', '/articles')
     config.add_route('admin:articles:new', '/articles/new')

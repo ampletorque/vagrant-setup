@@ -2,6 +2,7 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from pyramid.view import view_defaults, view_config
+from pyramid.httpexceptions import HTTPFound
 from venusian import lift
 from formencode import Schema, validators
 from pyramid_es import get_client
@@ -34,6 +35,25 @@ class UserEditView(BaseEditView):
         twitter_username = custom_validators.TwitterUsername()
         chained_validators = [validators.FieldsMatch('password', 'password2')]
         new_comment = custom_validators.CommentBody()
+
+    @view_config(route_name='admin:user:send-password-reset')
+    def send_password_reset(self):
+        request = self.request
+        user = self._get_object()
+        token = user.set_reset_password_token()
+        mail.send_password_reset(request, user, token)
+        request.flash('Sent password reset email to %s.' % user.email,
+                      'success')
+        return HTTPFound(location=request.route_path('admin:user', id=user.id))
+
+    @view_config(route_name='admin:user:send-welcome-email')
+    def send_welcome_email(self):
+        request = self.request
+        user = self._get_object()
+        token = user.set_reset_password_token()
+        mail.send_welcome_email(request, user, token)
+        request.flash('Sent welcome email to %s.' % user.email, 'success')
+        return HTTPFound(location=request.route_path('admin:user', id=user.id))
 
 
 @view_defaults(route_name='admin:users', renderer='admin/users.html',

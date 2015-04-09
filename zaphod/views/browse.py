@@ -56,16 +56,16 @@ class ProjectListView(object):
         return data
 
     def render_json(self):
-        raise NotImplementedError
+        raise HTTPNotFound
 
     def render_csv(self):
-        raise NotImplementedError
+        raise HTTPNotFound
 
     def render_rss(self):
-        raise NotImplementedError
+        raise HTTPNotFound
 
     def render_atom(self):
-        raise NotImplementedError
+        raise HTTPNotFound
 
     def __call__(self):
         format = self.request.params.get('format', 'html')

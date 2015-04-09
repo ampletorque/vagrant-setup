@@ -196,7 +196,7 @@ def status_for_item(utcnow, product_map, old_order, old_ci):
     product = product_map[old_ci.product]
     project = product.project
     if not project.successful:
-        if project.end_time < utcnow:
+        if project.end_time and (project.end_time < utcnow):
             return 'failed'
         else:
             return 'unfunded'

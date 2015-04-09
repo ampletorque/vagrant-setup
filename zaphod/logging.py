@@ -238,8 +238,8 @@ def get_exclog_message(request):
 
     versions = '\n'.join('%s: %s' % (pkg_name, get_version(pkg_name))
                          for pkg_name in
-                          ['zaphod', 'pyramid_frontend', 'pyramid_es',
-                           'pyramid_uniform', 'pyramid_cron', 'gimlet'])
+                         ['zaphod', 'pyramid_frontend', 'pyramid_es',
+                          'pyramid_uniform', 'pyramid_cron', 'gimlet'])
 
     return exclog_message.format(
         url=request.url,
@@ -258,7 +258,7 @@ def get_git_version(package):
         try:
             with open(path) as fp:
                 return fp.read().strip()
-        except (IOError, OSError) as exc:
+        except (IOError, OSError):
             return ''
 
     repo_path = os.path.dirname(pkg_resources.resource_filename(package, ''))

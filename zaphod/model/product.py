@@ -134,6 +134,8 @@ class Product(Base, ImageMixin, ElasticMixin):
             join(CartItem.cart).\
             join(Cart.order).\
             filter(CartItem.product == self).\
+            filter(CartItem.stage.in_([CartItem.CROWDFUNDING,
+                                       CartItem.PREORDER])).\
             filter(CartItem.status != 'cancelled').\
             scalar() or 0
 

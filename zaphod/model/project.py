@@ -210,6 +210,8 @@ class Project(Node, ElasticMixin):
             join(Cart.order).\
             join(CartItem.product).\
             filter(Product.project == self).\
+            filter(CartItem.stage.in_([CartItem.CROWDFUNDING,
+                                       CartItem.PREORDER])).\
             filter(CartItem.status != 'cancelled').\
             scalar() or 0
         elsewhere_amount = self.pledged_elsewhere_amount or 0
@@ -217,12 +219,18 @@ class Project(Node, ElasticMixin):
 
     @property
     def num_backers(self):
+        """
+        Number of distinct backers in crowdfunding and preorder stages.
+        """
         q = Session.query(func.count(User.id.distinct())).\
             join(User.orders).\
             join(Order.cart).\
             join(Cart.items).\
             join(CartItem.product).\
-            filter(Product.project == self)
+            filter(Product.project == self).\
+            filter(CartItem.stage.in_([CartItem.CROWDFUNDING,
+                                       CartItem.PREORDER])).\
+            filter(CartItem.status != 'cancelled')
         return q.scalar() or 0
 
     @property
@@ -235,6 +243,8 @@ class Project(Node, ElasticMixin):
             join(Cart.order).\
             join(CartItem.product).\
             filter(Product.project == self).\
+            filter(CartItem.stage.in_([CartItem.CROWDFUNDING,
+                                       CartItem.PREORDER])).\
             filter(CartItem.status != 'cancelled').\
             scalar() or 0
 

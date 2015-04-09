@@ -2,11 +2,15 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 import logging
+import logging.handlers
 import time
 
 from sqlalchemy.orm.exc import DetachedInstanceError
 from sqlalchemy.event import listen
+from sqlalchemy.exc import SQLAlchemyError
+
 from pyramid.threadlocal import get_current_request
+from pyramid.compat import binary_type, text_type
 
 
 querylog = logging.getLogger('zaphod.querytimer')
@@ -123,3 +127,148 @@ class ColoredStreamHandler(logging.StreamHandler):
             return self.COLORS[l] + l + self.COLORS['reset']
         record.colored_levelname = _format_levelname(record.levelname)
         logging.StreamHandler.emit(self, record)
+
+
+class ExceptionSMTPHandler(logging.handlers.SMTPHandler):
+    def getSubject(self, record):
+        exc = record.exc_info[1]
+        exc_name = exc.__class__.__name__
+        subject = super(ExceptionSMTPHandler, self).getSubject(record)
+        subject = '{0}: {1}: {2}'.format(subject, exc_name, exc)
+        return subject
+
+
+exclog_message = u"""
+
+REQUEST URL
+-----------
+
+{url}
+
+
+USER INFO
+---------
+
+{user_info}
+
+
+URL PARAMETERS
+--------------
+
+{get_params}
+
+
+POST PARAMETERS
+---------------
+
+{post_params}
+
+
+COOKIES
+-------
+
+{cookies}
+
+
+WSGI ENVIRON
+------------
+
+{env}
+
+
+VERSIONS
+--------
+
+{versions}
+
+
+TRACEBACK
+---------
+
+"""
+
+
+exclog_user_info = u"""\
+Name: {name}
+Email: {email}\
+"""
+
+
+def get_exclog_message(request):
+    """
+    A custom message generator pyramid_exclog which fills in user info and
+    masks sensitive fields.
+    """
+    env = request.environ.copy()
+
+    # Remove GET and POST params and cookies from environ because they're
+    # displayed separately.
+    env.pop('webob._parsed_query_vars', None)
+    env.pop('webob._parsed_post_vars', None)
+    env.pop('webob._parsed_cookies', None)
+    env.pop('HTTP_COOKIE', None)
+    env = format_dict(env)
+
+    get_params = format_dict(request.GET.copy()) or None
+
+    post_params = request.POST.copy()
+
+    params_to_mask = ['cc.number', 'cc.expires_month', 'cc.expires_year',
+                      'cc.code', 'password', 'password2']
+    for name in post_params:
+        if name in params_to_mask:
+            post_params[name] = '*' * len(post_params[name])
+
+    post_params = format_dict(post_params) or None
+    cookies = format_dict(request.cookies) or None
+
+    try:
+        if request.user:
+            name = request.user.name
+            email = request.user.email
+            user_info = exclog_user_info.format(name=name, email=email)
+        else:
+            user_info = u'No logged in user'
+    except SQLAlchemyError as exc:
+        user_info = u'Could not get user info due to SQLAlchemy exc: {}'
+        user_info = user_info.format(_as_unicode(exc))
+
+    versions = format_dict(request.registry['git.info'])
+
+    return exclog_message.format(
+        url=request.url.decode(request.url_encoding),
+        user_info=user_info,
+        env=env,
+        get_params=get_params,
+        post_params=post_params,
+        cookies=cookies,
+        versions=versions,
+    )
+
+
+def format_dict(d):
+    """Format dict nicely as a unicode string."""
+    items = []
+    template = u'{}: {}'
+    for k, v in sorted(d.items()):
+        k = _as_unicode(k)
+        v = _as_unicode(v)
+        items.append(template.format(k, v))
+    return u'\n'.join(items)
+
+
+def _as_unicode(obj, encoding='utf-8', errors='replace'):
+    """Convert an ``obj``ect to a unicode string.
+
+    Assume byte strings are UTF-8 encoded. Call ``str()`` on other objects,
+    then convert that string to unicode.
+
+    Be lenient about unknown chars--they will be replaced with the official
+    Unicode replacement char.
+
+    """
+    if isinstance(obj, text_type):
+        return obj
+    if not isinstance(obj, binary_type):
+        obj = str(obj)
+    return obj.decode(encoding, errors)

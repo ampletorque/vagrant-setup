@@ -310,7 +310,7 @@
                 <label for="option-${option.id}">${option.name}</label>
                 <select id="option-${option.id}" name="options-${loop.index}" class="form-control">
                   % for value in option.published_values:
-                    <option value="${value.id}">
+                    <option value="${value.id}" ${'selected' if option.default_value == value else ''}>
                       ${value.description}
                       % if value.price_increase:
                         (+${h.currency(value.price_increase)})

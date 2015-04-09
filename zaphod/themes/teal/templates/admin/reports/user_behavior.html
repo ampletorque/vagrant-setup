@@ -32,7 +32,13 @@
                     <a href="${request.route_path('admin:project', id=project.id)}">${project.name}</a>
                   </td>
                   <td>${num_users}</td>
-                  <td>${'%0.1f' % (100. * num_users / num_backers)}%</td>
+                  <td>
+                    % if num_backers > 0:
+                      ${'%0.1f' % (100. * num_users / num_backers)}%
+                    % else:
+                      -
+                    % endif
+                  </td>
                   <td>${num_backers}</td>
                 </tr>
               % endfor

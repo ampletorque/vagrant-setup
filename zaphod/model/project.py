@@ -135,8 +135,9 @@ class Project(Node, ElasticMixin):
         Return True if the project should be available for the public to view
         (e.g. it's not pre-release).
         """
-        utcnow = utils.utcnow()
-        return (utcnow > self.start_time) or self.listed
+        return ((not self.start_time) or
+                (utils.utcnow() > self.start_time) or
+                self.listed)
 
     def update_successful(self):
         self.successful = self.pledged_amount >= self.target

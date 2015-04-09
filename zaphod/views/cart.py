@@ -139,13 +139,14 @@ class CartView(object):
         if form.validate():
             cart = self.get_cart(create_new=True)
             ci = model.CartItem.get(form.data['id'])
-            assert ci.cart == cart
-            name = ci.product.name
-            ci.release_stock()
-            model.Session.delete(ci)
-            request.flash("Removed '%s' from your shopping cart." % name,
-                          'info')
-            return HTTPFound(location=request.route_url('cart'))
+            if ci:
+                assert ci.cart == cart
+                name = ci.product.name
+                ci.release_stock()
+                model.Session.delete(ci)
+                request.flash("Removed '%s' from your shopping cart." % name,
+                              'info')
+                return HTTPFound(location=request.route_url('cart'))
         else:
             raise HTTPBadRequest
 

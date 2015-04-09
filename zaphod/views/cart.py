@@ -198,9 +198,6 @@ class CartView(object):
         gateway_id = request.registry.settings['payment_gateway_id']
         iface = payment.get_payment_interface(request.registry, gateway_id)
 
-        # XXX make sure we're not using a live gateway for now
-        assert iface.api_key.startswith('sk_test')
-
         try:
             profile = iface.create_profile(
                 card_number=ccf['number'],

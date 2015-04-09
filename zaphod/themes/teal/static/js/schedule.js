@@ -12,7 +12,8 @@ define([
     this.$container = $(selector);
     this
       .proxy('addHandler')
-      .proxy('removeHandler');
+      .proxy('removeHandler')
+      .proxy('resetHandler');
     this.init();
   }
 
@@ -30,19 +31,22 @@ define([
       this.$container
         .on('click', '.js-batch-remove', this.removeHandler)
         .on('click', '.js-batch-add', this.addHandler);
+      this.$batchesBody = this.$container.find('> tbody');
+      this.$batchesBodyBackup = this.$batchesBody.find('> tr');
+
+      this.$form = this.$container.closest('form')
+        .on('reset', this.resetHandler);
+
+      this.indexCounter = this.$batchesBody.find('> tr').length;
     },
 
     addHandler: function(e) {
-      console.log("batch add");
+      console.log("schedule add");
       e.preventDefault();
       e.stopPropagation();
 
-      var $batchesBody = this.$container.find('> tbody'),
-          $batches = $batchesBody.find('> tr'),
-          nextIndex = $batches.length,
-          newID = 'new-' + nextIndex;
-
-      var $last = $batches.last();
+      var $batches = this.$batchesBody.find('> tr'),
+          $last = $batches.last();
 
       // Calculate new date string that is 1 month after current last ship time
       var lastShipTime = moment($last.find('.js-datepicker').val(), 'YYYY-MM-DD'),
@@ -55,20 +59,28 @@ define([
       }
 
       // Make a new row, passing in the ID
-      $batchesBody.append(rowTemplate({
+      this.$batchesBody.append(rowTemplate({
         qty: "",
-        idx: nextIndex,
-        id: newID,
+        idx: this.indexCounter,
+        id: 'new-' + this.indexCounter,
         shipTime: nextShipTime
       }));
+
+      this.indexCounter++;
     },
 
     removeHandler: function(e) {
-      console.log("batch remove");
+      console.log("schedule remove");
       e.preventDefault();
       e.stopPropagation();
       $(e.target).closest('tr').remove();
     },
+
+    resetHandler: function(e) {
+      console.log("schedule reset");
+      this.$batchesBody.empty();
+      this.$batchesBody.append(this.$batchesBodyBackup.clone());
+    }
 
   };
 

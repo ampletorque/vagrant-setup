@@ -105,8 +105,9 @@ class ProductEditView(BaseEditView):
                 assert (ii + 1) == len(batches), \
                     "infinite qty can only be last batch"
             else:
-                assert new_qty > batch.qty_claimed, \
-                    "new batch qty must be greater than already claimed"
+                assert new_qty >= batch.qty_claimed, \
+                    ("new batch qty must be greater than already "
+                     "claimed (%d vs %d)" % (new_qty, batch.qty_claimed))
             batch.qty = new_qty
 
         for batch in batches_remaining:

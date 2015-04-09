@@ -149,11 +149,11 @@ class Project(Node, ElasticMixin):
         # - available (some mixture of preorder and stock)
         # - funded (no longer available)
         utcnow = utils.utcnow()
-        if utcnow < self.start_time:
+        if self.start_time and (utcnow < self.start_time):
             return 'prelaunch'
         elif self.suspended_time:
             return 'suspended'
-        elif self.start_time <= utcnow <= self.end_time:
+        elif self.start_time and (self.start_time <= utcnow <= self.end_time):
             return 'crowdfunding'
         elif self.pledged_amount < self.target:
             return 'failed'

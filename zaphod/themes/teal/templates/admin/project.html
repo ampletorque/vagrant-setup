@@ -24,6 +24,7 @@ ${regions.project_header(obj)}
           ${widgets.aliases(renderer, obj)}
 
           ${forms.ldaterange(renderer, 'start_time', 'end_time', obj.start_time, obj.end_time)}
+          ${forms.lvalue(obj.status, label='Status')}
           ${forms.lvalue('Yes' if obj.successful else 'No', label='Successful')}
           ${forms.ltext(renderer, 'target', obj.target, label='Funding Target', prefix='$')}
           ${forms.ltext(renderer, 'gravity', obj.gravity, hint='Determines sort order of project in list views.', type='number')}

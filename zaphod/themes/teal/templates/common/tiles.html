@@ -1,3 +1,6 @@
+<%namespace name="blocks" file="blocks.html"/>
+
+
 <%def name="numeric_fact(amount, label, format)">
   <div class="fact ${'fact-micro' if amount > 1000000 else 'fact-small' if amount > 100000 else ''}">
     % if format == '$':
@@ -10,6 +13,7 @@
     <span>${label}</span>
   </div>
 </%def>
+
 
 <%def name="crowdfunding_metadata(project)">
   <div class="stats stats-crowdfunding">
@@ -116,15 +120,6 @@
 </%def>
 
 
-<%def name="price_range(project)">
-  % if project.price_range_low == project.price_range_high:
-    <sup>$</sup>${h.commas(project.price_range_low)}
-  % else:
-    <sup>$</sup>${h.commas(project.price_range_low)} - <sup>$</sup>${h.commas(project.price_range_high)}
-  % endif
-</%def>
-
-
 <%def name="stock_metadata(project)">
   <div class="stats stats-pre-order">
     <div class="status-bar status-bar-dark">
@@ -134,7 +129,7 @@
     <div class="factoids">
       <div class="fact">
         <span>options from</span>
-        <p>${self.price_range(project)}</p>
+        <p>${blocks.price_range(project)}</p>
       </div>
     </div>
   </div>

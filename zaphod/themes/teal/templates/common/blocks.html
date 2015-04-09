@@ -324,3 +324,12 @@
     </div>
   </div>
 </%def>
+
+
+<%def name="price_range(project)">
+  % if project.price_range_low == project.price_range_high:
+    <sup>$</sup>${h.commas(project.price_range_low)}
+  % else:
+    <sup>$</sup>${h.commas(project.price_range_low)} - <sup>$</sup>${h.commas(project.price_range_high)}
+  % endif
+</%def>

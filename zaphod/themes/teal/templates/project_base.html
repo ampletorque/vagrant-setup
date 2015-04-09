@@ -221,9 +221,16 @@
 
 
 <%def name="stats_stock_only(project)">
-  <div class="status-bar status-bar-primary">
+  <p class="text-center">Free UPS Ground Shipping</p>
+  <div class="status-bar status-bar-dark">
     <span class="status-bar-left">In Stock</span>
     <span class="status-bar-right">Available Now</span>
+  </div>
+  <div class="factoids">
+    <div class="fact">
+      <span>options from</span>
+      <p>${blocks.price_range(project)}</p>
+    </div>
   </div>
   <div class="social-buttons">
     <p>Support this project on social media!</p>

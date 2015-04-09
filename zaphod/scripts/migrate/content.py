@@ -111,6 +111,13 @@ def migrate_projects(settings, creator_map, tag_map, user_map):
     batch_map = {}
     for old_project in scrappy_meta.Session.query(cs_model.Project):
         log.warn("  project %s", old_project.name)
+
+        if (old_project.stage == 3) and (old_project.target == 0):
+            start_time = end_time = None
+        else:
+            start_time = old_project.start_time
+            end_time = old_project.end_time
+
         project = model.Project(
             id=old_project.id,
             creator=creator_map[old_project.creator],
@@ -132,8 +139,8 @@ def migrate_projects(settings, creator_map, tag_map, user_map):
             listed=old_project.listed,
             gravity=old_project.gravity,
             target=old_project.target,
-            start_time=old_project.start_time,
-            end_time=old_project.end_time,
+            start_time=start_time,
+            end_time=end_time,
             suspended_time=old_project.suspended_time,
 
             created_by=user_map[old_project.created_by],

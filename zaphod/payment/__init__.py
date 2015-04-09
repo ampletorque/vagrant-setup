@@ -47,7 +47,7 @@ def make_descriptor(registry, description):
     Make a descriptor, up to 22 chars, to be used for a payment of a given
     project.
     """
-    chars = string.uppercase + string.digits
+    chars = string.ascii_uppercase + string.digits
     random_code = ''.join(random.choice(chars) for __ in range(3))
     s = 'CROWDSUPPLY %s %s' % (random_code, description)
     return s.upper()[:22]

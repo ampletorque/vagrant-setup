@@ -147,7 +147,8 @@ class ProjectView(object):
         project = self.context.node
         if project.status == 'crowdfunding':
             raise HTTPFound(location=request.node_url(project))
-        self._verify_owner()
+        elif project.status == 'prelaunch':
+            self._verify_owner()
         return {
             'action': 'crowdfunding',
             'project': project,

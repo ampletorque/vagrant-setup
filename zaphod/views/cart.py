@@ -20,14 +20,19 @@ log = logging.getLogger(__name__)
 class CheckoutForm(Schema):
     "Validates checkout submissions."
     allow_extra_fields = False
-    pre_validators = [NestedVariables,
-                      custom_validators.CloneFields(
-                          'shipping', 'cc.billing',
-                          when='billing_same_as_shipping')]
+    pre_validators = [
+        NestedVariables,
+        custom_validators.CloneFields(
+            'shipping', 'cc.billing',
+            when='billing_same_as_shipping'),
+        custom_validators.CloneFields(
+            'cc.billing', 'shipping',
+            when='non_physical')]
 
     shipping = custom_validators.AddressSchema
 
     billing_same_as_shipping = validators.Bool()
+    non_physical = validators.Bool()
 
     email = validators.Email(not_empty=True, strip=True)
     comments = validators.UnicodeString()

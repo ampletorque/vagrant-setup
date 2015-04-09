@@ -386,10 +386,15 @@ class CloneFields(FancyValidator):
         self.to_fields = to_fields
         self.when = when
 
+    def _resolve_source(self, value):
+        for piece in self.from_fields.split('.'):
+            value = value[piece]
+        return value
+
     def _to_python(self, value, state):
         if ((self.when in value) and
                 validators.Bool.to_python(value[self.when])):
-            from_val = value[self.from_fields]
+            from_val = self._resolve_source(value)
             tree = value
             pieces = self.to_fields.split('.')
             head = pieces[:-1]

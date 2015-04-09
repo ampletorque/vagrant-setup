@@ -56,7 +56,9 @@
 
     ${forms.lcheckbox(renderer, 'cc.save', True, label='Save credit card information for future use')}
 
-    % if not cart.non_physical:
+    % if cart.non_physical:
+      ${renderer.hidden('non_physical', True)}
+    % else:
       ${forms.lcheckbox(renderer, 'billing_same_as_shipping', checked=True, label='Credit card billing address is the same as the shipping address')}
     % endif
 

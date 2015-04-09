@@ -4,6 +4,9 @@ from __future__ import (absolute_import, division, print_function,
 import logging
 import logging.handlers
 import time
+import re
+import os.path
+import pkg_resources
 
 from sqlalchemy.orm.exc import DetachedInstanceError
 from sqlalchemy.event import listen
@@ -233,10 +236,13 @@ def get_exclog_message(request):
         user_info = u'Could not get user info due to SQLAlchemy exc: {}'
         user_info = user_info.format(_as_unicode(exc))
 
-    versions = format_dict(request.registry['git.info'])
+    versions = '\n'.join('%s: %s' % (pkg_name, get_version(pkg_name))
+                         for pkg_name in
+                          ['zaphod', 'pyramid_frontend', 'pyramid_es',
+                           'pyramid_uniform', 'pyramid_cron', 'gimlet'])
 
     return exclog_message.format(
-        url=request.url.decode(request.url_encoding),
+        url=request.url,
         user_info=user_info,
         env=env,
         get_params=get_params,
@@ -244,6 +250,41 @@ def get_exclog_message(request):
         cookies=cookies,
         versions=versions,
     )
+
+
+def get_git_version(package):
+
+    def safe_read(path):
+        try:
+            with open(path) as fp:
+                return fp.read().strip()
+        except (IOError, OSError) as exc:
+            return str(exc)
+
+    repo_path = os.path.dirname(pkg_resources.resource_filename(package, ''))
+    git_path = os.path.join(repo_path, '.git')
+    head_path = os.path.join(git_path, 'HEAD')
+
+    # A ref spec like 'ref: refs/heads/master' or a SHA1
+    head = safe_read(head_path)
+    ref_match = re.match(r'ref: (?P<ref_path>.+)', head)
+    if ref_match:
+        ref_path = ref_match.groupdict()['ref_path']
+        sha1_path = os.path.join(git_path, ref_path)
+        sha1 = safe_read(sha1_path)
+    else:
+        sha1_match = re.match(r'(?P<sha1>[a-f0-9]{40})', head)
+        if sha1_match:
+            sha1 = sha1_match.groupdict()['sha1']
+        else:
+            sha1 = head
+    return sha1
+
+
+def get_version(package):
+    git_sha1 = get_git_version(package)
+    pkg_version = pkg_resources.get_distribution(package).version
+    return '%s - git %s' % (pkg_version, git_sha1)
 
 
 def format_dict(d):
@@ -269,6 +310,7 @@ def _as_unicode(obj, encoding='utf-8', errors='replace'):
     """
     if isinstance(obj, text_type):
         return obj
-    if not isinstance(obj, binary_type):
-        obj = str(obj)
-    return obj.decode(encoding, errors)
+    elif isinstance(obj, binary_type):
+        return obj.decode(encoding, errors)
+    else:
+        return str(obj)

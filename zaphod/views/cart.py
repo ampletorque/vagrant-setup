@@ -228,7 +228,7 @@ class CartView(object):
                                      order=order,
                                      exc=e,
                                  ),
-                                 to=request.registry.settings['mailer.from'])
+                                 to=[request.registry.settings['mailer.from']])
 
             raise HTTPFound(location=request.route_url('cart'))
 

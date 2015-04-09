@@ -10,6 +10,7 @@ def includeme(config):
     config.add_route('index', '/')
 
     config.add_route('sitemap', '/sitemap.xml')
+    config.add_route('robots', '/robots.txt')
 
     config.add_route('launch', '/launch')
     config.add_route('contact', '/contact')

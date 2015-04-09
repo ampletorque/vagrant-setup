@@ -531,3 +531,26 @@ class ProjectEditView(NodeEditView):
 class ProjectCreateView(NodeCreateView):
     cls = model.Project
     obj_route_name = 'admin:project'
+
+    class CreateForm(NodeCreateForm):
+        creator_id = validators.Int(not_empty=True)
+
+    @view_config(permission='admin')
+    def create(self):
+        request = self.request
+
+        form = Form(request, schema=self.CreateForm)
+        if form.validate():
+            obj = self._create_object(form)
+            model.Session.flush()
+            request.flash("Created.", 'success')
+            return HTTPFound(location=request.route_url(self.obj_route_name,
+                                                        id=obj.id))
+
+        q = model.Session.query(model.Creator.id, model.Creator.name).\
+            order_by(model.Creator.name)
+
+        return {
+            'renderer': FormRenderer(form),
+            'creators_for_select': q.all(),
+        }

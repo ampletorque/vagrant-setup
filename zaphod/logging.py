@@ -218,9 +218,9 @@ def get_exclog_message(request):
 
     params_to_mask = ['cc.number', 'cc.expires_month', 'cc.expires_year',
                       'cc.code', 'password', 'password2']
-    for name in post_params:
+    for name, value in list(post_params.items()):
         if name in params_to_mask:
-            post_params[name] = '*' * len(post_params[name])
+            post_params[name] = '*' * len(value)
 
     post_params = format_dict(post_params) or None
     cookies = format_dict(request.cookies) or None

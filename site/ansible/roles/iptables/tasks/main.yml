@@ -7,9 +7,6 @@
             group=root
             mode=0644
 
-  notify:
-    - reload iptables
-
 - name: copy ip6tables file
   sudo: yes
   template: src=ip6tables.conf.j2
@@ -18,5 +15,10 @@
             group=root
             mode=0644
 
-  notify:
-    - reload ip6tables
+- name: reload iptables
+  sudo: yes
+  shell: iptables-restore < /etc/iptables.rules
+
+- name: reload ip6tables
+  sudo: yes
+  shell: ip6tables-restore < /etc/ip6tables.rules

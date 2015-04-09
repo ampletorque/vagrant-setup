@@ -1,4 +1,10 @@
 ---
+- name: add www-data user to staff group
+  sudo: yes
+  user: name=www-data
+        group=www-data
+        groups=staff
+
 - name: install uwsgi
   sudo: yes
   pip: name=uwsgi state=present executable=pip3

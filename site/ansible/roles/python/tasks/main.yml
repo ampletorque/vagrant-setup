@@ -6,15 +6,10 @@
     - python3
     - python3-dev
     - python3-pip
+    - python-virtualenv
     - libxml2-dev
     - libxslt-dev
     - libmemcached-dev
-
-# Don't rely on Ubuntu virtualenv package (Fixed in 13.10)
-# https://bugs.launchpad.net/ubuntu/+source/python2.7/+bug/1115466
-- name: install python-virtualenv
-  sudo: yes
-  pip: name=virtualenv
 
 - name: create /var/sw dir
   sudo: yes

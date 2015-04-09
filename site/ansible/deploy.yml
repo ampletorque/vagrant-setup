@@ -32,16 +32,9 @@
            dest=/var/sw/zaphod
            version=master
            accept_hostkey=yes
-      notify:
-        - run setup.py develop
-        - recompile assets
-        - run alembic migrations
-        - reload uwsgi
-        - restart nginx
-        - flush redis
-        - build docs
 
-    # XXX Might need a step in here that flushes old .pyc or __pycache__ files.
+    - name: setup zaphod database
+      shell: mysql -uroot < /var/sw/zaphod/site/conf/dbsetup.sql
 
     - name: link uwsgi config file
       file: src=/var/sw/zaphod/site/conf/uwsgi-{{ app_environment }}.conf
@@ -49,8 +42,6 @@
             owner=deploy
             group=deploy
             state=link
-      notify:
-        - reload uwsgi
 
     - name: link nginx config file
       file: src=/var/sw/zaphod/site/conf/nginx-{{ app_environment }}.conf
@@ -58,14 +49,11 @@
             owner=deploy
             group=deploy
             state=link
-      notify:
-        - restart nginx
 
     # XXX set up /cron handler
 
-  handlers:
-    - name: run setup.py develop
-      command: /var/sw/pyramid34/bin/python setup.py develop chdir=/var/sw/zaphod
+    - name: run pip install
+      command: /var/sw/pyramid34/bin/pip install -e . chdir=/var/sw/zaphod
 
     - name: recompile assets
       command: /var/sw/pyramid34/bin/pcompile /var/sw/zaphod/site/conf/production.ini

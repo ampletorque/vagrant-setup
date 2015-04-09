@@ -6,6 +6,7 @@
     - ssh
     - git
     - iptables
+    - utils
     - openssl
     - python
     - postfix
@@ -17,5 +18,3 @@
     - image-processing
     - node
     - certs
-
-# XXX Add some basic system helpers here, like vim.

@@ -180,7 +180,7 @@ class Project(Node, ElasticMixin):
     def current_body(self):
         if self.status == 'prelaunch':
             return self.prelaunch_body
-        elif self.status == 'available':
+        elif self.status in ('available', 'stock-only'):
             return self.available_body
         else:
             return self.crowdfunding_body

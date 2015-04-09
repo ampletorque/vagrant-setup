@@ -36,6 +36,6 @@ def contact_view(request):
             "We make every effort to respond to customer requests as "
             "quickly as possible.", 'success')
 
-        raise HTTPFound(location=request.url)
+        return HTTPFound(location=request.url)
 
     return dict(renderer=FormRenderer(form))

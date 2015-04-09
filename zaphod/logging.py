@@ -259,7 +259,7 @@ def get_git_version(package):
             with open(path) as fp:
                 return fp.read().strip()
         except (IOError, OSError) as exc:
-            return None
+            return ''
 
     repo_path = os.path.dirname(pkg_resources.resource_filename(package, ''))
     git_path = os.path.join(repo_path, '.git')

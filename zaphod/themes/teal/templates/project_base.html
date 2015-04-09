@@ -601,7 +601,7 @@
             <%self:tab suffix="backers">
               Backers
             </%self:tab>
-            % if project.status == 'available':
+            % if project.status == 'available' and project.crowdfunding_body.strip():
               <%self:tab suffix="crowdfunding">
                 History
               </%self:tab>

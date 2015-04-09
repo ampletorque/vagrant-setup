@@ -1,5 +1,5 @@
 <%inherit file="base.txt"/>\
-${email} submitted a website inquiry from ${request.remote_addr}:
+${email} submitted a website inquiry from ${request.client_addr}:
 
 ${body | n}
 

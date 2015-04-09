@@ -91,7 +91,7 @@ def request_log_tween_factory(handler, registry):
                 '%0.2f' % ((time.time() - started) * 1000.),
                 '%0.2f' % (1000. * environ.get('querytimer.elapsed', 0)),
                 '%d' % environ.get('querytimer.num_queries', 0),
-                request.remote_addr,
+                request.client_addr,
                 request.method,
                 request.url,
                 user)

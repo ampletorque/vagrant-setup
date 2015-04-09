@@ -443,7 +443,7 @@ class OrderEditView(BaseEditView):
                 reference=profile.reference,
                 save=False,
                 stripe_js=False,
-                remote_addr=request.remote_addr,
+                remote_addr=request.client_addr,
                 user_agent=request.user_agent,
                 session_id=request.session.id,
             )

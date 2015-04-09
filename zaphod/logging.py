@@ -259,7 +259,7 @@ def get_git_version(package):
             with open(path) as fp:
                 return fp.read().strip()
         except (IOError, OSError) as exc:
-            return str(exc)
+            return None
 
     repo_path = os.path.dirname(pkg_resources.resource_filename(package, ''))
     git_path = os.path.join(repo_path, '.git')
@@ -284,7 +284,10 @@ def get_git_version(package):
 def get_version(package):
     git_sha1 = get_git_version(package)
     pkg_version = pkg_resources.get_distribution(package).version
-    return '%s - git %s' % (pkg_version, git_sha1)
+    if git_sha1:
+        return '%s - %s' % (pkg_version, git_sha1)
+    else:
+        return pkg_version
 
 
 def format_dict(d):

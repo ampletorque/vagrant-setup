@@ -81,12 +81,14 @@ class Project(Node, ElasticMixin):
         'ProjectUpdate',
         backref='project',
         primaryjoin='ProjectUpdate.project_id == Project.node_id',
+        order_by='ProjectUpdate.id',
     )
     published_updates = orm.relationship(
         'ProjectUpdate',
         viewonly=True,
         primaryjoin=('and_(ProjectUpdate.project_id == Project.node_id,'
                      'ProjectUpdate.published == True)'),
+        order_by='ProjectUpdate.id',
     )
 
     products = orm.relationship(

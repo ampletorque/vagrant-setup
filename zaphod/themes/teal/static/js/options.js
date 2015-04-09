@@ -17,7 +17,8 @@ define([
       .proxy('valueRemoveHandler')
       .proxy('optionGrabHandler')
       .proxy('valueGrabHandler')
-      .proxy('setGravity');
+      .proxy('setGravity')
+      .proxy('resetHandler');
     this.init();
   }
 
@@ -40,6 +41,11 @@ define([
         .on('mousedown', '.js-value-drag-handle', this.valueGrabHandler);
 
       this.$optionsBody = this.$container.find('> tbody');
+
+      this.$optionsBackup = this.$optionsBody.find('> tr').clone();
+
+      this.$form = this.$container.closest('form')
+        .on('reset', this.resetHandler);
 
       this.indexCounter = this.$optionsBody.find('> tr').length;
     },
@@ -147,8 +153,13 @@ define([
 
     setGravity: function(e) {
       console.log("set gravity");
-    }
+    },
 
+    resetHandler: function(e) {
+      console.log("options reset");
+      this.$optionsBody.empty();
+      this.$optionsBody.append(this.$optionsBackup.clone());
+    }
   };
 
   $(function () {

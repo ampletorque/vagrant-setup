@@ -171,7 +171,7 @@ class Project(Node, ElasticMixin):
     def current_vimeo_id(self):
         if self.status == 'prelaunch':
             return self.prelaunch_vimeo_id
-        elif self.status == 'available':
+        elif self.status in ('available', 'stock-only'):
             return self.available_vimeo_id
         else:
             return self.crowdfunding_vimeo_id
@@ -189,7 +189,7 @@ class Project(Node, ElasticMixin):
     def current_teaser(self):
         if self.status == 'prelaunch':
             return self.prelaunch_teaser
-        elif self.status == 'available':
+        elif self.status in ('available', 'stock-only'):
             return self.available_teaser
         else:
             return self.crowdfunding_teaser

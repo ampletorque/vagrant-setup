@@ -9,6 +9,7 @@ from pyramid.view import view_config
 
 from formencode import Schema, ForEach, NestedVariables, validators
 from pyramid_uniform import Form, FormRenderer
+from pyramid_es import get_client
 
 from .. import model, mail, custom_validators, payment
 from ..payment.exc import PaymentException
@@ -186,6 +187,8 @@ class CartView(object):
             model.Session.add(user)
             token = user.set_reset_password_token()
             mail.send_welcome_email(request, user, token)
+            client = get_client(request)
+            client.index_object(user)
 
         return user
 
@@ -290,12 +293,13 @@ class CartView(object):
 
         request.flash('Order confirmed!', 'success')
 
+        client = get_client(request)
+        client.index_object(order)
+
         # invalidate redis cache
         request.theme.invalidate_index()
         for project_id in project_ids:
             request.theme.invalidate_project(project_id)
-
-        # XXX if account is new, send a separate welcome email
 
     @view_config(route_name='cart', renderer='cart.html')
     def cart(self):

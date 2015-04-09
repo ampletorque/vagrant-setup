@@ -75,7 +75,10 @@ define(['jquery'], function ($) {
           type: "GET",
           url: this.$container.data('path') + '?q=' + q,
           error: function (request, status, error) {
-            alert('Server Error');
+            if(status !== 'abort') {
+              console.log("projects ajax error", status, error);
+              alert('Server Error');
+            }
           },
           success: function (data, status, xhr) {
             var project;

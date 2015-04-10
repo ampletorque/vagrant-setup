@@ -58,6 +58,7 @@ def includeme(config):
     config.add_route('admin:articles', '/articles')
     config.add_route('admin:articles:new', '/articles/new')
     config.add_route('admin:article', '/article/{id}')
+    config.add_route('admin:article:delete', '/article/{id}/delete')
 
     config.add_route('admin:orders', '/orders')
     config.add_route('admin:orders:new', '/orders/new')
@@ -109,15 +110,19 @@ def includeme(config):
     config.add_route('admin:provider-types', '/provider-types')
     config.add_route('admin:provider-types:new', '/provider-types/new')
     config.add_route('admin:provider-type', '/provider-type/{id}')
+    config.add_route('admin:provider-type:delete',
+                     '/provider-type/{id}/delete')
 
     config.add_route('admin:providers', '/providers')
     config.add_route('admin:providers:new', '/providers/new')
     config.add_route('admin:provider', '/provider/{id}')
+    config.add_route('admin:provider:delete', '/provider/{id}/delete')
 
     config.add_route('admin:tags', '/tags')
     config.add_route('admin:tags:new', '/tags/new')
     config.add_route('admin:tags:ajax-list', '/tags/ajax-list')
     config.add_route('admin:tag', '/tag/{id}')
+    config.add_route('admin:tag:delete', '/tag/{id}/delete')
 
     config.add_route('admin:leads', '/leads')
     config.add_route('admin:leads:new', '/leads/new')

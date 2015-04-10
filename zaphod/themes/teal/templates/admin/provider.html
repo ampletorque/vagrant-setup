@@ -34,8 +34,11 @@
           <%forms:actions>
             <button class="btn btn-primary" type="submit">Save</button>
             <button class="btn btn-default" type="reset">Cancel</button>
+            ${widgets.delete_button()}
           </%forms:actions>
         ${renderer.end()}
+
+        ${widgets.delete_modal('provider', request.route_path('admin:provider:delete', id=obj.id))}
       </div>
     </div>
   </div>

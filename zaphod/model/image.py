@@ -64,7 +64,7 @@ class ImageMixin(object):
         return orm.relationship(ImageAssociation,
                                 collection_class=ordering_list('gravity'),
                                 order_by=ImageAssociation.gravity,
-                                cascade='all, delete-orphan')
+                                cascade='all, delete, delete-orphan')
 
     def img(self, request, chain=None, class_=None, id=None, qualified=False):
         # XXX Improve this for performance...

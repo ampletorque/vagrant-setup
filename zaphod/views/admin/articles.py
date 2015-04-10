@@ -8,7 +8,7 @@ from formencode import validators
 from ... import model
 
 from ...admin import (NodeListView, NodeEditView, NodeUpdateForm,
-                      NodeCreateView)
+                      NodeCreateView, NodeDeleteView)
 
 
 @view_defaults(route_name='admin:article', renderer='admin/article.html',
@@ -37,3 +37,10 @@ class ArticleListView(NodeListView):
 class ArticleCreateView(NodeCreateView):
     cls = model.Article
     obj_route_name = 'admin:article'
+
+
+@view_defaults(route_name='admin:article:delete', permission='admin')
+@lift()
+class ArticleDeleteView(NodeDeleteView):
+    cls = model.Article
+    list_route_name = 'admin:articles'

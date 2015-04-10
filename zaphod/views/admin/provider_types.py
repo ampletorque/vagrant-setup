@@ -7,7 +7,7 @@ from venusian import lift
 from ... import model
 
 from ...admin import (NodeEditView, NodeListView, NodeUpdateForm,
-                      NodeCreateView)
+                      NodeCreateView, NodeDeleteView)
 
 
 @view_defaults(route_name='admin:provider-type',
@@ -32,3 +32,10 @@ class ProviderTypeListView(NodeListView):
 class ProviderTypeCreateView(NodeCreateView):
     cls = model.ProviderType
     obj_route_name = 'admin:provider-type'
+
+
+@view_defaults(route_name='admin:provider-type:delete', permission='admin')
+@lift()
+class ProviderTypeDeleteView(NodeDeleteView):
+    cls = model.ProviderType
+    list_route_name = 'admin:provider-types'

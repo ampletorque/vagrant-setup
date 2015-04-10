@@ -6,7 +6,7 @@ import hashlib
 from datetime import timedelta
 
 from cryptacular.bcrypt import BCRYPTPasswordManager
-from sqlalchemy import Column, types
+from sqlalchemy import Column, types, orm
 
 from pyramid_es.mixin import ElasticMixin, ESMapping, ESField, ESString
 
@@ -45,6 +45,22 @@ class User(Base, ImageMixin, UserMixin, CommentMixin, ElasticMixin):
     show_in_backers = Column(types.Boolean, nullable=False, default=True)
     show_location = Column(types.Unicode(255), nullable=False, default=u'')
     show_name = Column(types.Unicode(255), nullable=False, default=u'')
+
+    # It's necessary to use post_update=True on these relationships so that
+    # they do not get populated until after rows are created, in case of a
+    # self-referential relationship. E.g. the root User is also going to be
+    # created by itself.
+    created_by = orm.relationship(
+        'User',
+        foreign_keys='User.created_by_id',
+        remote_side='User.id',
+        post_update=True)
+
+    updated_by = orm.relationship(
+        'User',
+        foreign_keys='User.updated_by_id',
+        remote_side='User.id',
+        post_update=True)
 
     @staticmethod
     def hash_password(password):

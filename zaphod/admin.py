@@ -5,7 +5,7 @@ import os.path
 from datetime import datetime
 
 from formencode import Schema, NestedVariables, ForEach, validators
-from pyramid.httpexceptions import HTTPFound, HTTPNotFound
+from pyramid.httpexceptions import HTTPFound, HTTPNotFound, HTTPBadRequest
 from pyramid.view import view_config
 from pyramid_frontend.images.files import check_and_save_image
 
@@ -171,6 +171,35 @@ class BaseCreateView(object):
         return {'renderer': FormRenderer(form)}
 
 
+class BaseDeleteView(object):
+
+    def __init__(self, request):
+        self.request = request
+
+    def _get_object(self):
+        request = self.request
+        obj = self.cls.get(request.matchdict['id'])
+        if not obj:
+            raise HTTPNotFound
+        return obj
+
+    @view_config(permission='admin')
+    def delete(self):
+        request = self.request
+        form = Form(request, Schema)
+        if form.validate():
+            obj = self._get_object()
+            if hasattr(obj, 'elastic_document'):
+                client = get_client(request)
+                client.delete_object(obj)
+            model.Session.delete(obj)
+            model.Session.flush()
+            request.flash("Deleted.", 'success')
+            return HTTPFound(location=request.route_url(self.list_route_name))
+        else:
+            raise HTTPBadRequest
+
+
 class NodeUpdateForm(Schema):
     allow_extra_fields = False
     pre_validators = [NestedVariables()]
@@ -204,3 +233,7 @@ class NodeCreateForm(Schema):
 
 class NodeCreateView(BaseCreateView):
     CreateForm = NodeCreateForm
+
+
+class NodeDeleteView(BaseDeleteView):
+    pass

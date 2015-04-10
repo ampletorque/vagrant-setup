@@ -33,22 +33,16 @@ class UserMixin(object):
         return Column('updated_time', types.DateTime,
                       default=utils.utcnow, nullable=False)
 
-    # It's necessary to use post_update=True on these relationships so that
-    # they do not get populated until after rows are created, in case of a
-    # self-referential relationship. E.g. the root User is also going to be
-    # created by itself.
     @declared_attr
     def created_by(cls):
         return orm.relationship(
             'User',
             foreign_keys='%s.created_by_id' % cls.__name__,
-            remote_side='User.id',
-            post_update=True)
+            remote_side='User.id')
 
     @declared_attr
     def updated_by(cls):
         return orm.relationship(
             'User',
             foreign_keys='%s.updated_by_id' % cls.__name__,
-            remote_side='User.id',
-            post_update=True)
+            remote_side='User.id')

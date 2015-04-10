@@ -25,6 +25,9 @@
           ${forms.ltextarea(renderer, 'keywords', obj.keywords, rows=3, hint='Included in a keywords meta tag and used for search.')}
           ${widgets.lcontent(renderer, 'body', obj.body)}
 
+          ${forms.ltext(renderer, 'home_url', obj.home_url, label='Homepage URL', hint='Enter a fully qualified URL, e.g. https://example.com/page')}
+          ${forms.ltext(renderer, 'location', obj.location, label='Location', hint='Either city, state or city, country is generally preferred.')}
+
           ${forms.lcheckbox(renderer, 'listed', obj.listed)}
           ${forms.lcheckbox(renderer, 'published', obj.published)}
 

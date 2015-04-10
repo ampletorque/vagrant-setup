@@ -105,6 +105,9 @@ class ProjectEditView(NodeEditView):
         crowdfunding_fee_percent = validators.Number()
         preorder_fee_percent = validators.Number()
 
+        homepage_url = validators.URL(max=255)
+        open_source_url = validators.URL(max=255)
+
         tag_ids = ForEach(validators.Int)
         related_project_ids = ForEach(validators.Int)
 

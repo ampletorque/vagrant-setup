@@ -2,6 +2,7 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from pyramid.view import view_defaults
+from formencode import validators
 from venusian import lift
 
 from ... import model
@@ -16,7 +17,9 @@ from ...admin import (NodeEditView, NodeListView, NodeUpdateForm,
 class CreatorEditView(NodeEditView):
     cls = model.Creator
 
-    UpdateForm = NodeUpdateForm
+    class UpdateForm(NodeUpdateForm):
+        home_url = validators.URL(max=255)
+        location = validators.UnicodeString(max=255)
 
 
 @view_defaults(route_name='admin:creators', renderer='admin/creators.html',

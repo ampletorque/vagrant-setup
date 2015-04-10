@@ -151,7 +151,7 @@ class CartItem(Base):
         ('failed', 'Project Failed To Fund'),
         ('waiting', 'Waiting for Items'),
         ('payment pending', 'Payment Not Yet Processed'),
-        ('payent failed', 'Payment Failed'),
+        ('payment failed', 'Payment Failed'),
         ('cancelled', 'Cancelled'),
         ('shipped', 'Shipped'),
         ('abandoned', 'Abandoned'),

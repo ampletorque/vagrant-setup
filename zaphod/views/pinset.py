@@ -2,7 +2,7 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 import pkg_resources
-from six import StringIO
+from six import BytesIO
 
 from pyramid.view import view_config
 from pyramid.response import Response
@@ -65,7 +65,7 @@ def build_node_pinset(request, id):
                    if assoc.published][:8]
     pil_images = load_pil_images(request, image_metas)
     pinset_im = build_image_pinset(pil_images)
-    buf = StringIO()
+    buf = BytesIO()
 
     pinset_im.save(buf, format='JPEG', quality=80)
     return buf.getvalue()

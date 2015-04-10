@@ -145,12 +145,12 @@
 
         <div class="well">
           <div class="row">
-            <div class="col-sm-6">
+            <div class="col-sm-4">
               <h4>Shipping Address</h4>
               <p>${blocks.address(obj.shipping)}</p>
               <p><a href="${request.route_path('admin:order:address', id=obj.id)}">Change Address</a></p>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-4">
               <h4>User</h4>
               <p>
                 <a href="${request.route_path('admin:user', id=obj.user.id)}">
@@ -166,6 +166,10 @@
               % else:
                 <p>None</p>
               % endif
+            </div>
+            <div class="col-sm-4">
+              <h4>Customer Comments</h4>
+              <p>${obj.customer_comments or 'None'}</p>
             </div>
           </div>
         </div>

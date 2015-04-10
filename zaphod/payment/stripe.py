@@ -76,8 +76,8 @@ class StripeInterface(object):
                       email=email,
                       address_line1=billing.address1,
                       address_zip=billing.postal_code,
-                      address_state=billing.state.upper(),
-                      address_country=billing.country_name.upper()))
+                      address_state=(billing.state or '').upper(),
+                      address_country=(billing.country_name or '').upper()))
         self.log.info("create_profile response:\n%r", cu)
 
         return StripePaymentProfile(customer_id=cu.id,

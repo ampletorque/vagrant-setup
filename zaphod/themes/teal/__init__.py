@@ -208,4 +208,6 @@ class TealTheme(Theme):
         cache.invalidate('project-%d-sidebar' % project_id)
         cache.invalidate('project-%d-leader' % project_id)
         cache.invalidate('project-%d-pinset' % project_id)
+        cache.invalidate('project-%d-updates' % project_id)
+        cache.invalidate('project-%d-backers' % project_id)
         self.invalidate_index()

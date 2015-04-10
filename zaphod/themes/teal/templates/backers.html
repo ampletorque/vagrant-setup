@@ -1,5 +1,7 @@
 <%inherit file="project_base.html"/>
 
+<%page cached="True" cache_region="default" cache_key="project-${str(project.id)}-backers" />
+
 
 <%def name="title()">Backers of ${project.name}</%def>
 

@@ -32,8 +32,10 @@
 
           <h3>Order Information</h3>
 
-          <p>You may update your shipping address at any time prior to your order being shipped.</p>
-          <a class="btn btn-primary" href="${request.route_path('order:update', id=order.id)}">Update Shipping Address</a>
+          % if not order.closed:
+            <p>You may update your shipping address at any time prior to your order being shipped.</p>
+            <a class="btn btn-primary" href="${request.route_path('order:update', id=order.id)}">Update Shipping Address</a>
+          % endif
 
         % endif
 

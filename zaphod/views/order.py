@@ -41,6 +41,9 @@ class OrderView(object):
         request = self.request
         order = self._get_order()
 
+        assert not order.closed, \
+            "attempted to view order update page for closed order"
+
         form = Form(request, UpdateOrderForm)
         if form.validate():
             new_address = model.Address(**form.data['shipping'])

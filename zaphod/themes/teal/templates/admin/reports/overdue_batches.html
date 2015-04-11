@@ -1,0 +1,38 @@
+<%inherit file="base.html"/>
+
+
+<%def name="title()">Overdue Batches</%def>
+
+
+<section class="section-overdue-batches">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <p>These production batches are allocated to cart items which are currently "Waiting for Items", but have estimated ship dates that have already passed. The estimated ship dates should be updated to reflect the current status of the proejct.</p>
+
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Project</th>
+                <th>Product</th>
+                <th>Current Estimate</th>
+              </tr>
+            </thead>
+            <tbody>
+              % for batch in batches:
+                <tr>
+                  <td><a href="${request.route_path('admin:product:schedule', id=batch.product.id)}">Update</a></td>
+                  <td>${batch.product.project.name}</td>
+                  <td>${batch.product.name}</td>
+                  <td>${h.format_datetime(request, batch.ship_time, '%B %d, %Y')}</td>
+                </tr>
+              % endfor
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

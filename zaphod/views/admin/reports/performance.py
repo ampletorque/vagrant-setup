@@ -246,3 +246,17 @@ class PerformanceReportsView(BaseReportsView):
 
     # XXX consider also a 'problem project' report that shows the worst
     # currently overdue projects and projects that are in need of an update
+
+    @view_config(route_name='admin:reports:overdue-batches',
+                 renderer='admin/reports/overdue_batches.html')
+    def overdue_batches(self):
+        # for all time, find any batches which are allocated to currently
+        # waiting cart items and have a ship time which has already passed.
+        q = model.Session.query(model.Batch).\
+            join(model.Batch.cart_items).\
+            filter(model.CartItem.status == 'waiting')
+        batches = q.all()
+
+        return {
+            'batches': batches,
+        }

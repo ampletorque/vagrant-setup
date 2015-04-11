@@ -11,6 +11,7 @@ def includeme(config):
     config.add_route('admin:reports:user-behavior', '/user-behavior')
     config.add_route('admin:reports:delays', '/delays')
     config.add_route('admin:reports:project-delays', '/project-delays')
+    config.add_route('admin:reports:overdue-batches', '/overdue-batches')
 
     config.add_route('admin:reports:funnel-analysis', '/funnel-analysis')
     config.add_route('admin:reports:lead-activity', '/lead-activity')

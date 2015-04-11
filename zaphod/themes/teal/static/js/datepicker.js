@@ -17,7 +17,9 @@ define(['jquery'], function ($) {
     }
   }
 
-  function DatePicker( element, options ) {
+  function DatePicker(element, options) {
+    var opts = $.extend({}, $.fn.datepicker.defaults, options);
+
     this.$el = $(element);
     this
       .proxy('show')
@@ -27,7 +29,7 @@ define(['jquery'], function ($) {
       .proxy('selectDate');
 
     if(!this.detectNative()) {
-      $.extend(this, options);
+      $.extend(this, opts);
       this.$el.data('datepicker', this);
       all.push(this);
       this.init();
@@ -336,7 +338,11 @@ define(['jquery'], function ($) {
     }
   };
 
-  var options = {
+  $.fn.datepicker = function(options) {
+    return this.each(function() { var d = new DatePicker(this, options); });
+  };
+
+  $.fn.datepicker.defaults = {
     monthNames: ["January", "February", "March", "April", "May", "June",
                  "July", "August", "September", "October", "November",
                  "December"],
@@ -345,9 +351,7 @@ define(['jquery'], function ($) {
   };
 
   $(function() {
-    $('.js-datepicker').each(function(ii) {
-      var d = new DatePicker(this, options);
-    });
+    $('.js-datepicker').datepicker();
     $('html').click(clearDatePickers);
   });
 

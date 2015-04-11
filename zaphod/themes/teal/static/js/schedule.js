@@ -59,12 +59,14 @@ define([
       }
 
       // Make a new row, passing in the ID
-      this.$batchesBody.append(rowTemplate({
+      var $el = $(rowTemplate({
         qty: "",
         idx: this.indexCounter,
         id: 'new-' + this.indexCounter,
         shipTime: nextShipTime
       }));
+      $el.find('.js-datepicker').datepicker();
+      this.$batchesBody.append($el);
 
       this.indexCounter++;
     },

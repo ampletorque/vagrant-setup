@@ -119,14 +119,20 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        <h1 class="page-header">
-          ${self.title()}
-          % if obj.closed:
-            <span class="pull-right label label-success">Closed</span>
-          % else:
-            <span class="pull-right label label-danger">Open</span>
-          % endif
-        </h1>
+
+        <div class="admin-header">
+          <div class="admin-header-metadata">
+            ${widgets.updated_info(obj)}
+          </div>
+          <h1 class="page-header">
+            ${self.title()}
+            % if obj.closed:
+              <span class="label label-success">Closed</span>
+            % else:
+              <span class="label label-danger">Open</span>
+            % endif
+          </h1>
+        </div>
 
         <div class="well">
           % if not obj.unpaid_amount:

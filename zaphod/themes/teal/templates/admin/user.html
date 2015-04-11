@@ -10,12 +10,24 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        <h1 class="page-header">
-          ${self.title()}
-          % if obj == request.user:
-            <small>This is you!</small>
-          % endif
-        </h1>
+
+        <div class="admin-header">
+          <div class="admin-header-metadata">
+            % if obj.url_path:
+              <p><a href="${request.route_path('profile', path=obj.url_path)}">View Profile Page</a></p>
+            % else:
+              <p>No Profile Page</p>
+            % endif
+            ${widgets.updated_info(obj)}
+          </div>
+
+          <h1 class="page-header">
+            ${self.title()}
+            % if obj == request.user:
+              <small>This is you!</small>
+            % endif
+          </h1>
+        </div>
 
         <div class="well">
           <a class="btn btn-primary" href="${request.route_path('admin:user:send-password-reset', id=obj.id)}">Send Password Reset</a>

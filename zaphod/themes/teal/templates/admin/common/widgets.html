@@ -219,6 +219,7 @@
   <a class="btn btn-danger pull-right" data-toggle="modal" data-target="#delete-modal" href="#">Delete</a>
 </%def>
 
+
 <%def name="delete_modal(thing_name, action)">
   <div class="modal fade" id="delete-modal">
     <div class="modal-dialog">
@@ -228,8 +229,6 @@
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">Delete this ${thing_name}?</h4>
           </div>
-          ##<div class="modal-body">
-          ##</div>
           <div class="modal-footer">
             ${h.auth_token_hidden_field(request)}
             <button type="submit" class="btn btn-danger">Nuke It</button>
@@ -239,4 +238,10 @@
       </form>
     </div>
   </div>
+</%def>
+
+
+<%def name="updated_info(obj)">
+  <p>Updated ${h.format_datetime(request, obj.updated_time)} by ${obj.updated_by.name}</p>
+  <p>Created ${h.format_datetime(request, obj.created_time)} by ${obj.created_by.name}</p>
 </%def>

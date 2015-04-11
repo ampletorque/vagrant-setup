@@ -14,11 +14,18 @@ ${regions.project_header(obj.project)}
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        % if obj.published:
-          <a class="pull-right" href="${request.node_path(obj)}">View Public Page</a>
-        % endif
 
-        <h1 class="page-header">Update ${obj.id}</h1>
+        <div class="admin-header">
+          <div class="admin-header-metadata">
+            % if obj.published:
+              <p><a href="${request.node_path(obj)}">View Public Page</a></p>
+            % else:
+              <p>Not Published</p>
+            % endif
+            ${widgets.updated_info(obj)}
+          </div>
+          <h1 class="page-header">${self.title()}</h1>
+        </div>
 
         ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped js-ajax-validate')}
           ${forms.ltext(renderer, 'name', obj.name)}

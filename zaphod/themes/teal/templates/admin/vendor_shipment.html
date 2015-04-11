@@ -11,7 +11,13 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        <h1 class="page-header">${self.title()}</h1>
+
+        <div class="admin-header">
+          <div class="admin-header-metadata">
+            ${widgets.updated_info(obj)}
+          </div>
+          <h1 class="page-header">${self.title()}</h1>
+        </div>
 
         <div class="well">
           <a href="${request.route_path('admin:vendor-order', id=obj.vendor_order.id)}" class="btn btn-default">&larr; Back to Vendor Order ${obj.vendor_order.id}</a>

@@ -7,7 +7,7 @@
 <%def name="title()">Edit Order ${obj.id}</%def>
 
 
-<%def name="item_row(item)">
+<%def name="item_row(idx, item)">
   <tr>
     <td class="table-remove">
       <a href="${request.route_path('admin:order:remove-item', id=obj.id, item_id=item.id)}">
@@ -44,14 +44,17 @@
     <td style="width:125px">
       <div class="input-group">
         <div class="input-group-addon">$</div>
-        ${renderer.text('items-%d.price_each' % item.id, item.price_each, class_='form-control')}
+        ${renderer.text('items-%d.price_each' % idx, item.price_each, class_='form-control')}
       </div>
     </td>
-    <td style="width:80px">${renderer.text('items-%d.qty_desired' % item.id, item.qty_desired, class_='form-control', type='number')}</td>
+    <td style="width:80px">
+      ${renderer.hidden('items-%d.id' % idx, item.id)}
+      ${renderer.text('items-%d.qty_desired' % idx, item.qty_desired, class_='form-control', type='number')}
+    </td>
     <td style="width:125px">
       <div class="input-group">
         <div class="input-group-addon">$</div>
-        ${renderer.text('items-%d.shipping_price' % item.id, item.shipping_price, class_='form-control')}
+        ${renderer.text('items-%d.shipping_price' % idx, item.shipping_price, class_='form-control')}
       </div>
     </td>
     <td>${h.currency(item.total)}</td>
@@ -187,7 +190,7 @@
           </div>
         % endif
 
-        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped js-ajax-validate')}
 
           <table class="table">
             <thead>
@@ -203,7 +206,7 @@
             </thead>
             <tbody>
               % for item in obj.cart.items:
-                ${self.item_row(item)}
+                ${self.item_row(loop.index, item)}
               % endfor
             </tbody>
             <tbody>

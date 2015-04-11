@@ -87,6 +87,14 @@ class RemoveItemForm(Schema):
     allow_extra_fields = False
 
 
+class UpdateItemSchema(Schema):
+    allow_extra_fields = False
+    id = validators.Int(not_empty=True)
+    price_each = validators.Number(not_empty=True, min=0.01)
+    shipping_price = validators.Number(not_empty=True, min=0)
+    qty_desired = validators.Int(not_empty=True, min=1)
+
+
 @view_defaults(route_name='admin:order', renderer='admin/order.html',
                permission='admin')
 @lift()
@@ -96,8 +104,21 @@ class OrderEditView(BaseEditView):
     class UpdateForm(Schema):
         "Schema for validating order update form."
         pre_validators = [NestedVariables()]
-        loaded_time = validators.Number(not_empty=True)
+        items = ForEach(UpdateItemSchema)
         new_comment = custom_validators.CommentBody()
+
+    def _update_object(self, form, obj):
+        for item_params in form.data.pop('items'):
+            item = model.CartItem.get(item_params['id'])
+            assert item.cart.order == obj
+            item.qty_desired = item_params['qty_desired']
+            item.price_each = item_params['price_each']
+            item.shipping_price = item_params['shipping_price']
+            # XXX This should probably be combined into one method call with
+            # locking.
+            item.release_stock()
+            item.reserve_stock()
+        BaseEditView._update_object(self, form, obj)
 
     @view_config(route_name='admin:order:resend-confirmation')
     def resend_confirmation(self):

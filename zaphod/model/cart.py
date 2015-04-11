@@ -4,7 +4,7 @@ from __future__ import (absolute_import, division, print_function,
 import logging
 
 from sqlalchemy import Column, ForeignKey, types, orm
-from sqlalchemy.sql import func
+from sqlalchemy.sql import func, or_
 
 from . import custom_types, utils
 from .base import Base, Session
@@ -242,7 +242,8 @@ class CartItem(Base):
             join(Item.acquisition).\
             filter(Acquisition.sku == self.sku,
                    Item.destroy_time == None,
-                   Item.cart_item_id == None).\
+                   or_(Item.cart_item == None,
+                       Item.cart_item == self)).\
             limit(self.qty_desired)
         items = q.all()
         assert len(items) == self.qty_desired, \

@@ -9,6 +9,8 @@ def includeme(config):
     config.add_route('admin:reports:funding-success', '/funding-success')
     config.add_route('admin:reports:project-launches', '/project-launches')
     config.add_route('admin:reports:user-behavior', '/user-behavior')
+    config.add_route('admin:reports:delays', '/delays')
+    config.add_route('admin:reports:project-delays', '/project-delays')
 
     config.add_route('admin:reports:funnel-analysis', '/funnel-analysis')
     config.add_route('admin:reports:lead-activity', '/lead-activity')
@@ -24,5 +26,3 @@ def includeme(config):
 
     config.add_route('admin:reports:warehouse-transactions',
                      '/warehouse-transactions')
-    config.add_route('admin:reports:delays', '/delays')
-    config.add_route('admin:reports:project-delays', '/project-delays')

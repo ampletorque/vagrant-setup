@@ -192,3 +192,57 @@ class PerformanceReportsView(BaseReportsView):
             'start_date': start_date,
             'end_date': end_date,
         }
+
+    @view_config(route_name='admin:reports:delays',
+                 renderer='admin/reports/delays.html')
+    def delays(self):
+        utcnow, start_date, end_date, start, end = self._range()
+
+        delay_bucket = func.round(func.datediff(
+            model.CartItem.shipped_time,
+            model.CartItem.expected_ship_time), -1).label('delay')
+        q = model.Session.query(
+            delay_bucket,
+            func.count(model.CartItem.id.distinct())).\
+            filter(model.CartItem.expected_ship_time != None,
+                   model.CartItem.shipped_time >= start,
+                   model.CartItem.shipped_time < end).\
+            group_by(delay_bucket)
+        delay_count = q.all()
+        total_count = sum(count for delay, count in delay_count)
+
+        return {
+            'start_date': start_date,
+            'end_date': end_date,
+            'delay_count': delay_count,
+            'total_count': total_count,
+        }
+
+    @view_config(route_name='admin:reports:project-delays',
+                 renderer='admin/reports/project_delays.html')
+    def project_delays(self):
+        utcnow, start_date, end_date, start, end = self._range()
+
+        delay = func.datediff(
+            func.ifnull(model.CartItem.shipped_time, utcnow),
+            model.CartItem.expected_ship_time)
+        max_delay = func.max(delay).label('worst')
+        avg_delay = func.avg(delay).label('average')
+        q = model.Session.query(model.Project, max_delay, avg_delay).\
+            filter(model.CartItem.expected_ship_time != None,
+                   model.CartItem.expected_ship_time < utcnow).\
+            join(model.CartItem.product).\
+            join(model.Product.project).\
+            filter(model.CartItem.status.in_(['shipped', 'in process',
+                                              'waiting'])).\
+            filter(model.CartItem.stage == model.CartItem.CROWDFUNDING).\
+            group_by(model.Project.id).\
+            order_by(avg_delay.desc())
+        projects = q.all()
+
+        return {
+            'projects': projects,
+        }
+
+    # XXX consider also a 'problem project' report that shows the worst
+    # currently overdue projects and projects that are in need of an update

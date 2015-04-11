@@ -31,7 +31,13 @@ define(['jquery'], function ($) {
   }
 
   function ajaxValidate($form) {
+    if($form.data('block-submit')) {
+      alert('Form submission already in progress.');
+      return;
+    }
     // Submit the form with an ajax request
+    $form.data('block-submit', true);
+
     $.ajax({
       type: $form.attr('method'),
       url: $form.attr('action'),
@@ -44,6 +50,7 @@ define(['jquery'], function ($) {
         if(data.status === 'ok') {
           window.location.replace(data.location);
         } else {
+          $form.data('block-submit', false);
           clearErrors($form);
           renderErrors($form, data.errors);
           // Defocus any focused form fields and scroll to the top of the

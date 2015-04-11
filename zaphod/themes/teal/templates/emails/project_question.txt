@@ -1,0 +1,4 @@
+<%inherit file="base.txt"/>\
+${email} submitted a question about your project, "${project.name}":
+
+${message | n}

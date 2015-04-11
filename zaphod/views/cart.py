@@ -267,7 +267,8 @@ class CartView(object):
         comments = form.data['comments']
 
         # update item shipping prices in case of international
-        cart.set_international_shipping()
+        if shipping.country_code != 'us':
+            cart.set_international_shipping()
 
         # update item statuses
         cart.set_initial_statuses()

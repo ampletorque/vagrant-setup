@@ -47,6 +47,11 @@ class OwnerCreateForm(Schema):
     user_id = validators.Int(not_empty=True)
 
 
+class SuspendForm(Schema):
+    allow_extra_fields = False
+    reason = validators.UnicodeString()
+
+
 @view_defaults(route_name='admin:projects', renderer='admin/projects.html',
                permission='admin')
 @lift()
@@ -525,6 +530,30 @@ class ProjectEditView(NodeEditView):
         return {
             'obj': project,
             'pending_count': pending_count,
+        }
+
+    @view_config(route_name='admin:project:suspend',
+                 renderer='admin/project_suspend.html')
+    def suspend(self):
+        request = self.request
+        project = self._get_object()
+        form = Form(request, SuspendForm)
+        if form.validate():
+            self._touch_object(project)
+            project.suspended_time = model.utcnow()
+            comment_body = 'Project suspended. '
+            if form.data['reason']:
+                comment_body += 'Details: %s' % form.data['reason']
+            else:
+                comment_body += 'No details specified.'
+            project.add_comment(request.user, comment_body)
+            request.flash("Suspended project %d." % project.id, 'success')
+            return HTTPFound(location=request.route_url('admin:project',
+                                                        id=project.id))
+
+        return {
+            'obj': project,
+            'renderer': FormRenderer(form),
         }
 
 

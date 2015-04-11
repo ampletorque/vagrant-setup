@@ -14,9 +14,11 @@ ${regions.project_header(obj)}
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        ##<div class="well">
-        ##  <a class="btn btn-danger" href="#">Suspend Project</a>
-        ##</div>
+        % if obj.status == 'crowdfunding':
+          <div class="well">
+            <a class="btn btn-danger" href="${request.route_path('admin:project:suspend', id=obj.id)}">Suspend Project</a>
+          </div>
+        % endif
 
         ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped js-ajax-validate')}
           ${forms.ltext(renderer, 'name', obj.name)}

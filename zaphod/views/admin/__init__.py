@@ -28,6 +28,7 @@ def includeme(config):
                      '/project/{id}/mark-successful')
     config.add_route('admin:project:capture-funds',
                      '/project/{id}/capture-funds')
+    config.add_route('admin:project:suspend', '/project/{id}/suspend')
 
     config.add_route('admin:project:reports', '/project/{id}/reports')
     config.add_route('admin:project:reports:funding', '/project/{id}/funding')

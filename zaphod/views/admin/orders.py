@@ -272,8 +272,9 @@ class OrderEditView(BaseEditView):
         form = Form(request, RemoveItemForm)
         assert item.cart.order == order
         if form.validate():
-            request.flash("Removed '%s' to order." % item.product.name,
+            request.flash("Removed '%s' from order." % item.product.name,
                           'success')
+            item.release_stock()
             model.Session.delete(item)
             self._touch_object(order)
             return HTTPFound(location=request.route_url('admin:order',

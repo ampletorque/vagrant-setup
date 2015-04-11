@@ -51,9 +51,11 @@ def includeme(config):
     config.add_route('forgot-password', '/forgot-password')
     config.add_route('forgot-reset', '/forgot-reset')
     config.add_route('account', '/account')
-    config.add_route('order', '/account/order/{id}')
     config.add_route('settings', '/account/settings')
     config.add_route('profile', '/people/{path}')
+
+    config.add_route('order', '/account/order/{id}')
+    config.add_route('order:update', '/account/order/{id}/update')
 
     config.add_route('update-payment', '/update-payment')
 

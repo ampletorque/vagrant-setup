@@ -1,0 +1,30 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="common/forms.html"/>
+
+
+<%def name="title()">Update Order ${order.id}</%def>
+
+
+<section class="section-order-update">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+
+        <h1>Update Order Information</h1>
+
+        <p>Please note that a chance in the country of your shipping address may result in additional fees. We will contact you to confirm these fees when processing your address update.</p>
+
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
+          ${forms.address_fields(renderer, 'shipping', order.shipping)}
+
+          <%forms:actions>
+            <button class="btn btn-primary" type="submit">Save</button>
+            <a class="btn btn-default" href="${request.route_path('order', id=order.id)}">Cancel</a>
+          </%forms:actions>
+        ${renderer.end()}
+
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,82 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="blocks" file="/common/blocks.html"/>
+<%namespace name="widgets" file="common/widgets.html"/>
+
+<%def name="title()">Receive Invoice for Vendor Order ${vendor_order.id}</%def>
+
+
+<section class="section-admin-vendor-shipment-receive">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">${self.title()}</h1>
+
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
+
+          ${forms.ltext(renderer, 'invoice_num')}
+          ${forms.ldatepicker(renderer, 'invoice_date')}
+          ${forms.ldatepicker(renderer, 'shipping_date')}
+
+          ${forms.ltext(renderer, 'shipping_cost', prefix='$')}
+          ${forms.ltext(renderer, 'tax', prefix='$')}
+          ${forms.ltext(renderer, 'drop_ship_fee', prefix='$')}
+          ${forms.ltext(renderer, 'discount', prefix='$', hint='A discount (e.g. early pay discount) associated with this invoice. If applicable, this will be subtracted from item costs (weighted like other invoice fees). Even if a discount isn\'t applied, it can still be noted for future documentation.')}
+          ${forms.lcheckbox(renderer, 'discount_applies', checked=False, label='Indicates whether or not an available discount was applied to this invoice.')}
+          ${forms.ltext(renderer, 'bank_fee', prefix='$', hint='Wire transfer fees, escrow fees, etc.')}
+
+          <legend>Items</legend>
+
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Project</th>
+                  <th>Item</th>
+                  <th>SKU</th>
+                  <th>Qty Ordered</th>
+                  <th>Qty Invoiced</th>
+                  <th>Cost</th>
+                </tr>
+              </thead>
+              <tbody>
+                % for item in vendor_order.items:
+                  <tr>
+                    <td></td>
+                    <td>${item.sku.product.project.name}</td>
+                    <td>
+                      <a href="${request.route_path('admin:product', id=item.sku.product_id)}">
+                        ${item.sku.product.name}
+                      </a>
+                      ${blocks.option_value_list(item.sku)}
+                    </td>
+                    <td>${item.sku.id}</td>
+                    <td>${item.qty_ordered}</td>
+                    <td style="width:130px">
+                      <input type="hidden" name="items-${loop.index}.id" value="${item.id}">
+                      <input type="number" name="items-${loop.index}.qty" value="0" class="form-control">
+                    </td>
+                    <td style="width:130px">
+                      <div class="input-group">
+                        <span class="input-group-addon">$</span>
+                        <input type="text" name="items-${loop.index}.cost_each" value="0.00" class="form-control">
+                      </div>
+                    </td>
+                  </tr>
+                % endfor
+              </tbody>
+            </table>
+          </div>
+
+          <%forms:actions>
+            <button class="btn btn-primary" type="submit">Save</button>
+            <a class="btn btn-default" href="${request.route_path('admin:vendor-order', id=vendor_order.id)}">Cancel</a>
+          </%forms:actions>
+        ${renderer.end()}
+
+      </div>
+    </div>
+  </div>
+</section>

@@ -2,12 +2,14 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from sqlalchemy import Column, ForeignKey, types, orm
+from sqlalchemy.sql import func
 
 from . import custom_types
 from .address import make_address_columns
-from .base import Base
+from .base import Base, Session
 from .user_mixin import UserMixin
 from .comment import CommentMixin
+from .item import VendorShipmentItem, Item
 
 
 class Vendor(Base, UserMixin, CommentMixin):
@@ -72,13 +74,16 @@ class VendorOrderItem(Base):
 
     @property
     def qty_received(self):
-        # XXX FIXME
-        return 0
+        return Session.query(Item).\
+            join(Item.acquisition.of_type(VendorShipmentItem)).\
+            filter(VendorShipmentItem.vendor_order_item == self).\
+            count()
 
     @property
     def qty_invoiced(self):
-        # XXX FIXME
-        return 0
+        return Session.query(func.sum(VendorInvoiceItem.qty_invoiced)).\
+            filter(VendorInvoiceItem.vendor_order_item == self).\
+            scalar() or 0
 
 
 class VendorInvoice(Base, UserMixin, CommentMixin):
@@ -133,6 +138,9 @@ class VendorInvoiceItem(Base):
     vendor_invoice = orm.relationship('VendorInvoice', backref='items')
     vendor_order_item = orm.relationship('VendorOrderItem',
                                          backref='vendor_invoice_items')
+
+    qty_invoiced = Column(types.Integer, nullable=False)
+    cost_each = Column(custom_types.Money, nullable=False)
 
 
 class VendorShipment(Base, UserMixin):

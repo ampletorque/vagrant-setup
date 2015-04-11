@@ -1,0 +1,66 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="blocks" file="/common/blocks.html"/>
+<%namespace name="widgets" file="common/widgets.html"/>
+
+<%def name="title()">Receive Shipment for Vendor Order ${vendor_order.id}</%def>
+
+
+<section class="section-admin-vendor-shipment-receive">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">${self.title()}</h1>
+
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
+
+          ${forms.ltext(renderer, 'description')}
+
+          <legend>Items</legend>
+
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Project</th>
+                  <th>Item</th>
+                  <th>SKU</th>
+                  <th>Qty Remaining</th>
+                  <th>Qty in Shipment</th>
+                </tr>
+              </thead>
+              <tbody>
+                % for item in vendor_order.items:
+                  <tr>
+                    <td></td>
+                    <td>${item.sku.product.project.name}</td>
+                    <td>
+                      <a href="${request.route_path('admin:product', id=item.sku.product_id)}">
+                        ${item.sku.product.name}
+                      </a>
+                      ${blocks.option_value_list(item.sku)}
+                    </td>
+                    <td>${item.sku.id}</td>
+                    <td>${item.qty_ordered - item.qty_received}</td>
+                    <td style="width:150px">
+                      <input type="hidden" name="items-${loop.index}.id" value="${item.id}">
+                      <input type="number" name="items-${loop.index}.qty" value="0" class="form-control">
+                    </td>
+                  </tr>
+                % endfor
+              </tbody>
+            </table>
+          </div>
+
+          <%forms:actions>
+            <button class="btn btn-primary" type="submit">Save</button>
+            <a class="btn btn-default" href="${request.route_path('admin:vendor-order', id=vendor_order.id)}">Cancel</a>
+          </%forms:actions>
+        ${renderer.end()}
+
+      </div>
+    </div>
+  </div>
+</section>

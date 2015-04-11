@@ -7,3 +7,4 @@
   tasks:
     - name: reindex elasticsearch
       command: /var/sw/pyramid34/bin/reindex_zaphod /var/sw/zaphod/site/conf/production.ini
+      when: app_environment == "staging"

@@ -28,7 +28,9 @@ class ProfileView(object):
         projects_backed = set()
         for order in user.orders:
             for ci in order.cart.items:
-                projects_backed.add(ci.product.project.id)
+                project = ci.product.project
+                if project.published:
+                    projects_backed.add(project.id)
 
         return {
             'user': user,

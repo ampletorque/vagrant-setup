@@ -1,2 +1,7 @@
 [webservers]
-franz.crowdsupply.com ansible_ssh_user=deploy app_environment=production
+franz.crowdsupply.com ansible_ssh_user=deploy
+
+[webservers:vars]
+app_environment=production
+repo=git@github.com:crowdsupply/zaphod.git
+version=master

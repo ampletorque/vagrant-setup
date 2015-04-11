@@ -1,2 +1,7 @@
 [webservers]
-drax.crowdsupply.com ansible_ssh_user=deploy app_environment=staging
+drax.crowdsupply.com ansible_ssh_user=deploy
+
+[webservers:vars]
+app_environment=staging
+repo=git@github.com:storborg/zaphod.git
+version=master

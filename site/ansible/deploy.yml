@@ -28,9 +28,9 @@
             mode=2775
 
     - name: checkout zaphod source
-      git: repo="git@github.com:crowdsupply/zaphod.git"
+      git: repo={{ repo }}
            dest=/var/sw/zaphod
-           version=master
+           version={{ version }}
            accept_hostkey=yes
 
     - name: setup zaphod database

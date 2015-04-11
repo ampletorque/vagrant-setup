@@ -111,22 +111,23 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
         self.update_status()
 
     def ship_items(self, items, tracking_number, cost, shipped_by_creator,
-                   user):
+                   user, shipped_time=None):
         """
         Add a new shipment to an order, marking the supplied items as shipped.
         """
-        utcnow = utils.utcnow()
+        shipped_time = shipped_time or utils.utcnow()
         shipment = Shipment(
             tracking_number=tracking_number,
             cost=cost,
             shipped_by_creator=shipped_by_creator,
             created_by=user,
+            created_time=shipped_time,
             shipping=self.shipping,
         )
         self.shipments.append(shipment)
         assert items
         for item in items:
-            item.shipped_time = utcnow
+            item.shipped_time = shipped_time
             item.shipment = shipment
             item.update_status('shipped')
         self.update_status()

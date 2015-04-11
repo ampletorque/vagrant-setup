@@ -204,7 +204,7 @@ class NodeUpdateForm(Schema):
     allow_extra_fields = False
     pre_validators = [NestedVariables()]
 
-    name = validators.UnicodeString(max=255, not_empty=True)
+    name = validators.UnicodeString(max=255, not_empty=True, strip=True)
     override_path = custom_validators.URLString(if_missing=None)
 
     keywords = validators.UnicodeString()

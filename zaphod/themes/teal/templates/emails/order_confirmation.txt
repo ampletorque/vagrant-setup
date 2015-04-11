@@ -1,13 +1,11 @@
 <%inherit file="base.txt"/>\
 Thank you for your order!
 
-Please double-check the shipping information below to make sure it is accurate. If you have any questions or need to make changes to this order, please email us at support@crowdsupply.com or call (800) 554-2014.
-
-For reference, your order ID is ${order.id}.
-
 % if not order.cart.non_physical:
-When these items ship, you will receive a shipment confirmation email containing tracking information.
+You will receive a shipping confirmation email containing tracking information as soon as your order ships. In the meantime, please double-check the accuracy of the shipping information below.
+
 % endif
+If you have any questions or need to make changes to this order, please email us at support@crowdsupply.com or call (800) 554-2014.
 
 Shipping Information
 ${self.divider('=')}
@@ -25,7 +23,7 @@ ${self.address_fields(order.any_billing)}
 ## ${order.customer_comments}
 ## % endif
 
-Order Items
+Order ${order.id}
 ${self.divider('=')}
 
 % for project, items in items_by_project.items():

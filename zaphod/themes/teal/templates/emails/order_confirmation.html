@@ -8,17 +8,12 @@
         <td>
           Thank you for your order!
           <br /><br />
-
-          Please double-check the shipping information below to make sure it is accurate. If you have any questions or need to make changes to this order, please email us at <a href="mailto:support@crowdsupply.com">support@crowdsupply.com</a> or call (800) 554-2014.
-          <br /><br />
-
-          For reference, your order ID is <span class="bold">${order.id}</span>.
-          <br /><br />
-
           % if not order.cart.non_physical:
-            When these items ship, you will receive a shipment confirmation email containing tracking information.
-            <br /><br />
+          You will receive a shipping confirmation email containing tracking information as soon as your order ships. In the meantime, please double-check the accuracy of the shipping information below.
+          <br /><br />
           % endif
+          If you have any questions or need to make changes to this order, please email us at <a href="mailto:support@crowdsupply.com">support@crowdsupply.com</a> or call (800) 554-2014.
+          <br /><br />
         </td>
       </tr>
     </table>
@@ -46,7 +41,7 @@
     <table>
       <tr>
         <td>
-          <span class="h3">Order Contents</span>
+          <span class="h3">Order ${order.id}</span>
           <br />
         </td>
       </tr>

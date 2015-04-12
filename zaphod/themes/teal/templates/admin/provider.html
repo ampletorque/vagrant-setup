@@ -32,6 +32,8 @@
           ${forms.ltextarea(renderer, 'keywords', obj.keywords, rows=3, hint='Included in a keywords meta tag and used for search.')}
           ${widgets.lcontent(renderer, 'body', obj.body)}
 
+          ${forms.lselect(renderer, 'provider_type_ids', [pt.id for pt in obj.types], getters.provider_types_for_select(), multiple=True, label='Provider Types')}
+
           ${forms.lcheckbox(renderer, 'listed', obj.listed)}
           ${forms.lcheckbox(renderer, 'published', obj.published)}
 

@@ -57,7 +57,7 @@ def includeme(config):
     config.add_route('order', '/account/order/{id}')
     config.add_route('order:update', '/account/order/{id}/update')
 
-    config.add_route('update-payment', '/update-payment')
+    config.add_route('update-payment', '/update-payment/{token}')
 
     config.add_route('pinset', '/pinset/{id}.jpg')
 

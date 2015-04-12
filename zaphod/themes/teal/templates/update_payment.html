@@ -20,9 +20,6 @@
         <p>If you have any questions please don't hesitate to <a href="${request.route_path('contact')}">contact us</a>.</p>
 
         ${renderer.begin(class_='form-horizontal form-wrapped', id='update-payment-form', method='POST')}
-          ${renderer.hidden('order_id', request.params['order_id'])}
-          ${renderer.hidden('timestamp', request.params['timestamp'])}
-          ${renderer.hidden('sig', request.params['sig'])}
 
           <%forms:element renderer="${renderer}" name="cc.use_saved" label=" ">
             <label for="cc-use-saved-yes">

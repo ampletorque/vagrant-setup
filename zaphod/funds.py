@@ -2,8 +2,9 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 import logging
-import time
 from datetime import date, timedelta
+
+from itsdangerous import TimestampSigner
 
 from . import model, payment, mail
 from .payment.exc import TransactionDeclinedException
@@ -11,21 +12,11 @@ from .payment.exc import TransactionDeclinedException
 log = logging.getLogger(__name__)
 
 
-def generate_update_token(order_id, timestamp):
-    # XXX
-    return 'abcdef'
-
-
-def verify_update_token(token, order_id, timestamp):
-    # XXX
-    return True
-
-
 def update_payment_url(request, order):
-    timestamp = int(time.time())
-    sig = generate_update_token(order.id, timestamp)
-    params = dict(order_id=order.id, timestamp=timestamp, sig=sig)
-    return request.route_url('update-payment', _query=params)
+    settings = request.registry.settings
+    signer = TimestampSigner(settings['payment.secret'])
+    token = signer.sign(str(order.id))
+    return request.route_url('update-payment', token=token)
 
 
 def update_item_statuses(project, order, new_status):

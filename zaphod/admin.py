@@ -152,7 +152,10 @@ class BaseCreateView(object):
         self.request = request
 
     def _create_object(self, form):
-        obj = self.cls(**form.data)
+        request = self.request
+        obj = self.cls(created_by=request.user,
+                       updated_by=request.user,
+                       **form.data)
         model.Session.add(obj)
         return obj
 

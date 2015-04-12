@@ -14,6 +14,7 @@ from pyramid_es.mixin import ElasticMixin, ESMapping, ESField, ESString
 from . import utils, custom_types
 from .base import Base, Session
 from .user import User
+from .user_mixin import UserMixin
 from .order import Order
 from .cart import Cart, CartItem
 from .product import Product
@@ -363,3 +364,25 @@ class ProjectEmail(Base):
                              default=utils.utcnow)
 
     project = orm.relationship('Project', backref='emails')
+
+
+class ProjectTransfer(Base, UserMixin):
+    __tablename__ = 'project_transfers'
+    id = Column(types.Integer, primary_key=True)
+    project_id = Column(None, ForeignKey('projects.node_id'), nullable=False)
+    amount = Column(custom_types.Money, nullable=False)
+    fee = Column(custom_types.Money, nullable=False)
+    method = Column(types.String(255), nullable=False)
+    reference = Column(types.Unicode(255), nullable=False)
+
+    available_methods = [('check', 'Check'),
+                         ('ach', 'ACH Transfer'),
+                         ('domestic-wire', 'Domestic Wire Transfer'),
+                         ('international-wire', 'International Wire Transfer'),
+                         ('paypal', 'PayPal')]
+
+    project = orm.relationship('Project', backref='transfers')
+
+    @property
+    def method_description(self):
+        return dict(self.available_methods)[self.method]

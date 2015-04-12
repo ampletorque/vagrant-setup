@@ -29,6 +29,9 @@ def includeme(config):
     config.add_route('admin:project:capture-funds',
                      '/project/{id}/capture-funds')
     config.add_route('admin:project:suspend', '/project/{id}/suspend')
+    config.add_route('admin:project:transfers', '/project/{id}/transfers')
+    config.add_route('admin:project:transfers:new',
+                     '/project/{id}/transfers/new')
 
     config.add_route('admin:project:reports', '/project/{id}/reports')
     config.add_route('admin:project:reports:funding', '/project/{id}/funding')
@@ -46,6 +49,7 @@ def includeme(config):
     config.add_route('admin:adjust-inventory', '/adjust-inventory/{id}')
 
     config.add_route('admin:update', '/update/{id}')
+    config.add_route('admin:transfer', '/transfer/{id}')
 
     config.add_route('admin:users', '/users')
     config.add_route('admin:users:new', '/users/new')

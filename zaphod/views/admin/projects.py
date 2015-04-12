@@ -52,6 +52,14 @@ class SuspendForm(Schema):
     reason = validators.UnicodeString()
 
 
+class TransferCreateForm(Schema):
+    allow_extra_fields = False
+    amount = validators.Number(not_empty=True)
+    fee = validators.Number(if_empty=0)
+    method = validators.String(not_empty=True)
+    reference = validators.UnicodeString()
+
+
 @view_defaults(route_name='admin:projects', renderer='admin/projects.html',
                permission='admin')
 @lift()
@@ -553,6 +561,36 @@ class ProjectEditView(NodeEditView):
 
         return {
             'obj': project,
+            'renderer': FormRenderer(form),
+        }
+
+    @view_config(route_name='admin:project:transfers',
+                 renderer='admin/project_transfers.html')
+    def transfers(self):
+        project = self._get_object()
+        return {'obj': project}
+
+    @view_config(route_name='admin:project:transfers:new',
+                 renderer='admin/project_transfers_new.html')
+    def create_transfer(self):
+        request = self.request
+        project = self._get_object()
+
+        form = Form(request, schema=TransferCreateForm)
+        if form.validate():
+            transfer = model.ProjectTransfer(project=project)
+            form.bind(transfer)
+            model.Session.flush()
+            request.flash("Project transfer created.", 'success')
+            self._touch_object(project)
+            return HTTPFound(location=request.route_url('admin:transfer',
+                                                        id=transfer.id))
+
+        methods_for_select = model.ProjectTransfer.available_methods
+
+        return {
+            'obj': project,
+            'methods_for_select': methods_for_select,
             'renderer': FormRenderer(form),
         }
 

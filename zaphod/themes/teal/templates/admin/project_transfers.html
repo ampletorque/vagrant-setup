@@ -1,0 +1,57 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="widgets" file="/admin/common/widgets.html"/>
+<%namespace name="regions" file="/admin/common/regions.html"/>
+
+<%def name="title()">Project ${obj.id} Transfers</%def>
+
+
+${regions.project_header(obj)}
+
+
+<section class="section-admin-project">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+
+        % if obj.transfers:
+
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Amount</th>
+                  <th>Fee</th>
+                  <th>Method</th>
+                  <th>Reference</th>
+                  <th>Created Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                % for transfer in obj.transfers:
+                  <tr>
+                    <td><a href="${request.route_path('admin:transfer', id=transfer.id)}">Edit</a></td>
+                    <td>${h.currency(transfer.amount)}</td>
+                    <td>${h.currency(transfer.fee)}</td>
+                    <td>${transfer.method_description}</td>
+                    <td>${transfer.reference}</td>
+                    <td>${h.format_datetime(request, transfer.created_time)}</td>
+                  </tr>
+                % endfor
+              </tbody>
+            </table>
+          </div>
+
+        % else:
+
+          <p>This project has no transfers.</p>
+
+        % endif
+
+        <a class="btn btn-default" href="${request.route_path('admin:project:transfers:new', id=obj.id)}">Create New Transfer</a>
+      </div>
+    </div>
+  </div>
+</section>

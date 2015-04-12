@@ -3,5 +3,9 @@ franz.crowdsupply.com ansible_ssh_user=deploy
 
 [webservers:vars]
 app_environment=production
+# NOTE: As of Ansible 1.9, if you change this when deploying to a host that has
+# already checked out the repo, it won't do anything. Re-cloning the repo from
+# scratch is required for this to have any effect.
+# See https://github.com/ansible/ansible-modules-core/issues/233
 repo=git@github.com:crowdsupply/zaphod.git
 version=master

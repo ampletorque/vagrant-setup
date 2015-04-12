@@ -21,24 +21,54 @@
 </%def>
 
 
+<%def name="featured_projects(projects)">
+  % if projects:
+    <br>
+
+    <center>
+      <h3>You might be interested in these similar projects, currently available at crowdsupply.com.</h3>
+    </center>
+
+    <table>
+      <tr>
+        % for project in projects:
+          <td style="width:33%; padding:0.25in;">
+            <center>
+              ${project.img(request, 'project-body')}
+              <h3>${project.name}</h3>
+              <p>${project.current_teaser}</p>
+            </center>
+          </td>
+        % endfor
+      </tr>
+    </table>
+  % endif
+</%def>
+
+
 <%self:page_letter>
   <h1>Crowd Supply Order ${order.id}</h1>
 
-  <h3>Placed</h3>
-  <p>${h.format_datetime(request, order.created_time, '%B %d, %Y')}</p>
-
-  <h3>Shipping Information</h3>
-  <p>${self.address(order.shipping)}</p>
-
-  % if order.any_billing:
-    <h3>Billing Information</h3>
-    <p>${self.address(order.any_billing)}</p>
-  % endif
-
-  % if order.customer_comments:
-    <h3>Customer Comments</h3>
-    <p>${order.customer_comments}</p>
-  % endif
+  <table style="width:100%">
+    <tr>
+      <td style="width:50%">
+        <h3>Shipping Information</h3>
+        <p>${self.address(order.shipping)}</p>
+        <h3>Placed</h3>
+        <p>${h.format_datetime(request, order.created_time, '%B %d, %Y')}</p>
+      </td>
+      <td style="width:50%">
+        % if order.any_billing:
+          <h3>Billing Information</h3>
+          <p>${self.address(order.any_billing)}</p>
+        % endif
+        % if order.customer_comments:
+          <h3>Customer Comments</h3>
+          <p>${order.customer_comments}</p>
+        % endif
+      </td>
+    </tr>
+  </table>
 
   <table class="table">
     <thead>
@@ -59,9 +89,21 @@
           </td>
           <td>${h.currency(item.price_each)}</td>
           <td>${item.qty_desired}</td>
-          <td>${h.currency(item.total)}</td>
+          <td>${h.currency(item.price_each * item.qty_desired)}</td>
         </tr>
       % endfor
     </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="4" style="text-align:right">Shipping</td>
+        <td>${h.currency(order.shipping_amount)}</td>
+      </tr>
+      <tr>
+        <td colspan="4" style="text-align:right">Total</td>
+        <td>${h.currency(order.total_amount)}</td>
+      </tr>
+    </tfoot>
   </table>
+
+  ${self.featured_projects(getters.featured_projects_for_cart(order.cart, limit=3))}
 </%self:page_letter>

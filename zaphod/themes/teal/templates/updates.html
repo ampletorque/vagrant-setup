@@ -15,7 +15,7 @@
       % endif
       % for update in reversed(project.published_updates):
         ## XXX It shouldn't be necessary to check this, but there seems to be a SQLAlchemy bug (???) that's breaking the project.published_updates relationship.
-        % if update.published:
+        % if update.published and update.listed:
           % if not loop.first:
             <hr>
           % endif

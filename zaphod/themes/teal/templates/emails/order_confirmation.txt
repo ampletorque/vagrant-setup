@@ -37,10 +37,14 @@ This is a pledge to a crowdfunding campaign, and may not be processed immediatel
 % for item in items:
   * ${item.product.name} - qty ${item.qty_desired} - ${h.currency(item.price_each)} ea.
 
+  % for el in h.variant_list(item.sku):
+    - ${el}
+  % endfor
+
   % if item.stage == item.STOCK:
     This item is currently in stock.
   % elif item.stage == item.PREORDER:
-    This item is a pre-order and will be shipped at a later date. Please not that your transaction will be processed immediately.
+    This item is a pre-order and will be shipped at a later date. Please note that your transaction will be processed immediately.
   % endif
 
 % endfor

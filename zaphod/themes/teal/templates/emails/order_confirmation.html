@@ -76,14 +76,31 @@
                 </tr>
                 <tr>
                   <td colspan="2">
+                    <%
+                      options = h.variant_list(item.sku)
+                    %>
+                    % if options:
+                      <ul>
+                        % for el in options:
+                          <li>${el}</li>
+                        % endfor
+                      </ul>
+                    % endif
+
                     % if item.stage == item.STOCK:
                       This item is currently in stock.
                     % elif item.stage == item.PREORDER:
-                      This item is a pre-order and will be shipped at a later date. Please not that your transaction will be processed immediately.
+                      This item is a pre-order and will be shipped at a later date. Please note that your transaction will be processed immediately.
                     % endif
                   </td>
                 </tr>
               % endfor
+
+              <tr>
+                <td colspan="3">
+                  <br />
+                </td>
+              </tr>
 
               <tr>
                 <td colspan="2" class="text-right">

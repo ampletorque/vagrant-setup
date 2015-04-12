@@ -200,7 +200,7 @@ class CartItem(Base):
         """
         Total price of this line item, including shipping.
         """
-        return (self.price_each + self.shipping_price) * self.qty_desired
+        return (self.price_each * self.qty_desired) + self.shipping_price
 
     @property
     def qty_reserved(self):

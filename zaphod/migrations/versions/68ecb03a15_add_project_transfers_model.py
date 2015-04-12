@@ -21,7 +21,7 @@ def upgrade():
         'project_transfers',
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('project_id', sa.Integer(), nullable=False),
-        sa.Column('amount', 
+        sa.Column('amount',
                   sa.Numeric(precision=10, scale=2),
                   nullable=False),
         sa.Column('fee',

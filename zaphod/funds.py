@@ -11,23 +11,20 @@ from .payment.exc import TransactionDeclinedException
 log = logging.getLogger(__name__)
 
 
-def generate_update_token(order_id, project_id, timestamp):
+def generate_update_token(order_id, timestamp):
     # XXX
     return 'abcdef'
 
 
-def verify_update_token(token, order_id, project_id, timestamp):
+def verify_update_token(token, order_id, timestamp):
     # XXX
     return True
 
 
-def update_payment_url(request, order, project):
+def update_payment_url(request, order):
     timestamp = int(time.time())
-    sig = generate_update_token(order.id, project.id, timestamp)
-    params = dict(order_id=order.id,
-                  project_id=project.id,
-                  timestamp=timestamp,
-                  sig=sig)
+    sig = generate_update_token(order.id, timestamp)
+    params = dict(order_id=order.id, timestamp=timestamp, sig=sig)
     return request.route_url('update-payment', _query=params)
 
 

@@ -10,10 +10,10 @@
           <span class="h3">Your payment on Crowd Supply has been rejected.</span>
           <br /><br />
 
-          Your payment to the <strong>${project.name}</strong> campaign on Crowd Supply was declined by your credit card company. We're sorry for this inconvenience. Unfortunately, we do not have any additional information about why the transaction was declined.
+          The payment for your Crowd Supply order was declined by your credit card company. We're sorry for this inconvenience. Unfortunately, we do not have any additional information about why the transaction was declined.
           <br /><br />
 
-          This payment was for order ${order.id}. The <strong>${project.name}</strong> team is counting on these funds to deliver their product. Please resolve this issue by ${h.format_datetime(request, due_date, 'calendar')} to prevent your shipment from being delayed.
+          This payment was for order ${order.id}. Please resolve this issue by ${h.format_datetime(request, due_date, '%b %d, %Y')} to prevent your shipment from being delayed.
           <br /><br />
 
           Please click the button below to submit the payment again or provide new payment information:

@@ -7,7 +7,7 @@ import os
 import os.path
 import email.utils
 import textwrap
-from datetime import datetime
+from datetime import datetime, date, timedelta
 
 import six
 
@@ -226,3 +226,14 @@ def send_password_reset(request, user, token):
 
 def send_welcome_email(request, user, token):
     _send_reset_email(request, user, token, 'welcome_email')
+
+
+def send_update_payment_email(request, order, link):
+    recipient = [(order.user.name, order.user.email)]
+    due_date = date.today() + timedelta(days=7)
+    vars = {
+        'order': order,
+        'link': link,
+        'due_date': due_date,
+    }
+    send_with_admin(request, 'update_payment', vars=vars, to=recipient)

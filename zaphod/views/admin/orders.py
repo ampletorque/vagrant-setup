@@ -10,7 +10,7 @@ from formencode import Schema, ForEach, NestedVariables, validators
 
 from pyramid_uniform import Form, FormRenderer
 
-from ... import model, mail, custom_validators, payment
+from ... import model, mail, custom_validators, payment, funds
 
 from ...admin import BaseEditView, BaseListView, BaseCreateView
 
@@ -138,6 +138,18 @@ class OrderEditView(BaseEditView):
         self._touch_object(order)
         mail.send_shipping_confirmation(request, order)
         request.flash("Resent shipping confirmation to %s." % order.user.email,
+                      'success')
+        return HTTPFound(location=request.route_url('admin:order',
+                                                    id=order.id))
+
+    @view_config(route_name='admin:order:send-update-payment')
+    def send_update_payment(self):
+        request = self.request
+        order = self._get_object()
+        self._touch_object(order)
+        link = funds.update_payment_url(request, order)
+        mail.send_update_payment_email(request, order, link)
+        request.flash("Sent update payment email to %s." % order.user.email,
                       'success')
         return HTTPFound(location=request.route_url('admin:order',
                                                     id=order.id))

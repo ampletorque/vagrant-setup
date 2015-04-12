@@ -150,6 +150,10 @@
               <a class="btn btn-default" href="${request.route_path('admin:order:fill', id=obj.id)}">Fill Order</a>
             % endif
           % endif
+
+          % if obj.unpaid_amount:
+            <a class="btn btn-default" href="${request.route_path('admin:order:send-update-payment', id=obj.id)}">Send Update Payment Email</a>
+          % endif
         </div>
 
         <div class="well">

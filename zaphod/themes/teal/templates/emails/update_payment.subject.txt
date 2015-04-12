@@ -1,1 +1,1 @@
-Your Crowd Supply payment to ${project.name} could not be processed
+Your Crowd Supply payment for order ${order.id} could not be processed

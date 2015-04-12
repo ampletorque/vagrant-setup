@@ -73,19 +73,14 @@
                     </a>
                   </td>
                   <td>
-                    <a href="${request.node_url(project)}">
-                      ${item.product.name}
-                    </a>
+                    <a href="${request.node_url(project)}">${item.product.name}</a> x${item.qty_desired}
                   </td>
-                  <td>
-                    qty ${item.qty_desired}
-                  </td>
-                  <td>
-                    ${h.currency(item.price_each)} ea.
+                  <td class="text-right">
+                    ${h.currency(item.price_each * item.qty_desired)}
                   </td>
                 </tr>
                 <tr>
-                  <td colspan="3">
+                  <td colspan="2">
                     % if item.stage == item.STOCK:
                       This item is currently in stock.
                     % elif item.stage == item.PREORDER:
@@ -94,6 +89,33 @@
                   </td>
                 </tr>
               % endfor
+
+              <tr>
+                <td colspan="2" class="text-right">
+                  Items Total
+                </td>
+                <td class="text-right">
+                  ${h.currency(order.cart.items_total)}
+                </td>
+              </tr>
+
+              <tr>
+                <td colspan="2" class="text-right">
+                  Shipping
+                </td>
+                <td class="text-right">
+                  ${h.currency(order.cart.shipping_total)}
+                </td>
+              </tr>
+
+              <tr>
+                <td colspan="2" class="text-right bold">
+                  Total
+                </td>
+                <td class="text-right bold">
+                  ${h.currency(order.total_amount)}
+                </td>
+              </tr>
             </table>
 
           % endfor

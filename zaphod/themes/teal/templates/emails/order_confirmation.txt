@@ -44,6 +44,7 @@ This is a pledge to a crowdfunding campaign, and may not be processed immediatel
   % elif item.stage == item.PREORDER:
     This item is a pre-order and will be shipped at a later date. Please not that your transaction will be processed immediately.
   % endif
+
 % endfor
 
 % endfor

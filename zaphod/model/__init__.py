@@ -8,6 +8,7 @@ from .article import *
 from .base import *
 from .cart import *
 from .creator import *
+from .discount import *
 from .emails import *
 from .lead import *
 from .image import *

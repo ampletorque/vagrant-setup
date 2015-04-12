@@ -3,7 +3,7 @@
 <%namespace name="forms" file="/common/forms.html"/>
 
 
-<%def name="title()">New Project</%def>
+<%def name="title()">New Discount</%def>
 
 
 <section class="section-admin-new">
@@ -13,12 +13,13 @@
         <h1 class="page-header">${self.title()}</h1>
 
         ${renderer.begin(id='create-form', class_='form-horizontal form-wrapped')}
+
           ${forms.lselect(renderer, 'creator_id', None, getters.creators_for_select(), prompt='Select Creator', label='Creator')}
-          ${forms.ltext(renderer, 'name')}
+          ${forms.ltext(renderer, 'description')}
 
           <%forms:actions>
             <button class="btn btn-primary" type="submit">Save</button>
-            <a class="btn btn-default" href="${request.route_path('admin:projects')}">Cancel</a>
+            <a class="btn btn-default" href="${request.route_path('admin:vendors')}">Cancel</a>
           </%forms:actions>
 
         ${renderer.end()}

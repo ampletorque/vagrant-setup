@@ -1,0 +1,43 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="widgets" file="common/widgets.html"/>
+
+<%def name="title()">Edit Discount ${obj.id}</%def>
+
+
+<section class="section-admin-discount">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+
+        <div class="admin-header">
+          <div class="admin-header-metadata">
+            ${widgets.updated_info(obj)}
+          </div>
+          <h1 class="page-header">${self.title()}</h1>
+        </div>
+
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
+
+          ${forms.lvalue(obj.creator.name, label='Creator')}
+          ${forms.ltext(renderer, 'rate', obj.rate, suffix='%')}
+          ${forms.ltext(renderer, 'description', obj.description)}
+
+          ## XXX add list of products
+
+          ## XXX add list of users
+
+          ${forms.lcheckbox(renderer, 'published', checked=obj.published)}
+          ${forms.lcheckbox(renderer, 'enabled', checked=obj.enabled)}
+
+          <%forms:actions>
+            <button class="btn btn-primary" type="submit">Save</button>
+            <button class="btn btn-default" type="reset">Cancel</button>
+          </%forms:actions>
+        ${renderer.end()}
+
+      </div>
+    </div>
+  </div>
+</section>

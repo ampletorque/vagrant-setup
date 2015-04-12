@@ -129,6 +129,10 @@ def includeme(config):
     config.add_route('admin:leads:new', '/leads/new')
     config.add_route('admin:lead', '/lead/{id}')
 
+    config.add_route('admin:discounts', '/discounts')
+    config.add_route('admin:discounts:new', '/discounts/new')
+    config.add_route('admin:discount', '/discount/{id}')
+
     config.add_route('admin:settings', '/settings')
 
     config.add_route('admin:mail_template', '/mail-template/{template_name}')

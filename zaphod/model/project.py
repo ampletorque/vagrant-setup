@@ -87,8 +87,11 @@ class Project(Node, ElasticMixin):
     published_updates = orm.relationship(
         'ProjectUpdate',
         viewonly=True,
-        primaryjoin=('and_(ProjectUpdate.project_id == Project.node_id,'
-                     'ProjectUpdate.published == True)'),
+        primaryjoin=('and_('
+                     'remote(ProjectUpdate.project_id) == Project.node_id,'
+                     'remote(ProjectUpdate.published) == True,'
+                     'remote(ProjectUpdate.listed) == True,'
+                     ')'),
         order_by='ProjectUpdate.id',
     )
 

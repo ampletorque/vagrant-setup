@@ -111,6 +111,7 @@ class ProjectEditView(NodeEditView):
         end_time = validators.DateConverter(month_style='yyyy/mm/dd')
         gravity = validators.Int(not_empty=True)
 
+        successful = validators.Bool()
         accepts_preorders = validators.Bool()
         pledged_elsewhere_count = validators.Int()
         pledged_elsewhere_amount = validators.Number()
@@ -118,8 +119,8 @@ class ProjectEditView(NodeEditView):
         crowdfunding_fee_percent = validators.Number()
         preorder_fee_percent = validators.Number()
 
-        homepage_url = validators.URL(max=255)
-        open_source_url = validators.URL(max=255)
+        homepage_url = validators.URL(max=255, if_empty='')
+        open_source_url = validators.URL(max=255, if_empty='')
 
         tag_ids = ForEach(validators.Int)
         related_project_ids = ForEach(validators.Int)

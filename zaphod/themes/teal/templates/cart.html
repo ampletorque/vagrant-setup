@@ -86,9 +86,9 @@
 
             <div class="js-international-surcharge">
               % if cart.international_available:
-                <p>An surcharge of ${h.currency(cart.international_surcharge_total)} applies for international shipping.</p>
+                <p>A surcharge of ${h.currency(cart.international_surcharge_total)} applies for orders shipping outside of the United States.</p>
               % else:
-                <p>International shipping is not available on some or all of the items in your cart.</p>
+                <p>Shipping to non-US addresses is not available on some or all of the items in your cart.</p>
               % endif
             </div>
             % if not cart.non_physical:

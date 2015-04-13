@@ -73,20 +73,22 @@
 
 
 <%def name="associated_products(cart, products)">
-  <div class="row">
-    <div class="col-xs-12">
-      <h3>You Might Also Want...</h3>
-    </div>
-  </div>
-  <div class="row row-cart-associated">
-    % for product in products:
-      <div class="col-sm-3 text-center">
-        <h4>${product.name}</h4>
-        ${product.img(request, 'product-icon')}
-        <button class="btn btn-cta">Add For ${h.currency(product.price)}</button>
+  % if products:
+    <div class="row">
+      <div class="col-xs-12">
+        <h3>You Might Also Want...</h3>
       </div>
-    % endfor
-  </div>
+    </div>
+    <div class="row row-cart-associated">
+      % for product in products:
+        <div class="col-sm-3 text-center">
+          <h4>${product.name}</h4>
+          ${product.img(request, 'product-icon')}
+          <button class="btn btn-cta">Add For ${h.currency(product.price)}</button>
+        </div>
+      % endfor
+    </div>
+  % endif
 </%def>
 
 

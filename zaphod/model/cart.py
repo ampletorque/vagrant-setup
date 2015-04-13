@@ -259,8 +259,9 @@ class CartItem(Base):
             with_for_update().\
             all()
 
-    def _refresh_crowdfunding(self):
+    def refresh_crowdfunding(self):
         log.info('refresh %s: selecting crowdfunding', self.id)
+        self.release_stock()
         self.stage = CROWDFUNDING
 
         if self.product.non_physical:
@@ -312,14 +313,16 @@ class CartItem(Base):
         log.info('refresh %s: success:%s', self.id, success)
         return success
 
-    def _refresh_non_physical(self):
+    def refresh_non_physical(self):
+        self.release_stock()
         self.batch = None
         self.expected_ship_time = None
         self.stage = CartItem.STOCK
         log.info('refresh %s: non-physical', self.id)
         return True
 
-    def _refresh_stock(self):
+    def refresh_stock(self):
+        self.release_stock()
         # Get up to ``qty_desired`` items that are either unreserved or
         # reserved to this cart item already, with a read lock.
         items_q = Session.query(Item).\
@@ -350,8 +353,9 @@ class CartItem(Base):
         self.expected_ship_time = utils.shipping_day()
         return (not partial)
 
-    def _refresh_preorder(self):
+    def refresh_preorder(self):
         project = self.product.project
+        self.release_stock()
 
         # Make sure that the product is available.
         accepts_preorders = (project.accepts_preorders and
@@ -436,15 +440,14 @@ class CartItem(Base):
             "cannot refresh cart item that has a placed order"
         self.price_each = self.calculate_price()
         project = self.product.project
-        self.release_stock()
         if project.status == 'crowdfunding':
-            return self._refresh_crowdfunding()
+            return self.refresh_crowdfunding()
         elif self.product.non_physical:
-            return self._refresh_non_physical()
+            return self.refresh_non_physical()
         elif self.product.in_stock:
-            return self._refresh_stock()
+            return self.refresh_stock()
         else:
-            return self._refresh_preorder()
+            return self.refresh_preorder()
 
     def expire(self):
         """

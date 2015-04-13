@@ -238,8 +238,20 @@ class OrderEditView(BaseEditView):
             price_each=product.price,
         )
         model.Session.add(item)
-        # XXX need to figure out how to update status and allocate stock here,
-        # but item.refresh() can't do it because that will update the stage
+
+        if product.non_physical:
+            item.refresh_non_physical()
+        elif stage == model.CartItem.CROWDFUNDING:
+            item.refresh_crowdfunding()
+        elif stage == model.CartItem.PREORDER:
+            item.refresh_preorder()
+        elif stage == model.CartItem.STOCK:
+            item.refresh_stock()
+        else:
+            raise Exception('unknown cart item state when adding')
+
+        # XXX Need to set item status more correctly.
+        item.status = 'payment pending'
 
         request.flash("Added '%s' to order." % product.name, 'success')
         self._touch_object(order)

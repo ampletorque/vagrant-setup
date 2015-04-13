@@ -167,6 +167,8 @@ class AccountingReportsView(BaseReportsView):
         value_by_project = [(project, value) for value, project in project_q]
 
         return {
+            'start_date': start_date,
+            'end_date': end_date,
             'confirmed_value': confirmed_value,
             'unconfirmed_value': unconfirmed_value,
             'total_value': total_value,

@@ -107,7 +107,12 @@
     <td colspan="4">
       ${self.payment_description(payment)}<br>
       % if payment.discriminator == 'cc':
-        CCV: ${payment.ccv_result} - AVS Address: ${payment.avs_address1_result} - AVS Zip: ${payment.avs_zip_result}
+        CCV: ${payment.ccv_result} - AVS Address: ${payment.avs_address1_result} - AVS Zip: ${payment.avs_zip_result}<br>
+        % if payment.captured_time:
+          <span class="label label-success">Captured ${h.format_datetime(request, payment.captured_time)}</span>
+        % else:
+          <span class="label label-warning">Not Captured</span>
+        % endif
       % endif
     </td>
     <td>${h.currency(payment.amount)}</td>

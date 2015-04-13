@@ -146,11 +146,11 @@ class AccountingReportsView(BaseReportsView):
 
         # unconfirmed inventory value
         confirmed_q = base_q.\
-            filter(model.Item.vendor_invoice_item_id == None)
+            filter(model.Item.vendor_invoice_item_id != None)
         confirmed_value = confirmed_q.scalar() or 0
 
         unconfirmed_q = base_q.\
-            filter(model.Item.vendor_invoice_item_id != None)
+            filter(model.Item.vendor_invoice_item_id == None)
         unconfirmed_value = unconfirmed_q.scalar() or 0
 
         total_value = confirmed_value + unconfirmed_value

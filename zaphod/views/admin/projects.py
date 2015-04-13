@@ -151,7 +151,9 @@ class ProjectEditView(NodeEditView):
 
         form = Form(request, schema=ProductCreateForm)
         if form.validate():
-            product = model.Product(project=project)
+            product = model.Product(project=project,
+                                    created_by=request.user,
+                                    updated_by=request.user)
             form.bind(product)
             model.Session.flush()
             request.flash("Product created.", 'success')
@@ -216,7 +218,9 @@ class ProjectEditView(NodeEditView):
 
         form = Form(request, schema=NodeCreateForm)
         if form.validate():
-            update = model.ProjectUpdate(project=project)
+            update = model.ProjectUpdate(project=project,
+                                         created_by=request.user,
+                                         updated_by=request.user)
             form.bind(update)
             model.Session.flush()
             request.flash("Project update created.", 'success')
@@ -579,7 +583,9 @@ class ProjectEditView(NodeEditView):
 
         form = Form(request, schema=TransferCreateForm)
         if form.validate():
-            transfer = model.ProjectTransfer(project=project)
+            transfer = model.ProjectTransfer(project=project,
+                                             created_by=request.user,
+                                             updated_by=request.user)
             form.bind(transfer)
             model.Session.flush()
             request.flash("Project transfer created.", 'success')

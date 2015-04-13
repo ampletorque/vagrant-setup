@@ -45,6 +45,9 @@ ${regions.product_header(obj)}
           </%forms:element>
 
           ${forms.lcheckbox(renderer, 'accepts_preorders', obj.accepts_preorders, hint='Check if this product will be available for pre-order or stock orders after crowdfunding.')}
+
+          ${forms.lselect(renderer, 'associated_product_ids', [ap.id for ap in obj.associated_products], [(p.id, p.name) for p in obj.project.products if p != obj], multiple=True, label='Associated Products')}
+
           ${forms.lcheckbox(renderer, 'published', obj.published)}
 
           ${widgets.images(renderer, obj)}

@@ -4,7 +4,7 @@ from __future__ import (absolute_import, division, print_function,
 from datetime import datetime
 from decimal import Decimal
 
-from sqlalchemy import Column, ForeignKey, UniqueConstraint, types, orm
+from sqlalchemy import Table, Column, ForeignKey, UniqueConstraint, types, orm
 from sqlalchemy.sql import func
 from sqlalchemy.ext.orderinglist import ordering_list
 
@@ -35,6 +35,16 @@ class Batch(Base):
             filter(CartItem.batch == self).\
             filter(CartItem.status != 'cancelled').\
             scalar() or 0
+
+
+associated_products_table = Table(
+    'associated_products',
+    Base.metadata,
+    Column('source_id', None, ForeignKey('products.id'),
+           primary_key=True),
+    Column('dest_id', None, ForeignKey('products.id'),
+           primary_key=True),
+    mysql_engine='InnoDB')
 
 
 class Product(Base, ImageMixin, ElasticMixin):
@@ -82,6 +92,14 @@ class Product(Base, ImageMixin, ElasticMixin):
                      'Option.published == True)'),
         order_by='Option.gravity',
         viewonly=True,
+    )
+
+    associated_products = orm.relationship(
+        'Product',
+        secondary=associated_products_table,
+        collection_class=set,
+        primaryjoin='associated_products.c.source_id == Product.id',
+        secondaryjoin='associated_products.c.dest_id == Product.id',
     )
 
     def select_batch(self, qty):

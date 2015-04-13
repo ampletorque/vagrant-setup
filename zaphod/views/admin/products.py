@@ -78,9 +78,13 @@ class ProductEditView(BaseEditView):
         box_length = validators.Number()
         box_width = validators.Number()
         box_height = validators.Number()
+        associated_product_ids = ForEach(validators.Int)
         images = ForEach(custom_validators.ImageAssociation())
 
     def _update_object(self, form, obj):
+        obj.associated_products.clear()
+        for ap_id in form.data.pop('associated_product_ids'):
+            obj.associated_products.add(model.Product.get(ap_id))
         BaseEditView._update_object(self, form, obj)
         self.request.theme.invalidate_project(obj.project.id)
 

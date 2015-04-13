@@ -39,7 +39,7 @@ def launch_view(request):
             email=form.data['email'],
         )
         mail.send_with_admin(request, 'contact', vars,
-                             to=['projects+inbound@crowdsupply.com'],
+                             to=request.registry.settings['mailer.from'],
                              reply_to=form.data['email'])
         request.flash(
             "Thanks! We'll contact you within 24-48 hours with further "

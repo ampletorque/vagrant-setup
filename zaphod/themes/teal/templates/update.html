@@ -4,6 +4,45 @@
 <%def name="title()">${project.name} - ${update.name}</%def>
 
 
-<div class="project-block">
-  ${self.project_update(update)}
+<%def name="update_main(update)">
+  <div class="update">
+    <div class="update-date pull-right">
+      <p class="update-date-month">${update.created_time.strftime('%b')}</p>
+      <p class="update-date-day">${update.created_time.strftime('%d')}</p>
+    </div>
+    <a href="${request.node_path(update)}"><h3>${update.name}</h3></a>
+
+    <div class="rendered-content">
+      ${request.render_content(update, update.body)}
+    </div>
+
+    <div class="social-buttons">
+      <p>Share this update on social media:</p>
+      <div class="row">
+        <div class="col-xs-2 col-xs-offset-4">
+          <a href="${h.facebook_share_url(url=request.node_url(update), text='', caption='Crowd Supply Update', name=update.name, image_url=update.img_url(request, 'project-main'), app_id=request.registry.settings['facebook.app_id'], redirect_uri=request.url)}">
+            <i class="fa fa-facebook"></i>
+          </a>
+        </div>
+        <div class="col-xs-2">
+          <a href="${h.twitter_tweet_url(text=update.name, via='crowd_supply', url=request.node_url(update))}">
+            <i class="fa fa-twitter"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</%def>
+
+
+<div class="row">
+  <div class="col-sm-8">
+    <div class="project-block">
+      <a href="${request.node_path(project, suffix=['updates'])}">&larr; View All Updates</a>
+      ${self.update_main(update)}
+    </div>
+  </div>
+  <div class="col-sm-4 project-sidebar">
+    ${self.sidebar(project)}
+  </div>
 </div>

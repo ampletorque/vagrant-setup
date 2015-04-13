@@ -85,7 +85,17 @@
           <td>${item.product.img(request, 'product-icon')}</td>
           <td>
             <strong>${item.product.name}</strong><br>
-            ${item.product.project.name}
+            ${item.product.project.name}<br>
+            <%
+              options = h.variant_list(item.sku)
+            %>
+            % if options:
+              <ul>
+                % for el in options:
+                  <li>${el}</li>
+                % endfor
+              </ul>
+            % endif
           </td>
           <td>${h.currency(item.price_each)}</td>
           <td>${item.qty_desired}</td>

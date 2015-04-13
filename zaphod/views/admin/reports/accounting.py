@@ -215,7 +215,7 @@ class AccountingReportsView(BaseReportsView):
 
         card_types = list(card_type_codes)
 
-        payments = payments.items()
+        payments = list(payments.items())
         payments.sort(key=lambda row: row[0].id)
 
         return {

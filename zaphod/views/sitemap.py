@@ -63,7 +63,8 @@ class SitemapView(object):
         return params
 
     def _query_nodes(self):
-        q = model.Session.query(model.Node).filter_by(published=True)
+        q = model.Session.query(model.Node).\
+            filter_by(published=True, listed=True)
         for node in q:
             if (isinstance(node, model.Project) and not node.is_live()):
                 continue

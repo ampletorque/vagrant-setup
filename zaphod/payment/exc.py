@@ -78,4 +78,4 @@ class CannotCreditException(PaymentException):
 
 
 class ParameterException(PaymentException):
-    message = "CIM parameter error."
+    message = "Parameter error."

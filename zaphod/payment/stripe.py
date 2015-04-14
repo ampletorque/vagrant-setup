@@ -38,17 +38,20 @@ class StripeInterface(object):
             raise new_e
 
         except stripe.AuthenticationError as e:
-            new_e = exc.AuthenticationException()
+            new_e = exc.AuthenticationException(
+                'Stripe authentication error: %s' % e)
             new_e.original_exception = e
             raise new_e
 
         except stripe.InvalidRequestError as e:
-            new_e = exc.ParameterException()
+            new_e = exc.ParameterException(
+                'Stripe parameter error: %s' % e)
             new_e.original_exception = e
             raise new_e
 
         except (stripe.APIConnectionError, stripe.StripeError) as e:
-            new_e = exc.PaymentException()
+            new_e = exc.PaymentException(
+                'Stripe general error: %s' % e)
             new_e.original_exception = e
             raise new_e
 

@@ -1,0 +1,26 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+
+<%def name="title()">Mark Payment ${payment.id} as Chargeback</%def>
+
+
+<section class="section-admin-mark-chargeback-payment">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">${self.title()}</h1>
+
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
+
+          ${renderer.ltextarea(renderer, 'reason', label='Reason', hint='Input chargeback reason or any additional details available.')}
+
+          <%forms:actions>
+            <button class="btn btn-primary" type="submit">Mark as Chargeback</button>
+            <a class="btn btn-default" href="${request.route_path('admin:order', id=payment.order_id)}">Cancel</a>
+          </%forms:actions>
+        ${renderer.end()}
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,24 +1,22 @@
 <%inherit file="base.html"/>
 
 <%namespace name="forms" file="/common/forms.html"/>
-<%namespace name="blocks" file="/common/blocks.html"/>
 
-<%def name="title()">Edit Order ${obj.id}</%def>
+<%def name="title()">Refund Credit Card Payment ${payment.id}</%def>
 
 
-<section class="section-admin-order">
+<section class="section-admin-refund-payment">
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
         <h1 class="page-header">${self.title()}</h1>
 
         ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
-
-          <p>WIP: add refund form here.</p>
+          ${forms.ltext(renderer, 'amount', 0, prefix='$', hint='Maximum refund of %s.' % h.currency(payment.amount))}
 
           <%forms:actions>
-            <button class="btn btn-primary" type="submit">Save</button>
-            <a class="btn btn-default" href="${request.route_path('admin:order', id=obj.id)}">Cancel</a>
+            <button class="btn btn-primary" type="submit">Refund</button>
+            <a class="btn btn-default" href="${request.route_path('admin:order', id=payment.order_id)}">Cancel</a>
           </%forms:actions>
         ${renderer.end()}
       </div>

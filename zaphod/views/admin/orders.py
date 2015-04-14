@@ -10,7 +10,7 @@ from formencode import Schema, ForEach, NestedVariables, validators
 
 from pyramid_uniform import Form, FormRenderer
 
-from ... import model, mail, custom_validators, payment, funds
+from ... import model, mail, custom_validators, payment, funds, helpers as h
 
 from ...admin import BaseEditView, BaseListView, BaseCreateView
 
@@ -52,9 +52,15 @@ class AddCheckPaymentForm(Schema):
                                           not_empty=True)
 
 
-class AddRefundForm(Schema):
+class AddCashRefundForm(Schema):
     allow_extra_fields = False
-    # XXX
+    amount = validators.Number(not_empty=True, min=0)
+
+
+class AddCheckRefundForm(Schema):
+    allow_extra_fields = False
+    amount = validators.Number(not_empty=True, min=0)
+    reference = validators.Int(not_empty=True, min=0)
 
 
 class CancelForm(Schema):
@@ -505,16 +511,48 @@ class OrderEditView(BaseEditView):
             'renderer': FormRenderer(form),
         }
 
-    @view_config(route_name='admin:order:refund',
-                 renderer='admin/order_refund.html')
-    def refund(self):
+    @view_config(route_name='admin:order:refund-cash',
+                 renderer='admin/order_refund_cash.html')
+    def refund_cash(self):
         request = self.request
         order = self._get_object()
 
-        form = Form(request, schema=AddRefundForm)
+        form = Form(request, schema=AddCashRefundForm)
         if form.validate():
-            # XXX do stuff
+            amount = form.data['amount']
+            refund = model.CashRefund(
+                refund_amount=-amount,
+                amount=-amount,
+                created_by=request.user,
+            )
+            order.payments.append(refund)
             self._touch_object(order)
+            request.flash("Added cash refund of %s." % h.currency(amount),
+                          'success')
+            return HTTPFound(location=request.route_url('admin:order',
+                                                        id=order.id))
+
+        return {'obj': order, 'renderer': FormRenderer(form)}
+
+    @view_config(route_name='admin:order:refund-check',
+                 renderer='admin/order_refund_check.html')
+    def refund_check(self):
+        request = self.request
+        order = self._get_object()
+
+        form = Form(request, schema=AddCheckRefundForm)
+        if form.validate():
+            amount = form.data['amount']
+            refund = model.CheckRefund(
+                refund_amount=-amount,
+                amount=-amount,
+                reference=form.data['reference'],
+                created_by=request.user,
+            )
+            order.payments.append(refund)
+            self._touch_object(order)
+            request.flash("Added check refund of %s." % h.currency(amount),
+                          'success')
             return HTTPFound(location=request.route_url('admin:order',
                                                         id=order.id))
 

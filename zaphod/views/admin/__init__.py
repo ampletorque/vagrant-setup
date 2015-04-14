@@ -85,10 +85,21 @@ def includeme(config):
                      '/order/{id}/new-credit-card-payment')
     config.add_route('admin:order:payment-cash', '/order/{id}/cash-payment')
     config.add_route('admin:order:payment-check', '/order/{id}/check-payment')
-    config.add_route('admin:order:refund', '/order/{id}/refund')
+    config.add_route('admin:order:refund-cash', '/order/{id}/refund-cash')
+    config.add_route('admin:order:refund-check', '/order/{id}/refund-check')
     config.add_route('admin:order:add-item', '/order/{id}/add-item')
     config.add_route('admin:order:remove-item',
                      '/order/{id}/remove-item/{item_id}')
+
+    config.add_route('admin:payment:capture', '/payment/{id}/capture')
+    config.add_route('admin:payment:void', '/payment/{id}/void')
+    config.add_route('admin:payment:refund', '/payment/{id}/refund')
+    config.add_route('admin:payment:mark-chargeback',
+                     '/payment/{id}/mark-chargeback')
+    config.add_route('admin:payment:mark-chargeback-won',
+                     '/payment/{id}/mark-chargeback-won')
+    config.add_route('admin:payment:mark-chargeback-lost',
+                     '/payment/{id}/mark-chargeback-lost')
 
     config.add_route('admin:vendors', '/vendors')
     config.add_route('admin:vendors:new', '/vendors/new')

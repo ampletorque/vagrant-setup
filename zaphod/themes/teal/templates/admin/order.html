@@ -77,11 +77,15 @@
   % elif payment.discriminator == 'gift':
     Gift Code <a href="${request.admin_url(payment.gift_code)}">${payment.gift_code.code}</a>
   % elif payment.discriminator == 'carf':
-    Cash Refund: ${payment.comments}
+    Cash Refund
+    % if payment.comments:
+      ${payment.comments}
+    % endif
   % elif payment.discriminator == 'chrf':
-    Check Refund(${payment.reference}): ${payment.comments}
-  % elif payment.discriminator == 'gcrf':
-    Refund: Gift Code <a href="${request.admin_url(payment.gift_code)}">${payment.gift_code.code}</a> - ${payment.comments}
+    Check Refund - Reference: ${payment.reference}
+    % if payment.comments:
+      ${payment.comments}
+    % endif
   % elif payment.discriminator == 'ccrf':
     % if not payment.processed_time and payment.pending_action == 'rfnd' and payment.valid:
       <span class='label label-info'>Refund Pending</span>
@@ -109,13 +113,33 @@
       % if payment.discriminator == 'cc':
         CCV: ${payment.ccv_result} - AVS Address: ${payment.avs_address1_result} - AVS Zip: ${payment.avs_zip_result}<br>
         % if payment.captured_time:
-          <span class="label label-success">Captured ${h.format_datetime(request, payment.captured_time)}</span>
+          <strong>Captured ${h.format_datetime(request, payment.captured_time)}</strong>
         % else:
-          <span class="label label-warning">Not Captured</span>
+          <strong>Not Captured</strong>
+        % endif
+        % if payment.can_be_captured:
+          <a href="${request.route_path('admin:payment:capture', id=payment.id)}" class="btn btn-default btn-xs">Capture</a>
+        % endif
+        % if payment.can_be_voided:
+          <a href="${request.route_path('admin:payment:void', id=payment.id)}" class="btn btn-primary btn-xs">Void</a>
+        % endif
+        % if payment.captured_time:
+          % if payment.chargeback_time:
+            <a href="${request.route_path('admin:payment:mark-chargeback-won', id=payment.id)}" class="btn btn-default btn-xs">Mark Chargeback Won</a>
+            <a href="${request.route_path('admin:payment:mark-chargeback-lost', id=payment.id)}" class="btn btn-default btn-xs">Mark Chargeback Lost</a>
+          % else:
+            <a href="${request.route_path('admin:payment:mark-chargeback', id=payment.id)}" class="btn btn-default btn-xs">Mark Chargeback</a>
+          % endif
         % endif
       % endif
     </td>
-    <td>${h.currency(payment.amount)}</td>
+    <td>
+      % if payment.amount >= 0:
+        ${h.currency(payment.amount)}
+      % else:
+        (${h.currency(-payment.amount)})
+      % endif
+    </td>
   </tr>
 </%def>
 
@@ -140,7 +164,7 @@
         </div>
 
         <div class="well">
-          % if not obj.unpaid_amount:
+          % if not obj.unauthorized_amount:
             <a class="btn btn-primary" href="${request.route_path('admin:order:print', id=obj.id)}">Print Invoice</a>
           % endif
           <a class="btn btn-primary" href="${request.route_path('admin:order:resend-confirmation', id=obj.id)}">Resend Order Confirmation</a>
@@ -253,7 +277,8 @@
                   <a href="${request.route_path('admin:order:payment-cash', id=obj.id)}">Cash</a> -
                   <a href="${request.route_path('admin:order:payment-check', id=obj.id)}">Check</a>
                   <br>
-                  Add Refund: <a href="${request.route_path('admin:order:refund', id=obj.id)}">Credit Card</a>
+                  Add Refund: <a href="${request.route_path('admin:order:refund-cash', id=obj.id)}">Cash</a> -
+                  <a href="${request.route_path('admin:order:refund-check', id=obj.id)}">Check</a>
                 </td>
                 <td>Balance Due</td>
                 <td>${h.currency(obj.unauthorized_amount)}</td>

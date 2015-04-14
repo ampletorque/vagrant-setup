@@ -111,6 +111,7 @@
     <td colspan="4">
       ${self.payment_description(payment)}<br>
       % if payment.discriminator == 'cc':
+        Descriptor: <code>${payment.descriptor}</code><br>
         CCV: ${payment.ccv_result} - AVS Address: ${payment.avs_address1_result} - AVS Zip: ${payment.avs_zip_result}<br>
         % if payment.captured_time:
           <strong>Captured ${h.format_datetime(request, payment.captured_time)}</strong>

@@ -3,7 +3,7 @@ from __future__ import (absolute_import, division, print_function,
 
 from pyramid.view import view_defaults
 from venusian import lift
-from formencode import Schema, validators
+from formencode import Schema, NestedVariables, validators
 
 from ... import model, custom_validators
 
@@ -17,7 +17,11 @@ class VendorEditView(BaseEditView):
     cls = model.Vendor
 
     class UpdateForm(Schema):
-        loaded_time = validators.Number(not_empty=True)
+        allow_extra_fields = False
+        pre_validators = [NestedVariables]
+        name = validators.UnicodeString(not_empty=True)
+        active = validators.Bool()
+        mailing = custom_validators.AddressSchema
         new_comment = custom_validators.CommentBody()
 
 

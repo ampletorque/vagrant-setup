@@ -115,6 +115,7 @@ class OrderEditView(BaseEditView):
 
     def _update_object(self, form, obj):
         for item_params in form.data.pop('items'):
+            orig_qty_desired = item.qty_desired
             item = model.CartItem.get(item_params['id'])
             assert item.cart.order == obj
             item.qty_desired = item_params['qty_desired']
@@ -122,8 +123,11 @@ class OrderEditView(BaseEditView):
             item.shipping_price = item_params['shipping_price']
             # XXX This should probably be combined into one method call with
             # locking.
-            item.release_stock()
-            item.reserve_stock()
+            if orig_qty_desired != item.qty_desired:
+                item.release_stock()
+                model.Session.flush()
+                item.reserve_stock()
+                model.Session.flush()
         BaseEditView._update_object(self, form, obj)
 
     @view_config(route_name='admin:order:resend-confirmation')

@@ -262,6 +262,9 @@ class CreditCardPayment(Payment):
     def can_be_captured(self):
         return self.can_be_voided()
 
+    def can_be_refunded(self):
+        return bool(self.captured_time) and (self.refundable_amount > 0)
+
     def mark_for_voiding(self, user):
         self.transition('pending_action', self.can_be_voided, user)
         self.pending_action = 'void'

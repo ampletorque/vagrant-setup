@@ -127,7 +127,9 @@
           <a href="${request.route_path('admin:payment:void', id=payment.id)}" class="btn btn-primary btn-xs">Void</a>
         % endif
         % if payment.captured_time:
-          <a href="${request.route_path('admin:payment:refund', id=payment.id)}" class="btn btn-default btn-xs">Refund</a>
+          % if payment.can_be_refunded():
+            <a href="${request.route_path('admin:payment:refund', id=payment.id)}" class="btn btn-default btn-xs">Refund</a>
+          % endif
           % if payment.chargeback_time:
             <a href="${request.route_path('admin:payment:mark-chargeback-won', id=payment.id)}" class="btn btn-default btn-xs">Mark Chargeback Won</a>
             <a href="${request.route_path('admin:payment:mark-chargeback-lost', id=payment.id)}" class="btn btn-default btn-xs">Mark Chargeback Lost</a>

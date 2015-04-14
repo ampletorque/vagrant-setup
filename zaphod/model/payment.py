@@ -256,7 +256,7 @@ class CreditCardPayment(Payment):
 
     def can_be_voided(self):
         return (self.valid and
-                (not self.captured_time) and 
+                (not self.captured_time) and
                 (not self.voided_time))
 
     def can_be_captured(self):

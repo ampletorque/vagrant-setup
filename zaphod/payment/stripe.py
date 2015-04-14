@@ -230,8 +230,8 @@ class StripePaymentProfile(object):
         charge = self.interface._wrap_call(
             stripe.Charge.retrieve,
             transaction_id)
-        # XXX Major problem here: amount is ignored!
-        resp = charge.capture()
+        amount_cents = self._to_cents(amount)
+        resp = charge.capture(amount=amount_cents)
 
         self.interface.log.info("prior_auth_capture response:\n%r", resp)
 

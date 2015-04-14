@@ -92,15 +92,20 @@ class PaymentView(object):
         form = Form(request, RefundForm)
         if form.validate():
             amount = form.data['amount']
+            assert amount <= pp.refundable_amount, \
+                "trying to refund %r, which is more than allowed %r" % (
+                    amount, pp.refundable_amount)
 
             profile = self._get_profile(pp)
             profile.refund(amount=amount,
                            transaction_id=pp.transaction_id)
             refund = model.CreditCardRefund(
+                order=pp.order,
                 created_by=request.user,
                 credit_card_payment=pp,
                 refund_amount=-amount,
             )
+            model.Session.add(refund)
             refund.mark_as_processed(request.user, -amount)
             request.flash("Refunded %s for %s." % (pp.transaction_id,
                                                    h.currency(amount)),

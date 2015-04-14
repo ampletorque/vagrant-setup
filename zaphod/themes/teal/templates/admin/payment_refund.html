@@ -10,9 +10,10 @@
     <div class="row">
       <div class="col-lg-12">
         <h1 class="page-header">${self.title()}</h1>
+        <p>Transaction ${payment.transaction_id} - <code>${payment.descriptor}</code></p>
 
         ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
-          ${forms.ltext(renderer, 'amount', 0, prefix='$', hint='Maximum refund of %s.' % h.currency(payment.amount))}
+          ${forms.ltext(renderer, 'amount', 0, prefix='$', hint='Maximum refund of %s.' % h.currency(payment.refundable_amount))}
 
           <%forms:actions>
             <button class="btn btn-primary" type="submit">Refund</button>

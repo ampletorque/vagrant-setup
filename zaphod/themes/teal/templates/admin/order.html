@@ -289,6 +289,15 @@
                 <td>Balance Due</td>
                 <td>${h.currency(obj.unauthorized_amount)}</td>
               </tr>
+
+              % if obj.paid_amount > obj.current_due_amount:
+                <tr>
+                  <td></td>
+                  <td colspan=4"></td>
+                  <td><strong>Overpaid By</strong></td>
+                  <td><strong>${h.currency(obj.paid_amount - obj.current_due_amount)}</strong></td>
+                </tr>
+              % endif
             </tfoot>
           </table>
 

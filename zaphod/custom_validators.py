@@ -5,6 +5,7 @@ import re
 import itertools
 import copy
 from datetime import datetime, timedelta, time
+import decimal
 
 import pytz
 from formencode import validators, Schema, national, compound
@@ -427,3 +428,36 @@ class ListNotEmpty(FancyValidator):
                 error_dict={
                     self.field_name: message,
                 })
+
+
+class DecimalNumber(validators.Number):
+    """
+    Convert a value to a Decimal.
+    """
+    def _to_python(self, value, state):
+        try:
+            return decimal.Decimal(value)
+        except decimal.InvalidOperation:
+            raise Invalid(self.message('number', state), value, state)
+        except TypeError:
+            raise Invalid(self.message('number', state), value, state)
+
+
+class Money(DecimalNumber):
+    """
+    Convert a value to a Decimal and verify that it does not contain fractional
+    cents.
+    """
+
+    messages = {'fractional-cents':
+                "This field does not support fractional cents."}
+
+    cents = decimal.Decimal(".01")
+
+    def _to_python(self, value, state):
+        d = DecimalNumber._to_python(self, value, state)
+        q = d.quantize(self.cents)
+        if d != q:
+            raise Invalid(self.message("fractional-cents", state),
+                          value, state)
+        return q

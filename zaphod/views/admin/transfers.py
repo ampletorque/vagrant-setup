@@ -5,7 +5,7 @@ from pyramid.view import view_defaults
 from venusian import lift
 from formencode import Schema, validators
 
-from ... import model
+from ... import model, custom_validators
 
 from ...admin import BaseEditView
 
@@ -18,7 +18,7 @@ class TransferEditView(BaseEditView):
 
     class UpdateForm(Schema):
         allow_extra_fields = False
-        amount = validators.Number(not_empty=True)
-        fee = validators.Number(if_empty=0)
+        amount = custom_validators.Money(not_empty=True)
+        fee = custom_validators.Money(if_empty=0)
         method = validators.String(not_empty=True)
         reference = validators.UnicodeString()

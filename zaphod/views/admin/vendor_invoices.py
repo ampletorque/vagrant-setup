@@ -7,7 +7,7 @@ from formencode import Schema, ForEach, NestedVariables, validators
 from pyramid.httpexceptions import HTTPFound
 from pyramid_uniform import Form, FormRenderer
 
-from ... import model
+from ... import model, custom_validators
 
 from ...admin import BaseEditView
 
@@ -16,7 +16,7 @@ class ItemSchema(Schema):
     allow_extra_fields = False
     id = validators.Int(not_empty=True, min=0)
     qty_invoiced = validators.Int(not_empty=True, min=0)
-    cost_each = validators.Number(not_empty=True, min=0)
+    cost_each = custom_validators.Money(not_empty=True, min=0)
 
 
 class InvoiceForm(Schema):
@@ -26,13 +26,13 @@ class InvoiceForm(Schema):
     invoice_date = validators.DateConverter()
 
     shipping_date = validators.DateConverter()
-    shipping_cost = validators.Number(not_empty=True, min=0)
+    shipping_cost = custom_validators.Money(not_empty=True, min=0)
 
-    tax = validators.Number(not_empty=True, min=0)
-    drop_ship_fee = validators.Number(not_empty=True, min=0)
-    discount = validators.Number(not_empty=True, min=0)
+    tax = custom_validators.Money(not_empty=True, min=0)
+    drop_ship_fee = custom_validators.Money(not_empty=True, min=0)
+    discount = custom_validators.Money(not_empty=True, min=0)
     discount_applies = validators.Bool()
-    bank_fee = validators.Number(not_empty=True, min=0)
+    bank_fee = custom_validators.Money(not_empty=True, min=0)
 
     items = ForEach(ItemSchema)
 

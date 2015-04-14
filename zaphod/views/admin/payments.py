@@ -7,17 +7,17 @@ from formencode import Schema, validators
 
 from pyramid_uniform import Form, FormRenderer
 
-from ... import model, payment, helpers as h
+from ... import model, payment, custom_validators, helpers as h
 
 
 class CaptureForm(Schema):
     allow_extra_fields = False
-    amount = validators.Number(not_empty=True, min=0)
+    amount = custom_validators.Money(not_empty=True, min=0)
 
 
 class RefundForm(Schema):
     allow_extra_fields = False
-    amount = validators.Number(not_empty=True, min=0)
+    amount = custom_validators.Money(not_empty=True, min=0)
 
 
 class MarkChargebackForm(Schema):

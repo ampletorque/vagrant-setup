@@ -1,6 +1,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+from decimal import Decimal
 from datetime import datetime, time
 
 from pyramid.view import view_defaults, view_config
@@ -20,7 +21,7 @@ class OptionValueSchema(Schema):
     allow_extra_fields = False
     id = validators.String(not_empty=True)
     description = validators.UnicodeString(not_empty=True, strip=True)
-    price_increase = validators.Number(if_empty=0.0)
+    price_increase = custom_validators.Money(if_empty=0)
     gravity = validators.Int(not_empty=True)
     published = validators.Bool()
 
@@ -66,14 +67,14 @@ class ProductEditView(BaseEditView):
         pre_validators = [NestedVariables]
         name = validators.UnicodeString(not_empty=True, strip=True)
         international_available = validators.Bool()
-        international_surcharge = validators.Number()
+        international_surcharge = custom_validators.Money()
         gravity = validators.Int()
         non_physical = validators.Bool()
         published = validators.Bool()
-        price = validators.Number()
+        price = custom_validators.Money(not_empty=True, min=Decimal('.01'))
         accepts_preorders = validators.Bool()
         hs_code = validators.String()
-        fulfillment_fee = validators.Number()
+        fulfillment_fee = custom_validators.Money(not_empty=True, min=0)
         shipping_weight = validators.Number()
         box_length = validators.Number()
         box_width = validators.Number()

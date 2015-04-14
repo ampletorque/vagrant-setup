@@ -1,6 +1,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+from decimal import Decimal
 from unittest import TestCase
 from formencode import Invalid, Schema, validators, NestedVariables
 
@@ -178,3 +179,65 @@ class TestCustomValidators(TestCase):
             with self.assertRaises(Invalid) as cm:
                 v.to_python(bad_case)
             self.assertIn('10 digits', str(cm.exception))
+
+    def test_decimal_validator_good(self):
+        v = custom_validators.DecimalNumber()
+        cases = [
+            '123',
+            '55.262',
+            '99.00',
+            '99.0',
+            '12423523523.4124124124',
+        ]
+        for case in cases:
+            result = v.to_python(case)
+            self.assertEqual(result, Decimal(case))
+            self.assertIsInstance(result, Decimal)
+
+    def test_decimal_validator_bad(self):
+        v = custom_validators.DecimalNumber()
+        cases = [
+            'blah',
+            '--123',
+            '553.foo',
+        ]
+        for case in cases:
+            with self.assertRaises(Invalid):
+                print("testing %s" % case)
+                v.to_python(case)
+
+        v = custom_validators.DecimalNumber(min=0)
+        with self.assertRaises(Invalid):
+            v.to_python('-234.52')
+
+    def test_money_validator_good(self):
+        v = custom_validators.Money()
+        cases = [
+            '123',
+            '55.26',
+            '99.00',
+            '99.0',
+            '12423523523.41',
+        ]
+        for case in cases:
+            result = v.to_python(case)
+            self.assertEqual(result, Decimal(case))
+            self.assertIsInstance(result, Decimal)
+
+    def test_money_validator_bad(self):
+        v = custom_validators.Money()
+        cases = [
+            '123.foo',
+            'blah',
+        ]
+        for case in cases:
+            with self.assertRaises(Invalid) as cm:
+                v.to_python(case)
+
+        with self.assertRaises(Invalid) as cm:
+            v.to_python('123.3456')
+        self.assertIn('fractional cents', str(cm.exception))
+
+        v = custom_validators.Money(min=0)
+        with self.assertRaises(Invalid):
+            v.to_python('-234.52')

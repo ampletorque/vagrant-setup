@@ -12,7 +12,7 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid_uniform import Form, FormRenderer, crud_update
 from pyramid_es import get_client
 
-from ... import model, funds
+from ... import model, funds, custom_validators
 
 from ...admin import (NodeEditView, NodeListView, NodeUpdateForm,
                       NodeCreateView, NodeCreateForm)
@@ -54,8 +54,8 @@ class SuspendForm(Schema):
 
 class TransferCreateForm(Schema):
     allow_extra_fields = False
-    amount = validators.Number(not_empty=True)
-    fee = validators.Number(if_empty=0)
+    amount = custom_validators.Money(not_empty=True, min=Decimal('.01'))
+    fee = custom_validators.Money(if_empty=0)
     method = validators.String(not_empty=True)
     reference = validators.UnicodeString()
 
@@ -105,7 +105,7 @@ class ProjectEditView(NodeEditView):
         available_teaser = validators.UnicodeString()
         available_body = validators.UnicodeString()
 
-        target = validators.Number()
+        target = custom_validators.Money()
         start_time = validators.DateConverter(month_style='yyyy/mm/dd')
         # XXX FIXME Remember we probably want to add a day to this value.
         end_time = validators.DateConverter(month_style='yyyy/mm/dd')
@@ -114,7 +114,7 @@ class ProjectEditView(NodeEditView):
         successful = validators.Bool()
         accepts_preorders = validators.Bool()
         pledged_elsewhere_count = validators.Int()
-        pledged_elsewhere_amount = validators.Number()
+        pledged_elsewhere_amount = custom_validators.Money()
         include_in_launch_stats = validators.Bool()
         crowdfunding_fee_percent = validators.Number()
         preorder_fee_percent = validators.Number()

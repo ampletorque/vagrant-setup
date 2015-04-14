@@ -29,13 +29,13 @@ class EditUserForm(Schema):
 class AddNewCCPaymentForm(Schema):
     allow_extra_fields = False
     pre_validators = [NestedVariables]
-    amount = validators.Number(not_empty=True, min=0)
+    amount = custom_validators.Money(not_empty=True, min=0)
     cc = custom_validators.CreditCardSchema
 
 
 class AddExistingCCPaymentForm(Schema):
     allow_extra_fields = False
-    amount = validators.Number(not_empty=True, min=0)
+    amount = custom_validators.Money(not_empty=True, min=0)
     method_id = validators.Int(not_empty=True)
 
 
@@ -46,7 +46,7 @@ class AddCashPaymentForm(Schema):
 
 class AddCheckPaymentForm(Schema):
     allow_extra_fields = False
-    amount = validators.Number(not_empty=True, min=0)
+    amount = custom_validators.Money(not_empty=True, min=0)
     reference = validators.UnicodeString(not_empty=True)
     check_date = validators.DateConverter(month_style='yyyy/mm/dd',
                                           not_empty=True)
@@ -54,12 +54,12 @@ class AddCheckPaymentForm(Schema):
 
 class AddCashRefundForm(Schema):
     allow_extra_fields = False
-    amount = validators.Number(not_empty=True, min=0)
+    amount = custom_validators.Money(not_empty=True, min=0)
 
 
 class AddCheckRefundForm(Schema):
     allow_extra_fields = False
-    amount = validators.Number(not_empty=True, min=0)
+    amount = custom_validators.Money(not_empty=True, min=0)
     reference = validators.Int(not_empty=True, min=0)
 
 
@@ -74,7 +74,7 @@ class FillForm(Schema):
     chained_validators = [custom_validators.ListNotEmpty('item_ids')]
     tracking_number = validators.UnicodeString()
     shipped_by_creator = validators.Bool()
-    cost = validators.Number(not_empty=True)
+    cost = custom_validators.Money(not_empty=True, min=0)
     item_ids = ForEach(validators.Int(not_empty=True))
     send_tracking_email = validators.Bool()
 
@@ -96,8 +96,8 @@ class RemoveItemForm(Schema):
 class UpdateItemSchema(Schema):
     allow_extra_fields = False
     id = validators.Int(not_empty=True)
-    price_each = validators.Number(not_empty=True, min=0.01)
-    shipping_price = validators.Number(not_empty=True, min=0)
+    price_each = custom_validators.Money(not_empty=True, min=Decimal('0.01'))
+    shipping_price = custom_validators.Money(not_empty=True, min=0)
     qty_desired = validators.Int(not_empty=True, min=1)
 
 

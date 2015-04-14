@@ -154,11 +154,11 @@ class StripePaymentProfile(object):
     def _to_cents(self, amount):
         # XXX assert that the amount has non-fractional cents
         assert isinstance(amount, Decimal)
-        amount = amount * 100
-        just_cents = amount.quantize(Decimal(1))
-        assert amount == just_cents, \
+        as_cents = amount * 100
+        just_cents = as_cents.quantize(Decimal(1))
+        assert as_cents == just_cents, \
             "amount of %r has fractional cents" % amount
-        return amount
+        return as_cents
 
     def _charge_status(self, charge):
         return {

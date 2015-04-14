@@ -5,7 +5,7 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.view import view_config
 from pyramid_uniform import Form, FormRenderer
 
-from .. import mail
+from .. import mail, custom_validators
 
 
 class LaunchForm(Schema):
@@ -13,7 +13,7 @@ class LaunchForm(Schema):
     name = validators.UnicodeString()
     description = validators.UnicodeString()
     email = validators.Email()
-    goal = validators.Number()
+    goal = custom_validators.Money()
     allocation = validators.UnicodeString()
     country = validators.UnicodeString()
 

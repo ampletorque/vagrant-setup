@@ -115,8 +115,8 @@ class OrderEditView(BaseEditView):
 
     def _update_object(self, form, obj):
         for item_params in form.data.pop('items'):
-            orig_qty_desired = item.qty_desired
             item = model.CartItem.get(item_params['id'])
+            orig_qty_desired = item.qty_desired
             assert item.cart.order == obj
             item.qty_desired = item_params['qty_desired']
             item.price_each = item_params['price_each']

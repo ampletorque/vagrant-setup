@@ -282,11 +282,7 @@ class StripePaymentProfile(object):
             stripe.Charge.retrieve,
             transaction_id)
 
-        fees = {}
-        for fee_detail in charge.fee_details:
-            fees[fee_detail.type] = fee_detail.amount
-
-        if 'application_fee' in fees:
+        if charge.application_fee:
             resp = charge.refund(amount=self._to_cents(amount),
                                  refund_application_fee=True)
         else:

@@ -46,7 +46,7 @@ class PaymentView(object):
     def void(self):
         request = self.request
         pp = self._get_object()
-        assert pp.can_be_voided
+        assert pp.can_be_voided()
         profile = self._get_profile(pp)
         profile.void(pp.transaction_id)
         pp.mark_as_void(request.user)
@@ -60,7 +60,7 @@ class PaymentView(object):
     def capture(self):
         request = self.request
         pp = self._get_object()
-        assert pp.can_be_captured
+        assert pp.can_be_captured()
 
         form = Form(request, CaptureForm)
         if form.validate():

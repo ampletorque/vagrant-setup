@@ -114,13 +114,15 @@
         CCV: ${payment.ccv_result} - AVS Address: ${payment.avs_address1_result} - AVS Zip: ${payment.avs_zip_result}<br>
         % if payment.captured_time:
           <strong>Captured ${h.format_datetime(request, payment.captured_time)}</strong>
+        % elif payment.voided_time:
+          <strong>Voided ${h.format_datetime(request, payment.voided_time)}</strong>
         % else:
           <strong>Not Captured</strong>
         % endif
-        % if payment.can_be_captured:
+        % if payment.can_be_captured():
           <a href="${request.route_path('admin:payment:capture', id=payment.id)}" class="btn btn-default btn-xs">Capture</a>
         % endif
-        % if payment.can_be_voided:
+        % if payment.can_be_voided():
           <a href="${request.route_path('admin:payment:void', id=payment.id)}" class="btn btn-primary btn-xs">Void</a>
         % endif
         % if payment.captured_time:

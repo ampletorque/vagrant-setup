@@ -114,7 +114,9 @@ class Payment(Base, StateMixin):
 
     def can_be_voided(self):
         void_time = self.created_time + timedelta(hours=1)
-        return self.valid and utils.utcnow() < void_time
+        return ((not self.voided_time) and
+                self.valid and
+                (utils.utcnow() < void_time))
 
     def mark_as_void(self, user):
         self.transition('voided', self.can_be_voided, user)
@@ -253,7 +255,12 @@ class CreditCardPayment(Payment):
                 self.pending_action != "void")
 
     def can_be_voided(self):
-        return self.valid and not self.captured_time
+        return (self.valid and
+                (not self.captured_time) and 
+                (not self.voided_time))
+
+    def can_be_captured(self):
+        return self.can_be_voided()
 
     def mark_for_voiding(self, user):
         self.transition('pending_action', self.can_be_voided, user)

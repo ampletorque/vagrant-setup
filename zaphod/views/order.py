@@ -54,6 +54,7 @@ class OrderView(object):
             }
 
             mail.send_with_admin(request, 'order_update', vars,
+                                 to=request.registry.settings['mailer.from'],
                                  reply_to=order.user.email)
 
             request.flash("Our support staff has been notified of your "

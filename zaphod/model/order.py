@@ -93,7 +93,9 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
         Update the .closed status of this order. It is 'closed' if and only if
         all of the cart items are closed and the order is fully paid.
         """
-        self.closed = all(ci.closed for ci in self.cart.items)
+        self.closed = (all(ci.closed for ci in self.cart.items) and
+                       (order.total_amount == order.paid_amount) and
+                       (order.total_amount == order.current_due_amount))
 
     def cancel(self, items, reason, user):
         """

@@ -146,7 +146,7 @@ class CartView(object):
                 model.Session.delete(ci)
                 request.flash("Removed '%s' from your shopping cart." % name,
                               'info')
-                return HTTPFound(location=request.route_url('cart'))
+            return HTTPFound(location=request.route_url('cart'))
         else:
             raise HTTPBadRequest
 

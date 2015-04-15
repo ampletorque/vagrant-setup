@@ -170,8 +170,11 @@
         </div>
 
         <div class="well">
-          % if not obj.unauthorized_amount:
-            <a class="btn btn-primary" href="${request.route_path('admin:order:print', id=obj.id)}">Print Invoice</a>
+          % if (not obj.unauthorized_amount) and (not obj.closed):
+            <a class="btn btn-primary" href="${request.route_path('admin:order:prepare-invoice', id=obj.id)}">
+              <i class="fa fa-print"></i>
+              Print Invoice
+            </a>
           % endif
           <a class="btn btn-primary" href="${request.route_path('admin:order:resend-confirmation', id=obj.id)}">Resend Order Confirmation</a>
 

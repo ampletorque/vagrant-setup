@@ -22,6 +22,13 @@
 </%def>
 
 
+<%def name="page_letter_width(padded=True)">
+  <div class="page-letter-width ${'page-letter-width-padded' if padded else ''}">
+    ${caller.body()}
+  </div>
+</%def>
+
+
 <%def name="print_guide()">
   <div class="print-guide">
     <p>Print this document with zero margins.</p>

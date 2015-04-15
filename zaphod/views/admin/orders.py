@@ -69,6 +69,11 @@ class CancelForm(Schema):
     item_ids = ForEach(validators.Int(not_empty=True))
 
 
+class PrepareInvoiceForm(Schema):
+    allow_extra_fields = False
+    item_ids = ForEach(validators.Int(not_empty=True))
+
+
 class FillForm(Schema):
     allow_extra_fields = False
     chained_validators = [custom_validators.ListNotEmpty('item_ids')]
@@ -164,14 +169,51 @@ class OrderEditView(BaseEditView):
         return HTTPFound(location=request.route_url('admin:order',
                                                     id=order.id))
 
-    @view_config(route_name='admin:order:print',
-                 renderer='paper/invoice.html')
-    def print(self):
+    @view_config(route_name='admin:order:prepare-invoice',
+                 renderer='admin/order_prepare_invoice.html')
+    def prepare_invoice(self):
+        request = self.request
         order = self._get_object()
-        assert order.unauthorized_amount == 0, \
+        self._touch_object(order)
+        assert order.authorized_amount == order.current_due_amount, \
             "cannot print an invoice for an unpaid order"
-        items = order.cart.items
-        return {'order': order, 'items': items}
+
+        form = Form(request, PrepareInvoiceForm)
+        if form.validate():
+            item_ids = form.data['item_ids']
+            assert len(item_ids) > 0, "need some items to pack"
+            for item_id in item_ids:
+                item = model.CartItem.get(item_id)
+                assert item.cart.order == order
+                item.status = 'being packed'
+            return HTTPFound(
+                location=request.route_url('admin:order:print-invoice',
+                                           id=order.id))
+
+        return {'obj': order, 'renderer': FormRenderer(form)}
+
+    @view_config(route_name='admin:order:print-invoice',
+                 renderer='paper/invoice.html')
+    def print_invoice(self):
+        order = self._get_object()
+        assert order.authorized_amount == order.current_due_amount, \
+            "cannot print an invoice for an unpaid order"
+
+        items_this_shipment = []
+        items_other = []
+        for item in order.cart.items:
+            if item.status == 'being packed':
+                items_this_shipment.append(item)
+            elif not item.closed:
+                items_other.append(item)
+
+        assert len(items_this_shipment) > 0, "no items are being packed"
+
+        return {
+            'order': order,
+            'items_this_shipment': items_this_shipment,
+            'items_other': items_other,
+        }
 
     @view_config(route_name='admin:order:cancel',
                  renderer='admin/order_cancel.html')

@@ -46,7 +46,31 @@
 </%def>
 
 
-<%self:page_letter>
+<%def name="item_row(item)">
+  <tr>
+    <td>${item.product.img(request, 'product-icon')}</td>
+    <td>
+      <strong>${item.product.name}</strong><br>
+      ${item.product.project.name}<br>
+      <%
+        options = h.variant_list(item.sku)
+      %>
+      % if options:
+        <ul>
+          % for el in options:
+            <li>${el}</li>
+          % endfor
+        </ul>
+      % endif
+    </td>
+    <td>${h.currency(item.price_each)}</td>
+    <td>${item.qty_desired}</td>
+    <td>${h.currency(item.price_each * item.qty_desired)}</td>
+  </tr>
+</%def>
+
+
+<%self:page_letter_width>
   <h1>Crowd Supply Order ${order.id}</h1>
 
   <table style="width:100%">
@@ -80,28 +104,22 @@
       </tr>
     </thead>
     <tbody>
-      % for item in items:
+      % if items_other:
         <tr>
-          <td>${item.product.img(request, 'product-icon')}</td>
-          <td>
-            <strong>${item.product.name}</strong><br>
-            ${item.product.project.name}<br>
-            <%
-              options = h.variant_list(item.sku)
-            %>
-            % if options:
-              <ul>
-                % for el in options:
-                  <li>${el}</li>
-                % endfor
-              </ul>
-            % endif
-          </td>
-          <td>${h.currency(item.price_each)}</td>
-          <td>${item.qty_desired}</td>
-          <td>${h.currency(item.price_each * item.qty_desired)}</td>
+          <td colspan="5"><strong>Items In This Shipment</strong></td>
         </tr>
+      % endif
+      % for item in items_this_shipment:
+        ${self.item_row(item)}
       % endfor
+      % if items_other:
+        <tr>
+          <td colspan="5"><strong>Items Shipping Separately</strong></td>
+        </tr>
+        % for item in items_other:
+          ${self.item_row(item)}
+        % endfor
+      % endif
     </tbody>
     <tfoot>
       <tr>
@@ -116,4 +134,4 @@
   </table>
 
   ${self.featured_projects(getters.featured_projects_for_cart(order.cart, limit=3))}
-</%self:page_letter>
+</%self:page_letter_width>

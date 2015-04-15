@@ -145,7 +145,9 @@ class UpdatePaymentView(object):
                     descriptor=descriptor,
                 ))
 
-                request.flash("Successfully processed transaction.")
+                request.flash("Thank you, your payment was successful. If "
+                              "you would like to see the status of your "
+                              "order(s), you may log in now.", 'success')
                 return HTTPFound(location=request.route_url('account'))
 
         return {

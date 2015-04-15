@@ -29,6 +29,7 @@ def contact_view(request):
             subject=form.data['subject'],
         )
         mail.send_with_admin(request, 'contact', vars,
+                             to=[request.registry.settings['mailer.from']],
                              reply_to=form.data['email'])
 
         request.flash(

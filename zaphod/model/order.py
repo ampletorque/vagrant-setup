@@ -94,8 +94,8 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
         all of the cart items are closed and the order is fully paid.
         """
         self.closed = (all(ci.closed for ci in self.cart.items) and
-                       (order.total_amount == order.paid_amount) and
-                       (order.total_amount == order.current_due_amount))
+                       (self.total_amount == self.paid_amount) and
+                       (self.total_amount == self.current_due_amount))
 
     def cancel(self, items, reason, user):
         """

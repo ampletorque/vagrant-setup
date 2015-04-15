@@ -33,39 +33,41 @@
             </label>
           </%forms:element>
 
-          <%forms:element renderer="${renderer}" name="cc.number" label="Card Number">
-            <div class="row">
-              <div class="col-sm-6">
-                ${renderer.text('cc.number', class_='form-control js-ccfield')}
+          <div class="credit-card-fields">
+            <%forms:element renderer="${renderer}" name="cc.number" label="Card Number">
+              <div class="row">
+                <div class="col-sm-6">
+                  ${renderer.text('cc.number', class_='form-control js-ccfield')}
+                </div>
+                <div class="col-sm-6">
+                  ${blocks.credit_card_icons()}
+                </div>
               </div>
-              <div class="col-sm-6">
-                ${blocks.credit_card_icons()}
-              </div>
-            </div>
-          </%forms:element>
+            </%forms:element>
 
-          <%forms:element renderer="${renderer}" names="${['cc.expires_month', 'cc.expires_year']}" label="Expiration">
-            <div class="row">
-              <div class="col-xs-6 col-sm-3">
-                ${h.cc_expires_month_select(renderer, 'cc.expires_month', class_='form-control')}
+            <%forms:element renderer="${renderer}" names="${['cc.expires_month', 'cc.expires_year']}" label="Expiration">
+              <div class="row">
+                <div class="col-xs-6 col-sm-3">
+                  ${h.cc_expires_month_select(renderer, 'cc.expires_month', class_='form-control')}
+                </div>
+                <div class="col-xs-6 col-sm-3">
+                  ${h.cc_expires_year_select(renderer, 'cc.expires_year', class_='form-control')}
+                </div>
               </div>
-              <div class="col-xs-6 col-sm-3">
-                ${h.cc_expires_year_select(renderer, 'cc.expires_year', class_='form-control')}
+            </%forms:element>
+
+            <%forms:element renderer="${renderer}" name="cc.code" label="CVV Code">
+              <div class="row">
+                <div class="col-sm-4 col-xs-9">
+                  ${renderer.text('cc.code', class_='form-control')}
+                </div>
               </div>
-            </div>
-          </%forms:element>
+            </%forms:element>
 
-          <%forms:element renderer="${renderer}" name="cc.code" label="CVV Code">
-            <div class="row">
-              <div class="col-sm-4 col-xs-9">
-                ${renderer.text('cc.code', class_='form-control')}
-              </div>
-            </div>
-          </%forms:element>
+            ${forms.lcheckbox(renderer, 'cc.save', True, label='Save credit card information for future use')}
 
-          ${forms.lcheckbox(renderer, 'cc.save', True, label='Save credit card information for future use')}
-
-          ${forms.address_fields(renderer, 'cc.billing', order.active_payment_method.billing)}
+            ${forms.address_fields(renderer, 'cc.billing', order.active_payment_method.billing)}
+          </div>
 
           <%forms:actions>
             <button type="submit" class="btn btn-cta">Submit</button>

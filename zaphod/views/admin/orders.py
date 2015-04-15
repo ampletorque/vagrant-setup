@@ -449,7 +449,7 @@ class OrderEditView(BaseEditView):
             description='order-%d' % order.id,
             statement_descriptor=descriptor,
             ip=method.remote_addr,
-            user_agent=request.user_agent,
+            user_agent=method.user_agent,
             referrer=request.route_url('cart'),
         )
         order.payments.append(model.CreditCardPayment(

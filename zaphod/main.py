@@ -1,6 +1,3 @@
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-
 from pyramid.config import Configurator
 from pyramid.settings import asbool
 from pyramid.events import BeforeRender

@@ -1,6 +1,3 @@
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-
 from pyramid.httpexceptions import HTTPFound
 
 from pyramid_es import get_client

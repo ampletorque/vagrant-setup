@@ -1,6 +1,3 @@
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-
 from sqlalchemy import Column, types
 from sqlalchemy.orm import composite
 from sqlalchemy.ext.mutable import MutableComposite

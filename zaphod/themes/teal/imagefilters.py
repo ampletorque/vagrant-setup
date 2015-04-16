@@ -1,6 +1,3 @@
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-
 from pyramid_frontend.images.filters import Filter
 from pyramid_frontend.images.utils import is_white_background, pad_image
 

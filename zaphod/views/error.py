@@ -1,6 +1,3 @@
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-
 from pyramid.httpexceptions import (HTTPClientError, HTTPInternalServerError,
                                     HTTPFound)
 from pyramid.renderers import render_to_response

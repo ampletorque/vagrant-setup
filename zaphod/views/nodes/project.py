@@ -1,6 +1,3 @@
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-
 from pyramid.httpexceptions import HTTPFound, HTTPForbidden
 from pyramid.view import view_config
 from formencode import Schema, validators

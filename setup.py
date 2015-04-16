@@ -1,13 +1,5 @@
-from __future__ import print_function
-
-import os
-import sys
 from setuptools import setup, find_packages
 
-
-PY3 = sys.version_info[0] > 2
-
-here = os.path.abspath(os.path.dirname(__file__))
 
 requires = [
     'pyramid>=1.4.5',
@@ -54,11 +46,6 @@ requires = [
     'tox>=1.9.0',
     'flake8>=2.4.0',
 ]
-
-
-if not PY3:
-    # Needed for uwsgi deployment with ini-paste-logged.
-    requires.append('PasteScript>=1.7.5')
 
 
 setup(name='zaphod',

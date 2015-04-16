@@ -1,6 +1,3 @@
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-
 from formencode import Schema
 from pyramid_uniform import Form, FormRenderer
 from pyramid.view import view_config

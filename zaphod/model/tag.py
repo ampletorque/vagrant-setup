@@ -1,6 +1,3 @@
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-
 from sqlalchemy import Table, Column, ForeignKey, orm
 
 from .base import Base

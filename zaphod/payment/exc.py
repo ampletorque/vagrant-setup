@@ -2,9 +2,6 @@
 Common payment handling exceptions. Use these rather than implementing new
 ones.
 """
-from __future__ import absolute_import, print_function, division
-
-
 class PaymentException(Exception):
     message = "A payment error occurred."
 

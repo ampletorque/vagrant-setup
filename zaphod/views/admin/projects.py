@@ -1,6 +1,3 @@
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-
 from decimal import Decimal
 
 from pyramid.view import view_defaults, view_config

@@ -68,6 +68,7 @@ class CancelForm(Schema):
 
 class PrepareInvoiceForm(Schema):
     allow_extra_fields = False
+    chained_validators = [custom_validators.ListNotEmpty('item_ids')]
     item_ids = ForEach(validators.Int(not_empty=True))
 
 
@@ -177,9 +178,7 @@ class OrderEditView(BaseEditView):
 
         form = Form(request, PrepareInvoiceForm)
         if form.validate():
-            item_ids = form.data['item_ids']
-            assert len(item_ids) > 0, "need some items to pack"
-            for item_id in item_ids:
+            for item_id in form.data['item_ids']:
                 item = model.CartItem.get(item_id)
                 assert item.cart.order == order
                 item.status = 'being packed'

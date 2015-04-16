@@ -6,8 +6,6 @@ import email.utils
 import textwrap
 from datetime import datetime, date, timedelta
 
-import six
-
 from pyramid.renderers import render
 from pyramid.settings import asbool
 from pyramid_mailer import get_mailer
@@ -61,7 +59,7 @@ def dump_locally(settings, msg):
 
 
 def format_address_list(addrs):
-    return [addr if isinstance(addr, six.string_types) else
+    return [addr if isinstance(addr, str) else
             email.utils.formataddr(addr) for addr in addrs]
 
 

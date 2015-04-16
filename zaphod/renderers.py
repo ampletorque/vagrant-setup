@@ -1,7 +1,7 @@
 from decimal import Decimal
 import csv
 
-from six import StringIO
+from io import StringIO
 
 from pyramid.compat import string_types
 from pyramid.renderers import JSON

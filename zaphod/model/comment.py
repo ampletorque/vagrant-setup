@@ -1,5 +1,3 @@
-import six
-
 from sqlalchemy import Column, ForeignKey, types, orm
 from sqlalchemy.ext.declarative import declared_attr
 
@@ -17,10 +15,7 @@ class CommentMixin(object):
             return
 
         table_name = cls.__tablename__
-        if six.PY3:
-            type_name = cls.__name__ + 'Comment'
-        else:
-            type_name = cls.__name__ + b'Comment'
+        type_name = cls.__name__ + 'Comment'
 
         cls.Comment = type(
             type_name,

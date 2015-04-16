@@ -1,7 +1,5 @@
 from unittest import TestCase
 
-import six
-
 from ...logging import get_exclog_message
 from ...request import Request
 
@@ -19,7 +17,7 @@ class TestGetExclogMessage(TestCase):
         request = Request.blank('/')
         request.user = MockUser()
         msg = get_exclog_message(request)
-        self.assertIsInstance(msg, six.string_types)
+        self.assertIsInstance(msg, str)
 
     def test_sensitive_field_masking(self):
         request = Request.blank('/', method='POST')

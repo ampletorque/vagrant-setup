@@ -5,8 +5,6 @@ from sqlalchemy.ext.orderinglist import ordering_list
 
 from pyramid_es.mixin import ElasticMixin, ESMapping, ESField, ESString
 
-import six
-
 from . import utils
 from .base import Base, Session
 from .user_mixin import UserMixin
@@ -24,10 +22,7 @@ class ImageMixin(object):
             return
 
         table_name = cls.__tablename__
-        if six.PY3:
-            type_name = cls.__name__ + 'ImageAssociation'
-        else:
-            type_name = cls.__name__ + b'ImageAssociation'
+        type_name = cls.__name__ + 'ImageAssociation'
 
         ImageAssociation = type(
             type_name,

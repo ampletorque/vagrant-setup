@@ -1,5 +1,5 @@
 import pkg_resources
-from six import BytesIO
+from io import BytesIO
 
 from pyramid.view import view_config
 from pyramid.response import Response

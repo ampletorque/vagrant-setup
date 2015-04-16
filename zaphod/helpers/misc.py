@@ -6,7 +6,7 @@ import hashlib
 import string
 import time
 
-from six.moves.urllib.parse import urlencode
+from urllib.parse import urlencode
 
 from webhelpers2.html.tags import (HTML, _make_safe_id_component, literal,
                                    select)

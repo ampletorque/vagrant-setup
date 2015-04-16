@@ -1,8 +1,6 @@
 import re
 from string import Template
 
-from six.moves import range
-
 from webhelpers2.html import HTML, literal
 
 

@@ -1,4 +1,4 @@
-from six.moves.urllib.parse import quote
+from urllib.parse import quote
 
 from pyramid.httpexceptions import HTTPNotFound, HTTPMovedPermanently
 from sqlalchemy.orm.exc import NoResultFound

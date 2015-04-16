@@ -14,7 +14,7 @@
 
         ${renderer.begin(id='create-form', class_='form-horizontal form-wrapped')}
 
-          ${forms.lselect(renderer, 'vendor_id', None, vendors, label='Vendor', prompt='Select Vendor')}
+          ${forms.lselect(renderer, 'vendor_id', None, getters.vendors_for_select(), label='Vendor', prompt='Select Vendor')}
 
           <%forms:actions>
             <button class="btn btn-primary" type="submit">Save</button>

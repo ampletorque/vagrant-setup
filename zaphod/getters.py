@@ -18,6 +18,11 @@ def provider_types_for_select():
         order_by(model.ProviderType.name)
 
 
+def vendors_for_select():
+    return model.Session.query(model.Vendor.id, model.Vendor.name).\
+        order_by(model.Vendor.name)
+
+
 def featured_projects_for_cart(cart, limit=None):
     """
     Return a list of projects that are:

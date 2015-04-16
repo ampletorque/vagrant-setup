@@ -11,9 +11,9 @@ ${item.product.project.name}
 </%def>
 
 % if not unshipped_items:
-Your Crowd Supply order (${order.id}) from has shipped!
+Your Crowd Supply order (${order.id}) has shipped!
 % else:
-Your Crowd Supply order (${order.id}) from has partially shipped.
+Your Crowd Supply order (${order.id}) has partially shipped.
 % endif
 
 Your order is being shipped to:

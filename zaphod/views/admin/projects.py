@@ -151,9 +151,7 @@ class ProjectEditView(NodeEditView):
 
         form = Form(request, schema=ProductCreateForm)
         if form.validate():
-            product = model.Product(project=project,
-                                    created_by=request.user,
-                                    updated_by=request.user)
+            product = model.Product(project=project)
             form.bind(product)
             model.Session.flush()
             request.flash("Product created.", 'success')

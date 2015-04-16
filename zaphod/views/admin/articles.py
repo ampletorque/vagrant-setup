@@ -16,7 +16,7 @@ class ArticleEditView(NodeEditView):
 
     class UpdateForm(NodeUpdateForm):
         "Schema for validating article update form."
-        category = validators.UnicodeString(max=255)
+        category = validators.String(max=255)
         show_heading = validators.Bool()
         show_article_list = validators.Bool()
 

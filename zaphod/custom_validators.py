@@ -173,16 +173,16 @@ class AddressSchema(Schema):
         StateInCountryFormat('country_code', 'state'),
     ]
 
-    first_name = validators.UnicodeString(not_empty=True, strip=True)
-    last_name = validators.UnicodeString(not_empty=True, strip=True)
-    company = validators.UnicodeString(strip=True)
-    phone = validators.UnicodeString(not_empty=True, strip=True, min=5)
-    address1 = validators.UnicodeString(not_empty=True, strip=True)
-    address2 = validators.UnicodeString(strip=True)
-    city = validators.UnicodeString(not_empty=True, strip=True)
-    state = validators.UnicodeString(strip=True)
-    postal_code = validators.UnicodeString(strip=True)
-    country_code = validators.UnicodeString(not_empty=True)
+    first_name = validators.String(not_empty=True, strip=True)
+    last_name = validators.String(not_empty=True, strip=True)
+    company = validators.String(strip=True)
+    phone = validators.String(not_empty=True, strip=True, min=5)
+    address1 = validators.String(not_empty=True, strip=True)
+    address2 = validators.String(strip=True)
+    city = validators.String(not_empty=True, strip=True)
+    state = validators.String(strip=True)
+    postal_code = validators.String(strip=True)
+    country_code = validators.String(not_empty=True)
 
 
 class CreditCardValidator(validators.CreditCardValidator):
@@ -338,13 +338,13 @@ class ImageAssociation(Schema):
     allow_extra_fields = False
     id = compound.Any(validators.Int(not_empty=True),
                       validators.Regex('^[a-z0-9]+$', not_empty=True))
-    name = validators.UnicodeString(if_missing=None)
+    name = validators.String(if_missing=None)
     fresh = validators.Bool()
     published = validators.Bool()
     gravity = validators.Int(not_empty=True)
-    caption = validators.UnicodeString()
-    alt = validators.UnicodeString()
-    title = validators.UnicodeString()
+    caption = validators.String()
+    alt = validators.String()
+    title = validators.String()
 
 
 class UTCDateConverter(validators.DateConverter):

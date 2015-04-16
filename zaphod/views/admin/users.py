@@ -17,16 +17,16 @@ class UserEditView(BaseEditView):
 
     class UpdateForm(Schema):
         allow_extra_fields = False
-        name = validators.UnicodeString(not_empty=True)
+        name = validators.String(not_empty=True)
         email = validators.Email(not_empty=True)
-        password = validators.UnicodeString()
-        password2 = validators.UnicodeString()
+        password = validators.String()
+        password2 = validators.String()
         enabled = validators.Bool()
         admin = validators.Bool()
         show_admin_bars = validators.Bool()
         show_in_backers = validators.Bool()
-        show_location = validators.UnicodeString()
-        show_name = validators.UnicodeString()
+        show_location = validators.String()
+        show_name = validators.String()
         timezone = validators.String()
         url_path = custom_validators.URLString()
         twitter_username = custom_validators.TwitterUsername()
@@ -90,10 +90,10 @@ class UserCreateView(BaseCreateView):
 
     class CreateForm(Schema):
         allow_extra_fields = False
-        name = validators.UnicodeString(not_empty=True)
+        name = validators.String(not_empty=True)
         email = validators.Email(not_empty=True)
-        password = validators.UnicodeString()
-        password2 = validators.UnicodeString()
+        password = validators.String()
+        password2 = validators.String()
         admin = validators.Bool()
         send_welcome_email = validators.Bool()
         chained_validators = [validators.FieldsMatch('password', 'password2')]

@@ -17,7 +17,7 @@ from ...admin import BaseEditView
 class OptionValueSchema(Schema):
     allow_extra_fields = False
     id = validators.String(not_empty=True)
-    description = validators.UnicodeString(not_empty=True, strip=True)
+    description = validators.String(not_empty=True, strip=True)
     price_increase = custom_validators.Money(if_empty=0)
     gravity = validators.Int(not_empty=True)
     published = validators.Bool()
@@ -26,7 +26,7 @@ class OptionValueSchema(Schema):
 class OptionSchema(Schema):
     allow_extra_fields = False
     id = validators.String(not_empty=True)
-    name = validators.UnicodeString(not_empty=True, strip=True)
+    name = validators.String(not_empty=True, strip=True)
     gravity = validators.Int(not_empty=True)
     default_value_id = validators.String(if_missing=0)
     published = validators.Bool()
@@ -62,7 +62,7 @@ class ProductEditView(BaseEditView):
     class UpdateForm(Schema):
         allow_extra_fields = False
         pre_validators = [NestedVariables]
-        name = validators.UnicodeString(not_empty=True, strip=True)
+        name = validators.String(not_empty=True, strip=True)
         international_available = validators.Bool()
         international_surcharge = custom_validators.Money()
         gravity = validators.Int()

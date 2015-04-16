@@ -11,7 +11,7 @@ from . import NodePredicate
 class AskQuestionForm(Schema):
     allow_extra_fields = False
     email = validators.Email(not_empty=True)
-    message = validators.UnicodeString(not_empty=True)
+    message = validators.String(not_empty=True)
 
 
 class ProjectView(object):

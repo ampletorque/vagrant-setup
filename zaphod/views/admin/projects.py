@@ -17,13 +17,13 @@ from ...admin import (NodeEditView, NodeListView, NodeUpdateForm,
 
 class ProductCreateForm(Schema):
     allow_extra_fields = False
-    name = validators.UnicodeString(not_empty=True)
+    name = validators.String(not_empty=True)
 
 
 class OwnerSchema(Schema):
     allow_extra_fields = False
     user_id = validators.Int(not_empty=True)
-    title = validators.UnicodeString()
+    title = validators.String()
     gravity = validators.Int(if_empty=0)
     can_change_content = validators.Bool()
     can_post_updates = validators.Bool()
@@ -46,7 +46,7 @@ class OwnerCreateForm(Schema):
 
 class SuspendForm(Schema):
     allow_extra_fields = False
-    reason = validators.UnicodeString()
+    reason = validators.String()
 
 
 class TransferCreateForm(Schema):
@@ -54,7 +54,7 @@ class TransferCreateForm(Schema):
     amount = custom_validators.Money(not_empty=True, min=Decimal('.01'))
     fee = custom_validators.Money(if_empty=0)
     method = validators.String(not_empty=True)
-    reference = validators.UnicodeString()
+    reference = validators.String()
 
 
 @view_defaults(route_name='admin:projects', renderer='admin/projects.html',
@@ -92,15 +92,15 @@ class ProjectEditView(NodeEditView):
     class UpdateForm(NodeUpdateForm):
         "Schema for validating project update form."
         prelaunch_vimeo_id = validators.Int()
-        prelaunch_teaser = validators.UnicodeString()
-        prelaunch_body = validators.UnicodeString()
+        prelaunch_teaser = validators.String()
+        prelaunch_body = validators.String()
 
         crowdfunding_vimeo_id = validators.Int()
         # Crowdfunding teaser and body are handled by the base node schema
 
         available_vimeo_id = validators.Int()
-        available_teaser = validators.UnicodeString()
-        available_body = validators.UnicodeString()
+        available_teaser = validators.String()
+        available_body = validators.String()
 
         target = custom_validators.Money()
         start_time = validators.DateConverter(month_style='yyyy/mm/dd')

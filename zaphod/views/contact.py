@@ -10,8 +10,8 @@ class ContactForm(Schema):
     "Validates contact form submissions."
     allow_extra_fields = False
     email = validators.Email(not_empty=True)
-    subject = validators.UnicodeString()
-    message = validators.UnicodeString(not_empty=True)
+    subject = validators.String()
+    message = validators.String(not_empty=True)
 
 
 @view_config(route_name='contact', renderer='contact.html')

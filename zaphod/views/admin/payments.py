@@ -19,7 +19,7 @@ class RefundForm(Schema):
 
 class MarkChargebackForm(Schema):
     allow_extra_fields = False
-    reason = validators.UnicodeString()
+    reason = validators.String()
 
 
 class PaymentView(object):

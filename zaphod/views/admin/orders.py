@@ -44,7 +44,7 @@ class AddCashPaymentForm(Schema):
 class AddCheckPaymentForm(Schema):
     allow_extra_fields = False
     amount = custom_validators.Money(not_empty=True, min=0)
-    reference = validators.UnicodeString(not_empty=True)
+    reference = validators.String(not_empty=True)
     check_date = validators.DateConverter(month_style='yyyy/mm/dd',
                                           not_empty=True)
 
@@ -62,7 +62,7 @@ class AddCheckRefundForm(Schema):
 
 class CancelForm(Schema):
     allow_extra_fields = False
-    reason = validators.UnicodeString()
+    reason = validators.String()
     item_ids = ForEach(validators.Int(not_empty=True))
 
 
@@ -74,7 +74,7 @@ class PrepareInvoiceForm(Schema):
 class FillForm(Schema):
     allow_extra_fields = False
     chained_validators = [custom_validators.ListNotEmpty('item_ids')]
-    tracking_number = validators.UnicodeString()
+    tracking_number = validators.String()
     shipped_by_creator = validators.Bool()
     cost = custom_validators.Money(not_empty=True, min=0)
     item_ids = ForEach(validators.Int(not_empty=True))

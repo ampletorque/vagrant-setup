@@ -16,7 +16,7 @@ class CreatorEditView(NodeEditView):
 
     class UpdateForm(NodeUpdateForm):
         home_url = validators.URL(max=255)
-        location = validators.UnicodeString(max=255)
+        location = validators.String(max=255)
 
 
 @view_defaults(route_name='admin:creators', renderer='admin/creators.html',

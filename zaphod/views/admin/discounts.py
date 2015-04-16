@@ -15,7 +15,7 @@ class DiscountEditView(BaseEditView):
 
     class UpdateForm(Schema):
         allow_extra_fields = False
-        description = validators.UnicodeString(not_empty=True, strip=True)
+        description = validators.String(not_empty=True, strip=True)
         rate = validators.Number(not_empty=True)
         published = validators.Bool()
         enabled = validators.Bool()
@@ -38,4 +38,4 @@ class DiscountCreateView(BaseCreateView):
     class CreateForm(Schema):
         allow_extra_fields = False
         creator_id = validators.Int(not_empty=True)
-        description = validators.UnicodeString(not_empty=True)
+        description = validators.String(not_empty=True)

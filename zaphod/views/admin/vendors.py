@@ -16,7 +16,7 @@ class VendorEditView(BaseEditView):
     class UpdateForm(Schema):
         allow_extra_fields = False
         pre_validators = [NestedVariables]
-        name = validators.UnicodeString(not_empty=True)
+        name = validators.String(not_empty=True)
         active = validators.Bool()
         mailing = custom_validators.AddressSchema
         new_comment = custom_validators.CommentBody()
@@ -38,4 +38,4 @@ class VendorCreateView(BaseCreateView):
 
     class CreateForm(Schema):
         allow_extra_fields = False
-        name = validators.UnicodeString(not_empty=True)
+        name = validators.String(not_empty=True)

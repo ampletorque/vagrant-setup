@@ -32,7 +32,7 @@ class CheckoutForm(Schema):
     non_physical = validators.Bool()
 
     email = validators.Email(not_empty=True, strip=True)
-    comments = validators.UnicodeString()
+    comments = validators.String()
 
     cc = custom_validators.SelectValidator(
         {'yes': validators.Constant('saved')},

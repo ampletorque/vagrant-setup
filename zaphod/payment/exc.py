@@ -2,6 +2,8 @@
 Common payment handling exceptions. Use these rather than implementing new
 ones.
 """
+
+
 class PaymentException(Exception):
     message = "A payment error occurred."
 

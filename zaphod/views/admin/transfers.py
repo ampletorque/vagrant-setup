@@ -18,4 +18,4 @@ class TransferEditView(BaseEditView):
         amount = custom_validators.Money(not_empty=True)
         fee = custom_validators.Money(if_empty=0)
         method = validators.String(not_empty=True)
-        reference = validators.UnicodeString()
+        reference = validators.String()

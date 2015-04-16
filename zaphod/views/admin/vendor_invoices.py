@@ -19,7 +19,7 @@ class ItemSchema(Schema):
 class InvoiceForm(Schema):
     allow_extra_fields = False
     pre_validators = [NestedVariables()]
-    invoice_num = validators.UnicodeString(not_empty=True)
+    invoice_num = validators.String(not_empty=True)
     invoice_date = validators.DateConverter()
 
     shipping_date = validators.DateConverter()

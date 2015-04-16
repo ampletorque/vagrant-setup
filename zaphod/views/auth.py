@@ -21,38 +21,38 @@ class LoginForm(Schema):
     Schema for validating login attempts.
     """
     allow_extra_fields = False
-    email = validators.UnicodeString(not_empty=False, strip=True)
-    password = validators.UnicodeString(not_empty=False, strip=True)
+    email = validators.String(not_empty=False, strip=True)
+    password = validators.String(not_empty=False, strip=True)
     remember_me = validators.Bool()
 
 
 class SettingsForm(Schema):
     allow_extra_fields = False
     pre_validators = [NestedVariables()]
-    name = validators.UnicodeString(not_empty=True, strip=True)
-    email = validators.UnicodeString(not_empty=True, strip=True)
-    password = validators.UnicodeString(not_empty=False, min=4, strip=True)
-    password2 = validators.UnicodeString(not_empty=False, strip=True)
+    name = validators.String(not_empty=True, strip=True)
+    email = validators.String(not_empty=True, strip=True)
+    password = validators.String(not_empty=False, min=4, strip=True)
+    password2 = validators.String(not_empty=False, strip=True)
 
     url_path = custom_validators.URLString()
-    twitter_username = validators.UnicodeString()
+    twitter_username = validators.String()
 
     show_in_backers = validators.Bool()
-    show_name = validators.UnicodeString()
-    show_location = validators.UnicodeString()
+    show_name = validators.String()
+    show_location = validators.String()
 
     chained_validators = [validators.FieldsMatch('password', 'password2')]
 
 
 class ForgotPasswordForm(Schema):
     allow_extra_fields = False
-    email = validators.UnicodeString(not_empty=True, strip=True)
+    email = validators.String(not_empty=True, strip=True)
 
 
 class ForgotResetForm(Schema):
     allow_extra_fields = False
-    password = validators.UnicodeString(not_empty=False, min=4, strip=True)
-    password2 = validators.UnicodeString(not_empty=False, strip=True)
+    password = validators.String(not_empty=False, min=4, strip=True)
+    password2 = validators.String(not_empty=False, strip=True)
     chained_validators = [validators.FieldsMatch('password', 'password2')]
 
 

@@ -17,22 +17,22 @@ class LeadEditView(BaseEditView):
         "Schema for validating lead update form."
         allow_extra_fields = False
         pre_validators = [NestedVariables()]
-        name = validators.UnicodeString(not_empty=True)
-        description = validators.UnicodeString()
-        notes = validators.UnicodeString()
-        discount = validators.UnicodeString()
+        name = validators.String(not_empty=True)
+        description = validators.String()
+        notes = validators.String()
+        discount = validators.String()
         status = validators.String(not_empty=True)
         assigned_to_id = validators.Int()
         source_id = validators.Int()
-        new_source = validators.UnicodeString()
+        new_source = validators.String()
         contact_point = validators.String()
         estimated_launch_time = \
             custom_validators.UTCDateConverter(month_style='yyyy/mm/dd')
         campaign_duration_days = validators.Int()
-        person = validators.UnicodeString(if_empty=u'')
+        person = validators.String(if_empty=u'')
         email = validators.Email(if_empty=u'')
-        phone = validators.UnicodeString(if_empty=u'')
-        new_comment = validators.UnicodeString()
+        phone = validators.String(if_empty=u'')
+        new_comment = validators.String()
 
         was_contacted = validators.Bool()
         next_contact_days = validators.Int()
@@ -54,6 +54,6 @@ class LeadCreateView(BaseCreateView):
 
     class CreateForm(Schema):
         allow_extra_fields = False
-        name = validators.UnicodeString(not_empty=True)
+        name = validators.String(not_empty=True)
         source_id = validators.Int()
-        new_source = validators.UnicodeString()
+        new_source = validators.String()

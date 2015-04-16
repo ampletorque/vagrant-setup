@@ -8,12 +8,12 @@ from .. import mail, custom_validators
 
 class LaunchForm(Schema):
     allow_extra_fields = False
-    name = validators.UnicodeString()
-    description = validators.UnicodeString()
+    name = validators.String()
+    description = validators.String()
     email = validators.Email()
     goal = custom_validators.Money()
-    allocation = validators.UnicodeString()
-    country = validators.UnicodeString()
+    allocation = validators.String()
+    country = validators.String()
 
 
 templ = '''%(description)s

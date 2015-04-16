@@ -204,12 +204,12 @@ class NodeUpdateForm(Schema):
     allow_extra_fields = False
     pre_validators = [NestedVariables()]
 
-    name = validators.UnicodeString(max=255, not_empty=True, strip=True)
+    name = validators.String(max=255, not_empty=True, strip=True)
     override_path = custom_validators.URLString(if_missing=None)
 
-    keywords = validators.UnicodeString()
-    teaser = validators.UnicodeString()
-    body = validators.UnicodeString()
+    keywords = validators.String()
+    teaser = validators.String()
+    body = validators.String()
 
     listed = validators.Bool()
     published = validators.Bool()
@@ -228,7 +228,7 @@ class NodeListView(BaseListView):
 
 class NodeCreateForm(Schema):
     allow_extra_fields = False
-    name = validators.UnicodeString(max=255, not_empty=True)
+    name = validators.String(max=255, not_empty=True)
 
 
 class NodeCreateView(BaseCreateView):

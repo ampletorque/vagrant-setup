@@ -19,7 +19,7 @@ class ShipmentForm(Schema):
     "Schema for validating vendor shipment update form."
     allow_extra_fields = False
     pre_validators = [NestedVariables()]
-    description = validators.UnicodeString()
+    description = validators.String()
     items = ForEach(ItemSchema)
 
 

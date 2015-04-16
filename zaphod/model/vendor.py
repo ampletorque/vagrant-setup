@@ -33,7 +33,7 @@ class VendorOrder(Base, UserMixin, CommentMixin):
     placed_by_id = Column(None, ForeignKey('users.id'), nullable=True)
     placed_time = Column(types.DateTime, nullable=True)
 
-    status = Column(types.String(255), nullable=False)
+    status = Column(types.String(255), nullable=False, default='crea')
 
     vendor = orm.relationship('Vendor', backref='orders')
     placed_by = orm.relationship('User', foreign_keys=[placed_by_id])

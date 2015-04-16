@@ -124,21 +124,14 @@ def send(request, template_name, vars, to=None, from_=None,
             mailer.send(msg)
 
 
-def load_admin_users(template_name):
-    # XXX
-    return model.Session.query(model.User).filter_by(admin=True).all()
-
-
 def send_with_admin(request, template_name, vars, to=None, from_=None,
                     bcc=None, cc=None, reply_to=None, immediately=False):
     """
     Wrap the ``mail.send()`` so that emails are bcc'd to any admin users with
     the corresponding setting set.
     """
-    admin_emails = [(user.name, user.email) for user in
-                    load_admin_users(template_name)]
     bcc = bcc or []
-    bcc.extend(admin_emails)
+    bcc.append(request.registry.settings['mailer.admins'])
     return send(request=request, template_name=template_name,
                 vars=vars,
                 to=to, from_=from_, bcc=bcc, cc=cc, reply_to=reply_to,

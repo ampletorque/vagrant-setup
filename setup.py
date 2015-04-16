@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 requires = [
     'pyramid>=1.4.5',
-    'SQLAlchemy>=0.8.2',
+    'SQLAlchemy>=1.0.0',
     'alembic>=0.6.7',
     'transaction>=1.4.3',
     'pyramid_tm>=0.7',

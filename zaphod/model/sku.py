@@ -100,7 +100,9 @@ def sku_for_option_value_ids(product, ov_ids):
     new one.
     """
     q = Session.query(SKU).filter_by(product=product)
-    assert len(ov_ids) == len(product.options), "not enough ov IDs specified"
+    assert len(ov_ids) == len(product.options), \
+        "not enough ov IDs specified: product %d has %d, only got %d" % (
+            product.id, len(product.options), len(ov_ids))
     for ov_id in ov_ids:
         q = q.filter(SKU.option_values.any(id=ov_id))
     try:

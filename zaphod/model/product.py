@@ -65,7 +65,7 @@ class Product(Base, ImageMixin, ElasticMixin):
     accepts_preorders = Column(types.Boolean, nullable=False, default=False)
     in_stock = Column(types.Boolean, nullable=False, default=False)
     fulfillment_fee = Column(custom_types.Money, nullable=False,
-                             default=Decimal('2.50'))
+                             default=Decimal('2.75'))
 
     hs_code = Column(types.String(255), nullable=False, default=u'')
     # In kg

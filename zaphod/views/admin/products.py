@@ -82,7 +82,10 @@ class ProductEditView(BaseEditView):
     def _update_object(self, form, obj):
         obj.associated_products.clear()
         for ap_id in form.data.pop('associated_product_ids'):
-            obj.associated_products.add(model.Product.get(ap_id))
+            product = model.Product.get(ap_id)
+            assert len(product.options) == 0, \
+                "product w/ options cannot be associated"
+            obj.associated_products.add(product)
         BaseEditView._update_object(self, form, obj)
         self.request.theme.invalidate_project(obj.project.id)
 

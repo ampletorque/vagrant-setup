@@ -95,7 +95,8 @@ class CartView(object):
     def add(self):
         request = self.request
 
-        form = Form(request, schema=CartItemAddSchema, skip_csrf=True)
+        form = Form(request, schema=CartItemAddSchema, skip_csrf=True,
+                    method=None)
         if form.validate():
             product = model.Product.get(form.data['product_id'])
             cart = self.get_cart(create_new=True)

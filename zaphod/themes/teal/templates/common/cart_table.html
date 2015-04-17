@@ -83,8 +83,8 @@
       % for product in products:
         <div class="col-sm-3 text-center">
           <h4>${product.name}</h4>
-          ${product.img(request, 'product-icon')}
-          <button class="btn btn-cta">Add For ${h.currency(product.price)}</button>
+          <p>${product.img(request, 'product-icon')}</p>
+          <a href="${request.route_path('cart:add', _query=dict(product_id=product.id, qty=1))}" class="btn btn-cta">Add For ${h.currency(product.price)}</a>
         </div>
       % endfor
     </div>

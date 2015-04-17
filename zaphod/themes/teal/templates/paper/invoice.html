@@ -40,6 +40,13 @@
             </center>
           </td>
         % endfor
+        % if len(projects) < 3:
+          % for __ in range(3 - len(projects)):
+            <td style="width:33%; padding: 0.25in;">
+              &nbsp;
+            </td>
+          % endfor
+        % endfor
       </tr>
     </table>
   % endif

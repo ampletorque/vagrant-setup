@@ -14,8 +14,6 @@ from pyramid_mailer.message import Message
 from mako.exceptions import TopLevelLookupException
 from premailer import Premailer
 
-from . import model
-
 log = logging.getLogger(__name__)
 
 

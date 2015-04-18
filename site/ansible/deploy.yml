@@ -32,6 +32,7 @@
            dest=/var/sw/zaphod
            version={{ version }}
            accept_hostkey=yes
+      register: git_status
 
     - name: setup zaphod database
       shell: mysql -uroot < /var/sw/zaphod/site/conf/dbsetup.sql
@@ -75,3 +76,7 @@
 
     - name: build docs
       command: /var/sw/pyramid34/bin/sphinx-build -d /var/sw/zaphod/docs/_build/doctrees -b html /var/sw/zaphod/docs /var/sw/zaphod/docs/_build/html
+
+    - name: log completion
+      sudo: yes
+      shell: echo "{{ app_environment }} update {{ git_status.before }} to {{ git_status.after }}" >> /var/log/ansible-deployments.log

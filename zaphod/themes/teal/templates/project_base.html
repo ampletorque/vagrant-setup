@@ -327,7 +327,7 @@
           % elif project.status in ('available', 'stock-only'):
             % if product.in_stock:
               <button type="submit" class="btn btn-block btn-cta">Add to Cart</button>
-            % elif product.accepts_preorders:
+            % elif product.accepts_preorders and project.accepts_preorders:
               <button type="submit" class="btn btn-block btn-cta">Pre-order</button>
             % endif
           % endif

@@ -63,6 +63,9 @@ def includeme(config):
 
     config.add_route('admin:orders', '/orders')
     config.add_route('admin:orders:new', '/orders/new')
+    config.add_route('admin:orders:open', '/orders/open')
+    config.add_route('admin:orders:open-stock', '/orders/open-stock')
+    config.add_route('admin:orders:overdue', '/orders/overdue')
     config.add_route('admin:order', '/order/{id}')
     config.add_route('admin:order:resend-confirmation',
                      '/order/{id}/resend-confirmation')

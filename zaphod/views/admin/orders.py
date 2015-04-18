@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from sqlalchemy.sql import not_
 from pyramid.httpexceptions import HTTPFound
 from pyramid.view import view_defaults, view_config
 from venusian import lift
@@ -608,13 +609,42 @@ class OrderListView(BaseListView):
     cls = model.Order
     paginate = True
 
-    @view_config(route_name='admin:orders',
-                 renderer='admin/orders.html')
+    @view_config(route_name='admin:orders', renderer='admin/orders.html')
     def index(self):
         vars = BaseListView.index(self)
         q = model.Session.query(model.Order).filter_by(closed=False)
         vars['num_open'] = q.count()
         return vars
+
+    @view_config(route_name='admin:orders:open', renderer='admin/orders.html')
+    def open(self):
+        q = model.Session.query(model.Order).\
+            filter_by(closed=False).\
+            order_by(model.Order.id.desc())
+        return {'page': self._make_page(q)}
+
+    @view_config(route_name='admin:orders:open-stock',
+                 renderer='admin/orders.html')
+    def open_stock(self):
+        q = model.Session.query(model.Order).\
+            join(model.Order.cart).\
+            join(model.Cart.items).\
+            filter(model.Order.closed == False).\
+            filter(not_(model.CartItem.status.in_(['cancelled', 'shipped']))).\
+            order_by(model.Order.id.desc())
+        return {'page': self._make_page(q)}
+
+    @view_config(route_name='admin:orders:overdue',
+                 renderer='admin/orders.html')
+    def overdue(self):
+        utcnow = model.utcnow()
+        q = model.Session.query(model.Order).\
+            join(model.Order.cart).\
+            join(model.Cart.items).\
+            filter(model.Order.closed == False).\
+            filter(model.CartItem.expected_ship_time < utcnow).\
+            order_by(model.Order.id.desc())
+        return {'page': self._make_page(q)}
 
 
 @view_defaults(route_name='admin:orders:new',

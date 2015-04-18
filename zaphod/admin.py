@@ -113,6 +113,14 @@ class BaseListView(object):
     def __init__(self, request):
         self.request = request
 
+    def _make_page(self, q):
+        request = self.request
+        item_count = q.count()
+        return Page(request, q,
+                    page=int(request.params.get('page', 1)),
+                    items_per_page=20,
+                    item_count=item_count)
+
     @view_config(permission='admin')
     def index(self):
         request = self.request
@@ -133,11 +141,7 @@ class BaseListView(object):
             q = model.Session.query(self.cls)
             final_q = q.order_by(self.cls.id.desc())
             if self.paginate:
-                item_count = final_q.count()
-                page = Page(request, final_q,
-                            page=int(request.params.get('page', 1)),
-                            items_per_page=20,
-                            item_count=item_count)
+                page = self._make_page(final_q)
                 return dict(page=page)
             else:
                 return dict(objs=final_q.all())

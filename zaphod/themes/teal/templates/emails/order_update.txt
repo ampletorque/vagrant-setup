@@ -1,6 +1,8 @@
 <%inherit file="base.txt"/>\
 An address change has been requested for order ${order.id}.
 
+${request.route_url('admin:order', id=order.id)}
+
 Current Address:
 ${self.address_fields(order.shipping)}
 

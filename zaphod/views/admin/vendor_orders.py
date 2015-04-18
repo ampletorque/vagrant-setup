@@ -1,3 +1,4 @@
+from pyramid.httpexceptions import HTTPFound
 from pyramid.view import view_defaults, view_config
 from venusian import lift
 from formencode import Schema, validators
@@ -17,6 +18,28 @@ class VendorOrderEditView(BaseEditView):
         "Schema for validating vendor order update form."
         loaded_time = validators.Number(not_empty=True)
         new_comment = custom_validators.CommentBody()
+
+    @view_config(route_name='admin:vendor-order:mark-sent')
+    def mark_sent(self):
+        request = self.request
+        vo = self._get_object()
+        self._touch_object(vo)
+        vo.status = 'sent'
+        vo.placed_by = request.user
+        vo.placed_time = model.utcnow()
+        request.flash("Marked order as sent.", 'success')
+        return HTTPFound(location=request.route_url('admin:vendor-order',
+                                                    id=vo.id))
+
+    @view_config(route_name='admin:vendor-order:mark-confirmed')
+    def mark_confirmed(self):
+        request = self.request
+        vo = self._get_object()
+        self._touch_object(vo)
+        vo.status = 'conf'
+        request.flash("Marked order as confirmed.", 'success')
+        return HTTPFound(location=request.route_url('admin:vendor-order',
+                                                    id=vo.id))
 
 
 @view_defaults(route_name='admin:vendor-orders',

@@ -78,7 +78,11 @@
               <tbody>
                 % for item in obj.items:
                   <tr>
-                    <td></td>
+                    <td class="table-remove">
+                      <a href="${request.route_path('admin:vendor-order:remove-item', id=obj.id, item_id=item.id)}">
+                        <i class="fa fa-minus-circle"></i>
+                      </a>
+                    </td>
                     <td>
                       <a href="${request.route_path('admin:product', id=item.sku.product_id)}">
                         ${item.sku.product.name}
@@ -86,13 +90,34 @@
                       ${blocks.option_value_list(item.sku)}
                     </td>
                     <td>${item.sku.id}</td>
-                    <td>${item.qty_ordered}</td>
+                    <td style="width:80px">
+                      ${renderer.hidden('items-%d.id' % loop.index, item.id)}
+                      ${renderer.text('items-%d.qty_ordered' % loop.index, item.qty_ordered, class_='form-control', type='number', min=1)}
+                    </td>
                     <td>${item.qty_received}</td>
                     <td>${item.qty_invoiced}</td>
-                    <td>${h.currency(item.cost)}</td>
+                    <td style="width:125px">
+                      <div class="input-group">
+                        <div class="input-group-addon">$</div>
+                        ${renderer.text('items-%d.cost' % loop.index, item.cost, class_='form-control')}
+                      </div>
+                    </td>
                   </tr>
                 % endfor
               </tbody>
+              <tfoot>
+                <tr>
+                  <td class="table-add">
+                    <a href="${request.route_path('admin:vendor-order:add-item', id=obj.id)}">
+                      <i class="fa fa-plus-circle"></i>
+                    </a>
+                  </td>
+                  <td colspan="6">
+                    <a href="${request.route_path('admin:vendor-order:add-item', id=obj.id)}">
+                      Add Item
+                    </a>
+                  </td>
+              </tfoot>
             </table>
           </div>
 

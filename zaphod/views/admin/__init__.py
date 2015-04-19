@@ -110,6 +110,10 @@ def includeme(config):
     config.add_route('admin:vendor-orders', '/vendor-orders')
     config.add_route('admin:vendor-orders:new', '/vendor-orders/new')
     config.add_route('admin:vendor-order', '/vendor-order/{id}')
+    config.add_route('admin:vendor-order:add-item',
+                     '/vendor-order/{id}/add-item')
+    config.add_route('admin:vendor-order:remove-item',
+                     '/vendor-order/{id}/remove-item/{item_id}')
     config.add_route('admin:vendor-order:mark-sent',
                      '/vendor-order/{id}/mark-sent')
     config.add_route('admin:vendor-order:mark-confirmed',

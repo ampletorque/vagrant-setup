@@ -85,9 +85,8 @@ class FillForm(Schema):
 
 class AddItemForm(Schema):
     allow_extra_fields = False
-    pre_validators = [NestedVariables]
     product_id = validators.Int(not_empty=True)
-    options = ForEach(validators.Int(not_empty=True))
+    value_ids = ForEach(validators.Int(not_empty=True))
     qty = validators.Int(not_empty=True, min=1, max=99)
     stage = validators.OneOf(['crowdfunding', 'pre-order', 'stock'],
                              not_empty=True)
@@ -276,7 +275,7 @@ class OrderEditView(BaseEditView):
             'stock': model.CartItem.STOCK,
         }[form.data['stage']]
 
-        sku = model.sku_for_option_value_ids(product, form.data['options'])
+        sku = model.sku_for_option_value_ids(product, form.data['value_ids'])
         item = model.CartItem(
             cart=order.cart,
             stage=stage,

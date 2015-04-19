@@ -8,7 +8,7 @@ from pyramid_uniform import Form, FormRenderer
 from formencode import Schema, NestedVariables, validators
 from itsdangerous import TimestampSigner
 
-from .. import model, payment, custom_validators
+from .. import mail, model, payment, custom_validators
 from ..payment.exc import PaymentException
 
 log = logging.getLogger(__name__)
@@ -32,6 +32,22 @@ class UpdatePaymentView(object):
         signer = TimestampSigner(settings['payment.secret'])
         s = signer.unsign(token, max_age=86400)
         return int(s)
+
+    def _send_failure_email(self, order, form, e, stage):
+        request = self.request
+        session = request.session
+        billing = model.Address(**form.data['cc']['billing'])
+        mail.send_with_admin(request,
+                             'update_payment_failure',
+                             vars=dict(
+                                 stage=stage,
+                                 billing=billing,
+                                 session_id=session.id,
+                                 order=order,
+                                 exc=e,
+                             ),
+                             to=[request.registry.settings['mailer.from']],
+                             immediately=True)
 
     def _make_method_profile(self, order, form):
         request = self.request
@@ -59,6 +75,7 @@ class UpdatePaymentView(object):
                 request.flash(
                     "That credit card could not be processed. Please double "
                     "check that the information is correct.", 'error')
+            self._send_failure_email(order, form, e, 'creating profile')
             return None, None
 
         method = model.PaymentMethod(
@@ -117,35 +134,47 @@ class UpdatePaymentView(object):
                 amount = (order.current_due_amount - order.authorized_amount)
                 descriptor = payment.make_descriptor(registry, order.id)
 
-                # XXX Need error handling here!
-                resp = profile.authorize(
-                    amount=amount,
-                    description='order-%d' % order.id,
-                    statement_descriptor=descriptor,
-                    ip=use_method.remote_addr,
-                    user_agent=use_method.user_agent,
-                    referrer=request.route_url('cart'),
-                )
+                try:
+                    resp = profile.authorize(
+                        amount=amount,
+                        description='order-%d' % order.id,
+                        statement_descriptor=descriptor,
+                        ip=use_method.remote_addr,
+                        user_agent=use_method.user_agent,
+                        referrer=request.route_url('cart'),
+                    )
+                except (socket.error, PaymentException) as e:
+                    if isinstance(e, socket.error):
+                        request.flash(
+                            "A error occured while attempting to process the "
+                            "transaction. Please try again.", 'error')
+                    else:
+                        request.flash(
+                            "That credit card could not be processed. Please "
+                            "double check that the information is correct.",
+                            'error')
+                    self._send_failure_email(order, form, e, 'issuing charge')
 
-                order.active_payment_method = use_method
-                order.payments.append(model.CreditCardPayment(
-                    method=use_method,
-                    transaction_id=resp['transaction_id'],
-                    invoice_number=descriptor,
-                    authorized_amount=amount,
-                    amount=0,
-                    avs_address1_result=resp['avs_address1_result'],
-                    avs_zip_result=resp['avs_zip_result'],
-                    ccv_result=resp['ccv_result'],
-                    card_type=resp['card_type'],
-                    created_by_id=request.user.id if request.user else 1,
-                    descriptor=descriptor,
-                ))
+                else:
+                    order.active_payment_method = use_method
+                    order.payments.append(model.CreditCardPayment(
+                        method=use_method,
+                        transaction_id=resp['transaction_id'],
+                        invoice_number=descriptor,
+                        authorized_amount=amount,
+                        amount=0,
+                        avs_address1_result=resp['avs_address1_result'],
+                        avs_zip_result=resp['avs_zip_result'],
+                        ccv_result=resp['ccv_result'],
+                        card_type=resp['card_type'],
+                        created_by_id=request.user.id if request.user else 1,
+                        descriptor=descriptor,
+                    ))
 
-                request.flash("Thank you, your payment was successful. If "
-                              "you would like to see the status of your "
-                              "order(s), you may log in now.", 'success')
-                return HTTPFound(location=request.route_url('account'))
+                    request.flash("Thank you, your payment was successful. If "
+                                  "you would like to see the status of your "
+                                  "order(s), you may log in now.", 'success')
+                    return HTTPFound(location=request.route_url('account'))
 
         return {
             'order': order,

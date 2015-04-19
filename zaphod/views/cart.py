@@ -102,7 +102,8 @@ class CartView(object):
             if not (product and cart and cart.id):
                 raise HTTPBadRequest
 
-            sku = model.sku_for_option_value_ids(product, form.data['value_ids'])
+            sku = model.sku_for_option_value_ids(product,
+                                                 form.data['value_ids'])
             ci = model.Session.query(model.CartItem).\
                 filter_by(cart=cart, sku=sku).first()
 

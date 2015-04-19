@@ -352,7 +352,7 @@
         </select>
       </div>
     % else:
-      ${h.hidden('options-%d' % loop.index, option.default_value.id)}
+      ${h.hidden('value_ids', option.default_value.id)}
     % endif
   % endfor
 </%def>

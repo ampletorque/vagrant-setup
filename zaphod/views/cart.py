@@ -112,7 +112,7 @@ class CartView(object):
                               "the qty has been increased to %d." %
                               (product.name, ci.qty_desired), 'success')
             else:
-                if not sku.qty_available:
+                if product.in_stock and (not sku.qty_available):
                     request.flash("Sorry, the particular variant you selected "
                                   "is out of stock.", 'error')
                     project = product.project

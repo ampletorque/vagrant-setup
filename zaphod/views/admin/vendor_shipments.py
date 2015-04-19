@@ -47,10 +47,19 @@ class VendorShipmentEditView(BaseEditView):
 
         form = Form(request, ShipmentForm)
         if form.validate():
-            vendor_shipment = self.cls(vendor_order=vendor_order)
+            vendor_shipment = self.cls(vendor_order=vendor_order,
+                                       created_by=request.user,
+                                       updated_by=request.user)
             for item_params in form.data.pop('items'):
-                # create VSI
-                pass
+                voi = model.VendorOrderItem.get(item_params['id'])
+                vsi = model.VendorShipmentItem(
+                    sku=voi.sku,
+                    vendor_shipment=vendor_shipment,
+                    vendor_order_item=voi,
+                )
+                model.Session.add(vsi)
+                vsi.adjust_qty(item_params['qty'])
+
             form.bind(vendor_shipment)
             model.Session.flush()
             request.flash("Received shipment.", 'success')

@@ -17,6 +17,12 @@ define([
       .proxy('valueRemoveHandler')
       .proxy('optionGrabHandler')
       .proxy('valueGrabHandler')
+      .proxy('optionDragHandler')
+      .proxy('valueDragHandler')
+      .proxy('optionDropHandler')
+      .proxy('valueDropHandler')
+      .proxy('optionPlaceTarget')
+      .proxy('valuePlaceTarget')
       .proxy('setGravity')
       .proxy('resetHandler');
     this.init();
@@ -86,19 +92,93 @@ define([
       $(e.target).closest('tr').remove();
     },
 
+    doNothing: function(e) {
+      e.preventDefault();
+    },
+
     optionGrabHandler: function(e) {
       console.log("option grab");
+      this.$movingRow = $(e.target).closest('tr');
+      this.$helper = $('<table>')
+        .addClass('table')
+        .css({
+          position: 'absolute',
+          width: this.$movingRow.width()
+        })
+        .append(this.$movingRow.clone());
+      this.$movingRow.css('opacity', 0.5);
 
+      $('body')
+        .on('mousemove', this.optionDragHandler)
+        .on('selectstart', this.doNothing)
+        .on('mouseup', this.optionDropHandler)
+        .append(this.$helper);
+
+      this.$target = $('<tr>')
+        .addClass('table-drop-target')
+        .append('<td colspan="4"></td>');
+
+      this.optionDragHandler(e);
     },
 
     optionDragHandler: function(e) {
       console.log("option drag");
-
+      this.$helper.css({
+        top: e.pageY + 10,
+        left: e.pageX + 10
+      });
+      this.optionPlaceTarget(e);
     },
 
     optionDropHandler: function(e) {
       console.log("option drop");
+      $('body')
+        .off('selectstart', this.doNothing)
+        .off('mousemove', this.optionDragHandler)
+        .off('mouseup', this.optionDropHandler);
 
+      if(this.$target.is(':visible')) {
+        // Actually move item and finalize
+        this.$movingRow.css('opacity', 1.0);
+        this.$target.after(this.$movingRow);
+        this.$target.detach();
+        this.setGravity();
+      } else {
+        this.$movingRow.css('opacity', 1.0);
+      }
+
+      this.$helper.remove();
+    },
+
+    optionPlaceTarget: function(e) {
+      console.log("option place target");
+      var $over = $(e.target).closest('tr');
+
+      // If we're not over the container, return.
+      if(!($.contains(this.$optionsBody[0], $over[0]))) {
+        return;
+      }
+
+      // If we're over the existing target, return.
+      if($over[0] === this.$target[0]) {
+        return;
+      }
+
+      this.$target.detach();
+
+      // If we're over the row being dragged, hide the target.
+      if($over[0] === this.$movingRow[0]) {
+        return;
+      }
+
+      // Otherwise, place the target either before or after the row we're over.
+      var h = $over.height(),
+          off = $over.offset();
+      if ((e.pageY < (off.top + h / 2)) && ($over.prev()[0] !== this.$movingRow[0])) {
+        $over.before(this.$target);
+      } else if ((e.pageY > (off.top + h / 2)) && ($over.next()[0] !== this.$movingRow[0])) {
+        $over.after(this.$target);
+      }
     },
 
     valueAddHandler: function(e) {
@@ -138,21 +218,96 @@ define([
 
     valueGrabHandler: function(e) {
       console.log("value grab");
+      this.$movingRow = $(e.target).closest('tr');
+      this.$movingBody = this.$movingRow.closest('tbody');
+      this.$helper = $('<table>')
+        .addClass('table')
+        .css({
+          position: 'absolute',
+          width: this.$movingRow.width()
+        })
+        .append(this.$movingRow.clone());
+      this.$movingRow.css('opacity', 0.5);
 
+      $('body')
+        .on('mousemove', this.valueDragHandler)
+        .on('selectstart', this.doNothing)
+        .on('mouseup', this.valueDropHandler)
+        .append(this.$helper);
+
+      this.$target = $('<tr>')
+        .addClass('table-drop-target')
+        .append('<td colspan="6"></td>');
+
+      this.valueDragHandler(e);
     },
 
     valueDragHandler: function(e) {
       console.log("value drag");
-
+      this.$helper.css({
+        top: e.pageY + 10,
+        left: e.pageX + 10
+      });
+      this.valuePlaceTarget(e);
     },
 
     valueDropHandler: function(e) {
       console.log("value drop");
+      $('body')
+        .off('selectstart', this.doNothing)
+        .off('mousemove', this.valueDragHandler)
+        .off('mouseup', this.valueDropHandler);
 
+      if(this.$target.is(':visible')) {
+        // Actually move item and finalize
+        this.$movingRow.css('opacity', 1.0);
+        this.$target.after(this.$movingRow);
+        this.$target.detach();
+        this.setGravity();
+      } else {
+        this.$movingRow.css('opacity', 1.0);
+      }
+
+      this.$helper.remove();
+    },
+
+    valuePlaceTarget: function(e) {
+      console.log("value place target");
+      var $over = $(e.target).closest('tr');
+
+      // If we're not over the container, return.
+      if(!($.contains(this.$movingBody[0], $over[0]))) {
+        return;
+      }
+
+      // If we're over the existing target, return.
+      if($over[0] === this.$target[0]) {
+        return;
+      }
+
+      this.$target.detach();
+
+      // If we're over the row being dragged, hide the target.
+      if($over[0] === this.$movingRow[0]) {
+        return;
+      }
+
+      // Otherwise, place the target either before or after the row we're over.
+      var h = $over.height(),
+          off = $over.offset();
+      if ((e.pageY < (off.top + h / 2)) && ($over.prev()[0] !== this.$movingRow[0])) {
+        $over.before(this.$target);
+      } else if ((e.pageY > (off.top + h / 2)) && ($over.next()[0] !== this.$movingRow[0])) {
+        $over.after(this.$target);
+      }
     },
 
     setGravity: function(e) {
       console.log("set gravity");
+      this.$container.find('.js-option-gravity, .js-value-gravity').each(function (ii) {
+        $(this).val(ii);
+      });
+
     },
 
     resetHandler: function(e) {

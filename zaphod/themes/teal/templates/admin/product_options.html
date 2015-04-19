@@ -22,7 +22,7 @@ ${regions.product_header(obj)}
     </td>
     <td>
       ${renderer.hidden('options-%d.values-%d.id' % (option_idx, value_idx), value.id)}
-      ${renderer.hidden('options-%d.values-%d.gravity' % (option_idx, value_idx), value_idx)}
+      ${renderer.hidden('options-%d.values-%d.gravity' % (option_idx, value_idx), value_idx, class_='js-value-gravity')}
       ${renderer.checkbox('options-%d.values-%d.published' % (option_idx, value_idx), checked=value.published)}
     </td>
     <td>${renderer.radio('options-%d.default_value_id' % option_idx, value=value.id, checked=bool(value.is_default))}</td>
@@ -47,7 +47,7 @@ ${regions.product_header(obj)}
     </td>
     <td style="width:250px">
       ${renderer.hidden('options-%d.id' % idx, option.id)}
-      ${renderer.hidden('options-%d.gravity' % idx, idx)}
+      ${renderer.hidden('options-%d.gravity' % idx, idx, class_='js-option-gravity')}
       ${renderer.text('options-%d.name' % idx, option.name, class_='form-control')}
       <label for="${h.make_id_component('options-%s.published' % idx)}">
         ${renderer.checkbox('options-%d.published' % idx, checked=option.published)}

@@ -81,10 +81,17 @@
     </div>
     <div class="row row-cart-associated">
       % for product in products:
-        <div class="col-sm-3 text-center">
-          <h4>${product.name}</h4>
-          <p>${product.img(request, 'product-icon')}</p>
-          <a href="${request.route_path('cart:add', _query=dict(product_id=product.id, qty=1))}" class="btn btn-cta">Add For ${h.currency(product.price)}</a>
+        <div class="col-sm-4">
+          <form method="POST" class="form-horizontal form-wrapped" action="${request.route_path('cart:add')}">
+            <div class="cart-associated-product">
+              <h4>${product.name}</h4>
+              ${product.img(request, 'product-icon')}
+              ${h.hidden('product_id', product.id)}
+              ${h.hidden('qty', 1)}
+              ${blocks.cart_item_options(product)}
+              <button type="submit" class="btn btn-cta">Add For ${h.currency(product.price)}</button>
+            </div>
+          </form>
         </div>
       % endfor
     </div>
@@ -119,8 +126,6 @@
               ${self.cart_table_row(cart, item, loop.index)}
             % endfor
 
-            ${self.associated_products(cart, getters.associated_products_for_cart(cart, limit=4))}
-
             <div class="row row-cart-footer">
               <div class="col-sm-6">${self.shipping_text(cart)}</div>
               <div class="col-sm-2">
@@ -132,8 +137,13 @@
               </div>
             </div>
           </form>
+
         </div>
+
       </div>
+
+      ${self.associated_products(cart, getters.associated_products_for_cart(cart, limit=3))}
+
     </div>
   </section>
 </%def>

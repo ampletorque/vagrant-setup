@@ -333,3 +333,26 @@
     <sup>$</sup>${h.commas(project.price_range_low)} - <sup>$</sup>${h.commas(project.price_range_high)}
   % endif
 </%def>
+
+
+<%def name="cart_item_options(product)">
+  % for option in product.options:
+    % if option.published:
+      <div class="form-group">
+        <label for="option-${option.id}">${option.name}</label>
+        <select id="option-${option.id}" name="value_ids" class="form-control">
+          % for value in option.published_values:
+            <option value="${value.id}" ${'selected' if option.default_value == value else ''}>
+            ${value.description}
+            % if value.price_increase:
+              (+${h.currency(value.price_increase)})
+            % endif
+            </option>
+          % endfor
+        </select>
+      </div>
+    % else:
+      ${h.hidden('options-%d' % loop.index, option.default_value.id)}
+    % endif
+  % endfor
+</%def>

@@ -46,7 +46,7 @@ class CartItemAddSchema(Schema):
     pre_validators = [NestedVariables]
     product_id = validators.Int(not_empty=True)
     qty = validators.Int(not_empty=True, min=1, max=99)
-    options = ForEach(validators.Int(not_empty=True))
+    value_ids = ForEach(validators.Int(not_empty=True))
 
 
 class CartItemRemoveSchema(Schema):
@@ -95,15 +95,14 @@ class CartView(object):
     def add(self):
         request = self.request
 
-        form = Form(request, schema=CartItemAddSchema, skip_csrf=True,
-                    method=None)
+        form = Form(request, schema=CartItemAddSchema, skip_csrf=True)
         if form.validate():
             product = model.Product.get(form.data['product_id'])
             cart = self.get_cart(create_new=True)
             if not (product and cart and cart.id):
                 raise HTTPBadRequest
 
-            sku = model.sku_for_option_value_ids(product, form.data['options'])
+            sku = model.sku_for_option_value_ids(product, form.data['value_ids'])
             ci = model.Session.query(model.CartItem).\
                 filter_by(cart=cart, sku=sku).first()
 

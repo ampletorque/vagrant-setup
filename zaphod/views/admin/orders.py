@@ -301,6 +301,7 @@ class OrderEditView(BaseEditView):
 
         # XXX Need to set item status more correctly.
         item.status = 'payment pending'
+        order.update_status()
 
         request.flash("Added '%s' to order." % product.name, 'success')
         self._touch_object(order)

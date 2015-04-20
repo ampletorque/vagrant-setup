@@ -1,3 +1,4 @@
+from datetime import datetime
 from decimal import Decimal
 import csv
 
@@ -52,6 +53,7 @@ def csv_renderer_factory(info):
 def make_json_renderer():
     renderer = JSON(indent=4)
     renderer.add_adapter(Decimal, lambda v, r: str(v))
+    renderer.add_adapter(datetime, lambda d, r: d.isoformat())
     return renderer
 
 

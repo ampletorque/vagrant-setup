@@ -34,6 +34,7 @@ def includeme(config):
     config.add_route('admin:project:reports:status', '/project/{id}/status')
     config.add_route('admin:project:reports:balance', '/project/{id}/balance')
     config.add_route('admin:project:reports:skus', '/project/{id}/skus')
+    config.add_route('admin:project:reports:orders', '/project/{id}/orders')
 
     config.add_route('admin:products:search', '/products/search')
     config.add_route('admin:product', '/product/{id}')

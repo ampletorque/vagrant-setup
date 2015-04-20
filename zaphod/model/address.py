@@ -125,3 +125,6 @@ class Address(MutableComposite):
         if self.country_code:
             s += self.country_code.upper()
         return s
+
+    def to_json(self):
+        return {col: getattr(self, col) for col in self.column_ordering}

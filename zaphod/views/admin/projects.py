@@ -1,4 +1,5 @@
 from decimal import Decimal
+from functools import lru_cache
 
 from pyramid.view import view_defaults, view_config
 from venusian import lift
@@ -472,6 +473,75 @@ class ProjectEditView(NodeEditView):
             'qty_ordered': qty_ordered,
             'qty_delivered': qty_delivered,
             'earliest_due_date': earliest_due_date,
+        }
+
+    def _order_to_json(self, project, order):
+
+        @lru_cache(maxsize=1024)
+        def sku_option_values(sku):
+            return [
+                {
+                    'id': ov.id,
+                    'option_id': ov.option_id,
+                    'name': ov.option.name,
+                    'description': ov.description,
+                }
+                for ov in sku.option_values
+            ]
+
+        items = [
+            {
+                'id': item.id,
+                'product': {
+                    'id': item.product.id,
+                    'name': item.product.name,
+                },
+                'stage': {
+                    item.CROWDFUNDING: 'crowdfunding',
+                    item.PREORDER: 'preorder',
+                    item.STOCK: 'stock',
+                }[item.stage],
+                'status': item.status,
+                'qty_desired': item.qty_desired,
+                'price_each': item.price_each,
+                'shipping_price': item.shipping_price,
+                'shipped_time': item.shipped_time,
+                'expected_ship_time': item.expected_ship_time,
+                'sku': {
+                    'id': item.sku_id,
+                    'option_values': sku_option_values(item.sku),
+                },
+            }
+            for item in order.cart.items
+            if item.product.project_id == project.id
+        ]
+        return {
+            'id': order.id,
+            'user': {
+                'id': order.user.id,
+                'email': order.user.email,
+                'name': order.user.name,
+                'admin': order.user.admin,
+            },
+            'shipping': order.shipping.to_json(),
+            'items': items,
+            'created_time': order.created_time,
+        }
+
+    @view_config(route_name='admin:project:reports:orders',
+                 request_param='format=json', renderer='json')
+    def orders_json(self):
+        project = self._get_object()
+
+        q = model.Session.query(model.Order).\
+            join(model.Order.cart).\
+            join(model.Cart.items).\
+            join(model.CartItem.product).\
+            filter(model.Product.project == project)
+
+        orders = [self._order_to_json(project, order) for order in q]
+        return {
+            'orders': orders,
         }
 
     @view_config(route_name='admin:project:ship',

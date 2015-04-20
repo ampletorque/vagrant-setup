@@ -59,6 +59,8 @@ class VendorShipmentEditView(BaseEditView):
                 )
                 model.Session.add(vsi)
                 vsi.adjust_qty(item_params['qty'])
+                model.Session.flush()
+                voi.sku.product.update_in_stock()
 
             form.bind(vendor_shipment)
             model.Session.flush()

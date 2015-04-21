@@ -55,8 +55,7 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
         The amount currently owed for this order: excludes cancelled items and
         items where the project has failed or has yet to succeed.
         """
-        return sum(ci.total for ci in self.cart.items
-                   if ci.status not in ('unfunded', 'failed', 'cancelled'))
+        return sum(ci.total for ci in self.cart.items if ci.status.payment_due)
 
     @property
     def authorized_amount(self):
@@ -90,9 +89,32 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
         Update the .closed status of this order. It is 'closed' if and only if
         all of the cart items are closed and the order is fully paid.
         """
-        self.closed = (all(ci.closed for ci in self.cart.items) and
+        self.closed = (all(ci.status.final for ci in self.cart.items) and
                        (self.total_amount == self.paid_amount) and
                        (self.total_amount == self.current_due_amount))
+
+    def update_payment_status(self):
+        """
+        Update the payment statuses based on currently unshipped items and
+        current paid amount.
+        """
+        settled = self.paid_amount >= self.current_due_amount
+        if settled:
+            # update any non-final items with payment_due == True to either
+            # 'waiting' or 'in process', depending on whether or not they are
+            # in stock.
+            for item in self.cart.items:
+                if item.payment_due and not item.status.final:
+                    if item.product.in_stock:
+                        item.update_status('in process')
+                    else:
+                        item.update_status('waiting')
+        else:
+            # update any non-final items with payment due == True to 'payment
+            # pending'.
+            for item in self.cart.items:
+                if item.payment_due and not item.status.final:
+                    item.update_status('payment pending')
 
     def cancel(self, items, reason, user):
         """

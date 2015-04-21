@@ -131,6 +131,7 @@ class OrderEditView(BaseEditView):
                 model.Session.flush()
                 item.reserve_stock()
                 model.Session.flush()
+        obj.update_payment_status()
         BaseEditView._update_object(self, form, obj)
 
     @view_config(route_name='admin:order:resend-confirmation')
@@ -298,9 +299,10 @@ class OrderEditView(BaseEditView):
         else:
             raise Exception('unknown cart item state when adding')
 
-        # XXX Need to set item status more correctly.
         item.status = 'payment pending'
         order.update_status()
+        model.Session.flush()
+        order.update_payment_status()
 
         request.flash("Added '%s' to order." % product.name, 'success')
         self._touch_object(order)
@@ -349,6 +351,8 @@ class OrderEditView(BaseEditView):
                           'success')
             item.release_stock()
             model.Session.delete(item)
+            model.Session.flush()
+            order.update_payment_status()
             self._touch_object(order)
             return HTTPFound(location=request.route_url('admin:order',
                                                         id=order.id))
@@ -402,6 +406,8 @@ class OrderEditView(BaseEditView):
                 amount=form.data['amount'],
                 created_by=request.user,
             ))
+            model.Session.flush()
+            order.update_payment_status()
             request.flash("Added cash payment.", 'success')
             self._touch_object(order)
             return HTTPFound(location=request.route_url('admin:order',
@@ -425,6 +431,8 @@ class OrderEditView(BaseEditView):
                 check_date=form.data['check_date'],
                 created_by=request.user,
             ))
+            model.Session.flush()
+            order.update_payment_status()
             request.flash("Added check payment.", 'success')
             self._touch_object(order)
             return HTTPFound(location=request.route_url('admin:order',
@@ -462,6 +470,8 @@ class OrderEditView(BaseEditView):
             created_by=request.user,
             descriptor=descriptor,
         ))
+        model.Session.flush()
+        order.update_payment_status()
 
     @view_config(route_name='admin:order:payment-cc-existing',
                  renderer='admin/order_payment_cc_existing.html')
@@ -569,6 +579,8 @@ class OrderEditView(BaseEditView):
                 created_by=request.user,
             )
             order.payments.append(refund)
+            model.Session.flush()
+            order.update_payment_status()
             self._touch_object(order)
             request.flash("Added cash refund of %s." % h.currency(amount),
                           'success')
@@ -593,6 +605,8 @@ class OrderEditView(BaseEditView):
                 created_by=request.user,
             )
             order.payments.append(refund)
+            model.Session.flush()
+            order.update_payment_status()
             self._touch_object(order)
             request.flash("Added check refund of %s." % h.currency(amount),
                           'success')

@@ -2,6 +2,7 @@ import logging
 
 from sqlalchemy import Column, ForeignKey, types, orm
 from sqlalchemy.sql import func, or_
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from . import custom_types, utils
 from .base import Base, Session
@@ -27,18 +28,17 @@ class Cart(Base):
 
     @property
     def total(self):
-        return sum(ci.total for ci in self.items
-                   if ci.status not in ('cancelled', 'failed'))
+        return sum(ci.total for ci in self.items if ci.status.include_in_total)
 
     @property
     def items_total(self):
         return sum((ci.price_each * ci.qty_desired) for ci in self.items
-                   if ci.status not in ('cancelled', 'failed'))
+                   if ci.status.include_in_total)
 
     @property
     def shipping_total(self):
         return sum(ci.shipping_price for ci in self.items
-                   if ci.status not in ('cancelled', 'failed'))
+                   if ci.status.include_in_total)
 
     @property
     def non_physical(self):
@@ -109,6 +109,24 @@ STOCK = 2
 INACTIVE = 3
 
 
+class CartItemStatus(object):
+    def __init__(self, key, description,
+                 payment_due, include_in_total=True,
+                 valid_next=None):
+        self.key = key
+        self.description = description
+        self.payment_due = payment_due
+        self.include_in_total = include_in_total
+        self.final = not valid_next
+        self.valid_next = valid_next or ()
+
+    def __str__(self):
+        return self.description
+
+    def __repr__(self):
+        return '<CartItemStatus %s>' % self.key
+
+
 class CartItem(Base):
     """
     An item in a user's cart. After checkout, this object is used for tracking
@@ -131,7 +149,7 @@ class CartItem(Base):
     shipped_time = Column(types.DateTime, nullable=True)
     shipment_id = Column(None, ForeignKey('shipments.id'), nullable=True)
 
-    status = Column(types.CHAR(16), nullable=False, default='cart')
+    _status = Column('status', types.CHAR(16), nullable=False, default='cart')
 
     product = orm.relationship('Product', backref='cart_items')
     batch = orm.relationship('Batch', backref='cart_items')
@@ -144,44 +162,48 @@ class CartItem(Base):
     INACTIVE = 3
 
     available_statuses = [
-        ('cart', 'Pre-checkout'),
-        ('unfunded', 'Project Not Yet Funded'),
-        ('failed', 'Project Failed To Fund'),
-        ('waiting', 'Waiting for Items'),
-        ('payment pending', 'Payment Not Yet Processed'),
-        ('payment failed', 'Payment Failed'),
-        ('cancelled', 'Cancelled'),
-        ('shipped', 'Shipped'),
-        ('abandoned', 'Abandoned'),
-        ('in process', 'In Process'),
-        ('being packed', 'Being Packed'),
+        CartItemStatus('cart', 'Pre-checkout', payment_due=False,
+                       valid_next=('unfunded', 'payment pending',
+                                   'in process')),
+        CartItemStatus('unfunded', 'Project Not Yet Funded', payment_due=False,
+                       valid_next=('failed', 'cancelled', 'payment pending')),
+        CartItemStatus('failed', 'Project Failed To Fund', payment_due=False,
+                       include_in_total=False),
+        CartItemStatus('waiting', 'Waiting for Items', payment_due=True,
+                       valid_next=('cancelled', 'in process', 'being packed',
+                                   'shipped')),
+        CartItemStatus('payment pending', 'Payment Not Yet Processed',
+                       payment_due=True,
+                       valid_next=('cancelled', 'waiting', 'payment failed')),
+        CartItemStatus('payment failed', 'Payment Failed', payment_due=True,
+                       valid_next=('waiting', 'cancelled', 'abandoned')),
+        CartItemStatus('cancelled', 'Cancelled', payment_due=False,
+                       include_in_total=False),
+        CartItemStatus('shipped', 'Shipped', payment_due=True),
+        CartItemStatus('abandoned', 'Abandoned', payment_due=False),
+        CartItemStatus('in process', 'In Process', payment_due=True,
+                       valid_next=('cancelled', 'being packed', 'shipped')),
+        CartItemStatus('being packed', 'Being Packed', payment_due=True,
+                       valid_next=('shipped',)),
     ]
 
-    @property
-    def status_description(self):
-        """
-        Human-readable description of this item's status.
-        """
-        return dict(self.available_statuses)[self.status]
+    @hybrid_property
+    def status(self):
+        return {status.key: status for status in
+                self.available_statuses}[self._status]
+
+    @status.expression
+    def status(cls):
+        return cls._status
 
     def update_status(self, new_value):
         """
         Update the status of this item. Validates acceptable transitions.
         """
-        valid_transitions = {
-            'cart': ('unfunded', 'payment pending', 'in process'),
-            'unfunded': ('failed', 'cancelled', 'payment pending'),
-            'payment pending': ('cancelled', 'waiting', 'payment failed'),
-            'payment failed': ('waiting', 'cancelled', 'abandoned'),
-            'waiting': ('cancelled', 'in process', 'being packed', 'shipped'),
-            'in process': ('cancelled', 'being packed', 'shipped'),
-            'being packed': ('shipped',),
-        }
-        valid_next_statuses = valid_transitions.get(self.status, ())
-        assert new_value in valid_next_statuses, \
-            "invalid next cart item status: cannot %r -> %r" % (self.status,
-                                                                new_value)
-        self.status = new_value
+        assert new_value in self.status.valid_next, \
+            "invalid next cart item status: cannot %r -> %r" % (
+                self.status.key, new_value)
+        self._status = new_value
 
     def calculate_price(self):
         """
@@ -209,13 +231,6 @@ class CartItem(Base):
             return Session.query(Item).filter_by(cart_item=self).count()
         else:
             return self.qty_desired
-
-    @property
-    def closed(self):
-        """
-        True if this item is in a final, resolved state.
-        """
-        return self.status in ('cancelled', 'shipped', 'abandoned', 'failed')
 
     def release_stock(self):
         """

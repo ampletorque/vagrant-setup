@@ -127,10 +127,14 @@ class OrderEditView(BaseEditView):
             # XXX This should probably be combined into one method call with
             # locking.
             if orig_qty_desired != item.qty_desired:
-                item.release_stock()
-                model.Session.flush()
-                item.reserve_stock()
-                model.Session.flush()
+                if item.product.non_physical:
+                    item.refresh_non_physical()
+                elif item.stage == item.CROWDFUNDING:
+                    item.refresh_crowdfunding()
+                elif item.stage == item.PREORDER:
+                    item.refresh_preorder()
+                elif item.stage == item.STOCK:
+                    item.refresh_stock()
         obj.update_payment_status()
         BaseEditView._update_object(self, form, obj)
 

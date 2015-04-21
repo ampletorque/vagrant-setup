@@ -1,0 +1,43 @@
+<%inherit file="base.html"/>
+
+
+<%def name="title()">Open Items By Project Report</%def>
+
+
+<section class="section-report-project-open-items">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+
+        <p><strong>${len(by_project)}</strong> projects have open line items.</p>
+        <p>Showing number of currently open line items per project. Only projects with open line items are shown.</p>
+
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Project ID</th>
+                <th>Project Name</th>
+                <th>Open Order Count</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              % for project, open_order_count in by_project:
+                <tr>
+                  <td><a href="${request.route_path('admin:project', id=project.id)}">Edit Project</a></td>
+                  <td>${project.id}</td>
+                  <td>${project.name}</td>
+                  <td>${open_order_count}</td>
+                  <td><a href="${request.route_path('admin:project:reports:orders', id=project.id, _query=dict(filter_open=True))}">View Open Orders</a></td>
+                </tr>
+              % endfor
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>

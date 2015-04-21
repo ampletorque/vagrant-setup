@@ -1,5 +1,5 @@
 from pyramid.view import view_config, view_defaults
-from sqlalchemy.sql import func
+from sqlalchemy.sql import func, not_
 
 from .base import BaseReportsView
 
@@ -62,4 +62,23 @@ class OperationsReportsView(BaseReportsView):
             'inbound_item_count': inbound_item_count,
             'outbound_shipment_count': outbound_shipment_count,
             'outbound_item_count': outbound_item_count,
+        }
+
+    @view_config(route_name='admin:reports:project-open-items',
+                 renderer='admin/reports/project_open_items.html')
+    def project_open_items(self):
+        q = model.Session.query(model.Project,
+                                func.count(model.Order.id.distinct())).\
+            join(model.Order.cart).\
+            join(model.Cart.items).\
+            join(model.CartItem.product).\
+            join(model.Product.project).\
+            filter(not_(model.CartItem.status.in_(['failed', 'cancelled',
+                                                   'shipped', 'abandoned']))).\
+            group_by(model.Project.id)
+
+        by_project = q.all()
+
+        return {
+            'by_project': by_project,
         }

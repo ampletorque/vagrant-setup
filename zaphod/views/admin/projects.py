@@ -6,11 +6,13 @@ from venusian import lift
 from sqlalchemy.sql import func, not_
 from formencode import Schema, NestedVariables, ForEach, validators
 from pyramid.httpexceptions import HTTPFound
+from pyramid.settings import asbool
 
 from pyramid_uniform import Form, FormRenderer, crud_update
 from pyramid_es import get_client
 
 from ... import model, funds, custom_validators
+from ...helpers.paginate import Page
 
 from ...admin import (NodeEditView, NodeListView, NodeUpdateForm,
                       NodeCreateView, NodeCreateForm)
@@ -528,17 +530,41 @@ class ProjectEditView(NodeEditView):
             'created_time': order.created_time,
         }
 
-    @view_config(route_name='admin:project:reports:orders',
-                 request_param='format=json', renderer='json')
-    def orders_json(self):
-        project = self._get_object()
-
+    def _orders_q(self, project, filter_open=False):
         q = model.Session.query(model.Order).\
             join(model.Order.cart).\
             join(model.Cart.items).\
             join(model.CartItem.product).\
             filter(model.Product.project == project)
+        if filter_open:
+            q = q.filter(not_(model.CartItem.status.in_(
+                ['failed', 'cancelled', 'shipped', 'abandoned'])))
+        return q
 
+    @view_config(route_name='admin:project:reports:orders',
+                 renderer='admin/project_orders.html')
+    def orders(self):
+        request = self.request
+        project = self._get_object()
+        filter_open = asbool(request.params.get('filter_open'))
+        q = self._orders_q(project, filter_open=filter_open)
+        item_count = q.count()
+        page = Page(request, q,
+                    page=int(request.params.get('page', 1)),
+                    items_per_page=20,
+                    item_count=item_count)
+        return {
+            'obj': project,
+            'page': page,
+            'filter_open': filter_open,
+        }
+
+    @view_config(route_name='admin:project:reports:orders',
+                 request_param='format=json', renderer='json')
+    def orders_json(self):
+        project = self._get_object()
+        filter_open = asbool(request.params.get('filter_open'))
+        q = self._orders_q(project, filter_open=filter_open)
         orders = [self._order_to_json(project, order) for order in q]
         return {
             'orders': orders,

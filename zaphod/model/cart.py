@@ -212,6 +212,24 @@ class CartItem(Base):
                 self.status.key, new_value)
         self._status = new_value
 
+    def update_payment_status(self, settled):
+        if settled:
+            # update any non-final items with payment_due == True to either
+            # 'waiting' or 'in process', depending on whether or not they are
+            # in stock.
+            if self.status.payment_due and not self.status.final:
+                if (self.stage == self.STOCK) and self.product.in_stock:
+                    self.update_status('in process')
+                elif self.status.key not in ('being packed', 'in process'):
+                    self.update_status('waiting')
+        else:
+            # update any non-final items with payment due == True to 'payment
+            # pending'.
+            if (self.status.payment_due and
+                (not self.status.final) and
+                    (self.status.key != 'payment failed')):
+                self.update_status('payment pending')
+
     def calculate_price(self):
         """
         Calculate the price of this item including selected product option

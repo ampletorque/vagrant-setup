@@ -99,24 +99,8 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
         current paid amount.
         """
         settled = self.paid_amount >= self.current_due_amount
-        if settled:
-            # update any non-final items with payment_due == True to either
-            # 'waiting' or 'in process', depending on whether or not they are
-            # in stock.
-            for item in self.cart.items:
-                if item.status.payment_due and not item.status.final:
-                    if (item.stage == item.STOCK) and item.product.in_stock:
-                        item.update_status('in process')
-                    elif item.status.key not in ('being packed', 'in process'):
-                        item.update_status('waiting')
-        else:
-            # update any non-final items with payment due == True to 'payment
-            # pending'.
-            for item in self.cart.items:
-                if (item.status.payment_due and
-                    (not item.status.final) and
-                        (item.status.key != 'payment failed')):
-                    item.update_status('payment pending')
+        for item in self.cart.items:
+            item.update_payment_status(settled)
 
     def cancel(self, items, reason, user):
         """

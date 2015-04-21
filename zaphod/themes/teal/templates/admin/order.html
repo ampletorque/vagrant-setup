@@ -117,11 +117,14 @@
           <strong>Captured ${h.format_datetime(request, payment.captured_time)}</strong>
         % elif payment.voided_time:
           <strong>Voided ${h.format_datetime(request, payment.voided_time)}</strong>
+        % elif payment.expired:
+          <strong>Expired</strong>
         % else:
           <strong>Not Captured</strong>
         % endif
         % if payment.can_be_captured():
           <a href="${request.route_path('admin:payment:capture', id=payment.id)}" class="btn btn-default btn-xs">Capture</a>
+          <a href="${request.route_path('admin:payment:mark-expired', id=payment.id)}" class="btn btn-default btn-xs">Mark Expired</a>
         % endif
         % if payment.can_be_voided():
           <a href="${request.route_path('admin:payment:void', id=payment.id)}" class="btn btn-primary btn-xs">Void</a>

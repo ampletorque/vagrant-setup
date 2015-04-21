@@ -156,3 +156,14 @@ class PaymentView(object):
                       'success')
         return HTTPFound(location=request.route_url('admin:order',
                                                     id=pp.order_id))
+
+    @view_config(route_name='admin:payment:mark-expired',
+                 permission='admin')
+    def mark_expired(self):
+        request = self.request
+        pp = self._get_object()
+        pp.expired = True
+        request.flash("Marked payment %s as expired." % pp.transaction_id,
+                      'success')
+        return HTTPFound(location=request.route_url('admin:order',
+                                                    id=pp.order_id))

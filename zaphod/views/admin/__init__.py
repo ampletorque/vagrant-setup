@@ -103,6 +103,8 @@ def includeme(config):
                      '/payment/{id}/mark-chargeback-won')
     config.add_route('admin:payment:mark-chargeback-lost',
                      '/payment/{id}/mark-chargeback-lost')
+    config.add_route('admin:payment:mark-expired',
+                     '/payment/{id}/mark-expired')
 
     config.add_route('admin:vendors', '/vendors')
     config.add_route('admin:vendors:new', '/vendors/new')

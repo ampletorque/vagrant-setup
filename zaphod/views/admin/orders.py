@@ -182,7 +182,7 @@ class OrderEditView(BaseEditView):
             for item_id in form.data['item_ids']:
                 item = model.CartItem.get(item_id)
                 assert item.cart.order == order
-                item.status = 'being packed'
+                item.update_status('being packed')
             return HTTPFound(
                 location=request.route_url('admin:order:print-invoice',
                                            id=order.id))

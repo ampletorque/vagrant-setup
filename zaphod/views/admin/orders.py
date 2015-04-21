@@ -201,7 +201,7 @@ class OrderEditView(BaseEditView):
         for item in order.cart.items:
             if item.status == 'being packed':
                 items_this_shipment.append(item)
-            elif not item.status.closed:
+            elif not item.status.final:
                 items_other.append(item)
 
         assert len(items_this_shipment) > 0, "no items are being packed"

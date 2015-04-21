@@ -1,6 +1,6 @@
 from pyramid.config import Configurator
 from pyramid.settings import asbool
-from pyramid.events import BeforeRender
+from pyramid.events import BeforeRender, NewRequest
 from pyramid.paster import setup_logging
 from sqlalchemy import engine_from_config
 
@@ -13,6 +13,15 @@ from .logging import init_querytimer
 def add_renderer_globals(event):
     event['h'] = helpers
     event['getters'] = getters
+
+
+def new_request_subscriber(event):
+    request = event.request
+    if not (request.path.startswith('/img') or request.path.startswith('/_')):
+        request.response.headers.update({
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache',
+        })
 
 
 class Root(object):
@@ -54,6 +63,7 @@ def main(global_config, **settings):
     config.include('.tasks')
 
     config.add_subscriber(add_renderer_globals, BeforeRender)
+    config.add_subscriber(new_request_subscriber, NewRequest)
 
     config.add_tween('.logging.request_log_tween_factory')
 

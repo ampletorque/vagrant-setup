@@ -200,7 +200,8 @@ class CartItem(Base):
         """
         Update the status of this item. Validates acceptable transitions.
         """
-        assert new_value in self.status.valid_next, \
+        assert ((new_value == self.status.key) or
+                (new_value in self.status.valid_next)), \
             "invalid next cart item status: cannot %r -> %r" % (
                 self.status.key, new_value)
         self._status = new_value

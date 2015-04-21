@@ -105,15 +105,17 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
             # in stock.
             for item in self.cart.items:
                 if item.status.payment_due and not item.status.final:
-                    if item.product.in_stock:
+                    if (item.stage == item.STOCK) and item.product.in_stock:
                         item.update_status('in process')
-                    else:
+                    elif item.status.key not in ('being packed', 'in process'):
                         item.update_status('waiting')
         else:
             # update any non-final items with payment due == True to 'payment
             # pending'.
             for item in self.cart.items:
-                if item.status.payment_due and not item.status.final:
+                if (item.status.payment_due and
+                    (not item.status.final) and
+                        (item.status.key != 'payment failed')):
                     item.update_status('payment pending')
 
     def cancel(self, items, reason, user):

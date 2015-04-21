@@ -199,7 +199,7 @@ class OrderEditView(BaseEditView):
         items_this_shipment = []
         items_other = []
         for item in order.cart.items:
-            if item.status == 'being packed':
+            if item.status.key == 'being packed':
                 items_this_shipment.append(item)
             elif not item.status.final:
                 items_other.append(item)
@@ -299,7 +299,7 @@ class OrderEditView(BaseEditView):
         else:
             raise Exception('unknown cart item state when adding')
 
-        item.status = 'payment pending'
+        item._status = 'payment pending'
         order.update_status()
         model.Session.flush()
         order.update_payment_status()

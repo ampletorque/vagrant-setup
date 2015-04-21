@@ -202,16 +202,42 @@ class CartView(object):
 
         return user
 
-    def _handle_new_payment(self, order, form, email, user):
+    def _handle_checkout_failure(self, exc, billing, email, order):
         request = self.request
-        session = request.session
-        cart = order.cart
+        session_id = request.session.id
+        if isinstance(exc, socket.error):
+            request.flash(
+                "A error occured while attempting to process the "
+                "transaction. Please try again.", 'error')
+        else:
+            request.flash(
+                "That credit card could not be processed. Please double "
+                "check that the information is correct.", 'error')
+
+        log.info('payment_failed order:%d cart:%s', order.id, order.cart.id)
+
+        mail.send_with_admin(request,
+                             'checkout_failure',
+                             vars=dict(
+                                 billing=billing,
+                                 customer_email=email,
+                                 session_id=session_id,
+                                 order=order,
+                                 exc=exc,
+                             ),
+                             to=[request.registry.settings['mailer.from']],
+                             immediately=True)
+
+        raise HTTPFound(location=request.route_url('cart'))
+
+    def _handle_new_method(self, order, form, email, user):
+        request = self.request
 
         ccf = form.data['cc']
         billing = model.Address(**ccf['billing'])
-
         gateway_id = request.registry.settings['payment_gateway_id']
         iface = payment.get_payment_interface(request.registry, gateway_id)
+        log.info('creating_method order:%d cart:%s', order.id, order.cart.id)
 
         try:
             profile = iface.create_profile(
@@ -222,46 +248,68 @@ class CartView(object):
                 billing=billing,
                 email=email,
             )
-        except (socket.error, PaymentException) as e:
-            if isinstance(e, socket.error):
-                request.flash(
-                    "A error occured while attempting to process the "
-                    "transaction. Please try again.", 'error')
-            else:
-                request.flash(
-                    "That credit card could not be processed. Please double "
-                    "check that the information is correct.", 'error')
+        except (socket.error, PaymentException) as exc:
+            self._handle_checkout_failure(exc, billing, email, order)
+        else:
+            method = model.PaymentMethod(
+                user=user,
+                payment_gateway_id=gateway_id,
+                billing=billing,
+                reference=profile.reference,
+                save=ccf['save'],
+                stripe_js=False,
+                remote_addr=request.client_addr,
+                user_agent=request.user_agent,
+                session_id=request.session.id,
+            )
+            model.Session.add(method)
+            order.active_payment_method = method
+            return profile
 
-            log.info('payment_failed order:%d cart:%s', order.id, cart.id)
+    def _process_payment(self, order, profile):
+        request = self.request
+        registry = request.registry
+        # use self.active_payment_method and issue an authorize for the current
+        # due amount
+        method = order.active_payment_method
+        gateway_id = request.registry.settings['payment_gateway_id']
+        assert int(method.payment_gateway_id) == int(gateway_id), \
+            "tried to make a new txn against a non-primary gateway"
+        amount = order.current_due_amount
+        descriptor = payment.make_descriptor(registry, order.id)
 
-            mail.send_with_admin(request,
-                                 'checkout_failure',
-                                 vars=dict(
-                                     billing=billing,
-                                     customer_email=email,
-                                     session_id=session.id,
-                                     order=order,
-                                     exc=e,
-                                 ),
-                                 to=[request.registry.settings['mailer.from']],
-                                 immediately=True)
+        log.info('processing_payment order:%d cart:%d amount:%s descriptor:%r',
+                 order.id, order.cart.id, amount, descriptor)
 
-            raise HTTPFound(location=request.route_url('cart'))
+        try:
+            resp = profile.authorize(
+                amount=amount,
+                description='order-%d' % order.id,
+                statement_descriptor=descriptor,
+                ip=method.remote_addr,
+                user_agent=method.user_agent,
+                referrer=request.route_url('cart'),
+            )
+        except (socket.error, PaymentException) as exc:
+            self._handle_checkout_failure(exc, method.billing,
+                                          order.user.email, order)
 
-        method = model.PaymentMethod(
-            user=user,
-            payment_gateway_id=gateway_id,
-            billing=billing,
-            reference=profile.reference,
-            save=ccf['save'],
-            stripe_js=False,
-            remote_addr=request.client_addr,
-            user_agent=request.user_agent,
-            session_id=request.session.id,
-        )
-        model.Session.add(method)
-
-        order.active_payment_method = method
+        else:
+            order.payments.append(model.CreditCardPayment(
+                method=method,
+                transaction_id=resp['transaction_id'],
+                invoice_number=descriptor,
+                authorized_amount=amount,
+                amount=0,
+                avs_address1_result=resp['avs_address1_result'],
+                avs_zip_result=resp['avs_zip_result'],
+                ccv_result=resp['ccv_result'],
+                card_type=resp['card_type'],
+                descriptor=descriptor,
+                created_by_id=1,
+            ))
+            model.Session.flush()
+            order.update_payment_status()
 
     def _place_order(self, cart, form, payment_method):
         request = self.request
@@ -294,8 +342,14 @@ class CartView(object):
 
         if form.data['cc'] == 'saved':
             order.active_payment_method = payment_method
+            iface = payment.get_payment_interface(
+                request.registry, payment_method.payment_gateway_id)
+            profile = iface.get_profile(payment_method.reference)
         else:
-            self._handle_new_payment(order, form, email, user)
+            profile = self._handle_new_method(order, form, email, user)
+
+        if order.current_due_amount > 0:
+            self._process_payment(order, profile)
 
         # Save the order ID
         request.session['new_order_id'] = order.id

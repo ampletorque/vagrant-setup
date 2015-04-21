@@ -289,16 +289,30 @@
                   Add Refund: <a href="${request.route_path('admin:order:refund-cash', id=obj.id)}">Cash</a> -
                   <a href="${request.route_path('admin:order:refund-check', id=obj.id)}">Check</a>
                 </td>
-                <td>Balance Due</td>
-                <td>${h.currency(obj.unauthorized_amount)}</td>
+                <td>Current Amount Due</td>
+                <td>${h.currency(obj.current_due_amount)}</td>
+              </tr>
+
+              <tr>
+                <td></td>
+                <td colspan="4"></td>
+                <td>Total Amount</td>
+                <td>${h.currency(obj.total_amount)}</td>
               </tr>
 
               % if obj.paid_amount > obj.current_due_amount:
                 <tr>
                   <td></td>
-                  <td colspan=4"></td>
-                  <td><strong>Overpaid By</strong></td>
+                  <td colspan="4"></td>
+                  <td><strong>Currently Overpaid By</strong></td>
                   <td><strong>${h.currency(obj.paid_amount - obj.current_due_amount)}</strong></td>
+                </tr>
+              % elif obj.paid_amount < obj.current_due_amount:
+                <tr>
+                  <td></td>
+                  <td colspan="4"></td>
+                  <td><strong>Current Balance Due</strong></td>
+                  <td><strong>${h.currency(obj.current_due_amount - obj.paid_amount)}</strong></td>
                 </tr>
               % endif
             </tfoot>

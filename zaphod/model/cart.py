@@ -80,17 +80,21 @@ class Cart(Base):
         For a crowdfunding project, set to 'unfunded' or 'payment pending'
         depending on whether or not the project is successful.
 
-        For a pre-order or stock project, set to 'in process'.
+        For a pre-order or stock project, set to 'payment pending'.
         """
+        log.info('set_initial_statuses %s: %d items', self.id, len(self.items))
         for item in self.items:
             project = item.product.project
-            if item.stage == item.CROWDFUNDING:
-                if project.successful:
-                    item.update_status('payment pending')
-                else:
-                    item.update_status('unfunded')
+            if (item.stage == item.CROWDFUNDING) and not project.successful:
+                log.info('set_initial_statuses %s: item:%d project:%d '
+                         '-> unfunded',
+                         self.id, item.id, project.id)
+                item.update_status('unfunded')
             else:
-                item.update_status('in process')
+                log.info('set_initial_statuses %s: item:%d project:%d '
+                         '-> payment pending',
+                         self.id, item.id, project.id)
+                item.update_status('payment pending')
 
     def refresh(self):
         """

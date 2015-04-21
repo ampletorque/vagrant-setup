@@ -187,7 +187,8 @@ class CartItem(Base):
         CartItemStatus('shipped', 'Shipped', payment_due=True),
         CartItemStatus('abandoned', 'Abandoned', payment_due=False),
         CartItemStatus('in process', 'In Process', payment_due=True,
-                       valid_next=('cancelled', 'being packed', 'shipped')),
+                       valid_next=('cancelled', 'being packed', 'shipped',
+                                   'payment pending')),
         CartItemStatus('being packed', 'Being Packed', payment_due=True,
                        valid_next=('shipped',)),
     ]

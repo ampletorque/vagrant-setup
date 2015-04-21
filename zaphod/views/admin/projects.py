@@ -562,6 +562,7 @@ class ProjectEditView(NodeEditView):
     @view_config(route_name='admin:project:reports:orders',
                  request_param='format=json', renderer='json')
     def orders_json(self):
+        request = self.request
         project = self._get_object()
         filter_open = asbool(request.params.get('filter_open'))
         q = self._orders_q(project, filter_open=filter_open)

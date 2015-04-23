@@ -130,6 +130,15 @@ class CartItemStatus(object):
     def __repr__(self):
         return '<CartItemStatus %s>' % self.key
 
+    def __eq__(self, other):
+        if type(self) == type(other):
+            return self.key == other.key
+        raise ValueError("cannot compare %s to %s" % (
+            type(self), type(other)))
+
+    def __ne__(self, other):
+        return not (self == other)
+
 
 class CartItem(Base):
     """

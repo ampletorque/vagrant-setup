@@ -44,6 +44,7 @@ define(['jquery'], function ($) {
       data: $form.serialize(),
       dataType: 'json',
       error: function (request, status, error) {
+        $form.data('block-submit', false);
         alert('Server Error');
       },
       success: function (data, status, xhr) {

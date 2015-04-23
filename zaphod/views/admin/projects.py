@@ -503,7 +503,7 @@ class ProjectEditView(NodeEditView):
                     item.PREORDER: 'preorder',
                     item.STOCK: 'stock',
                 }[item.stage],
-                'status': item.status,
+                'status': item.status.key,
                 'qty_desired': item.qty_desired,
                 'price_each': item.price_each,
                 'shipping_price': item.shipping_price,

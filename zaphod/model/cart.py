@@ -337,13 +337,18 @@ class CartItem(Base):
                      self.id, cf_available)
 
         # Allocate pledge batch
+        cf_allocate = cf_consumed
         for batch in batches:
+            log.info('refresh %s: allocating batch %d / qty %s',
+                     self.id, batch.id, batch.qty)
             if ((not batch.qty) or
-                    ((cf_consumed + self.qty_desired) < batch.qty)):
+                    ((cf_allocate + self.qty_desired) <= batch.qty)):
                 self.batch = batch
                 log.info('refresh %s: selecting batch %s', self.id, batch.id)
                 break
-            cf_consumed -= batch.qty
+            cf_allocate -= batch.qty
+            log.info('refresh %s: cf qty to allocate now %d',
+                     self.id, cf_allocate)
 
         assert self.batch, "no batch assigned for cart item %s" % self.id
         self.expected_ship_time = self.batch.ship_time
@@ -443,7 +448,7 @@ class CartItem(Base):
         # Allocate pledge batch
         for batch in batches:
             if ((not batch.qty) or
-                    ((qty_consumed + self.qty_desired) < batch.qty)):
+                    ((qty_consumed + self.qty_desired) <= batch.qty)):
                 self.batch = batch
                 log.info('refresh %s: selecting batch %s', self.id, batch.id)
                 break

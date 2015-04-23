@@ -18,7 +18,8 @@ def update_payment_url(request, order):
 
 def update_item_statuses(project, order, new_status):
     for item in order.cart.items:
-        if (item.status != 'cancelled') and (item.product.project == project):
+        if ((item.status.key != 'cancelled') and
+                (item.product.project == project)):
             item.update_status(new_status)
 
 

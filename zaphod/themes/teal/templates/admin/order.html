@@ -181,7 +181,7 @@
           % endif
           <a class="btn btn-primary" href="${request.route_path('admin:order:resend-confirmation', id=obj.id)}">Resend Order Confirmation</a>
 
-          % if any(item.status == 'shipped' for item in obj.cart.items):
+          % if any(item.status.key == 'shipped' for item in obj.cart.items):
             <a class="btn btn-primary" href="${request.route_path('admin:order:resend-shipping-confirmation', id=obj.id)}">Resend Shipping Confirmation</a>
           % endif
 

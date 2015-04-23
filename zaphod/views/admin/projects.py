@@ -601,7 +601,7 @@ class ProjectEditView(NodeEditView):
                 filter(model.CartItem.status == 'unfunded')
 
             for item in q:
-                item.status = 'payment pending'
+                item.update_status('payment pending')
 
             request.flash("Marked project as successful.", 'success')
             return HTTPFound(

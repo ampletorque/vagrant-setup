@@ -53,7 +53,7 @@ define([
       this.$form = this.$container.closest('form')
         .on('reset', this.resetHandler);
 
-      this.indexCounter = this.$optionsBody.find('> tr').length;
+      this.indexCounter = this.$optionsBody.find('.js-value-drag-handle').length;
     },
 
     optionAddHandler: function(e) {

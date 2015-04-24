@@ -33,8 +33,6 @@ class Lead(Base, UserMixin, CommentMixin):
     id = Column(types.Integer, primary_key=True)
     name = Column(types.Unicode(255), nullable=False)
     description = Column(types.UnicodeText, nullable=False, default=u'')
-    notes = Column(types.UnicodeText, nullable=False, default=u'')
-    discount = Column(types.Unicode(255), nullable=False, default=u'')
 
     status = Column(types.String(4), nullable=False, default='prec')
     opp_time = Column(types.DateTime, nullable=True)

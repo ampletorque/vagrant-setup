@@ -288,9 +288,13 @@ class OrderEditView(BaseEditView):
             sku=sku,
             qty_desired=form.data['qty'],
             shipping_price=0,
-            price_each=product.price,
+            price_each=0,
         )
         model.Session.add(item)
+        item.price_each = item.calculate_price()
+
+        if order.shipping.country_code != 'us':
+            item.shipping_price = product.international_surcharge
 
         if product.non_physical:
             item.refresh_non_physical()

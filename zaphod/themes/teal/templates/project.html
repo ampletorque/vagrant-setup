@@ -10,6 +10,17 @@
 <%def name="title()">${project.name}</%def>
 
 
+<%def name="additional_head()">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="${request.node_url(project)}">
+  <meta property="og:description" content="${project.teaser}">
+  <meta property="og:title" content="${project.name}">
+  <meta property="og:site_name" content="Crowd Supply">
+  <meta property="og:image" content="${project.img(request, 'open-graph', qualified=True)}">
+  <meta property="fb:app_id" content="${request.registry.settings['facebook.app_id']}">
+</%def>
+
+
 <div class="row">
   <div class="col-md-8 project-media">
     % if project.current_vimeo_id:

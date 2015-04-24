@@ -99,7 +99,7 @@ def project_facebook_url(request, project,
         url=request.node_url(project),
         name=project.name,
         caption=description,
-        image_url=project.img_url(request, 'project-main'),
+        image_url=project.img_url(request, 'project-main', qualified=True),
         app_id=request.registry.settings['facebook.app_id'],
         redirect_uri=request.url)
 

@@ -102,6 +102,18 @@ class UserCreateView(BaseCreateView):
         request = self.request
         del form.data['password2']
         send_email = form.data.pop('send_welcome_email')
+
+        existing = model.Session.query(self.cls).\
+            filter_by(email=form.data['email']).\
+            first()
+
+        if existing:
+            request.flash("A user with the specified email address already "
+                          "exists. This is the admin page for the existing "
+                          "user.", 'error')
+            raise HTTPFound(location=request.route_url('admin:user',
+                                                       id=existing.id))
+
         obj = BaseCreateView._create_object(self, form)
         if send_email:
             token = obj.set_reset_password_token()

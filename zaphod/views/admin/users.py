@@ -1,7 +1,7 @@
 from pyramid.view import view_defaults, view_config
 from pyramid.httpexceptions import HTTPFound
 from venusian import lift
-from formencode import Schema, validators
+from formencode import Schema, NestedVariables, ForEach, validators
 from pyramid_es import get_client
 
 from ... import mail, model, custom_validators
@@ -17,6 +17,9 @@ class UserEditView(BaseEditView):
 
     class UpdateForm(Schema):
         allow_extra_fields = False
+        pre_validators = [NestedVariables]
+        chained_validators = [validators.FieldsMatch('password', 'password2')]
+
         name = validators.String(not_empty=True)
         email = validators.Email(not_empty=True)
         password = validators.String()
@@ -30,7 +33,8 @@ class UserEditView(BaseEditView):
         timezone = validators.String()
         url_path = custom_validators.URLString()
         twitter_username = custom_validators.TwitterUsername()
-        chained_validators = [validators.FieldsMatch('password', 'password2')]
+
+        images = ForEach(custom_validators.ImageAssociation())
         new_comment = custom_validators.CommentBody()
 
     @view_config(route_name='admin:user:send-password-reset')

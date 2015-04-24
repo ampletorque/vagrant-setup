@@ -13,7 +13,7 @@
 <%def name="additional_head()">
   <meta property="og:type" content="website">
   <meta property="og:url" content="${request.node_url(project)}">
-  <meta property="og:description" content="${project.teaser}">
+  <meta property="og:description" content="${project.current_teaser}">
   <meta property="og:title" content="${project.name}">
   <meta property="og:site_name" content="Crowd Supply">
   <meta property="og:image" content="${project.img(request, 'open-graph', qualified=True)}">

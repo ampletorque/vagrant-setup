@@ -23,7 +23,7 @@
       <div class="col-sm-3">
         <strong>${comment.created_by.name if comment.created_by_id != 1 else 'System Message'}</strong>
         <p class="comment-time">${h.format_datetime(request, comment.created_time)}</p>
-        <p class="comment-time-ago">${h.time_ago_in_words(comment.created_time, granularity='hour')}</p>
+        <p class="comment-time-ago">${h.distance_of_time_in_words(comment.created_time, h.datetime.utcnow(), granularity='hour')}</p>
       </div>
       <div class="col-sm-9">
         <p>

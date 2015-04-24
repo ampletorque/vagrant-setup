@@ -20,13 +20,17 @@
         <p><a href="mailto:info@crowdsupply.com">info@crowdsupply.com</a></p>
 
         <h3>Phone</h3>
-        <p>800-554-2014</p>
+        <p>${request.registry.settings['address.phone']}</p>
 
         <h3>Mailing Address</h3>
         <p>
-          Crowd Supply, Inc.<br>
-          425 SE 11th Ave<br>
-          Portland, OR 97214
+          ${request.registry.settings['address.address1']}<br>
+          % if 'address.address2' in request.registry.settings:
+            ${request.registry.settings['address.address2']}<br>
+          % endif
+          ${request.registry.settings['address.city']},
+          ${request.registry.settings['address.state']}
+          ${request.registry.settings['address.postal_code']}
         </p>
 
       </div>

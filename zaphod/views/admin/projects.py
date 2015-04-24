@@ -240,15 +240,35 @@ class ProjectEditView(NodeEditView):
             group_by(model.ProjectEmail.source)
         counts = dict(q.all())
 
-        emails = model.Session.query(model.ProjectEmail).\
-            filter(model.ProjectEmail.project == project).\
-            order_by(model.ProjectEmail.id.desc())
-
         return {
             'obj': project,
             'counts': counts,
-            'emails': emails,
         }
+
+    @view_config(route_name='admin:project:emails',
+                 request_param='format=text',
+                 renderer='string')
+    def emails_text(self):
+        project = self._get_object()
+        emails = set()
+
+        q = model.Session.query(model.ProjectEmail.email).\
+            filter(model.ProjectEmail.project == project).\
+            order_by(model.ProjectEmail.id.desc())
+        for email, in q:
+            emails.add(email)
+
+        q = model.Session.query(model.User.email).\
+            join(model.User.orders).\
+            join(model.Order.cart).\
+            join(model.Cart.items).\
+            join(model.CartItem.product).\
+            filter(model.CartItem.status != 'cancelled').\
+            filter(model.Product.project == project)
+        for email, in q:
+            emails.add(email)
+
+        return '\n'.join(sorted(emails))
 
     @view_config(route_name='admin:project:reports',
                  renderer='admin/project_reports.html')

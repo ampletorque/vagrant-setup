@@ -27,24 +27,9 @@ ${regions.project_header(obj)}
           </tr>
         </table>
 
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Email</th>
-              <th>Source</th>
-              <th>Subscribed Time</th>
-            </tr>
-          </thead>
-          <tbody>
-            % for pe in emails:
-              <tr>
-                <td>${pe.email}</td>
-                <td>${pe.source}</td>
-                <td>${h.format_datetime(request, pe.subscribed_time)}</td>
-              </tr>
-            % endfor
-          </tbody>
-        </table>
+        <p>Download all emails that are signed up or have placed an order for this project:</p>
+        <p><a href="${request.current_route_path(_query=dict(format='text'))}">Text</a></p>
+
       </div>
     </div>
   </div>

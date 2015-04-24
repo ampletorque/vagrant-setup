@@ -162,6 +162,10 @@ class TealTheme(Theme):
             'press-logo', width=150, height=75,
             crop_whitespace=True, pad=True,
             extension='png'),
+
+        FilterChain(
+            'open-graph', width=1500, height=1500, extension='jpg',
+            quality=75),
     ]
 
     tile_filter = 'project-tile'

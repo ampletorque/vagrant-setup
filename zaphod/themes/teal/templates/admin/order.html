@@ -270,8 +270,13 @@
                 <td colspan="4">
                   <a href="${request.route_path('admin:order:add-item', id=obj.id)}">Add Item</a>
                 </td>
-                <td><strong>Total</strong></td>
+                <td class="text-right"><strong>Total Amount</strong></td>
                 <td>${h.currency(obj.total_amount)}</td>
+              </tr>
+
+              <tr>
+                <td colspan="6" class="text-right">Current Confirmed Amount</td>
+                <td>${h.currency(obj.current_due_amount)}</td>
               </tr>
             </tbody>
             <tbody>
@@ -292,29 +297,18 @@
                   Add Refund: <a href="${request.route_path('admin:order:refund-cash', id=obj.id)}">Cash</a> -
                   <a href="${request.route_path('admin:order:refund-check', id=obj.id)}">Check</a>
                 </td>
-                <td>Current Amount Due</td>
-                <td>${h.currency(obj.current_due_amount)}</td>
-              </tr>
-
-              <tr>
-                <td></td>
-                <td colspan="4"></td>
-                <td>Total Amount</td>
-                <td>${h.currency(obj.total_amount)}</td>
+                <td class="text-right"><strong>Paid Amount</strong></td>
+                <td>${h.currency(obj.paid_amount)}</td>
               </tr>
 
               % if obj.paid_amount > obj.current_due_amount:
                 <tr>
-                  <td></td>
-                  <td colspan="4"></td>
-                  <td><strong>Currently Overpaid By</strong></td>
+                  <td colspan="6" class="text-right"><strong>Currently Overpaid By</strong></td>
                   <td><strong>${h.currency(obj.paid_amount - obj.current_due_amount)}</strong></td>
                 </tr>
               % elif obj.paid_amount < obj.current_due_amount:
                 <tr>
-                  <td></td>
-                  <td colspan="4"></td>
-                  <td><strong>Current Balance Due</strong></td>
+                  <td colspan="6" class="text-right"><strong>Additional Payment Required</strong></td>
                   <td><strong>${h.currency(obj.current_due_amount - obj.paid_amount)}</strong></td>
                 </tr>
               % endif

@@ -75,7 +75,8 @@ class Product(Base, ImageMixin, ElasticMixin):
     box_width = Column(types.Float, nullable=False, default=0)
     box_height = Column(types.Float, nullable=False, default=0)
 
-    batches = orm.relationship('Batch', backref='product')
+    batches = orm.relationship('Batch', backref='product',
+                               order_by='Batch.ship_time')
 
     options = orm.relationship(
         'Option',

@@ -195,6 +195,10 @@
           % if obj.unpaid_amount:
             <a class="btn btn-default" href="${request.route_path('admin:order:send-update-payment', id=obj.id)}">Send Update Payment Email</a>
           % endif
+
+          % if any(item.status.key == 'payment failed' for item in obj.cart.items):
+            <a class="btn btn-default" href="${request.route_path('admin:order:abandon', id=obj.id)}">Abandon Payment</a>
+          % endif
         </div>
 
         <div class="well">

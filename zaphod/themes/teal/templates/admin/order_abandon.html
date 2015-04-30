@@ -1,0 +1,31 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="blocks" file="/common/blocks.html"/>
+
+<%def name="title()">Abandon Order ${obj.id}</%def>
+
+
+<section class="section-admin-order">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">${self.title()}</h1>
+
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
+
+          <p>If the customer cannot be reached to add payment to this order, or the customer refuses to provide payment, it should be abandoned. If the order is being explicitly canceled, use the 'Cancel Order' button instead.</p>
+
+          <p>If possible, provide additional details in order comments about what happened with this order.</p>
+
+          <p><strong>Once this order is abandoned it will not be possible to ship any remaining unshipped items.</strong></p>
+
+          <%forms:actions>
+            <button class="btn btn-danger" type="submit">Abandon</button>
+            <a class="btn btn-default" href="${request.route_path('admin:order', id=obj.id)}">Cancel</a>
+          </%forms:actions>
+        ${renderer.end()}
+      </div>
+    </div>
+  </div>
+</section>

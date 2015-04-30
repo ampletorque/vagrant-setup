@@ -74,6 +74,7 @@ def includeme(config):
                      '/order/{id}/resend-shipping-confirmation')
     config.add_route('admin:order:send-update-payment',
                      '/order/{id}/send-update-payment')
+    config.add_route('admin:order:abandon', '/order/{id}/abandon')
     config.add_route('admin:order:prepare-invoice',
                      '/order/{id}/prepare-invoice')
     config.add_route('admin:order:print-invoice',

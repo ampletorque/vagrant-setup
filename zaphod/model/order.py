@@ -139,6 +139,20 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
             item.update_status('shipped')
         self.update_status()
 
+    def abandon(self):
+        """
+        Abandon payment on an order that has 'payment failed' items.
+        """
+        if not any(item.status.key == 'payment failed' for item in
+                   self.cart.items):
+            raise ValueError('cannot abandon order %d, it has no items '
+                             'which are "payment failed".' % self.id)
+        for item in self.cart.items:
+            item.release_stock()
+            if item.status.key == 'payment failed':
+                item.update_status('abandoned')
+        self.update_status()
+
     @classmethod
     def elastic_mapping(cls):
         return ESMapping(

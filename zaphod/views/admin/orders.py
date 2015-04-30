@@ -104,6 +104,10 @@ class UpdateItemSchema(Schema):
     qty_desired = validators.Int(not_empty=True, min=1)
 
 
+class AbandonForm(Schema):
+    allow_extra_fields = False
+
+
 @view_defaults(route_name='admin:order', renderer='admin/order.html',
                permission='admin')
 @lift()
@@ -171,6 +175,24 @@ class OrderEditView(BaseEditView):
                       'success')
         return HTTPFound(location=request.route_url('admin:order',
                                                     id=order.id))
+
+    @view_config(route_name='admin:order:abandon',
+                 renderer='admin/order_abandon.html')
+    def abandon(self):
+        request = self.request
+        order = self._get_object()
+
+        form = Form(request, AbandonForm)
+        if form.validate():
+            self._touch_object(order)
+            order.abandon()
+            request.flash("Abandoned payment.", 'error')
+            return HTTPFound(location=request.route_url('admin:order',
+                                                        id=order.id))
+        return {
+            'obj': order,
+            'renderer': FormRenderer(form),
+        }
 
     @view_config(route_name='admin:order:prepare-invoice',
                  renderer='admin/order_prepare_invoice.html')

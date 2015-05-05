@@ -74,7 +74,7 @@ class UserView(object):
         request = self.request
 
         user = model.Session.query(model.User).\
-            filter_by(email=email).\
+            filter_by(email=email, enabled=True).\
             first()
         if user and user.check_password(password):
             # Set auth token.

@@ -132,27 +132,29 @@ class MockPaymentInterface(object):
         "Create a new profile, returning a PaymentProfile instance."
         # Make up profile ID and payment profile ID.
         self.id_counter += 1
-        reference = self.id_counter
+        customer_id = self.id_counter
         profile = MockPaymentProfile(
             self,
-            reference=reference,
+            reference={'customer_id': customer_id},
             card_number=card_number,
             card_masked=card_number[-4:],
             email=email,
             description=description)
-        self.profiles[reference] = profile
+        self.profiles[customer_id] = profile
         return profile
 
     def delete_profile(self, profile):
         "Delete a profile. Accepts a PaymentProfile instance."
-        if profile.reference in self.profiles:
-            del self.profiles[profile.reference]
+        customer_id = profile.reference['customer_id']
+        if customer_id in self.profiles:
+            del self.profiles[customer_id]
         else:
             raise ProfileNotFoundException
 
     def get_profile(self, reference):
         "Grab a profile by id, returning a PaymentProfile instance."
-        if reference in self.profiles:
-            return self.profiles[reference]
+        customer_id = reference['customer_id']
+        if customer_id in self.profiles:
+            return self.profiles[customer_id]
         else:
             raise ProfileNotFoundException

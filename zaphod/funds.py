@@ -100,7 +100,7 @@ def capture_order(request, project, order):
     return success
 
 
-def capture_funds(request, project, limit=10):
+def capture_funds(request, project, limit=5):
     """
     Capture payments for all orders for a now-successful project.
     """

@@ -427,7 +427,8 @@ class ProjectEditView(NodeEditView):
         freight_cost = shipment_cost_q.scalar() or 0
 
         # transfers
-        total_paid = sum((transfer.amount + transfer.fee) for transfer in project.transfers)
+        total_paid = sum((transfer.amount + transfer.fee)
+                         for transfer in project.transfers)
 
         # total owed to project
         total_plus = cf_sales + po_sales + cf_shipping + po_shipping
@@ -654,14 +655,15 @@ class ProjectEditView(NodeEditView):
             return HTTPFound(location=request.current_route_url())
 
         else:
-            count_by_status = dict(model.Session.query(
+            count_by_status_q = model.Session.query(
                 model.CartItem.status,
                 func.count(model.Order.id.distinct())).\
                 join(model.Order.cart).\
                 join(model.Cart.items).\
                 join(model.CartItem.product).\
                 filter(model.Product.project == project).\
-                group_by(model.CartItem.status))
+                group_by(model.CartItem.status)
+            count_by_status = dict(count_by_status_q)
 
         return {
             'obj': project,

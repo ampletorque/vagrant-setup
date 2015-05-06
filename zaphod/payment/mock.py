@@ -10,8 +10,7 @@ log = logging.getLogger(__name__)
 
 
 class MockTransaction(object):
-    def __init__(self, id, profile, amount, description,
-                 ip, user_agent, referrer):
+    def __init__(self, profile, amount, description, ip, user_agent, referrer):
         self.id = binascii.hexlify(os.urandom(16))
         self.profile = profile
         self.amount = amount
@@ -59,7 +58,8 @@ class MockPaymentProfile(object):
         if description:
             self.description = description
 
-    def authorize(self, amount, description, ip, user_agent, referrer):
+    def authorize(self, amount, description, statement_descriptor,
+                  ip, user_agent, referrer):
         "Authorize a transaction, and return a dict with response info."
         transaction = MockTransaction(
             profile=self,
@@ -78,7 +78,8 @@ class MockPaymentProfile(object):
             'card_type': transaction.card_type,
         }
 
-    def auth_capture(self, amount, description, ip, user_agent, referrer):
+    def auth_capture(self, amount, description, statement_descriptor,
+                     ip, user_agent, referrer):
         "Authorize and capture a transaction."
         transaction = MockTransaction(
             profile=self,

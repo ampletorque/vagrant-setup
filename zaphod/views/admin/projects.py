@@ -640,16 +640,19 @@ class ProjectEditView(NodeEditView):
         form = Form(request, Schema)
         if form.validate():
             self._touch_object(project)
-            count = funds.capture_funds(request, project)
-            request.flash("Processed %d orders." % count, 'success')
+            failures, count = funds.capture_funds(request, project)
+            request.flash("Processed %d orders: %d failed." % (count, failures),
+                          'success')
             return HTTPFound(location=request.current_route_url())
+
         else:
             pending_q = model.Session.query(model.Order).\
                 join(model.Order.cart).\
                 join(model.Cart.items).\
                 join(model.CartItem.product).\
                 filter(model.Product.project == project).\
-                filter(model.CartItem.status == 'payment pending')
+                filter(model.CartItem.status.in_(['payment pending',
+                                                  'unfunded']))
             pending_count = pending_q.count()
 
         return {

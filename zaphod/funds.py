@@ -23,6 +23,14 @@ def update_item_statuses(project, order, new_status):
             item.update_status(new_status)
 
 
+def update_unfunded(project, order):
+    for item in order.cart.items:
+        if ((item.status.key == 'unfunded') and
+                (item.product.project == project)):
+            item.update_status('payment pending')
+    model.Session.flush()
+
+
 def capture_order(request, project, order):
     """
     Ensure that the specified order has captured payments for all crowdfunding
@@ -30,6 +38,8 @@ def capture_order(request, project, order):
     """
     registry = request.registry
     log.info('capture_order start: %d', order.id)
+
+    update_unfunded(project, order)
 
     # - get most recent payment method on order.
     method = order.active_payment_method
@@ -59,9 +69,11 @@ def capture_order(request, project, order):
         # - if failed, update cart item statuses and send payment failure
         # email.
         due_date = date.today() + timedelta(days=7)
-        link = update_payment_url(request, order, project)
+        link = update_payment_url(request, order)
         mail.send_update_payment(request, project, order, due_date, link)
         update_item_statuses(project, order, 'payment failed')
+        success = False
+
     else:
         # - if successful, update cart item statuses, record payment, and send
         # payment confirmation email.
@@ -80,17 +92,17 @@ def capture_order(request, project, order):
             created_by=request.user,
             descriptor=descriptor,
         ))
+        success = True
 
-    # - commit transaction asap after this!
+    # - XXX commit transaction asap after this??
 
     log.info('capture_order done: %d', order.id)
+    return success
 
 
 def capture_funds(request, project, limit=10):
     """
     Capture payments for all orders for a now-successful project.
-
-    XXX This query needs to restrict to just unpaid items.
     """
     assert project.successful, "project must be successful to capture funds"
     log.warn('capture_funds start: %d - %s', project.id, project.name)
@@ -99,7 +111,7 @@ def capture_funds(request, project, limit=10):
         join(model.Cart.items).\
         join(model.CartItem.product).\
         filter(model.Product.project == project).\
-        filter(model.CartItem.status == 'payment pending').\
+        filter(model.CartItem.status.in_(['payment pending', 'unfunded'])).\
         limit(limit)
     count = failures = 0
     for order in q:
@@ -109,4 +121,4 @@ def capture_funds(request, project, limit=10):
             failures += 1
     log.warn('capture_funds done: %d - %s / %d failed of %d',
              project.id, project.name, failures, count)
-    return count
+    return failures, count

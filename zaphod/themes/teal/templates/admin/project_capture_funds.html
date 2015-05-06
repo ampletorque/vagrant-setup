@@ -21,7 +21,7 @@ ${regions.project_header(obj)}
           % if pending_count:
             <form method="POST">
               ${h.auth_token_hidden_field(request)}
-              <button type="submit" class="btn btn-primary">Capture Funds</button>
+              <button type="submit" class="btn btn-primary">Capture Some Funds</button>
             </form>
           % endif
         % elif obj.pledged_amount >= obj.target:

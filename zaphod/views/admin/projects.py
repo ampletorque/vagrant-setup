@@ -426,12 +426,18 @@ class ProjectEditView(NodeEditView):
             filter(model.Product.project == project)
         freight_cost = shipment_cost_q.scalar() or 0
 
+        # transfers
+        total_paid = sum((transfer.amount + transfer.fee) for transfer in project.transfers)
+
         # total owed to project
-        total_owed = ((cf_sales + po_sales) -
-                      (cf_shipping + cf_transaction_fees +
-                       cf_crowd_supply_fees + po_shipping + po_transaction_fees
-                       + po_crowd_supply_fees + incurred_fulfillment_fees +
-                       freight_cost))
+        total_plus = cf_sales + po_sales + cf_shipping + po_shipping
+        total_minus = (cf_transaction_fees + cf_crowd_supply_fees +
+                       po_transaction_fees + po_crowd_supply_fees +
+                       incurred_fulfillment_fees + freight_cost)
+
+        total_owed = total_plus - total_minus
+
+        current_due = total_owed - total_paid
 
         return {
             'obj': project,
@@ -454,6 +460,8 @@ class ProjectEditView(NodeEditView):
             'freight_cost': freight_cost,
 
             'total_owed': total_owed,
+            'total_paid': total_paid,
+            'current_due': current_due,
         }
 
     @view_config(route_name='admin:project:reports:skus',

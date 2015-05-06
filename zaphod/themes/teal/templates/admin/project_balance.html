@@ -85,8 +85,24 @@ ${regions.project_header(obj)}
                 <td>${h.currency(freight_cost)}</td>
               </tr>
               <tr>
-                <td><strong>Current Net To Project</strong></td>
+                <td><strong>Total Net To Project</strong></td>
                 <td>${h.currency(total_owed)}</td>
+              </tr>
+              <tr class="table-divider"><td colspan="2"></td></tr>
+              % for transfer in obj.transfers:
+                <tr>
+                  <td>${transfer.method_description} ${transfer.reference} (${h.currency(transfer.amount)} plus fee of ${h.currency(transfer.fee)})</td>
+                  <td>${h.currency(transfer.fee + transfer.amount)}</td>
+                </tr>
+              % endfor
+              <tr>
+                <td><strong>Total Paid Already</strong></td>
+                <td>${h.currency(total_paid)}</td>
+              </tr>
+              <tr class="table-divider"><td colspan="2"></td></tr>
+              <tr>
+                <td><strong>Currently Due</strong></td>
+                <td>${h.currency(current_due)}</td>
               </tr>
             </tbody>
           </table>

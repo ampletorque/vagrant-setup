@@ -375,11 +375,11 @@ class ProjectTransfer(Base, UserMixin):
     method = Column(types.String(255), nullable=False)
     reference = Column(types.Unicode(255), nullable=False)
 
-    available_methods = [('check', 'Check'),
+    available_methods = [('check', 'Check Transfer'),
                          ('ach', 'ACH Transfer'),
                          ('domestic-wire', 'Domestic Wire Transfer'),
                          ('international-wire', 'International Wire Transfer'),
-                         ('paypal', 'PayPal')]
+                         ('paypal', 'PayPal Transfer')]
 
     project = orm.relationship('Project', backref='transfers')
 

@@ -641,8 +641,8 @@ class ProjectEditView(NodeEditView):
         if form.validate():
             self._touch_object(project)
             failures, count = funds.capture_funds(request, project)
-            request.flash("Processed %d orders: %d failed." % (count, failures),
-                          'success')
+            request.flash("Processed %d orders: %d failed." %
+                          (count, failures), 'success')
             return HTTPFound(location=request.current_route_url())
 
         else:

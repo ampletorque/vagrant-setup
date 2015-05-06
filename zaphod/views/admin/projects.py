@@ -646,18 +646,21 @@ class ProjectEditView(NodeEditView):
             return HTTPFound(location=request.current_route_url())
 
         else:
-            pending_q = model.Session.query(model.Order).\
+            count_by_status = dict(model.Session.query(
+                model.CartItem.status,
+                func.count(model.Order.id.distinct())).\
                 join(model.Order.cart).\
                 join(model.Cart.items).\
                 join(model.CartItem.product).\
                 filter(model.Product.project == project).\
-                filter(model.CartItem.status.in_(['payment pending',
-                                                  'unfunded']))
-            pending_count = pending_q.count()
+                group_by(model.CartItem.status))
 
         return {
             'obj': project,
-            'pending_count': pending_count,
+            'pending_count': (count_by_status.get('payment pending', 0) +
+                              count_by_status.get('unfunded', 0)),
+            'failed_count': count_by_status.get('payment failed', 0),
+            'abandon_count': count_by_status.get('abandoned', 0),
         }
 
     @view_config(route_name='admin:project:suspend',

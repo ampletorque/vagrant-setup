@@ -18,6 +18,8 @@ ${regions.project_header(obj)}
 
         % if obj.successful:
           <p>There are ${h.plural(pending_count, 'order', zero_word='no', words=False)} that have yet to be captured.</p>
+          <p>${h.plural(failed_count, 'order', zero_word='No', words=False)} currently have failed payments.</p>
+          <p>${h.plural(abandon_count, 'order', zero_word='No', words=False)} have been abandoned.</p>
           % if pending_count:
             <form method="POST">
               ${h.auth_token_hidden_field(request)}

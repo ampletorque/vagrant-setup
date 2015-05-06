@@ -79,7 +79,7 @@ def capture_order(request, project, order):
         # payment confirmation email.
         mail.send_payment_confirmation(request, project, order, amount)
         update_item_statuses(project, order, 'waiting')
-        order.payments.append(model.CreditCardPayment(
+        pp = model.CreditCardPayment(
             method=method,
             transaction_id=resp['transaction_id'],
             invoice_number=descriptor,
@@ -91,7 +91,9 @@ def capture_order(request, project, order):
             card_type=resp['card_type'],
             created_by=request.user,
             descriptor=descriptor,
-        ))
+        )
+        order.payments.append(pp)
+        pp.mark_as_captured(request.user, amount)
         success = True
 
     # - XXX commit transaction asap after this??

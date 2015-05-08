@@ -25,3 +25,5 @@ def includeme(config):
                      '/warehouse-transactions')
     config.add_route('admin:reports:project-open-items',
                      '/project-open-items')
+
+    config.add_route('admin:reports:emails', '/emails')

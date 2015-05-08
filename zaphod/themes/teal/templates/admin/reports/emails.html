@@ -1,0 +1,21 @@
+<%inherit file="base.html"/>
+
+
+<%def name="title()">Emails Report</%def>
+
+
+<section class="section-report-emails">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h4>User Emails</h4>
+        <p>${user_count}</p>
+
+        <h4>Newsletter Emails</h4>
+        <p>${newsletter_count}</p>
+
+        <p><a href="${request.current_route_path(_query=dict(format='csv'))}">Download CSV</a></p>
+      </div>
+    </div>
+  </div>
+</section>

@@ -13,7 +13,7 @@ class AddItemForm(Schema):
     allow_extra_fields = False
     product_id = validators.Int(not_empty=True)
     value_ids = ForEach(validators.Int(not_empty=True))
-    qty = validators.Int(not_empty=True, min=1, max=99)
+    qty = validators.Int(not_empty=True, min=1, max=999)
 
 
 class UpdateItemSchema(Schema):

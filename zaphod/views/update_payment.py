@@ -30,7 +30,7 @@ class UpdatePaymentView(object):
     def _validate_token(self, token):
         settings = self.request.registry.settings
         signer = TimestampSigner(settings['payment.secret'])
-        s = signer.unsign(token, max_age=86400)
+        s = signer.unsign(token, max_age=7 * 86400)
         return int(s)
 
     def _send_failure_email(self, order, form, e, stage):

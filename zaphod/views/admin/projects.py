@@ -471,7 +471,7 @@ class ProjectEditView(NodeEditView):
         project = self._get_object()
 
         base_q = model.Session.query(model.SKU,
-                                     func.count('*')).\
+                                     func.sum(model.CartItem.qty_desired)).\
             join(model.SKU.cart_items).\
             join(model.CartItem.cart).\
             join(model.Cart.order).\

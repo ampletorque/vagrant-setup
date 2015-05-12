@@ -51,7 +51,8 @@ class BaseEditView(object):
                 im = model.ImageMeta.get(image_params['id'])
             im.title = image_params['title']
             im.alt = image_params['alt']
-            self._touch_object(im)
+            im.updated_by = request.user
+            im.updated_time = datetime.utcnow()
             obj.image_associations.append(obj.ImageAssociation(
                 image_meta=im,
                 gravity=image_params['gravity'],

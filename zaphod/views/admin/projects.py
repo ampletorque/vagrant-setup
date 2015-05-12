@@ -125,6 +125,11 @@ class ProjectEditView(NodeEditView):
         tag_ids = ForEach(validators.Int)
         related_project_ids = ForEach(validators.Int)
 
+    def _touch_object(self, obj):
+        NodeEditView._touch_object(self, obj)
+        for product in obj.products:
+            product.update_in_stock()
+
     def _update_object(self, form, obj):
         obj.tags.clear()
         for tag_id in form.data.pop('tag_ids'):

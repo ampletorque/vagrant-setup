@@ -79,6 +79,10 @@ class ProductEditView(BaseEditView):
         associated_product_ids = ForEach(validators.Int)
         images = ForEach(custom_validators.ImageAssociation())
 
+    def _touch_object(self, obj):
+        BaseEditView._touch_object(self, obj)
+        obj.update_in_stock()
+
     def _update_object(self, form, obj):
         obj.associated_products.clear()
         for ap_id in form.data.pop('associated_product_ids'):

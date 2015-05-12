@@ -43,6 +43,7 @@ class BaseEditView(object):
         return im
 
     def _handle_images(self, form, obj):
+        request = self.request
         obj.image_associations[:] = []
         for image_params in form.data.pop('images'):
             if image_params['fresh']:

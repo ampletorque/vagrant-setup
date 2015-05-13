@@ -20,7 +20,7 @@
       <p>Share this update on social media:</p>
       <div class="row">
         <div class="col-xs-2 col-xs-offset-4">
-          <a href="${h.facebook_share_url(url=request.node_url(update), text='', caption='Crowd Supply Update', name=update.name, image_url=update.img_url(request, 'project-main'), app_id=request.registry.settings['facebook.app_id'], redirect_uri=request.url)}">
+          <a href="${h.facebook_share_url(url=request.node_url(update), text='', caption='Crowd Supply Update', name=update.name, image_url=update.img_url(request, 'project-main', qualified=True), app_id=request.registry.settings['facebook.app_id'], redirect_uri=request.url)}">
             <i class="fa fa-facebook"></i>
           </a>
         </div>

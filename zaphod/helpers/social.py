@@ -45,14 +45,17 @@ def facebook_share_url(text, url, name, caption, image_url, app_id,
     text = text.encode('ascii', 'ignore')
     name = name.encode('ascii', 'ignore')
     caption = caption.encode('ascii', 'ignore')
-    return 'https://www.facebook.com/dialog/feed?%s' % (
-        urlencode(dict(app_id=app_id,
-                       link=url,
-                       picture=image_url,
-                       name=name,
-                       caption=caption,
-                       description=text,
-                       redirect_uri=redirect_uri)))
+    params = dict(
+        app_id=app_id,
+        link=url,
+        name=name,
+        caption=caption,
+        description=text,
+        redirect_uri=redirect_uri,
+    )
+    if image_url:
+        params['picture'] = image_url
+    return 'https://www.facebook.com/dialog/feed?%s' % urlencode(params)
 
 
 def pin_it_url(dst_url, media, description):

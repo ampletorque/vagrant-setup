@@ -2,7 +2,7 @@ from pyramid.view import view_defaults
 from venusian import lift
 from formencode import ForEach, validators
 
-from ... import model
+from ... import model, custom_validators
 
 from ...admin import (NodeListView, NodeEditView, NodeUpdateForm,
                       NodeCreateView, NodeDeleteView)
@@ -16,6 +16,12 @@ class ProviderEditView(NodeEditView):
 
     class UpdateForm(NodeUpdateForm):
         provider_type_ids = ForEach(validators.Int)
+        email = validators.Email(not_empty=False)
+        home_url = validators.URL(max=255)
+        mailing = custom_validators.AddressSchema
+
+        lat = validators.Number()
+        lon = validators.Number()
 
     def _update_object(self, form, obj):
         obj.types.clear()

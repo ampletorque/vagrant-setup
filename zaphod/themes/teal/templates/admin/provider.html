@@ -34,6 +34,14 @@
 
           ${forms.lselect(renderer, 'provider_type_ids', [pt.id for pt in obj.types], getters.provider_types_for_select(), multiple=True, label='Provider Types')}
 
+          ${forms.ltext(renderer, 'email', obj.email, prefix='@')}
+          ${forms.ltext(renderer, 'home_url', obj.home_url, label='Homepage URL', hint='Enter a fully qualified URL, e.g. https://example.com/page')}
+
+          ${forms.address_fields(renderer, 'mailing', obj.mailing)}
+
+          ${forms.ltext(renderer, 'lat', obj.lat, label='Latitude (deg)')}
+          ${forms.ltext(renderer, 'lon', obj.lon, label='Longitude (deg)')}
+
           ${forms.lcheckbox(renderer, 'listed', obj.listed)}
           ${forms.lcheckbox(renderer, 'published', obj.published)}
 

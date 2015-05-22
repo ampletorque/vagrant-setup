@@ -78,12 +78,15 @@ def send(request, template_name, vars, to=None, from_=None,
     if reply_to:
         extra_headers['Reply-To'] = reply_to
 
+    cc = cc and format_address_list(cc)
+    bcc = bcc and format_address_list(bcc)
+
     msg = Message(
         subject=subject,
         sender=from_ or settings['mailer.from'],
         recipients=recipients,
-        cc=cc and format_address_list(cc),
-        bcc=bcc and format_address_list(bcc),
+        cc=cc,
+        bcc=bcc,
         extra_headers=extra_headers,
     )
 
@@ -98,7 +101,8 @@ def send(request, template_name, vars, to=None, from_=None,
     msg.body = process_text(render('emails/%s.txt' % template_name,
                                    vars, request))
 
-    log.info("enqueueing %s to:%r subject:%r", template_name, to, subject)
+    log.info("enqueueing %s to:%r cc:%r bcc:%r subject:%r", template_name,
+             recipients, cc, bcc, subject)
     if asbool(settings.get('mailer.debug')):
         log.info("debug: dumping %s", template_name)
         dump_locally(settings, msg)

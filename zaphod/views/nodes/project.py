@@ -43,7 +43,7 @@ class ProjectView(object):
                 ),
                 to=creator_emails,
                 reply_to=email,
-                cc=request.registry.settings['mailer.from'])
+                cc=[request.registry.settings['mailer.from']])
 
             request.flash(
                 "Thanks, we'll try to answer your question as soon as "

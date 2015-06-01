@@ -36,10 +36,16 @@ def featured_projects_for_cart(cart, limit=None):
     related = set()
     for item in cart.items:
         related.update(item.product.project.related_projects)
-    related = [project for project in related
-               if project.status in ('crowdfunding', 'available',
-                                     'stock-only')]
-    related.sort(key=attrgetter('start_time'))
+    related_cf = []
+    related_noncf = []
+    for project in related:
+        if project.status in ('crowdfunding', 'available', 'stock-only'):
+            if project.start_time:
+                related_cf.append(project)
+            else:
+                related_noncf.append(project)
+    related_cf.sort(key=attrgetter('start_time'), reverse=True)
+    related = related_cf + related_noncf
     if limit:
         related = related[:limit]
     return related

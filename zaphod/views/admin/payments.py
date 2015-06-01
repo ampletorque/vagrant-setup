@@ -6,6 +6,8 @@ from pyramid_uniform import Form, FormRenderer
 
 from ... import model, payment, custom_validators, helpers as h
 
+from ...admin import BaseEditView
+
 
 class CaptureForm(Schema):
     allow_extra_fields = False

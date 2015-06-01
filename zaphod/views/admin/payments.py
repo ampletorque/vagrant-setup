@@ -33,6 +33,10 @@ class PaymentView(object):
             raise HTTPNotFound
         return pp
 
+    def _touch_object(self, obj):
+        BaseEditView._touch_object(self, obj)
+        obj.order.update_payment_status()
+
     def _get_profile(self, pp):
         method = pp.method
         registry = self.request.registry
@@ -47,6 +51,7 @@ class PaymentView(object):
         profile = self._get_profile(pp)
         profile.void(pp.transaction_id)
         pp.mark_as_void(request.user)
+        self._touch_object(pp)
 
         request.flash("Voided payment %s." % pp.transaction_id, 'success')
         return HTTPFound(location=request.route_url('admin:order',
@@ -68,6 +73,7 @@ class PaymentView(object):
                                        transaction_id=pp.transaction_id)
 
             pp.mark_as_captured(request.user, amount)
+            self._touch_object(pp)
             request.flash("Captured %s for %s." % (pp.transaction_id,
                                                    h.currency(amount)),
                           'success')
@@ -103,6 +109,7 @@ class PaymentView(object):
                 refund_amount=-amount,
             )
             model.Session.add(refund)
+            self._touch_object(pp)
             refund.mark_as_processed(request.user, -amount)
             request.flash("Refunded %s for %s." % (pp.transaction_id,
                                                    h.currency(amount)),
@@ -125,6 +132,7 @@ class PaymentView(object):
         form = Form(request, MarkChargebackForm)
         if form.validate():
             pp.mark_as_chargeback(request.user)
+            self._touch_object(pp)
             request.flash("Marked payment %s as a chargeback." %
                           pp.transaction_id, 'success')
             return HTTPFound(location=request.route_url('admin:order',
@@ -141,6 +149,7 @@ class PaymentView(object):
         request = self.request
         pp = self._get_object()
         pp.chargeback_state = 'lost'
+        self._touch_object(pp)
         request.flash("Marked chargeback as resolved in customer's favor.",
                       'success')
         return HTTPFound(location=request.route_url('admin:order',
@@ -152,6 +161,7 @@ class PaymentView(object):
         request = self.request
         pp = self._get_object()
         pp.chargeback_state = 'won'
+        self._touch_object(pp)
         request.flash("Marked chargeback as resolved in merchant's favor.",
                       'success')
         return HTTPFound(location=request.route_url('admin:order',
@@ -163,6 +173,7 @@ class PaymentView(object):
         request = self.request
         pp = self._get_object()
         pp.expired = True
+        self._touch_object(pp)
         request.flash("Marked payment %s as expired." % pp.transaction_id,
                       'success')
         return HTTPFound(location=request.route_url('admin:order',

@@ -166,6 +166,7 @@ class PerformanceReportsView(BaseReportsView):
         num_projects_launched = q.count()
 
         pending_q = q.filter(model.Project.end_time > utcnow,
+                             model.Project.suspended_time == None,
                              model.Project.successful == False)
         num_projects_pending = pending_q.count()
 

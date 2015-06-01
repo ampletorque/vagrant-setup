@@ -46,6 +46,7 @@ def capture_order(request, project, order):
 
     # - figure out amount owed.
     amount = order.current_due_amount - order.authorized_amount
+    assert amount > 0, "order capture amount must be greater than zero"
 
     # - get payment gateway.
     iface = payment.get_payment_interface(registry, method.gateway.id)

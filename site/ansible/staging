@@ -7,5 +7,5 @@ app_environment=staging
 # already checked out the repo, it won't do anything. Re-cloning the repo from
 # scratch is required for this to have any effect.
 # See https://github.com/ansible/ansible-modules-core/issues/233
-repo=git@github.com:storborg/zaphod.git
+repo=git@github.com:crowdsupply/zaphod.git
 version=master

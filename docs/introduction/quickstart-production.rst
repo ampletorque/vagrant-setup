@@ -1,12 +1,14 @@
 Quick Start Deploying to Production
 ========================
 
-Checkout Zaphod to the Host Computer
+Host Computer Setup
 ------------------------------------
 
 Clone the repo::
 
     $ git clone git@github.com:crowdsupply/zaphod.git
+
+Enable SSH agent forwarding, if it's not already enabled. `This GitHub guide <https://developer.github.com/guides/using-ssh-agent-forwarding/>`_ is a good reference for what's involved.
 
 Development
 -----------

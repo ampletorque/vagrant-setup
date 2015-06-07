@@ -573,6 +573,7 @@ class ProjectEditView(NodeEditView):
         if filter_open:
             q = q.filter(not_(model.CartItem.status.in_(
                 ['failed', 'cancelled', 'shipped', 'abandoned'])))
+        q = q.order_by(model.Order.id.desc())
         return q
 
     @view_config(route_name='admin:project:reports:orders',

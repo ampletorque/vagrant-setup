@@ -191,7 +191,7 @@ define([
 
       var $optionsBody = this.$container.find('> tbody'),
           $options = $optionsBody.find('> tr'),
-          optionIdx = $options.index($thisOption);
+          optionIdx = $thisOption.data('index');
 
       var $valuesBody = $el.closest('table').find('> tbody'),
           $values = $valuesBody.find('> tr'),

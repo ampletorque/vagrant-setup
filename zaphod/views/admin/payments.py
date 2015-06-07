@@ -111,8 +111,8 @@ class PaymentView(object):
                 refund_amount=-amount,
             )
             model.Session.add(refund)
-            self._touch_object(pp)
             refund.mark_as_processed(request.user, -amount)
+            self._touch_object(pp)
             request.flash("Refunded %s for %s." % (pp.transaction_id,
                                                    h.currency(amount)),
                           'success')

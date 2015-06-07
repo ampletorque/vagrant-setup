@@ -21,7 +21,7 @@ ${regions.project_header(obj)}
         <p><a href="${request.route_path('admin:project:reports:balance', id=obj.id)}">Balance Sheet</a></p>
         <p><a href="${request.route_path('admin:project:reports:skus', id=obj.id)}">SKU Breakdown</a></p>
         <p><a href="${request.route_path('admin:project:reports:orders', id=obj.id)}">Orders</a></p>
-        <p><a href="${request.route_path('admin:project:reports:orders', id=obj.id, _query=dict(format='json'))}">Orders JSON Download (Work in progress: schema subject to change)</a></p>
+        <p>Orders Download [<a href="${request.route_path('admin:project:reports:orders', id=obj.id, _query=dict(format='json'))}">JSON</a>] [<a href="${request.route_path('admin:project:reports:orders', id=obj.id, _query=dict(format='csv'))}">CSV</a>]</p>
       </div>
     </div>
   </div>

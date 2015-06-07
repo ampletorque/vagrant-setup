@@ -564,6 +564,48 @@ class ProjectEditView(NodeEditView):
             'created_time': order.created_time,
         }
 
+    def _order_to_csv(self, project, order):
+
+        @lru_cache(maxsize=1024)
+        def sku_option_values(sku):
+            opts = [(ov.option.name, ov.description)
+                    for ov in sku.option_values]
+            opts.sort()
+            return ", ".join(["%s: %s" % opt for opt in opts])
+
+        return [
+            {
+                'order-id': order.id,
+                'product': item.product.name,
+                'options': sku_option_values(item.sku),
+                'quantity': item.qty_desired,
+                'unit-price': item.price_each,
+                'shipping-price': item.shipping_price,
+                'status': item.status.key,
+                'created-time': order.created_time,
+                'stage': {
+                    item.CROWDFUNDING: 'crowdfunding',
+                    item.PREORDER: 'preorder',
+                    item.STOCK: 'stock',
+                }[item.stage],
+                'email': order.user.email,
+                'first-name': order.shipping.first_name,
+                'last-name': order.shipping.last_name,
+                'company': order.shipping.company,
+                'address1': order.shipping.address1,
+                'address2': order.shipping.address2,
+                'city': order.shipping.city,
+                'state': order.shipping.state,
+                'postal-code': order.shipping.postal_code,
+                'country': order.shipping.country_name,
+                'phone': order.shipping.phone,
+                'estimated-ship-time': item.expected_ship_time,
+                'actual-ship-time': item.shipped_time,
+            }
+            for item in order.cart.items
+            if item.product.project_id == project.id
+        ]
+
     def _orders_q(self, project, filter_open=False):
         q = model.Session.query(model.Order).\
             join(model.Order.cart).\
@@ -603,6 +645,45 @@ class ProjectEditView(NodeEditView):
         orders = [self._order_to_json(project, order) for order in q]
         return {
             'orders': orders,
+        }
+
+    @view_config(route_name='admin:project:reports:orders',
+                 request_param='format=csv', renderer='csv')
+    def orders_csv(self):
+        request = self.request
+        project = self._get_object()
+        filter_open = asbool(request.params.get('filter_open'))
+        q = self._orders_q(project, filter_open=filter_open)
+        orders = []
+        for order in q:
+            orders += self._order_to_csv(project, order)
+        labels = [
+            ('order-id', 'Order ID'),
+            ('product', 'Product'),
+            ('options', 'Options'),
+            ('quantity', 'Quantity'),
+            ('unit-price', 'Unit Price'),
+            ('shipping-price', 'Shipping Price'),
+            ('status', 'Status'),
+            ('created-time', 'Created Time'),
+            ('stage', 'Stage'),
+            ('email', 'Email'),
+            ('first-name', 'First Name'),
+            ('last-name', 'Last Name'),
+            ('company', 'Company'),
+            ('address1', 'Address 1'),
+            ('address2', 'Address 2'),
+            ('city', 'City'),
+            ('state', 'State'),
+            ('postal-code', 'Postal Code'),
+            ('country', 'Country'),
+            ('phone', 'Phone'),
+            ('estimated-ship-time', 'Estimated Ship Time'),
+            ('actual-ship-time', 'Actual Ship Time'),
+        ]
+        return {
+            'labels': labels,
+            'rows': orders,
         }
 
     @view_config(route_name='admin:project:ship',

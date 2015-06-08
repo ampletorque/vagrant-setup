@@ -40,10 +40,13 @@ class BaseEditView(object):
         )
         im.width, im.height = info['size']
         model.Session.add(im)
+        client = get_client(request)
+        client.index_object(im)
         return im
 
     def _handle_images(self, form, obj):
         request = self.request
+        client = get_client(request)
         obj.image_associations[:] = []
         for image_params in form.data.pop('images'):
             if image_params['fresh']:
@@ -54,6 +57,7 @@ class BaseEditView(object):
             im.alt = image_params['alt']
             im.updated_by = request.user
             im.updated_time = datetime.utcnow()
+            client.index_object(im)
             obj.image_associations.append(obj.ImageAssociation(
                 image_meta=im,
                 gravity=image_params['gravity'],

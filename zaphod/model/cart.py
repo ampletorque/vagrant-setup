@@ -229,7 +229,8 @@ class CartItem(Base):
             # in stock.
             if self.status.payment_due and not self.status.final:
                 if (self.stage == self.STOCK) and self.product.in_stock:
-                    self.update_status('in process')
+                    if self.status.key != 'being packed':
+                        self.update_status('in process')
                 elif self.status.key not in ('being packed', 'in process'):
                     self.update_status('waiting')
         else:

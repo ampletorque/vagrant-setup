@@ -8,4 +8,4 @@ app_environment=staging
 # scratch is required for this to have any effect.
 # See https://github.com/ansible/ansible-modules-core/issues/233
 repo=git@github.com:crowdsupply/zaphod.git
-version=master
+version=staging

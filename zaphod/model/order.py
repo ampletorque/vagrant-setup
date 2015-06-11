@@ -41,7 +41,8 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
 
     @property
     def shipping_cost(self):
-        return sum(shipment.cost for shipment in self.shipments)
+        return sum(shipment.cost for shipment in self.shipments
+                   if shipment.cost)
 
     @property
     def paid_amount(self):

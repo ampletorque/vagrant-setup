@@ -40,6 +40,10 @@ class Order(Base, UserMixin, CommentMixin, ElasticMixin):
         return self.cart.shipping_total
 
     @property
+    def shipping_cost(self):
+        return sum(shipment.cost for shipment in self.shipments)
+
+    @property
     def paid_amount(self):
         "The amount currently paid, *not* including authorizes."
         return sum(p.amount for p in self.payments if p.valid)

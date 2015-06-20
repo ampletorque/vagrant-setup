@@ -128,6 +128,11 @@ class TealTheme(Theme):
             ],
             extension='jpg', quality=85),
 
+        FilterChain(
+            'project-body-fixed', width=749, height=421, extension='jpg',
+            crop_whitespace=True, crop=True, pad=True,
+            quality=85),
+
         # FilterChain(
         #     'project-wide', width=1170, height=658,
         #     crop_whitespace=True, pad=True, crop='nonwhite',

@@ -135,7 +135,7 @@
         ${request.image_tag(image.name, image.original_ext, 'project-body-fixed', title='Novena Heirloom Laptop Model')}
         <hr>
         % if project:
-          <h2>${h.currency(project.pledged_amount)} <small>raised</small></h2>
+          <h2>${h.commas(project.pledged_amount)} <small>raised</small></h2>
         % endif
         <hr>
         <p>Groundbreaking open-source laptop by bunnie and xobs. Marketing and more by Crowd Supply. Featured in TechCrunch and Mashable.</p>
@@ -151,7 +151,7 @@
         ${request.image_tag(image.name, image.original_ext, 'project-body-fixed', title='Portland Press Kit')}
         <hr>
         % if project:
-          <h2>${h.currency(project.pledged_amount)} <small>raised</small></h2>
+          <h2>${h.commas(project.pledged_amount)} <small>raised</small></h2>
         % endif
         <hr>
         <p>Sustainable Mason jar french press by Brian and Rob. Ongoing sales and more by Crowd Supply. Featured in Wired and Dwell.</p>
@@ -167,7 +167,7 @@
         ${request.image_tag(image.name, image.original_ext, 'project-body-fixed', title='USB Armory')}
         <hr>
         % if project:
-          <h2>${h.currency(project.pledged_amount)} <small>raised</small></h2>
+          <h2>${h.commas(project.pledged_amount)} <small>raised</small></h2>
         % endif
         <hr>
         <p>Secure USB stick computer by Inverse Path. Fulfillment and more by Crowd Supply. Featured in BoingBoing and PC World.</p>

@@ -130,7 +130,7 @@ class TealTheme(Theme):
 
         FilterChain(
             'project-body-fixed', width=749, height=421, extension='jpg',
-            crop_whitespace=True, crop=True, pad=True,
+            crop_whitespace=True, pad=True,
             quality=85),
 
         # FilterChain(

@@ -173,7 +173,7 @@
         </div>
 
         <div class="well">
-          % if (not obj.unauthorized_amount) and (not obj.closed):
+          % if (obj.authorized_amount >= obj.current_due_amount) and (not obj.closed):
             <a class="btn btn-primary" href="${request.route_path('admin:order:prepare-invoice', id=obj.id)}">
               <i class="fa fa-print"></i>
               Print Invoice

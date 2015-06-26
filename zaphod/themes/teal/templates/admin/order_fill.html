@@ -26,7 +26,7 @@
                 </thead>
                 <tbody>
                   % for item in obj.cart.items:
-                    % if not item.status.final:
+                    % if item.status.key == 'being packed':
                       <tr>
                         <td>${renderer.checkbox('item_ids', value=item.id)}</td>
                         <td>${item.qty_desired}</td>

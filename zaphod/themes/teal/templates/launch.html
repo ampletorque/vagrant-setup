@@ -9,25 +9,29 @@
 
 <section class="section-launch">
   <div class="container">
+
+    <div class="row">
+      <div class="col-lg-12">
+        <h2 class="text-center">Tools &amp; services for the greater goods.</h2>
+      </div>
+    </div>
+
     <div class="row">
       <div class="col-md-3 text-center">
         <h1><i class="fa fa-dollar"></i></h1>
         <h3>Sales</h3>
         <table class="table">
           <tr>
-            <td colspan="2"><em>any of</em></td>
+            <td><em>any of</em></td>
           </tr>
           <tr>
-            <td><strong>crowdfunding</strong></td>
-            <td>5%</td>
+            <td>crowdfunding (5% fee)</td>
           </tr>
           <tr>
-            <td><strong>pre-orders</strong></td>
-            <td>10%</td>
+            <td>pre-orders (10% fee)</td>
           </tr>
           <tr>
-            <td><strong>ongoing</strong></td>
-            <td>wholesale</td>
+            <td>ongoing (wholesale)</td>
           </tr>
         </table>
       </div>
@@ -36,16 +40,16 @@
         <h3>Fulfillment</h3>
         <table class="table">
           <tr>
-            <td colspan="2"><em>optional</em></td>
+            <td><em>optional</em></td>
           </tr>
           <tr>
-            <td colspan="2">$2.75/package</td>
+            <td>$2.75/package</td>
           </tr>
           <tr>
-            <td colspan="2">+$1 for international</td>
+            <td>+$1 for international</td>
           </tr>
           <tr>
-            <td colspan="2">discounted freight</td>
+            <td>discounted freight</td>
           </tr>
         </table>
       </div>
@@ -54,19 +58,16 @@
         <h3>Marketing</h3>
         <table class="table">
           <tr>
-            <td colspan="2"><em>optional</em></td>
+            <td><em>optional</em></td>
           </tr>
           <tr>
-            <td><strong>PR outreach</strong></td>
-            <td>2%-8%</td>
+            <td>PR outreach (2%-8% fee)</td>
           </tr>
           <tr>
-            <td><strong>press kits</strong></td>
-            <td>incl</td>
+            <td>press kits (included)</td>
           </tr>
           <tr>
-            <td><strong>photo &amp; video</strong></td>
-            <td>$2,000+</td>
+            <td>photo &amp; video ($2,000+)</td>
           </tr>
         </table>
       </div>
@@ -75,16 +76,16 @@
         <h3>Strategy</h3>
         <table class="table">
           <tr>
-            <td colspan="2"><em>included</em></td>
+            <td><em>included</em></td>
           </tr>
           <tr>
-            <td colspan="2">pricing &amp; goal</td>
+            <td>pricing &amp; goal</td>
           </tr>
           <tr>
-            <td colspan="2">campaign structure</td>
+            <td>campaign structure</td>
           </tr>
           <tr>
-            <td colspan="2">production planning</td>
+            <td>production planning</td>
           </tr>
         </table>
       </div>
@@ -135,10 +136,12 @@
         ${request.image_tag(image.name, image.original_ext, 'project-body-fixed', title='Novena Heirloom Laptop Model')}
         <hr>
         % if project:
-          <h2>${h.commas(project.pledged_amount)} <small>raised</small></h2>
+          <h2>$${h.commas(project.pledged_amount)} <small>raised</small></h2>
         % endif
         <hr>
-        <p>Groundbreaking open-source laptop by bunnie and xobs. Marketing and more by Crowd Supply. Featured in TechCrunch and Mashable.</p>
+        <p>Open-source laptop by bunnie and xobs.<br/>
+	   Marketing and more by Crowd Supply.<br/>
+	   Featured in TechCrunch and Mashable.</p>
         <a class="btn btn-cta" href="${request.node_path(project)}">Read Their Story</a>
       </div>
 
@@ -151,10 +154,12 @@
         ${request.image_tag(image.name, image.original_ext, 'project-body-fixed', title='Portland Press Kit')}
         <hr>
         % if project:
-          <h2>${h.commas(project.pledged_amount)} <small>raised</small></h2>
+          <h2>$${h.commas(project.pledged_amount)} <small>raised</small></h2>
         % endif
         <hr>
-        <p>Sustainable Mason jar french press by Brian and Rob. Ongoing sales and more by Crowd Supply. Featured in Wired and Dwell.</p>
+        <p>Mason jar french press by Brian and Rob.<br/>
+	   Ongoing sales and more by Crowd Supply.<br/>
+	   Featured in Wired and Dwell.</p>
         <a class="btn btn-cta" href="${request.node_path(project)}">Read Their Story</a>
       </div>
 
@@ -167,10 +172,12 @@
         ${request.image_tag(image.name, image.original_ext, 'project-body-fixed', title='USB Armory')}
         <hr>
         % if project:
-          <h2>${h.commas(project.pledged_amount)} <small>raised</small></h2>
+          <h2>$${h.commas(project.pledged_amount)} <small>raised</small></h2>
         % endif
         <hr>
-        <p>Secure USB stick computer by Inverse Path. Fulfillment and more by Crowd Supply. Featured in BoingBoing and PC World.</p>
+        <p>USB stick computer by Inverse Path.<br/>
+	   Fulfillment and more by Crowd Supply.<br/>
+	   Featured in BoingBoing and PC World.</p>
         <a class="btn btn-cta" href="${request.node_path(project)}">Read Their Story</a>
       </div>
     </div>

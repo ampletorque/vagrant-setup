@@ -203,17 +203,17 @@ class TealTheme(Theme):
 
     def invalidate_index(self):
         cache = self.cache_regions['default']
-        cache.invalidate('index')
+        cache.delete('index')
 
     def invalidate_project(self, project_id):
         cache = self.cache_regions['default']
-        cache.invalidate('project-%d-tile' % project_id)
-        cache.invalidate('project-%d-body' % project_id)
-        cache.invalidate('project-%d-body-crowdfunding' % project_id)
-        cache.invalidate('project-%d-body-available' % project_id)
-        cache.invalidate('project-%d-sidebar' % project_id)
-        cache.invalidate('project-%d-leader' % project_id)
-        cache.invalidate('project-%d-pinset' % project_id)
-        cache.invalidate('project-%d-updates' % project_id)
-        cache.invalidate('project-%d-backers' % project_id)
+        cache.delete('project-%d-tile' % project_id)
+        cache.delete('project-%d-body' % project_id)
+        cache.delete('project-%d-body-crowdfunding' % project_id)
+        cache.delete('project-%d-body-available' % project_id)
+        cache.delete('project-%d-sidebar' % project_id)
+        cache.delete('project-%d-leader' % project_id)
+        cache.delete('project-%d-pinset' % project_id)
+        cache.delete('project-%d-updates' % project_id)
+        cache.delete('project-%d-backers' % project_id)
         self.invalidate_index()

@@ -683,10 +683,14 @@ class OrderListView(BaseListView):
                  renderer='admin/orders.html')
     def overdue(self):
         utcnow = model.utcnow()
+        final_statuses = set(status.key for status in
+                             model.CartItem.available_statuses
+                             if status.final)
         q = model.Session.query(model.Order).\
             join(model.Order.cart).\
             join(model.Cart.items).\
             filter(model.Order.closed == False).\
+            filter(not_(model.CartItem.status.in_(final_statuses))).\
             filter(model.CartItem.expected_ship_time < utcnow).\
             order_by(model.Order.id.desc())
         return {'page': self._make_page(q)}

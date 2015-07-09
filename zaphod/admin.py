@@ -164,6 +164,9 @@ class BaseCreateView(object):
                        updated_by=request.user,
                        **form.data)
         model.Session.add(obj)
+        if hasattr(obj, 'elastic_document'):
+            client = get_client(request)
+            client.index_object(obj)
         return obj
 
     @view_config(permission='admin')

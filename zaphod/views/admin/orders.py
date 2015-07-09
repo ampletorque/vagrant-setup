@@ -674,6 +674,7 @@ class OrderListView(BaseListView):
             join(model.Order.cart).\
             join(model.Cart.items).\
             filter(model.Order.closed == False).\
+            filter(model.CartItem.stage == model.CartItem.STOCK).\
             filter(not_(model.CartItem.status.in_(['cancelled', 'shipped']))).\
             order_by(model.Order.id.desc())
         return {'page': self._make_page(q)}

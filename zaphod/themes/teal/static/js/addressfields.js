@@ -15,16 +15,16 @@ define(['jquery'], function ($) {
       function updateVisibility() {
         var countryCode = $countrySelect.val();
 
-        $stateCA.hide().attr('disabled', 'disabled');
-        $stateUS.hide().attr('disabled', 'disabled');
-        $stateInt.hide().attr('disabled', 'disabled');
+        $stateCA.hide().prop('disabled', true);
+        $stateUS.hide().prop('disabled', true);
+        $stateInt.hide().prop('disabled', true);
 
         if(countryCode === 'us') {
-          $stateUS.show().removeAttr('disabled');
+          $stateUS.show().prop('disabled', false);
         } else if(countryCode === 'ca') {
-          $stateCA.show().removeAttr('disabled');
+          $stateCA.show().prop('disabled', false);
         } else {
-          $stateInt.show().removeAttr('disabled');
+          $stateInt.show().prop('disabled', false);
         }
       }
 

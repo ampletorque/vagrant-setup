@@ -40,8 +40,6 @@ class BaseEditView(object):
         )
         im.width, im.height = info['size']
         model.Session.add(im)
-        client = get_client(request)
-        client.index_object(im)
         return im
 
     def _handle_images(self, form, obj):
@@ -57,6 +55,7 @@ class BaseEditView(object):
             im.alt = image_params['alt']
             im.updated_by = request.user
             im.updated_time = datetime.utcnow()
+            model.Session.flush()
             client.index_object(im)
             obj.image_associations.append(obj.ImageAssociation(
                 image_meta=im,
@@ -75,6 +74,7 @@ class BaseEditView(object):
         if 'images' in form.data:
             self._handle_images(form, obj)
         form.bind(obj)
+        model.Session.flush()
         if hasattr(obj, 'elastic_document'):
             client = get_client(request)
             client.index_object(obj)

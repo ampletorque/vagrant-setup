@@ -83,7 +83,7 @@ class Lead(Base, UserMixin, CommentMixin):
 
     dead_reason = Column(types.String(7), nullable=True, default='')
     available_dead_reasons = [('cs-rej', 'Rejected by CS'),
-                              ('cre-rej' 'Rejected by Creator'),
+                              ('cre-rej', 'Rejected by Creator'),
                               ('unrespo', 'Unresponsive'),
                               ('stalled', 'Indefinitely Stalled')]
 

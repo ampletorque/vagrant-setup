@@ -21,6 +21,34 @@
         ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
           ${forms.ltext(renderer, 'name', obj.name)}
 
+          ${forms.ltextarea(renderer, 'description', obj.description)}
+          ${forms.ltext(renderer, 'contact', obj.contact)}
+
+          ${forms.lselect(renderer, 'assigned_to_id', obj.assigned_to_id, getters.available_admin_users_for_select(), label='Assigned To')}
+
+          % if obj.stage == 'dead':
+            ${forms.lselect(renderer, 'dead_reason', obj.dead_reason, obj.available_dead_reasons)}
+          % else:
+            ${renderer.hidden('dead_reason', '')}
+          % endif
+
+          ${forms.lselect(renderer, 'source_id', obj.source_id, getters.available_lead_sources_for_select(), label='Source')}
+          ${forms.lcheckbox(renderer, 'is_inbound', checked=obj.is_inbound)}
+          ${forms.ltext(renderer, 'contact_channel', obj.contact_channel)}
+
+
+          <legend>Initial Estimates</legend>
+          ${forms.ldatepicker(renderer, 'initial_est_launch_time', obj.initial_est_launch_time, label='Launch Time')}
+          ${forms.lselect(renderer, 'initial_est_tier', obj.initial_est_tier, obj.available_tiers, label='Tier')}
+          ${forms.ltext(renderer, 'initial_est_six_month_sales', obj.initial_est_six_month_sales, prefix='$', label='6 Month Sales')}
+          ${forms.ltext(renderer, 'initial_est_six_month_percentage', obj.initial_est_six_month_percentage, suffix='%', label='6 Month %')}
+
+          <legend>Refined Estimates</legend>
+          ${forms.ldatepicker(renderer, 'refined_est_launch_time', obj.refined_est_launch_time, label='Launch Time')}
+          ${forms.lselect(renderer, 'refined_est_tier', obj.refined_est_tier, obj.available_tiers, label='Tier')}
+          ${forms.ltext(renderer, 'refined_est_six_month_sales', obj.refined_est_six_month_sales, prefix='$', label='6 Month Sales')}
+          ${forms.ltext(renderer, 'refined_est_six_month_percentage', obj.refined_est_six_month_percentage, suffix='%', label='6 Month %')}
+
           ${widgets.comments(renderer, obj)}
 
           <%forms:actions>

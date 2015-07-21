@@ -11,17 +11,30 @@ from .comment import CommentMixin
 __all__ = ['LeadSource', 'Lead']
 
 
-class LeadSource(Base):
+class LeadSource(Base, UserMixin):
     """
     A tracked source of leads.
     """
     __tablename__ = 'lead_sources'
     id = Column(types.Integer, primary_key=True)
     name = Column(types.Unicode(255), nullable=False)
+    category = Column(types.String(6), nullable=False, default='')
+
+    available_categories = [('', 'Unknown'),
+                            ('person', 'Person'),
+                            ('event', 'Event'),
+                            ('web', 'Website'),
+                            ('media', 'Media Placement'),
+                            ('advert', 'Advertisement'),
+                            ('other', 'Other')]
+
+    @property
+    def category_description(self):
+        return dict(self.available_categories)[self.category]
 
 
 def next_contact_default():
-    return utils.utcnow() + timedelta(days=5)
+    return utils.utcnow() + timedelta(days=7)
 
 
 class Lead(Base, UserMixin, CommentMixin):
@@ -31,62 +44,83 @@ class Lead(Base, UserMixin, CommentMixin):
     """
     __tablename__ = 'leads'
     id = Column(types.Integer, primary_key=True)
+
+    # Summary
     name = Column(types.Unicode(255), nullable=False)
     description = Column(types.UnicodeText, nullable=False, default=u'')
-
-    status = Column(types.String(4), nullable=False, default='prec')
-    opp_time = Column(types.DateTime, nullable=True)
-    cred_time = Column(types.DateTime, nullable=True)
-    prel_time = Column(types.DateTime, nullable=True)
-    dead_time = Column(types.DateTime, nullable=True)
-    live_time = Column(types.DateTime, nullable=True)
-
+    contact = Column(types.Unicode(255), nullable=False, default=u'')
     assigned_to_id = Column(None, ForeignKey('users.id'), nullable=True)
-    referred_by_id = Column(None, ForeignKey('users.id'), nullable=True)
-
-    source_id = Column(None, ForeignKey('lead_sources.id'), nullable=False,
-                       default=1)
-    contact_point = Column(types.String(6), nullable=False, default='')
-
     last_contact_time = Column(types.DateTime, nullable=True)
     next_contact_time = Column(types.DateTime, nullable=False,
                                default=next_contact_default)
 
-    estimated_launch_time = Column(types.DateTime, nullable=True)
-    campaign_duration_days = Column(types.Integer, nullable=True)
+    # Status
+    stage = Column(types.String(4), nullable=False, default='unqu')
+    eval_time = Column(types.DateTime, nullable=True)
+    qual_time = Column(types.DateTime, nullable=True)
+    nego_time = Column(types.DateTime, nullable=True)
+    prel_time = Column(types.DateTime, nullable=True)
+    dead_time = Column(types.DateTime, nullable=True)
+    live_time = Column(types.DateTime, nullable=True)
 
-    email = Column(types.Unicode(255), nullable=False, default=u'')
-    phone = Column(types.Unicode(255), nullable=False, default=u'')
-    person = Column(types.Unicode(255), nullable=False, default=u'')
+    available_stages = [('unqu', 'Unqualified'),
+                        ('eval', 'Evaluation'),
+                        ('qual', 'Qualified'),
+                        ('nego', 'Negotiation'),
+                        ('prel', 'Pre-launch'),
+                        ('dead', 'Dead'),
+                        ('live', 'Launched')]
 
-    available_statuses = [('prec', 'Pre-Contact'),
-                          ('opp', 'Opportunity'),
-                          ('cred', 'Credible'),
-                          ('prel', 'Prelaunch'),
-                          ('dead', 'Dead'),
-                          ('live', 'Launched')]
-
-    statuses_with_color = {
-        'prec': ('Pre-Contact', 'label-info'),
-        'opp': ('Opportunity', ''),
-        'cred': ('Credible', 'label-important'),
-        'prel': ('Prelaunch', 'label-success'),
+    stages_with_color = {
+        'unqu': ('Unqualified', 'label-info'),
+        'eval': ('Evaluation', ''),
+        'qual': ('Qualified', 'label-important'),
+        'nego': ('Negotiation', ''),
+        'prel': ('Live Pre-launch Page', 'label-success'),
         'dead': ('Dead', 'label-inverse'),
         'live': ('Launched', 'label-success'),
     }
 
-    available_contact_points = [('', 'Unknown'),
-                                ('phone', 'Phone'),
-                                ('chat', 'In-Person'),
-                                ('other', 'Other CF Site'),
-                                ('email', 'Email'),
-                                ('form', 'Web Form'),
-                                ('out', 'Outbound')]
+    dead_reason = Column(types.String(7), nullable=True, default='')
+    available_dead_reasons = [('cs-rej', 'Rejected by CS'),
+                              ('cre-rej' 'Rejected by Creator'),
+                              ('unrespo', 'Unresponsive'),
+                              ('stalled', 'Indefinitely Stalled')]
+
+    # Discovery
+    source_id = Column(None, ForeignKey('lead_sources.id'), nullable=False,
+                       default=1)
+    is_inbound = Column(types.Boolean(), nullable=False, default=True)
+    contact_channel = Column(types.String(6), nullable=False, default='')
+
+    available_contact_channels = [('', 'Unknown'),
+                                  ('webfor', 'Web Form'),
+                                  ('email', 'Email'),
+                                  ('social', 'Social Media'),
+                                  ('phone', 'Phone'),
+                                  ('person', 'In-person')]
+
+    # Estimates
+    initial_est_launch_time = Column(types.DateTime, nullable=True)
+    initial_est_tier = Column(types.String(4), nullable=False, default='garb')
+    initial_est_six_month_sales = Column(types.Integer(), nullable=False,
+                                         default=0)
+    initial_est_six_month_percentage = Column(types.Integer(), nullable=False,
+                                              default=5)
+    refined_est_launch_time = Column(types.DateTime, nullable=True)
+    refined_est_tier = Column(types.String(4), nullable=False, default='garb')
+    refined_est_six_month_sales = Column(types.Integer(), nullable=False,
+                                         default=0)
+    refined_est_six_month_percentage = Column(types.Integer(), nullable=False,
+                                              default=5)
+
+    available_tiers = [('star', 'Superstar'),
+                       ('good', 'Good'),
+                       ('fill', 'Filler'),
+                       ('garb', 'Garbage')]
 
     source = orm.relationship('LeadSource', backref='leads')
-
     assigned_to = orm.relationship('User', foreign_keys=assigned_to_id)
-    referred_by = orm.relationship('User', foreign_keys=referred_by_id)
 
     @property
     def new_source(self):

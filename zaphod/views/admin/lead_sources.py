@@ -7,34 +7,35 @@ from ... import model, custom_validators
 from ...admin import BaseListView, BaseEditView, BaseCreateView
 
 
-@view_defaults(route_name='admin:lead', renderer='admin/lead.html',
+@view_defaults(route_name='admin:lead-source', renderer='admin/lead_source.html',
                permission='admin')
 @lift()
-class LeadEditView(BaseEditView):
-    cls = model.Lead
+class LeadSourceEditView(BaseEditView):
+    cls = model.LeadSource
 
     class UpdateForm(Schema):
-        "Schema for validating lead update form."
+        "Schema for validating lead source update form."
         allow_extra_fields = False
         pre_validators = [NestedVariables()]
         name = validators.String(not_empty=True)
-        new_comment = custom_validators.CommentBody()
+        category = validators.String()
 
 
-@view_defaults(route_name='admin:leads', renderer='admin/leads.html',
+@view_defaults(route_name='admin:lead-sources', renderer='admin/lead_sources.html',
                permission='admin')
 @lift()
-class LeadListView(BaseListView):
-    cls = model.Lead
+class LeadSourceListView(BaseListView):
+    cls = model.LeadSource
 
 
-@view_defaults(route_name='admin:leads:new', renderer='admin/leads_new.html',
+@view_defaults(route_name='admin:lead-sources:new', renderer='admin/lead_sources_new.html',
                permission='admin')
 @lift()
-class LeadCreateView(BaseCreateView):
-    cls = model.Lead
-    obj_route_name = 'admin:lead'
+class LeadSourceCreateView(BaseCreateView):
+    cls = model.LeadSource
+    obj_route_name = 'admin:lead-source'
 
     class CreateForm(Schema):
         allow_extra_fields = False
         name = validators.String(not_empty=True)
+        category = validators.String()

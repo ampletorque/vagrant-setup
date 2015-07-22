@@ -71,7 +71,13 @@
                         Yes
                       % endif
                     </td>
-                    <td>${h.format_datetime(request, project.start_time)}</td>
+                    <td>
+                      % if project.start_time:
+                        ${h.format_datetime(request, project.start_time)}
+                      % else:
+                        None
+                      % endif
+                    </td>
                   </tr>
                 % endfor
               </tbody>

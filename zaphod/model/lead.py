@@ -121,11 +121,3 @@ class Lead(Base, UserMixin, CommentMixin):
 
     source = orm.relationship('LeadSource', backref='leads')
     assigned_to = orm.relationship('User', foreign_keys=assigned_to_id)
-
-    @property
-    def new_source(self):
-        return u''
-
-    @new_source.setter
-    def new_source(self, value):
-        self.source = LeadSource(name=value)

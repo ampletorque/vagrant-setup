@@ -1,4 +1,5 @@
 from datetime import timedelta
+from operator import attrgetter
 
 from sqlalchemy import Column, ForeignKey, types, orm
 
@@ -72,14 +73,18 @@ class Lead(Base, UserMixin, CommentMixin):
                         ('live', 'Launched')]
 
     stages_with_color = {
-        'unqu': ('Unqualified', 'label-info'),
-        'eval': ('Evaluation', ''),
-        'qual': ('Qualified', 'label-important'),
-        'nego': ('Negotiation', ''),
-        'prel': ('Live Pre-launch Page', 'label-success'),
-        'dead': ('Dead', 'label-inverse'),
-        'live': ('Launched', 'label-success'),
+        'unqu': ('Unqualified', 'info'),
+        'eval': ('Evaluation', 'default'),
+        'qual': ('Qualified', 'important'),
+        'nego': ('Negotiation', 'default'),
+        'prel': ('Live Pre-launch Page', 'success'),
+        'dead': ('Dead', 'inverse'),
+        'live': ('Launched', 'success'),
     }
+
+    @property
+    def stage_description_with_color(self):
+        return self.stages_with_color[self.stage]
 
     dead_reason = Column(types.String(7), nullable=True, default='')
     available_dead_reasons = [('cs-rej', 'Rejected by CS'),
@@ -121,3 +126,41 @@ class Lead(Base, UserMixin, CommentMixin):
 
     source = orm.relationship('LeadSource', backref='leads')
     assigned_to = orm.relationship('User', foreign_keys=assigned_to_id)
+
+    def gather_transitions(self):
+        transitions = []
+        stages = [stage for stage, label in self.available_stages]
+        overlapped = zip(stages, stages[1:])
+        for from_stage, to_stage in overlapped:
+            ts = getattr(self, to_stage + '_time')
+            if ts:
+                transitions.append(Transition(
+                    from_stage=from_stage,
+                    to_stage=to_stage,
+                    created_time=ts))
+        return transitions
+
+    @property
+    def events(self):
+        """
+        Return a list of objects which are either Comment or Transition
+        instances, sorted by timestamp.
+        """
+        events = self.gather_transitions() + self.comments
+        events.sort(key=attrgetter('created_time'))
+        return events
+
+
+class Transition(object):
+    def __init__(self, from_stage, to_stage, created_time):
+        self.from_stage = from_stage
+        self.to_stage = to_stage
+        self.created_time = created_time
+
+    @property
+    def from_stage_description(self):
+        return dict(Lead.available_stages)[self.from_stage]
+
+    @property
+    def to_stage_description(self):
+        return dict(Lead.available_stages)[self.to_stage]

@@ -16,23 +16,28 @@
 </%def>
 
 
+<%def name="single_comment(comment)">
+  <div class="row">
+    <div class="col-sm-3">
+      <strong>${comment.created_by.name if comment.created_by_id != 1 else 'System Message'}</strong>
+      <p class="comment-time">${h.format_datetime(request, comment.created_time)}</p>
+      <p class="comment-time-ago">${h.distance_of_time_in_words(comment.created_time, h.datetime.utcnow(), granularity='hour')}</p>
+    </div>
+    <div class="col-sm-9">
+      <p>
+        % for line in comment.body.split('\n'):
+          ${line}<br>
+        % endfor
+      </p>
+    </div>
+  </div>
+</%def>
+
+
 <%def name="comments(renderer, obj)">
   <legend>Admin Comments</legend>
   % for comment in obj.comments:
-    <div class="row">
-      <div class="col-sm-3">
-        <strong>${comment.created_by.name if comment.created_by_id != 1 else 'System Message'}</strong>
-        <p class="comment-time">${h.format_datetime(request, comment.created_time)}</p>
-        <p class="comment-time-ago">${h.distance_of_time_in_words(comment.created_time, h.datetime.utcnow(), granularity='hour')}</p>
-      </div>
-      <div class="col-sm-9">
-        <p>
-          % for line in comment.body.split('\n'):
-            ${line}<br>
-          % endfor
-        </p>
-      </div>
-    </div>
+    ${self.single_comment(comment)}
   % endfor
   ${forms.ltextarea(renderer, 'new_comment')}
 </%def>

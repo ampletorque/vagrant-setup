@@ -433,7 +433,7 @@
 <%def name="remind_me_form(project)">
   % if project.status == 'crowdfunding':
     <div class="project-remind-me">
-      <p><strong>Funding ends</strong> on ${h.format_datetime(request, project.final_day, '%b %d, %Y')} at 11:59pm PDT</p>
+      <p><strong>Funding ends</strong> on ${h.format_datetime(request, project.final_day, '%b %d, %Y')} at 11:59pm UTC</p>
       <form id="remind-me-form" class="form-inline" action="${request.node_path(project, suffix=['remind-me'])}" method="POST">
         <div class="input-group">
           ${h.text('email', None, type='email', placeholder='me@example.com', class_='form-control')}

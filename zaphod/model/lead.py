@@ -69,8 +69,8 @@ class Lead(Base, UserMixin, CommentMixin):
                         ('qual', 'Qualified'),
                         ('nego', 'Negotiation'),
                         ('prel', 'Pre-launch'),
-                        ('dead', 'Dead'),
-                        ('live', 'Launched')]
+                        ('dead', 'Closed - Lost'),
+                        ('live', 'Closed - Launched')]
 
     stages_with_color = {
         'unqu': ('Unqualified', 'info'),
@@ -78,8 +78,8 @@ class Lead(Base, UserMixin, CommentMixin):
         'qual': ('Qualified', 'primary'),
         'nego': ('Negotiation', 'default'),
         'prel': ('Live Pre-launch Page', 'danger'),
-        'dead': ('Dead', 'inverse'),
-        'live': ('Launched', 'success'),
+        'dead': ('Closed - Lost', 'inverse'),
+        'live': ('Closed - Launched', 'success'),
     }
 
     @property

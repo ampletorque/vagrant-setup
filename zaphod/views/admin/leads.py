@@ -51,11 +51,14 @@ class LeadEditView(BaseEditView):
         utcnow = model.utcnow()
 
         next_contact_days = form.data['next_contact_days']
+        # XXX Only update due date if the lead was contacted.
         obj.next_contact_time = utcnow + timedelta(days=next_contact_days)
 
         if form.data['was_contacted']:
             obj.last_contact_time = utcnow
 
+        # XXX There is a bug in this code: skipping stages doesn't set the
+        # intermediate timestamps.
         new_stage = form.data['stage']
         if obj.stage != new_stage:
             assert new_stage in dict(obj.available_stages)

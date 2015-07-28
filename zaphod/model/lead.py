@@ -75,9 +75,9 @@ class Lead(Base, UserMixin, CommentMixin):
     stages_with_color = {
         'unqu': ('Unqualified', 'info'),
         'eval': ('Evaluation', 'default'),
-        'qual': ('Qualified', 'important'),
+        'qual': ('Qualified', 'primary'),
         'nego': ('Negotiation', 'default'),
-        'prel': ('Live Pre-launch Page', 'success'),
+        'prel': ('Live Pre-launch Page', 'danger'),
         'dead': ('Dead', 'inverse'),
         'live': ('Launched', 'success'),
     }

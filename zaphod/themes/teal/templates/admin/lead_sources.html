@@ -1,0 +1,43 @@
+<%inherit file="base.html"/>
+
+<%def name="title()">List Lead Sources</%def>
+
+
+<section class="section-admin-lead-sources">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="pull-right">
+          <a class="btn btn-default" href="${request.route_path('admin:lead-sources:new')}"><i class="fa fa-plus"></i> New Lead Source</a>
+        </div>
+
+        <h1 class="page-header">Lead Sources <small>${len(objs)} total</small></h1>
+
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Category</th>
+              </tr>
+            </thead>
+            <tbody>
+              % for lead_source in objs:
+                <tr>
+                  <td>
+                    <a href="${request.route_path('admin:lead-source', id=lead_source.id)}">Edit</a>
+                  </td>
+                  <td>${lead_source.id}</td>
+                  <td>${lead_source.name}</td>
+                  <td>${lead_source.category_description}</td>
+                </tr>
+              % endfor
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

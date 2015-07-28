@@ -66,3 +66,21 @@ def associated_products_for_cart(cart, limit=None):
     if limit:
         associated = associated[:limit]
     return associated
+
+
+def available_admin_users_for_select(nullable=True):
+    ret = model.Session.query(model.User.id,
+                                                model.User.name).\
+        filter_by(admin=True).\
+        order_by(model.User.name).\
+        all()
+    if nullable:
+        return [('', 'None')] + ret
+    else:
+        return ret
+
+
+def available_lead_sources_for_select():
+    return model.Session.query(model.LeadSource.id,
+                               model.LeadSource.name).\
+        order_by(model.LeadSource.name)

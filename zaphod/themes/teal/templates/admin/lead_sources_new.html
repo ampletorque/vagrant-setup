@@ -3,7 +3,7 @@
 <%namespace name="forms" file="/common/forms.html"/>
 
 
-<%def name="title()">New Lead</%def>
+<%def name="title()">New Lead Source</%def>
 
 
 <section class="section-admin-new">
@@ -14,10 +14,11 @@
 
         ${renderer.begin(id='create-form', class_='form-horizontal form-wrapped')}
           ${forms.ltext(renderer, 'name')}
+          ${renderer.hidden('category', '')}
 
           <%forms:actions>
             <button class="btn btn-primary" type="submit">Save</button>
-            <a class="btn btn-default" href="${request.route_path('admin:leads')}">Cancel</a>
+            <a class="btn btn-default" href="${request.route_path('admin:lead-sources')}">Cancel</a>
           </%forms:actions>
 
         ${renderer.end()}

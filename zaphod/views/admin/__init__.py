@@ -155,6 +155,9 @@ def includeme(config):
     config.add_route('admin:leads', '/leads')
     config.add_route('admin:leads:new', '/leads/new')
     config.add_route('admin:lead', '/lead/{id}')
+    config.add_route('admin:lead-sources', '/lead-sources')
+    config.add_route('admin:lead-sources:new', '/lead-sources/new')
+    config.add_route('admin:lead-source', '/lead-source/{id}')
 
     config.add_route('admin:discounts', '/discounts')
     config.add_route('admin:discounts:new', '/discounts/new')

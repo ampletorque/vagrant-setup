@@ -19,9 +19,116 @@
         </div>
 
         ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
-          ${forms.ltext(renderer, 'name', obj.name)}
 
-          ${widgets.comments(renderer, obj)}
+          <legend>Overview</legend>
+          ${forms.ltext(renderer, 'name', obj.name)}
+          <%forms:element label="Stage">
+            <%
+              label, color = obj.stage_description_with_color
+            %>
+            <span class="label label-${color}">${label}</span>
+          </%forms:element>
+
+
+          <%forms:element label="Last Contacted">
+            ${h.format_datetime(request, obj.last_contact_time)}<br>
+            ${h.distance_of_time_in_words(obj.last_contact_time, h.datetime.utcnow(), granularity='hour')} ago
+          </%forms:element>
+
+          <%forms:element label="Next Contact">
+            ${h.format_datetime(request, obj.next_contact_time)}<br>
+            ${h.distance_of_time_in_words(obj.next_contact_time, h.datetime.utcnow(), granularity='hour')}
+            % if obj.next_contact_time < h.datetime.utcnow():
+              ago - <label class="label label-danger">OVERDUE</label>
+            % else:
+              from now
+            % endif
+          </%forms:element>
+
+
+          ${forms.ltextarea(renderer, 'description', obj.description, rows=4)}
+          ${forms.ltext(renderer, 'contact', obj.contact)}
+
+          ${forms.lselect(renderer, 'assigned_to_id', obj.assigned_to_id, getters.available_admin_users_for_select(), label='Assigned To')}
+
+          % if obj.stage == 'dead':
+            ${forms.lselect(renderer, 'dead_reason', obj.dead_reason, obj.available_dead_reasons)}
+          % else:
+            ${renderer.hidden('dead_reason', '')}
+          % endif
+
+          ${forms.lselect(renderer, 'source_id', obj.source_id, getters.available_lead_sources_for_select(), label='Source')}
+          ${forms.ltext(renderer, 'contact_channel', obj.contact_channel, label='Contact Channel')}
+          ${forms.lcheckbox(renderer, 'is_inbound', checked=obj.is_inbound, label='This was an inbound lead.')}
+
+          <br><br>
+
+          <div class="row">
+            <div class="col-sm-6">
+              <legend>Initial Estimates</legend>
+              ${forms.ldatepicker(renderer, 'initial_est_launch_time', obj.initial_est_launch_time, label='Launch')}
+              ${forms.lselect(renderer, 'initial_est_tier', obj.initial_est_tier, obj.available_tiers, label='Tier')}
+              ${forms.ltext(renderer, 'initial_est_six_month_sales', obj.initial_est_six_month_sales, prefix='$', label='6 Month Sales')}
+              ${forms.ltext(renderer, 'initial_est_six_month_percentage', obj.initial_est_six_month_percentage, suffix='%', label='6 Month %')}
+            </div>
+            <div class="col-sm-6">
+              <legend>Refined Estimates</legend>
+              ${forms.ldatepicker(renderer, 'refined_est_launch_time', obj.refined_est_launch_time, label='Launch')}
+              ${forms.lselect(renderer, 'refined_est_tier', obj.refined_est_tier, obj.available_tiers, label='Tier')}
+              ${forms.ltext(renderer, 'refined_est_six_month_sales', obj.refined_est_six_month_sales, prefix='$', label='6 Month Sales')}
+              ${forms.ltext(renderer, 'refined_est_six_month_percentage', obj.refined_est_six_month_percentage, suffix='%', label='6 Month %')}
+            </div>
+          </div>
+
+          <br><br>
+
+          <legend>Contact History</legend>
+          % for event in obj.events:
+            % if hasattr(event, 'from_stage'):
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="comment-time">${h.format_datetime(request, event.created_time)}</p>
+                  <p class="comment-time-ago">${h.distance_of_time_in_words(event.created_time, h.datetime.utcnow(), granularity='hour')}</p>
+                </div>
+                <div class="col-sm-9">
+                  <p>
+                    Stage updated from <strong>${event.from_stage_description}</strong> to <strong>${event.to_stage_description}</strong>.
+                  </p>
+                </div>
+              </div>
+
+            % else:
+              ${widgets.single_comment(event)}
+            % endif
+          % endfor
+
+          ${forms.ltextarea(renderer, 'new_comment', rows=4, label='Comment')}
+
+          <%forms:element label="New Stage" name="stage">
+            <div class="row">
+              <div class="col-sm-6">
+                <select name="stage" class="form-control">
+                  % for value, label in obj.available_stages[1:]:
+                    % if getattr(obj, value + '_time') and not obj.stage == value:
+                      <option value="${value}" disabled>${label}</option>
+                    % else:
+                      <option value="${value}">${label}</option>
+                    % endif
+                  % endfor
+                </select>
+              </div>
+            </div>
+          </%forms:element>
+
+          ${forms.lcheckbox(renderer, 'was_contacted', False, label='We had contact with this lead.')}
+
+          <%forms:element renderer="${renderer}" label="Next Contact" name="next_contact_days">
+            <div class="row">
+              <div class="col-sm-6">
+                ${renderer.select('next_contact_days', 3, [(1, '1 Day'), (2, '2 Days'), (3, '3 Days'), (4, '4 Days'), (5, '5 Days'), (14, '2 Weeks'), (30, '1 Month'), (90, '3 Months')], class_='form-control')}
+              </div>
+            </div>
+          </%forms:element>
 
           <%forms:actions>
             <button class="btn btn-primary" type="submit">Save</button>

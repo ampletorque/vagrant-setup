@@ -51,10 +51,8 @@ class LeadEditView(BaseEditView):
         utcnow = model.utcnow()
 
         next_contact_days = form.data['next_contact_days']
-        # XXX Only update due date if the lead was contacted.
-        obj.next_contact_time = utcnow + timedelta(days=next_contact_days)
-
         if form.data['was_contacted']:
+            obj.next_contact_time = utcnow + timedelta(days=next_contact_days)
             obj.last_contact_time = utcnow
 
         # XXX There is a bug in this code: skipping stages doesn't set the

@@ -2,7 +2,7 @@ from pyramid.view import view_defaults
 from venusian import lift
 from formencode import Schema, NestedVariables, validators
 
-from ... import model, custom_validators
+from ... import model
 
 from ...admin import BaseListView, BaseEditView, BaseCreateView
 

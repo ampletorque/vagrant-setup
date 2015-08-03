@@ -47,6 +47,15 @@ class LeadEditView(BaseEditView):
         was_contacted = validators.Bool()
         stage = validators.String(not_empty=True)
 
+    def _update_stage(self, new_stage, obj, utcnow):
+        assert new_stage in dict(obj.available_stages[1:])
+        for stage, label in obj.available_stages[1:]:
+            timestamp_field = stage + '_time'
+            if getattr(obj, timestamp_field) is None:
+                setattr(obj, timestamp_field, utcnow)
+            if stage == new_stage:
+                return
+
     def _update_object(self, form, obj):
         utcnow = model.utcnow()
 
@@ -55,12 +64,9 @@ class LeadEditView(BaseEditView):
             obj.next_contact_time = utcnow + timedelta(days=next_contact_days)
             obj.last_contact_time = utcnow
 
-        # XXX There is a bug in this code: skipping stages doesn't set the
-        # intermediate timestamps.
         new_stage = form.data['stage']
         if obj.stage != new_stage:
-            assert new_stage in dict(obj.available_stages)
-            setattr(obj, new_stage + '_time', utcnow)
+            self._update_stage(new_stage, obj, utcnow)
 
         BaseEditView._update_object(self, form, obj)
 

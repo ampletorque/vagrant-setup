@@ -30,12 +30,16 @@
           </%forms:element>
 
 
-          <%forms:element label="Last Contacted">
-            ${h.format_datetime(request, obj.last_contact_time)}<br>
-            ${h.distance_of_time_in_words(obj.last_contact_time, h.datetime.utcnow(), granularity='hour')} ago
-          </%forms:element>
+          % if obj.last_contact_time:
+            <%forms:element label="Last Contacted">
+              ${h.format_datetime(request, obj.last_contact_time)}<br>
+              ${h.distance_of_time_in_words(obj.last_contact_time, h.datetime.utcnow(), granularity='hour')} ago
+            </%forms:element>
+          % else:
+            ${forms.lvalue('Never', label='Last Contacted')}
+          % endif
 
-          <%forms:element label="Next Contact">
+          <%forms:lvalue label="Next Contact">
             ${h.format_datetime(request, obj.next_contact_time)}<br>
             ${h.distance_of_time_in_words(obj.next_contact_time, h.datetime.utcnow(), granularity='hour')}
             % if obj.next_contact_time < h.datetime.utcnow():
@@ -43,7 +47,7 @@
             % else:
               from now
             % endif
-          </%forms:element>
+          </%forms:lvalue>
 
 
           ${forms.ltextarea(renderer, 'description', obj.description, rows=4)}

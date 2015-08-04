@@ -1,5 +1,5 @@
 ---
-- hosts: webservers
+- hosts: all
   tasks:
     - debug: msg="Deploying app environment {{ app_environment }}"
 

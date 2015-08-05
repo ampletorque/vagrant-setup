@@ -1,0 +1,53 @@
+<%def name="google_analytics_tag()">
+  % if request.user and request.user.admin:
+    <!-- hiding google analytics tag, logged-in admin user -->
+    <script>
+      function ga() {}
+    </script>
+  % else:
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', '${request.registry.settings.get('analytics.google_analytics_profile', '')}', 'auto');
+      ga('require', 'displayfeatures');
+      % if request.user:
+        ga('set', '&uid', '${request.user.id}');
+      % endif
+      ga('set', 'dimension1', 'Default Lens');
+      ga('set', 'dimension2', '${'Yes' if request.user else 'No'}');
+      ga('set', 'dimension3', '${request.theme.key}');
+      ga('send', 'pageview');
+    </script>
+  % endif
+</%def>
+
+
+<%def name="google_analytics_ecommerce(order)">
+  <script>
+    ga('require', 'ec');
+
+    % for item in order.cart.items:
+      ga('ec:addProduct', {
+        'id': '${item.product_id}',
+        'name': ${h.json.dumps(item.product.name) | n},
+        'category': ${h.json.dumps(item.product.project.name) | n},
+        'brand': ${h.json.dumps(item.product.project.creator.name) | n},
+        'variant': ${h.json.dumps(h.variant_string(item.sku)) | n},
+        'price': '${item.price_each}',
+        'quantity': ${item.qty_desired}
+      });
+    % endfor
+
+    ga('ec:setAction', 'purchase', {
+      'id': '${order.id}',
+      'affiliation': 'Web',
+      'revenue': '${order.total_amount}',
+      'tax': '0',
+      'shipping': '${order.shipping_amount}'
+    });
+
+    ga('send', 'event', 'Checkout', 'complete');
+  </script>
+</%def>

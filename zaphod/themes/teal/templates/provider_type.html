@@ -1,0 +1,47 @@
+<%inherit file="base.html"/>
+
+
+<%namespace name="provider_tiles" file="common/provider_tiles.html"/>
+<%namespace name="blocks" file="common/blocks.html"/>
+
+
+<%def name="title()">${provider_type.name}</%def>
+
+
+<%blocks:admin_bar>
+  <p>
+    <a href="${request.route_path('admin:provider-type', id=provider_type.id)}">
+      Edit Provider Type ${provider_type.id} - ${provider_type.name}
+    </a>
+  </p>
+</%blocks:admin_bar>
+
+
+<section class="section-provider-type">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <ul class="breadcrumb">
+          <li>
+            <a href="${request.route_path('providers')}">Service Provider Index</a>
+          </li>
+          <li>${provider_type.plural_name}</li>
+        </ul>
+
+        <h1>${provider_type.plural_name}</h1>
+
+        <div class="rendered-content">
+          ${request.render_content(provider_type, provider_type.body)}
+        </div>
+
+        % if providers:
+          % for provider in providers:
+            ${provider_tiles.tile(provider)}
+          % endfor
+        % else:
+          <p>No providers found.</p>
+        % endif
+      </div>
+    </div>
+  </div>
+</section>

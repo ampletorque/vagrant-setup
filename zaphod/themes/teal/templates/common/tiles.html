@@ -1,0 +1,192 @@
+<%namespace name="blocks" file="blocks.html"/>
+
+
+<%def name="numeric_fact(amount, label, format)">
+  <div class="fact ${'fact-micro' if amount > 1000000 else 'fact-small' if amount > 100000 else ''}">
+    % if format == '$':
+      <p><sup>$</sup>${h.commas(amount)}</p>
+    % elif format == '%':
+      <p>${h.format_percent(amount)}<sup>%</sup></p>
+    % else:
+      <p>${h.commas(amount)}</p>
+    % endif
+    <span>${label}</span>
+  </div>
+</%def>
+
+
+<%def name="crowdfunding_metadata(project)">
+  <div class="stats stats-crowdfunding">
+    <div class="progress">
+      <div class="progress-bar" style="width:${project.progress_percent}%"></div>
+    </div>
+    <div class="factoids">
+      ${self.numeric_fact(project.pledged_amount, 'raised', '$')}
+      ${self.numeric_fact(project.progress_percent, 'funded', '%')}
+      <div class="fact" data-countdown-to="${project.end_time.isoformat()}">
+        <%
+          val, units = project.remaining
+        %>
+        <p>${val}</p>
+        <span>${units} left</span>
+      </div>
+    </div>
+  </div>
+</%def>
+
+
+<%def name="suspended_metadata(project)">
+  <div class="stats stats-suspended">
+    <div class="status-bar status-bar-danger">
+      <div class="status-bar-left">Campaign Suspended</div>
+    </div>
+    <div class="factoids">
+      ${self.numeric_fact(project.pledged_amount, 'raised', '$')}
+      ${self.numeric_fact(project.progress_percent, 'funded', '%')}
+      <div class="fact">
+        <p>${h.format_datetime(request, project.suspended_time, '%b %d')}</p>
+        <span>suspended</span>
+      </div>
+    </div>
+  </div>
+</%def>
+
+
+<%def name="failed_metadata(project)">
+  <div class="stats stats-failed">
+    <div class="status-bar status-bar-light">
+      <div class="status-bar-left">Funding Unsuccessful</div>
+    </div>
+    <div class="factoids">
+      ${self.numeric_fact(project.pledged_amount, 'raised', '$')}
+      ${self.numeric_fact(project.progress_percent, 'funded', '%')}
+      <div class="fact">
+        <p>${h.format_datetime(request, project.end_time, '%b %d')}</p>
+        <span>ended</span>
+      </div>
+    </div>
+  </div>
+</%def>
+
+
+<%def name="prelaunch_metadata(project)">
+  <div class="stats stats-prelaunch">
+    <div class="status-bar status-bar-light">
+      <div class="status-bar-left">Coming Soon</div>
+    </div>
+    <div class="factoids">
+      <div class="fact">
+        <p>Sign up</p>
+        <span>Subscribe for project updates.</span>
+      </div>
+    </div>
+  </div>
+</%def>
+
+
+<%def name="funded_metadata(project)">
+  <div class="stats stats-pre-order">
+    <div class="status-bar status-bar-primary">
+      <div class="status-bar-left">Funded!</div>
+      <div class="status-bar-right">No Longer Available</div>
+    </div>
+    <div class="factoids">
+      ${self.numeric_fact(project.pledged_amount, 'raised', '$')}
+      ${self.numeric_fact(project.progress_percent, 'funded', '%')}
+      <div class="fact">
+        <p>${h.commas(project.num_pledges)}</p>
+        <span>pledges</span>
+      </div>
+    </div>
+  </div>
+</%def>
+
+
+<%def name="available_metadata(project)">
+  <div class="stats stats-pre-order">
+    <div class="status-bar status-bar-primary">
+      <div class="status-bar-left">Funded!</div>
+      <div class="status-bar-right">Order Now</div>
+    </div>
+    <div class="factoids">
+      ${self.numeric_fact(project.pledged_amount, 'raised', '$')}
+      ${self.numeric_fact(project.progress_percent, 'funded', '%')}
+      <div class="fact">
+        <p>${h.commas(project.num_pledges)}</p>
+        <span>pledges</span>
+      </div>
+    </div>
+  </div>
+</%def>
+
+
+<%def name="stock_metadata(project)">
+  <div class="stats stats-pre-order">
+    <div class="status-bar status-bar-dark">
+      <div class="status-bar-left">In Stock</div>
+      <div class="status-bar-right">Order Now</div>
+    </div>
+    <div class="factoids">
+      <div class="fact">
+        <span>options from</span>
+        <p>${blocks.price_range(project)}</p>
+      </div>
+    </div>
+  </div>
+</%def>
+
+
+<%def name="metadata_inline(project)">
+  % if project.status == 'crowdfunding':
+    ${self.crowdfunding_metadata(project)}
+  % elif project.status == 'suspended':
+    ${self.suspended_metadata(project)}
+  % elif project.status == 'funded':
+    ${self.funded_metadata(project)}
+  % elif project.status == 'prelaunch':
+    ${self.prelaunch_metadata(project)}
+  % elif project.status == 'available':
+    ${self.available_metadata(project)}
+  % elif project.status == 'stock-only':
+    ${self.stock_metadata(project)}
+  % elif project.status == 'failed':
+    ${self.failed_metadata(project)}
+  % endif
+</%def>
+
+
+<%def name="tile(project_id)" cached="True" cache_region="default" cache_key="project-${str(project_id)}-tile">
+  <%
+    project = getters.get_project(project_id)
+  %>
+  <a class="project-tile" href="${request.node_url(project)}">
+    ${project.img(request, request.theme.tile_filter)}
+    <div class="project-tile-overview">
+      % if project.status == 'prelaunch':
+        <h3>${project.name}</h3>
+        <p>This project is launching soon. Click for more information or to enter your email address for news &amp; updates.</p>
+      % else:
+        <h3>${project.name}</h3>
+        <p>${project.current_teaser}</p>
+      % endif
+    </div>
+
+    <div class="project-metadata">
+      ${self.metadata_inline(project)}
+    </div>
+  </a>
+</%def>
+
+
+<%def name="tile_row(project_ids, cols=None)">
+  <div class="project-row">
+    % for project_id in project_ids:
+      ${self.tile(project_id)}
+    % endfor
+    % if cols != 2:
+      % for __ in range(3 - len(project_ids)):
+        <div class="project-tile-spacer"></div>
+      % endfor
+    % endif
+  </div>
+</%def>

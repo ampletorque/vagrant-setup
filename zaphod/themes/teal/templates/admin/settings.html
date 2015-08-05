@@ -1,0 +1,25 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+
+<%def name="title()">User Settings</%def>
+
+
+<section class="section-admin-settings">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">Settings</h1>
+
+        ${renderer.begin(id='settings-form', class_='form-horizontal form-wrapped')}
+          ${forms.lcheckbox(renderer, 'show_admin_bars', request.user.show_admin_bars)}
+
+          <%forms:actions>
+            <button class="btn btn-primary" type="submit">Save</button>
+            <button class="btn btn-default" type="reset">Cancel</button>
+          </%forms:actions>
+        ${renderer.end()}
+      </div>
+    </div>
+  </div>
+</section>

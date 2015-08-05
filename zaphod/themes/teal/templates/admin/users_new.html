@@ -1,0 +1,35 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+
+
+<%def name="title()">New User</%def>
+
+
+<section class="section-admin-new">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">${self.title()}</h1>
+
+        ${renderer.begin(id='create-form', class_='form-horizontal form-wrapped')}
+          ${forms.alerts(renderer)}
+          ${forms.ltext(renderer, 'name')}
+          ${forms.ltext(renderer, 'email')}
+          ${forms.lpassword(renderer, 'password')}
+          ${forms.lpassword(renderer, 'password2', label='Confirm', hint='Password optional: leave blank to require the user to set a password.')}
+
+          ${forms.lcheckbox(renderer, 'admin', checked=False, label='Admin user')}
+          ${forms.lcheckbox(renderer, 'send_welcome_email', checked=False, label='Send a welcome email to this user')}
+
+          <%forms:actions>
+            <button class="btn btn-primary" type="submit">Save</button>
+            <a class="btn btn-default" href="${request.route_path('admin:users')}">Cancel</a>
+          </%forms:actions>
+
+        ${renderer.end()}
+
+      </div>
+    </div>
+  </div>
+</section>

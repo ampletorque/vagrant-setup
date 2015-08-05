@@ -1,0 +1,25 @@
+language: python
+
+python:
+  - "2.7"
+  - "3.3"
+  - "3.4"
+
+services:
+  - elasticsearch
+
+before_install:
+  - "sudo apt-get update -qq"
+  - "sudo apt-get install -y jpegoptim optipng pngcrush graphicsmagick"
+  - "npm install -g less requirejs autoprefixer"
+
+install:
+  - "pip install python-coveralls --use-mirrors"
+  - "pip install -e . --use-mirrors"
+
+before_script: "flake8 zaphod"
+
+script:  "nosetests"
+
+after_success:
+  - coveralls

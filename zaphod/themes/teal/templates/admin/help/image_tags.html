@@ -1,0 +1,60 @@
+<%inherit file="base.html"/>
+
+<%def name="title()">Image Tag Guide</%def>
+
+
+
+<section class="section-image-tags-guide">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+
+        <h1>${self.title()}</h1>
+
+        <p>When configuring images, there are three fields you can use to supply additional text metadata about the image.</p>
+
+        <h2>Caption</h2>
+
+        <p>The caption field is used to label an image on the page that it is associated with, and it is defined per-association, rather than per image. For example, the same image might be used a project, a tag, and an article, and it could have a different caption field for each of those uses.</p>
+
+        <p>It is optional, and should be a short description of what the image is showing that might be ambiguous. **Colors** should always be noted in the caption, but things like "Top View" should generally not be.</p>
+
+        <p>On a project/product page, the product name should not be included, as the caption will generally be shown with the context of that product.</p>
+
+        <h4>Examples</h4>
+
+        <p><a href="/img/27d7/librem-laptop-opened-front-and-sides_jpg_project-tile.jpg">Profile View</a></p>
+        <p><a href="/img/cead/burnside-alpha-denim_jpg_project-body.jpg">Denim</a></p>
+
+        <h2>Alt</h2>
+
+        <p>The alt tag should only be used when the image is a **direct replacement for text**. Banners with marketing text are a good use for this. A product image that contains text (such as text written on the side of a bag or shown on the screen of a GPS unit) should not have the alt tag filled in.</p>
+
+        <p>The majority of images should not have an alt tag. When an alt tag is used, the title tag is optional. The alt tag is per-image, rather than per-association: it will be the same wherever the image is used.</p>
+
+        <h4>Examples</h4>
+
+        <p><a href="/img/8bb7/33books-logo_png_creator-profile.png">33 Books Co.</a></p>
+
+        <h2>Title</h2>
+
+        <p>The title tag should be used as a description of the image that **stands alone from any other content**. The title tag should always be supplied, except (sometimes) when an alt tag is used.</p>
+
+        <p>The title tag should read as a natural description, and try to avoid arbitrary text delimiters. The title tag is per-image, rather than per-association: it will be the same wherever the image is used. Don't include any non-descriptive prefixes like "Image of".</p>
+
+        <ul>
+          <li><strong>Bad</strong>: "Image of SuperPod B3"</li>
+          <li><strong>Bad</strong>: "Red"</li>
+          <li><strong>Less Bad</strong>: "SuperPod B3 - Red"</li>
+          <li><strong>Good</strong>: "SuperPod B3 Music Player in Red"</li>
+        </ul>
+
+        <h4>Examples</h4>
+
+        <p><a href="/img/5c11/sweet-sister-purple-3_png_project-body.jpg">WILD Outdoor Sweet Sister Hoodie in Purple Rain / Stellar Colorway</a></p>
+        <p><a href="/img/11f2/novena-848_jpg_project-body.jpg">Top View of Novena Motherboard</a>
+
+      </div>
+    </div>
+  </div>
+</section>

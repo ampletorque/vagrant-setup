@@ -1,0 +1,40 @@
+<%inherit file="project_base.html"/>
+
+<%page cached="True" cache_region="default" cache_key="project-${str(project.id)}-updates" />
+
+<%def name="title()">Updates from ${project.name}</%def>
+
+
+<%def name="additional_head()"></%def>
+
+
+<%def name="update_teaser(update)">
+  <div class="update">
+    <div class="update-date pull-right">
+      <p class="update-date-month">${update.created_time.strftime('%b')}</p>
+      <p class="update-date-day">${update.created_time.strftime('%d')}</p>
+    </div>
+    <a href="${request.node_path(update)}"><h3>${update.name}</h3></a>
+    <p>${update.teaser} <a href="${request.node_path(update)}">Read the full update.</a></p>
+  </div>
+</%def>
+
+
+<div class="row">
+  <div class="col-sm-8">
+    <div class="project-block">
+      % if not project.published_updates:
+        <p>There are no updates at this time, check back soon.</p>
+      % endif
+      % for update in reversed(project.published_updates):
+        % if not loop.first:
+          <hr>
+        % endif
+        ${self.update_teaser(update)}
+      % endfor
+    </div>
+  </div>
+  <div class="col-sm-4 project-sidebar">
+    ${self.sidebar(project)}
+  </div>
+</div>

@@ -1,0 +1,40 @@
+<%inherit file="base.html"/>
+
+
+<%def name="title()">Delays Report</%def>
+
+
+<section class="section-report-delays">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Days</th>
+                <th>Line Item Count</th>
+                <th>Cumulative %</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%
+                so_far = 0
+              %>
+              % for delay, count in delay_count:
+                <%
+                  so_far += count
+                %>
+                <tr>
+                  <td>${delay}</td>
+                  <td>${count}</td>
+                  <td>${'%0.2f' % (100. * so_far / total_count)}%</td>
+                </tr>
+              % endfor
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

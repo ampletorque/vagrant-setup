@@ -1,0 +1,260 @@
+<%def name="hint(s)">
+  % if s:
+    <p class="help-block no-error">
+      % if callable(s):
+        ${s()}
+      % else:
+        ${s}
+      % endif
+    </p>
+  % endif
+</%def>
+
+
+<%def name="element(renderer=None, label=None, name=None, names=None, hint=None, label_cols=3, has_error=False)">
+  <%
+    assert not (names and name)
+    if name and not names:
+      names = [name]
+      name = names[0]
+  %>
+  <div class="form-group ${'has-error' if has_error or (renderer and names and any(renderer.is_error(name) for name in names)) else ''}">
+    % if label or name:
+      ${h.HTML.label(label or h.prettify(name), for_=h.make_id_component(name), class_='control-label col-sm-%d' % label_cols)}
+    % endif
+    <div class="col-sm-${12 - label_cols} ${'' if (label or name) else ('col-sm-offset-%d' % label_cols)}">
+      ${caller.body()}
+      % if renderer and names:
+        % for name in names:
+          ${renderer.errorlist(name)}
+        % endfor
+      % endif
+      ${self.hint(hint)}
+    </div>
+  </div>
+</%def>
+
+
+<%def name="addon(s)">${h.HTML.span(s, class_='input-group-addon') if s else ''}</%def>
+
+
+<%def name="lvalue(value=None, label=None, hint=None, **kwargs)">
+  <%self:element label="${label}" hint="${hint}">
+    % if value:
+      ${h.HTML.p(h.literal(value), class_='form-control-static', **kwargs)}
+    % endif
+    % if hasattr(caller, 'body'):
+      <p class="form-control-static">${caller.body()}</p>
+    % endif
+  </%self:element>
+</%def>
+
+
+<%def name="ltext(renderer, name, value=None, label=None, hint=None, prefix=None, suffix=None, label_cols=3, class_='', **kwargs)">
+  <%self:element renderer="${renderer}" label="${label}" name="${name}" hint="${hint}" label_cols="${label_cols}">
+    <div class="${'input-group' if prefix or suffix else ''}">
+      ${self.addon(prefix)}
+      % if renderer:
+        ${renderer.text(name, value, class_='form-control', **kwargs)}
+      % else:
+        ${h.text(name, value, class_='form-control', **kwargs)}
+      % endif
+      ${self.addon(suffix)}
+    </div>
+  </%self:element>
+</%def>
+
+
+<%def name="datepicker(name, value, class_='')">
+  <input type="text" name="${name}" value="${value and value.strftime('%Y-%m-%d')}" class="form-control js-datepicker ${class_}">
+</%def>
+
+
+<%def name="ldatepicker(renderer, name, value=None, label=None, hint=None, label_cols=3)">
+  <%self:element renderer="${renderer}" label="${label}" name="${name}" hint="${hint}" label_cols="${label_cols}">
+    ${self.datepicker(name, renderer and renderer.value(name, value))}
+  </%self:element>
+</%def>
+
+
+<%def name="ldaterange(renderer, name_start, name_end, value_start, value_end, label='Date Range', hint=None, size='input-small', **kwargs)">
+  <%self:element renderer="${renderer}" label="${label}" name="${name_start}" hint="${hint}">
+    <div class="row">
+      <div class="col-xs-4">
+        <div class="input-group">
+          ${self.datepicker(name_start, value_start)}
+          <span class="input-group-addon">12:01 AM</span>
+        </div>
+      </div>
+      <div class="col-xs-1">
+        <div class="form-control-static">to</div>
+      </div>
+      <div class="col-xs-4">
+        <div class="input-group">
+          ${self.datepicker(name_end, value_end)}
+          <span class="input-group-addon">11:59 PM</span>
+        </div>
+      </div>
+    </div>
+  </%self:element>
+</%def>
+
+
+<%def name="lfile(renderer, name, label=None, hint=None, label_cols=3, **kwargs)">
+  <%self:element renderer="${renderer}" label="${label}" name="${name}" hint="${hint}" label_cols="${label_cols}">
+    % if renderer:
+      ${renderer.file(name, class_='form-control', **kwargs)}
+    % else:
+      ${h.file(name, class_='form-control', **kwargs)}
+    % endif
+  </%self:element>
+</%def>
+
+
+<%def name="ltextarea(renderer, name, value=None, label=None, hint=None, label_cols=3, class_='', **kwargs)">
+  <%self:element renderer="${renderer}" label="${label}" name="${name}" hint="${hint}" label_cols="${label_cols}">
+    % if renderer:
+      ${renderer.textarea(name, value, class_='form-control ' + class_, **kwargs)}
+    % else:
+      ${h.textarea(name, value, class_='form-control ' + class_, **kwargs)}
+    % endif
+  </%self:element>
+</%def>
+
+
+<%def name="lpassword(renderer, name, value=None, label=None, hint=None, prefix=None, suffix=None, **kwargs)">
+  <%self:element renderer="${renderer}" label="${label}" name="${name}" hint="${hint}">
+    <div class="${'input-prepend' if prefix else ''} ${'input-append' if suffix else ''}">
+      ${self.addon(prefix)}${renderer.password(name, value, class_='form-control', **kwargs)}${self.addon(suffix)}
+    </div>
+  </%self:element>
+</%def>
+
+
+<%def name="lcheckbox(renderer, name, checked=False, label=None, hint=None, label_cols=3, **kwargs)">
+  <%self:element renderer="${renderer}" hint="${hint}" label_cols="${label_cols}">
+    <div class="checkbox">
+      <label>
+        % if renderer:
+          ${renderer.checkbox(name, checked=checked, **kwargs)}
+        % else:
+          ${h.checkbox(name, checked=checked, **kwargs)}
+        % endif
+        <span>${label or h.prettify(name)}</span>
+      </label>
+    </div>
+    % if renderer:
+      ${renderer.errorlist(name)}
+    % endif
+  </%self:element>
+</%def>
+
+
+<%def name="lcheckboxes(renderer, name, selected, options, label=None, hint=None, label_cols=3, **kwargs)">
+  <%self:element label="${label}" hint="${hint}" label_cols="${label_cols}">
+    % for value, label in options:
+      <div class="checkbox">
+        <label>
+          % if renderer:
+            ${renderer.checkbox(name, value, checked=value in selected, id='%s-%s' % (name, value), **kwargs)}
+          % else:
+            ${h.checkbox(name, checked=value in selected, id='%s-%s' % (name, value), **kwargs)}
+          % endif
+          <span>${label or h.prettify(name)}</span>
+        </label>
+      </div>
+      % if renderer:
+        ${renderer.errorlist(name)}
+      % endif
+    % endfor
+  </%self:element>
+</%def>
+
+
+<%def name="lselect(renderer, name, selected, options, label=None, hint=None, **kwargs)">
+  <%self:element renderer="${renderer}" label="${label}" name="${name}" hint="${hint}">
+    % if renderer:
+      ${renderer.select(name, selected, options, class_='form-control', **kwargs)}
+    % else:
+      ${h.select(name, selected, options, class_='form-control', **kwargs)}
+    % endif
+  </%self:element>
+</%def>
+
+
+<%def name="actions(label_cols=3)">
+  <div class="form-group form-actions">
+    <div class="col-sm-${12 - label_cols} col-sm-offset-${label_cols}">
+      ${caller.body()}
+    </div>
+  </div>
+</%def>
+
+
+<%def name="address_fields(renderer, name, addr=None)">
+  <div class="address-fields">
+    <%self:element renderer="${renderer}" name="${'%s.country_code' % name}" label="Country">
+      <div class="row">
+        <div class="col-xs-8">
+          ${renderer.select('%s.country_code' % name, addr and addr.country_code, h.allowed_countries(), class_='form-control')}
+        </div>
+      </div>
+    </%self:element>
+
+    <%self:element renderer="${renderer}" names="${['%s.first_name' % name, '%s.last_name' % name]}" label="Name">
+      <div class="row">
+        <div class="col-xs-6">
+          ${renderer.text('%s.first_name' % name, addr and addr.first_name, placeholder='First', class_='form-control')}
+        </div>
+        <div class="col-xs-6">
+          ${renderer.text('%s.last_name' % name, addr and addr.last_name, placeholder='Last', class_='form-control')}
+        </div>
+      </div>
+    </%self:element>
+
+    ${self.ltext(renderer, '%s.company' % name, addr and addr.company, label='Company')}
+
+    <%self:element renderer="${renderer}" names="${['%s.address1', '%s.address2']}" label="Address">
+      ${renderer.text('%s.address1' % name, addr and addr.address1, class_='form-control')}
+      ${renderer.text('%s.address2' % name, addr and addr.address2, class_='form-control')}
+    </%self:element>
+
+    ${self.ltext(renderer, '%s.city' % name, addr and addr.city, label='City')}
+
+    <%self:element renderer="${renderer}" name="${'%s.state' % name}" label="State / Province">
+      <div class="row">
+        <div class="col-sm-6">
+          ${renderer.text('%s.state' % name, addr and addr.state, class_='form-control state-field-int')}
+          ${renderer.select('%s.state' % name, addr and addr.state, h.us_states() + h.us_territories(), prompt='Select State', disabled='disabled', class_='form-control state-field-us', style='display:none;')}
+          ${renderer.select('%s.state' % name, addr and addr.state, h.canada_provinces(), prompt='Select Province', disabled='disabled', class_='form-control state-field-ca', style='display:none;')}
+
+        </div>
+      </div>
+    </%self:element>
+
+    <%self:element renderer="${renderer}" name="${'%s.postal_code' % name}" label="Postal Code">
+      <div class="row">
+        <div class="col-sm-6">
+          ${renderer.text('%s.postal_code' % name, addr and addr.postal_code, class_='form-control')}
+        </div>
+      </div>
+    </%self:element>
+
+    <%self:element renderer="${renderer}" name="${'%s.phone' % name}" label="Phone">
+      <div class="row">
+        <div class="col-sm-6">
+          ${renderer.text('%s.phone' % name, addr and addr.phone, class_='form-control')}
+        </div>
+      </div>
+    </%self:element>
+  </div>
+</%def>
+
+
+<%def name="alerts(renderer, msg='')">
+  % if renderer.errors:
+    <div class="form-alerts">
+      <p>There are ${len(renderer.errors)} form ${h.plural(len(renderer.errors), 'error', with_number=False)} below. ${msg}</p>
+    </div>
+  % endif
+</%def>

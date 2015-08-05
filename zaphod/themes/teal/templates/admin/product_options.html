@@ -1,0 +1,139 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="blocks" file="/common/blocks.html"/>
+<%namespace name="widgets" file="/admin/common/widgets.html"/>
+<%namespace name="regions" file="/admin/common/regions.html"/>
+
+<%def name="title()">Product ${obj.id} Options</%def>
+
+
+${regions.project_header(obj.project)}
+${regions.product_header(obj)}
+
+
+<%def name="value_row(renderer, option_idx, value_idx, value)">
+  <tr>
+    <td class="js-value-drag-handle table-drag-handle"></td>
+    <td class="table-remove">
+      ##<a href="#" class="js-value-remove">
+      ##  <i class="fa fa-minus-circle"></i>
+      ##</a>
+    </td>
+    <td>
+      ${renderer.hidden('options-%d.values-%d.id' % (option_idx, value_idx), value.id)}
+      ${renderer.hidden('options-%d.values-%d.gravity' % (option_idx, value_idx), value_idx, class_='js-value-gravity')}
+      ${renderer.checkbox('options-%d.values-%d.published' % (option_idx, value_idx), checked=value.published)}
+    </td>
+    <td>${renderer.radio('options-%d.default_value_id' % option_idx, value=value.id, checked=bool(value.is_default))}</td>
+    <td>${renderer.text('options-%d.values-%d.description' % (option_idx, value_idx), value.description, class_='form-control')}</td>
+    <td>
+      <div class="input-group">
+        <div class="input-group-addon">$</div>
+        ${renderer.text('options-%d.values-%d.price_increase' % (option_idx, value_idx), value.price_increase, class_='form-control')}
+      </div>
+    </td>
+  </tr>
+</%def>
+
+
+<%def name="option_row(renderer, idx, option)">
+  <tr data-index="${idx}">
+    <td class="js-option-drag-handle table-drag-handle"></td>
+    <td class="table-remove">
+      ##<a href="#" class="js-option-remove">
+      ##  <i class="fa fa-minus-circle"></i>
+      ##</a>
+    </td>
+    <td style="width:250px">
+      ${renderer.hidden('options-%d.id' % idx, option.id)}
+      ${renderer.hidden('options-%d.gravity' % idx, idx, class_='js-option-gravity')}
+      ${renderer.text('options-%d.name' % idx, option.name, class_='form-control')}
+      <label for="${h.make_id_component('options-%s.published' % idx)}">
+        ${renderer.checkbox('options-%d.published' % idx, checked=option.published)}
+        Published
+      </label>
+    </td>
+    <td>
+      <table class="table">
+        <thead>
+          <tr>
+            <th></th>
+            <th></th>
+            <th>Published</th>
+            <th>Default</th>
+            <th>Description</th>
+            <th style="width:130px">Price Increase</th>
+          </tr>
+        </thead>
+        <tbody>
+          % for value in option.values:
+            ${self.value_row(renderer, idx, loop.index, value)}
+          % endfor
+        </tbody>
+        <tfoot>
+          <tr>
+            <td></td>
+            <td class="table-add">
+              <a href="#" class="js-value-add">
+                <i class="fa fa-plus-circle"></i>
+              </a>
+            </td>
+            <td colspan="4">
+              <a href="#" class="js-value-add">
+                Add New Value
+              </a>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </td>
+  </tr>
+</%def>
+
+
+<section class="section-admin-product">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped js-ajax-validate')}
+
+          <div class="table-responsive">
+            <table class="table js-option-widget">
+              <tbody>
+                % for option in obj.options:
+                  ${self.option_row(renderer, loop.index, option)}
+                % endfor
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td></td>
+                  <td class="table-add">
+                    <a href="#" class="js-option-add">
+                      <i class="fa fa-plus-circle"></i>
+                    </a>
+                  </td>
+                  <td colspan="2">
+                    <a href="#" class="js-option-add">
+                      Add New Option
+                    </a>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <p class="help-block">When a new option is added, the default value for that option will be assigned to existing SKUs.</p>
+          <p class="help-block">If an option is unpublished, the default for that option will be used.</p>
+          <p class="help-block">Do not change the meaning of options or values: this will adversely affect existing data. Instead, delete undesired options and create new ones.</p>
+
+          <%forms:actions>
+            <button class="btn btn-primary" type="submit">Save</button>
+            <button class="btn btn-default" type="reset">Cancel</button>
+          </%forms:actions>
+
+        ${renderer.end()}
+      </div>
+    </div>
+  </div>
+</section>

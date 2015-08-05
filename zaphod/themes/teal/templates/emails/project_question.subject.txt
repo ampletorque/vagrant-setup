@@ -1,0 +1,1 @@
+[Campaign Question] ${h.truncate(message, 30)}

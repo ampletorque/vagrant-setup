@@ -1,0 +1,15 @@
+<%inherit file="base.txt"/>\
+Your payment on Crowd Supply has been rejected.
+
+The payment for your Crowd Supply order was declined by your credit card company. We're sorry for this inconvenience. Unfortunately, we do not have any additional information about why the transaction was declined.
+
+This payment was for order ${order.id}. Please resolve this issue by ${h.format_datetime(request, due_date, '%b %d, %Y')} to prevent your shipment from being delayed.
+
+Please use the URL below to submit the payment again or provide new payment information:
+
+${link}
+
+Feel free to reply to this email or contact us if you have any questions. You will receive a separate shipping confirmation e-mail with a tracking number once the order actually ships.
+
+Thank you,
+Crowd Supply Support

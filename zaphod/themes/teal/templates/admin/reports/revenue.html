@@ -1,0 +1,51 @@
+<%inherit file="base.html"/>
+
+
+<%def name="title()">Revenue Report</%def>
+
+
+<%def name="row(label, value, total)">
+  <tr>
+    <td><strong>${label}</strong></td>
+    <td>${h.currency(value)}</td>
+    <td>
+      % if total:
+        ${'%0.1f' % (100 * value / total)}%
+      % else:
+        -
+      % endif
+    </td>
+  </tr>
+</%def>
+
+
+<section class="section-report-revenue">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <p>DANGER: WIP</p>
+
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Amount</th>
+                <th>% Of Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${self.row('Crowdfunding Fees', crowdfunding_fees, total)}
+              ${self.row('Fulfillment Fees', fulfillment_fees, total)}
+              ${self.row('Pre-Order Fees', preorder_fees, total)}
+              ${self.row('Stock Items', stock_items, total)}
+              ${self.row('Stock Shipping', stock_shipping, total)}
+              <tr class="table-divider"><td colspan="3"></td></tr>
+              ${self.row('Total', total, total)}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

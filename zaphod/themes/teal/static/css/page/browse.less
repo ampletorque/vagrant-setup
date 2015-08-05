@@ -1,0 +1,32 @@
+.browse-filters {
+    h3 {
+        background-color: @cs-teal;
+        color: @cs-white;
+
+        font-size: 13px;
+        font-weight: bold;
+        line-height: 18px;
+        text-transform: uppercase;
+        text-align: center;
+
+        margin-top: 0;
+        padding: 6px;
+        position: relative;
+
+        &:after {
+            content: '';
+            display: block;
+            border-top: 6px solid @cs-teal;
+            border-right: 6px solid transparent;
+            border-left: 6px solid transparent;
+            left: 50%;
+            position: absolute;
+            bottom: -5px;
+            margin-left: -3px;
+        }
+    }
+
+    ul {
+        margin-bottom: 30px;
+    }
+}

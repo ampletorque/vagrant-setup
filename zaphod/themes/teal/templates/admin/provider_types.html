@@ -1,0 +1,52 @@
+<%inherit file="base.html"/>
+
+<%def name="title()">List Provider Type</%def>
+
+
+<section class="section-admin-provider-types">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="pull-right">
+          <a class="btn btn-default" href="${request.route_path('admin:provider-types:new')}"><i class="fa fa-plus"></i> New Provider Type</a>
+        </div>
+
+        <h1 class="page-header">Provider Types <small>${len(objs)} total</small></h1>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Published</th>
+                <th>Listed</th>
+              </tr>
+            </thead>
+            <tbody>
+              % for provider_type in objs:
+                <tr>
+                  <td>
+                    <a href="${request.route_path('admin:provider-type', id=provider_type.id)}">Edit</a>
+                  </td>
+                  <td>${provider_type.id}</td>
+                  <td>${provider_type.name}</td>
+                  <td>
+                    % if provider_type.published:
+                      Yes
+                    % endif
+                  </td>
+                  <td>
+                    % if provider_type.listed:
+                      Yes
+                    % endif
+                  </td>
+                </tr>
+              % endfor
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

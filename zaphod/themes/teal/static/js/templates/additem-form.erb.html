@@ -1,0 +1,4 @@
+<hr>
+<input type="hidden" name="product_id" value="<%= info.id %>">
+<% for(var ii = 0; ii < info.options.length; ii++) { print(optionTemplate({option: info.options[ii]})); } %>
+<hr>

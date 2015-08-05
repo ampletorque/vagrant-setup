@@ -1,0 +1,62 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="widgets" file="/admin/common/widgets.html"/>
+
+<%def name="title()">Edit Provider ${obj.id}</%def>
+
+
+<section class="section-admin-provider">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+
+        <div class="admin-header">
+          <div class="admin-header-metadata">
+            % if obj.published:
+              <p><a href="${request.node_path(obj)}">View Public Page</a></p>
+            % else:
+              <p>Not Published</p>
+            % endif
+            ${widgets.updated_info(obj)}
+          </div>
+          <h1 class="page-header">${self.title()}</h1>
+        </div>
+
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped js-ajax-validate')}
+          ${forms.ltext(renderer, 'name', obj.name)}
+
+          ${widgets.aliases(renderer, obj)}
+
+          ${forms.ltextarea(renderer, 'teaser', obj.teaser, rows=3, hint='Optional summary.')}
+          ${forms.ltextarea(renderer, 'keywords', obj.keywords, rows=3, hint='Included in a keywords meta tag and used for search.')}
+          ${widgets.lcontent(renderer, 'body', obj.body)}
+
+          ${forms.lselect(renderer, 'provider_type_ids', [pt.id for pt in obj.types], getters.provider_types_for_select(), multiple=True, label='Provider Types')}
+
+          ${forms.ltext(renderer, 'email', obj.email, prefix='@')}
+          ${forms.ltext(renderer, 'home_url', obj.home_url, label='Homepage URL', hint='Enter a fully qualified URL, e.g. https://example.com/page')}
+
+          ${forms.address_fields(renderer, 'mailing', obj.mailing)}
+
+          ${forms.ltext(renderer, 'lat', obj.lat, label='Latitude (deg)')}
+          ${forms.ltext(renderer, 'lon', obj.lon, label='Longitude (deg)')}
+
+          ${forms.lcheckbox(renderer, 'listed', obj.listed)}
+          ${forms.lcheckbox(renderer, 'published', obj.published)}
+
+          ${widgets.images(renderer, obj)}
+          ${widgets.comments(renderer, obj)}
+
+          <%forms:actions>
+            <button class="btn btn-primary" type="submit">Save</button>
+            <button class="btn btn-default" type="reset">Cancel</button>
+            ${widgets.delete_button()}
+          </%forms:actions>
+        ${renderer.end()}
+
+        ${widgets.delete_modal('provider', request.route_path('admin:provider:delete', id=obj.id))}
+      </div>
+    </div>
+  </div>
+</section>

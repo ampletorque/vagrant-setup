@@ -1,0 +1,20 @@
+.breadcrumb {
+    color: @gray;
+    background-color: inherit;
+    padding: 0;
+    font-size: 15px;
+
+    > li {
+        + li:before {
+            display: inline-block;
+            content: "\f061";
+            font-family: "FontAwesome";
+            font-size: 11px;
+            position: relative;
+            top: -1px;
+            margin-right: 5px;
+            margin-left: 2px;
+            color: @gray-light;
+        }
+    }
+}

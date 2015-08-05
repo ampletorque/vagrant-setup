@@ -1,0 +1,28 @@
+<%inherit file="base.html"/>
+
+
+<%def name="title()">${exc.status}</%def>
+
+
+<section class="section-error">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+
+        <div class="text-center">
+          <h1>${exc.status}</h1>
+          % if exc.status_int == 404:
+            <h3>Oops, that page doesn't exist.</h3>
+            <p>Maybe try <a href="${request.route_path('index')}">the home page</a>?</p>
+          % else:
+            <p>Ack, something went wrong. Please try again in a few minutes.</p>
+            <p>If you need to contact us immediately, please don't hesitate to email us at:</p>
+            <p><a href="mailto:support@crowdsupply.com">support@crowdsupply.com</a></p>
+          % endif
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>

@@ -1,0 +1,144 @@
+<%inherit file="base.html"/>
+
+
+<%def name="title()">Crowd Supply Invoice - Order ${order.id}</%def>
+
+
+<%def name="address(a)">
+  ${a.first_name} ${a.last_name}<br>
+  % if a.company:
+    ${a.company}<br>
+  % endif
+  ${a.address1}<br>
+  % if a.address2:
+    ${a.address2}<br>
+  % endif
+  ${a.city}, ${a.state} ${a.postal_code}<br>
+  ${a.country_name}
+  % if a.phone:
+    <br>${a.phone}
+  % endif
+</%def>
+
+
+<%def name="featured_projects(projects)">
+  % if projects:
+    <br>
+
+    <center>
+      <h3>You might be interested in these similar projects, currently available at crowdsupply.com.</h3>
+    </center>
+
+    <table>
+      <tr>
+        % for project in projects:
+          <td style="width:33%; padding:0.25in;">
+            <center>
+              ${project.img(request, 'project-body')}
+              <h3>${project.name}</h3>
+              <p>${project.current_teaser}</p>
+            </center>
+          </td>
+        % endfor
+        % if len(projects) < 3:
+          % for __ in range(3 - len(projects)):
+            <td style="width:33%; padding: 0.25in;">
+              &nbsp;
+            </td>
+          % endfor
+        % endif
+      </tr>
+    </table>
+  % endif
+</%def>
+
+
+<%def name="item_row(item)">
+  <tr>
+    <td>${item.product.img(request, 'product-icon')}</td>
+    <td>
+      <strong>${item.product.name}</strong><br>
+      ${item.product.project.name}<br>
+      <%
+        options = h.variant_list(item.sku)
+      %>
+      % if options:
+        <ul>
+          % for el in options:
+            <li>${el}</li>
+          % endfor
+        </ul>
+      % endif
+    </td>
+    <td>${h.currency(item.price_each)}</td>
+    <td>${item.qty_desired}</td>
+    <td>${h.currency(item.price_each * item.qty_desired)}</td>
+  </tr>
+</%def>
+
+
+<%self:page_letter_width>
+  <h1>Crowd Supply Order ${order.id}</h1>
+
+  <table style="width:100%">
+    <tr>
+      <td style="width:50%">
+        <h3>Shipping Information</h3>
+        <p>${self.address(order.shipping)}</p>
+        <h3>Placed</h3>
+        <p>${h.format_datetime(request, order.created_time, '%B %d, %Y')}</p>
+      </td>
+      <td style="width:50%">
+        % if order.any_billing:
+          <h3>Billing Information</h3>
+          <p>${self.address(order.any_billing)}</p>
+        % endif
+        % if order.customer_comments:
+          <h3>Customer Comments</h3>
+          <p>${order.customer_comments}</p>
+        % endif
+      </td>
+    </tr>
+  </table>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th colspan="2">Item</th>
+        <th>Price Each</th>
+        <th>Qty</th>
+        <th>Subtotal</th>
+      </tr>
+    </thead>
+    <tbody>
+      % if items_other:
+        <tr>
+          <td colspan="5"><strong>Items In This Shipment</strong></td>
+        </tr>
+      % endif
+      % for item in items_this_shipment:
+        ${self.item_row(item)}
+      % endfor
+      % if items_other:
+        <tr>
+          <td colspan="5"><strong>Items Shipping Separately</strong></td>
+        </tr>
+        % for item in items_other:
+          ${self.item_row(item)}
+        % endfor
+      % endif
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="4" style="text-align:right">Shipping</td>
+        <td>${h.currency(order.shipping_amount)}</td>
+      </tr>
+      <tr>
+        <td colspan="4" style="text-align:right">Total</td>
+        <td>${h.currency(order.total_amount)}</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  ${self.featured_projects(getters.featured_projects_for_cart(order.cart, limit=3))}
+</%self:page_letter_width>

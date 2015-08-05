@@ -1,0 +1,54 @@
+<%inherit file="base.html"/>
+
+
+<%def name="title()">Warehouse Transactions Report</%def>
+
+
+<section class="section-report-warehouse-transactions">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+
+        <div class="table-responsive">
+          <table class="table">
+            <tbody>
+              <tr>
+                <td><strong>Positive Adjustment Count</strong></td>
+                <td>${positive_adjustment_count}</td>
+              </tr>
+              <tr>
+                <td><strong>Negative Adjustment Count</strong></td>
+                <td>${negative_adjustment_count}</td>
+              </tr>
+              <tr>
+                <td><strong>Positive Adjustment Value</strong></td>
+                <td>${h.currency(positive_adjustment_value)}</td>
+              </tr>
+              <tr>
+                <td><strong>Negative Adjustment Value</strong></td>
+                <td>${h.currency(negative_adjustment_value)}</td>
+              </tr>
+              <tr>
+                <td><strong>Inbound Shipment Count</strong></td>
+                <td>${inbound_shipment_count}</td>
+              </tr>
+              <tr>
+                <td><strong>Inbound Item Count</strong></td>
+                <td>${inbound_item_count}</td>
+              </tr>
+              <tr>
+                <td><strong>Outbound Shipment Count</strong></td>
+                <td>${outbound_shipment_count}</td>
+              </tr>
+              <tr>
+                <td><strong>Outbound Item Count</strong></td>
+                <td>${outbound_item_count}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>

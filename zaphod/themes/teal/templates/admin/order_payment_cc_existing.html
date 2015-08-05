@@ -1,0 +1,67 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="blocks" file="/common/blocks.html"/>
+
+<%def name="title()">Add Payment On Existing CC to Order ${obj.id}</%def>
+
+
+<%def name="saved_method(renderer, masked_cards, method, checked)">
+  <p>
+    <label>
+      ${renderer.radio('method_id', method.id, checked=checked)}
+      &nbsp;
+      Use credit card on file ending in ${masked_cards.get(method, '????')} -
+      % if method.save:
+        Saved by customer
+      % else:
+        Not saved by customer
+      % endif
+    </label>
+  </p>
+</%def>
+
+
+<section class="section-admin-order">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">${self.title()}</h1>
+
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
+          ${forms.ltext(renderer, 'amount', obj.unauthorized_amount, prefix='$')}
+
+          % if masked_cards:
+            <%forms:element renderer="${renderer}" name="method_id" label="Select Method">
+
+              % if obj.active_payment_method:
+                <h5>Initial checkout payment method</h5>
+                ${self.saved_method(renderer, masked_cards, obj.active_payment_method, checked=True)}
+              % endif
+
+              % if saved_user_methods:
+                <h5>User's saved payment methods</h5>
+                % for method in saved_user_methods:
+                  ${self.saved_method(renderer, masked_cards, method, checked=False)}
+                % endfor
+              % endif
+
+              % if saved_order_methods:
+                <h5>Payment methods used on order</h5>
+                % for method in saved_order_methods:
+                  ${self.saved_method(renderer, masked_cards, method, checked=False)}
+                % endfor
+              % endif
+
+            </%forms:element>
+          % endif
+
+          <%forms:actions>
+            <button class="btn btn-primary" type="submit">Process Payment</button>
+            <a class="btn btn-default" href="${request.route_path('admin:order', id=obj.id)}">Cancel</a>
+          </%forms:actions>
+        ${renderer.end()}
+      </div>
+    </div>
+  </div>
+</section>

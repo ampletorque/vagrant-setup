@@ -1,0 +1,48 @@
+<%inherit file="project_base.html"/>
+
+<%page cached="True" cache_region="default" cache_key="project-${str(project.id)}-body" />
+
+
+<%namespace name="tiles" file="common/tiles.html"/>
+<%namespace name="blocks" file="common/blocks.html"/>
+
+
+<%def name="title()">${project.name}</%def>
+
+
+<%def name="additional_head()">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="${request.node_url(project)}">
+  <meta property="og:description" content="${project.current_teaser}">
+  <meta property="og:title" content="${project.name}">
+  <meta property="og:site_name" content="Crowd Supply">
+  <meta property="og:image" content="${project.img_url(request, 'open-graph', qualified=True)}">
+  <meta property="fb:app_id" content="${request.registry.settings['facebook.app_id']}">
+</%def>
+
+
+<div class="row">
+  <div class="col-md-8 project-media">
+    % if project.current_vimeo_id:
+      ${blocks.vimeo_embed(project.current_vimeo_id)}
+    % else:
+      ${project.img(request, 'project-tile')}
+    % endif
+  </div>
+  <div class="col-sm-4 project-sidebar">
+    ${self.sidebar(project)}
+  </div>
+  <div class="col-sm-8">
+    <div class="project-block">
+      <%blocks:collapse_on_mobile target="details" title="Details">
+        ${self.remind_me_form(project)}
+        <div class="rendered-content">
+          ${request.render_content(project, project.current_body)}
+        </div>
+      </%blocks:collapse_on_mobile>
+    </div>
+  </div>
+</div>
+
+
+${self.ask_question_block(project)}

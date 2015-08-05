@@ -1,0 +1,145 @@
+.section-project {
+    background-color: @cs-offwhite;
+}
+
+.project-block {
+    background-color: @cs-white;
+    padding: 5px 15px;
+    margin: 0 -15px;
+
+    .status-bar {
+        margin: 0 -15px;
+    }
+
+    .project-pledged {
+        margin-bottom: 0;
+        color: @gray;
+        span {
+            color: @cs-black;
+            font-size: 35px;
+        }
+    }
+    .project-goal {
+        color: @gray;
+        span {
+            color: @cs-black;
+            font-size: 22px;
+        }
+    }
+}
+
+.project-media {
+    margin: 0 -15px;
+}
+
+@media (min-width: @screen-sm-min) {
+    .project-block {
+        margin: 0 0 30px;
+        padding: 15px;
+    }
+    .project-media {
+        margin: 0;
+    }
+}
+
+.project-block-backers {
+    padding-bottom: 0;
+
+    h2 {
+        margin-top: 0;
+    }
+    .list-unstyled {
+        margin-bottom: 0;
+    }
+}
+
+.breadcrumb-project {
+    margin-top: 15px;
+    margin-bottom: 0;
+}
+
+.update-date {
+    width: 50px;
+    height: 50px;
+    border: 1px solid #35424d;
+    text-align: center;
+    font-weight: bold;
+
+    .update-date-month {
+        text-transform: uppercase;
+        background-color: #35424d;
+        color: #fff;
+        margin: 0;
+    }
+    .update-date-day {
+        font-size: 16px;
+        line-height: 24px;
+        color: #35424d;
+    }
+}
+
+.pledge-level {
+    h3 {
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 28px;
+        margin: 0 0 10px;
+    }
+    label {
+        font-weight: normal;
+    }
+}
+.pledge-level-price {
+    font-size: 24px;
+    color: @gray-light;
+    line-height: 28px;
+    margin: 0 0 10px;
+}
+
+.pledge-level-metadata {
+    color: @gray-light;
+    font-size: 13px;
+}
+
+.pledge-level-supporters {
+    margin-top: 5px;
+}
+
+.backer {
+    .clearfix();
+    padding-top: 15px;
+    padding-bottom: 15px;
+
+    + .backer {
+        border-top: 1px solid lighten(@gray-light, 30%);
+    }
+
+    img {
+        margin-right: 15px;
+    }
+}
+.backer-location {
+    color: @gray-light;
+}
+
+.project-prelaunch-media {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+@media (min-width: @screen-sm-min) {
+    .project-sidebar {
+        float: right;
+    }
+}
+
+.project-history-notice {
+    background-color: #ffc;
+    padding: 10px 15px;
+}
+
+.section-project-owner-controls {
+    background-color: #ffc;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}

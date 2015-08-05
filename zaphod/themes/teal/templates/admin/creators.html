@@ -1,0 +1,52 @@
+<%inherit file="base.html"/>
+
+<%def name="title()">List Creators</%def>
+
+
+<section class="section-creators">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="pull-right">
+          <a class="btn btn-default" href="${request.route_path('admin:creators:new')}"><i class="fa fa-plus"></i> New Creator</a>
+        </div>
+
+        <h1 class="page-header">Creators <small>${len(objs)} total</small></h1>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Published</th>
+                <th>Listed</th>
+              </tr>
+            </thead>
+            <tbody>
+              % for creator in objs:
+                <tr>
+                  <td>
+                    <a href="${request.route_path('admin:creator', id=creator.id)}">Edit</a>
+                  </td>
+                  <td>${creator.id}</td>
+                  <td>${creator.name}</td>
+                  <td>
+                    % if creator.published:
+                      Yes
+                    % endif
+                  </td>
+                  <td>
+                    % if creator.listed:
+                      Yes
+                    % endif
+                  </td>
+                </tr>
+              % endfor
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,20 @@
+---
+- hosts: webservers
+  roles:
+    - { role: timezone, timezone: 'America/Los_Angeles'}
+    - deploy-user
+    - ssh
+    - git
+    - iptables
+    - utils
+    - openssl
+    - python
+    - postfix
+    - mysql
+    - redis
+    - elasticsearch
+    - nginx
+    - uwsgi
+    - image-processing
+    - node
+    - certs

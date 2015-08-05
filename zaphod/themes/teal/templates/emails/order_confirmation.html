@@ -1,0 +1,139 @@
+<%inherit file="base.html"/>
+
+
+<%self:container>
+  <div class="content">
+    <table>
+      <tr>
+        <td>
+          Thank you for your order!
+          <br /><br />
+          % if not order.cart.non_physical:
+          You will receive a shipping confirmation email containing tracking information as soon as your order ships. In the meantime, please double-check the accuracy of the shipping information below.
+          <br /><br />
+          % endif
+          If you have any questions or need to make changes to this order, please <a href="${request.route_url('contact')}">don't hesitate to contact us</a>.
+          <br /><br />
+        </td>
+      </tr>
+    </table>
+    <table>
+      <tr>
+        <td width="50%">
+          <span class="bold">Shipping Information</span><br />
+          ${self.address_fields(order.shipping)}
+        </td>
+
+        <td width="50%">
+          % if order.any_billing:
+            <span class="bold">Billing Information</span><br />
+            ${self.address_fields(order.any_billing)}
+          % endif
+        </td>
+      </tr>
+    </table>
+  </div>
+</%self:container>
+
+
+<%self:container cls="bordered">
+  <div class="content">
+    <table>
+      <tr>
+        <td>
+          <span class="h3">Order ${order.id}</span>
+          <br />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          % for project, items in items_by_project.items():
+            <br />
+            <span class="h5">
+              <a href="${request.node_url(project)}">${project.name}</a>
+            </span>
+            <br /><br />
+
+            % if items[0].stage == items[0].CROWDFUNDING:
+              This is a pledge to a crowdfunding campaign, and may not be processed immediately. Payment for this item will be collected when the project is successful. If the crowdfunding campaign is not successful, you will not be charged.
+              <br />
+            % endif
+
+            <table>
+              % for item in items:
+                <tr>
+                  <td rowspan="2">
+                    <a href="${request.node_url(project)}">
+                      ${item.product.img(request, 'product-icon', qualified=True)}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="${request.node_url(project)}">${item.product.name}</a> x${item.qty_desired}
+                  </td>
+                  <td class="text-right">
+                    ${h.currency(item.price_each * item.qty_desired)}
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <%
+                      options = h.variant_list(item.sku)
+                    %>
+                    % if options:
+                      <ul>
+                        % for el in options:
+                          <li>${el}</li>
+                        % endfor
+                      </ul>
+                    % endif
+
+                    % if item.stage == item.STOCK:
+                      This item is currently in stock.
+                    % elif item.stage == item.PREORDER:
+                      This item is a pre-order and will be shipped at a later date. Please note that your transaction will be processed immediately.
+                    % endif
+                  </td>
+                </tr>
+              % endfor
+
+              <tr>
+                <td colspan="3">
+                  <br />
+                </td>
+              </tr>
+
+              <tr>
+                <td colspan="2" class="text-right">
+                  Items Total
+                </td>
+                <td class="text-right">
+                  ${h.currency(order.cart.items_total)}
+                </td>
+              </tr>
+
+              <tr>
+                <td colspan="2" class="text-right">
+                  Shipping
+                </td>
+                <td class="text-right">
+                  ${h.currency(order.cart.shipping_total)}
+                </td>
+              </tr>
+
+              <tr>
+                <td colspan="2" class="text-right bold">
+                  Total
+                </td>
+                <td class="text-right bold">
+                  ${h.currency(order.total_amount)}
+                </td>
+              </tr>
+            </table>
+
+          % endfor
+
+        </td>
+      </tr>
+    </table>
+  </div>
+</%self:container>

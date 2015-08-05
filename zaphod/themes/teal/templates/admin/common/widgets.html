@@ -1,0 +1,252 @@
+<%namespace name="forms" file="/common/forms.html"/>
+
+
+<%def name="aliases(renderer, obj)">
+  ${forms.ltext(renderer, 'override_path', obj.override_path, label='URL', placeholder=obj.generate_path(), hint='Leave blank to use recommended URL. Changes will leave behind a redirect from the old URL to the new one.', prefix='crowdsupply.com/')}
+</%def>
+
+
+<%def name="markdown_hint()">
+  Use valid Markdown. See <a href="${request.route_path('admin:help:markdown')}">Markdown tips and recipes</a> for help.
+</%def>
+
+
+<%def name="lcontent(renderer, name, value)">
+  ${forms.ltextarea(renderer, name, value, rows=15, class_='form-monospace', hint=self.markdown_hint)}
+</%def>
+
+
+<%def name="single_comment(comment)">
+  <div class="row">
+    <div class="col-sm-3">
+      <strong>${comment.created_by.name if comment.created_by_id != 1 else 'System Message'}</strong>
+      <p class="comment-time">${h.format_datetime(request, comment.created_time)}</p>
+      <p class="comment-time-ago">${h.distance_of_time_in_words(comment.created_time, h.datetime.utcnow(), granularity='hour')}</p>
+    </div>
+    <div class="col-sm-9">
+      <p>
+        % for line in comment.body.split('\n'):
+          ${line}<br>
+        % endfor
+      </p>
+    </div>
+  </div>
+</%def>
+
+
+<%def name="comments(renderer, obj)">
+  <legend>Admin Comments</legend>
+  % for comment in obj.comments:
+    ${self.single_comment(comment)}
+  % endfor
+  ${forms.ltextarea(renderer, 'new_comment')}
+</%def>
+
+
+<%def name="image_hint()">
+  Images may also be dragged and dropped onto this table. Be sure that you have used the correct image metadata tags and filled in as many as appropriate. See <a href="${request.route_path('admin:help:image-tags')}">image tag usage and tips</a> for help.
+</%def>
+
+
+<%def name="images(renderer, obj)">
+  <%forms:element label="Images">
+    <div class="table-responsive">
+      <table class="table table-images js-image-widget" data-upload-path="${request.route_path('admin:images:upload')}" data-search-path="${request.route_path('admin:images:search')}">
+        <tbody class="js-image-widget-images">
+
+          % for assoc in obj.image_associations:
+            <tr>
+              <td class="js-image-drag-handle table-drag-handle"></td>
+              <td class="table-remove">
+                <a class="js-image-remove" href="#">
+                  <i class="fa fa-minus-circle"></i>
+                </a>
+              </td>
+              <td>${request.image_tag(assoc.image_meta.name, assoc.image_meta.original_ext, 'admin-tiny')}</td>
+              <td>
+                ${assoc.image_meta.name}.${assoc.image_meta.original_ext}<br>
+                ${assoc.image_meta.width} x ${assoc.image_meta.height}<br>
+                <a href="${request.image_url(assoc.image_meta.name, assoc.image_meta.original_ext, None)}">View Original</a><br>
+                <label>
+                  ${renderer.checkbox('images-%d.published' % loop.index, checked=assoc.published)}
+                  Published
+                </label>
+              </td>
+              <td>
+                ${renderer.hidden('images-%d.id' % loop.index, assoc.image_meta.id)}
+                ${renderer.hidden('images-%d.gravity' % loop.index, loop.index, class_='js-image-gravity')}
+                <label for="images-${loop.index}.caption">Caption</label>
+                ${renderer.text('images-%d.caption' % loop.index, assoc.caption, class_='form-control')}
+              </td>
+              <td>
+                ${renderer.text('images-%d.title' % loop.index, assoc.image_meta.title, class_='form-control', placeholder='Title')}
+                ${renderer.text('images-%d.alt' % loop.index, assoc.image_meta.alt, class_='form-control', placeholder='Alt')}
+              </td>
+            </tr>
+          % endfor
+
+        </tbody>
+        <tfoot>
+          <tr>
+            <td></td>
+            <td class="table-add">
+              <i class="fa fa-plus-circle"></i>
+            </td>
+            <td colspan="4">
+              <a data-toggle="modal" data-target="#image-search-modal" href="#">Associate existing images</a>
+              <div class="modal fade" id="image-search-modal">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                      <h4 class="modal-title">Search Images</h4>
+                    </div>
+                    <div class="modal-body">
+                      <input type="text" class="form-control js-image-search" placeholder="Search...">
+                      <div class="js-image-search-results image-search-results">
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary">Save</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td class="table-add">
+              <i class="fa fa-plus-circle"></i>
+            </td>
+            <td colspan="4">
+              <input type="file" multiple>
+              Upload new images
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <p class="help-block no-error">${forms.hint(self.image_hint())}</p>
+  </%forms:element>
+</%def>
+
+
+<%def name="daterange(renderer, name_start, name_end, value_start, value_end)">
+  <div class="btn-group js-date-range-friendly form-inline">
+    <a class="dropdown-toggle" data-toggle="dropdown">
+      <div class="js-date-range-pickers">
+        ${forms.datepicker(name_start, value_start, class_='js-date-range-start')}
+        -
+        ${forms.datepicker(name_end, value_end, class_='js-date-range-end')}
+        <button class="btn btn-default" href="#">Go</button>
+      </div>
+      <div class="js-date-range-current"></div>
+      <div class="js-date-range-text"></div>
+      <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu js-date-range-menu">
+      <li><a href="#" class="js-custom-range">Custom Date Range</a></li>
+      <li class="divider"></li>
+    </ul>
+  </div>
+</%def>
+
+
+<%def name="project_association(renderer, name, collection, label=None)">
+  <%forms:element name="${name}" label="${label}">
+    <div class="form-control-static">
+      <ul class="list-association js-project-association" data-path="${request.route_path('admin:projects:search')}">
+        % for project in collection:
+          <li class="list-association-item">
+            <a class="js-project-remove" href="#"><i class="fa fa-minus-circle"></i></a>
+            ${renderer.hidden('related_project_ids', project.id)}
+            ${project.name}
+          </li>
+        % endfor
+        <li>
+          <a class="js-project-add" href="#">
+            <i class="fa fa-plus-circle"></i>
+            Add Project
+          </a>
+          <div class="searcher">
+            <input type="text" class="form-control" placeholder="Search projects...">
+            <ul class="searcher-menu js-project-menu">
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </%forms:element>
+</%def>
+
+
+<%def name="tag_association(renderer, name, collection, label=None)">
+  <%forms:element name="${name}" label="${label}">
+    <div class="form-control-static">
+      <ul class="list-association js-tag-association" data-path="${request.route_path('admin:tags:ajax-list')}">
+        % for tag in collection:
+          <li class="list-association-item">
+            <a class="js-tag-remove" href="#"><i class="fa fa-minus-circle"></i></a>
+            ${renderer.hidden('tag_ids', tag.id)}
+            ${tag.name}
+          </li>
+        % endfor
+        <li class="list-association-add">
+          <a class="js-tag-add" href="#">
+            <i class="fa fa-plus-circle"></i>
+            Add Tag
+          </a>
+          <select class="form-control">
+          </select>
+        </li>
+      </ul>
+    </div>
+  </%forms:element>
+</%def>
+
+
+<%def name="user_picker(renderer, name)">
+  <div class="searcher js-user-picker" data-path="${request.route_path('admin:users:search')}">
+    ${renderer.hidden(name, None)}
+    <div class="input-group">
+      <span class="input-group-addon">None Selected</span>
+      <input type="text" class="form-control" placeholder="Search users...">
+    </div>
+    <ul class="searcher-menu js-user-menu">
+    </ul>
+  </div>
+</%def>
+
+
+<%def name="delete_button()">
+  <a class="btn btn-danger pull-right" data-toggle="modal" data-target="#delete-modal" href="#">Delete</a>
+</%def>
+
+
+<%def name="delete_modal(thing_name, action)">
+  <div class="modal fade" id="delete-modal">
+    <div class="modal-dialog">
+      <form action="${action}" method="POST">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Delete this ${thing_name}?</h4>
+          </div>
+          <div class="modal-footer">
+            ${h.auth_token_hidden_field(request)}
+            <button type="submit" class="btn btn-danger">Nuke It</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</%def>
+
+
+<%def name="updated_info(obj)">
+  <p>Updated ${h.format_datetime(request, obj.updated_time)} by ${obj.updated_by.name}</p>
+  <p>Created ${h.format_datetime(request, obj.created_time)} by ${obj.created_by.name}</p>
+</%def>

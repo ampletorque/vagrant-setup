@@ -1,0 +1,114 @@
+<%namespace name="widgets" file="/admin/common/widgets.html"/>
+<%namespace name="pagination" file="/common/pagination.html"/>
+
+
+<%def name="tab(route_name, **kw)">
+  <%
+    path = request.route_path(route_name, **kw)
+  %>
+  % if path == request.path:
+    <li class="active"><a href="${path}">${caller.body()}</a></li>
+  % else:
+    <li><a href="${path}">${caller.body()}</a></li>
+  % endif
+</%def>
+
+
+<%def name="project_header(project)">
+  <section class="section-admin-project-tabs">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+
+          <div class="admin-header">
+            <div class="admin-header-metadata">
+              % if project.published:
+                <p><a href="${request.node_path(project)}">View Public Page</a></p>
+              % else:
+                <p>Not Published</p>
+              % endif
+              ${widgets.updated_info(project)}
+            </div>
+            <h1 class="page-header">Project ${project.id} <small>${project.name}</small></h1>
+          </div>
+
+          <ul class="nav nav-tabs">
+            <%self:tab id="${project.id}" route_name="admin:project">Content</%self:tab>
+            <%self:tab id="${project.id}" route_name="admin:project:products">Products</%self:tab>
+            <%self:tab id="${project.id}" route_name="admin:project:owners">Owners</%self:tab>
+            <%self:tab id="${project.id}" route_name="admin:project:updates">Updates</%self:tab>
+            <%self:tab id="${project.id}" route_name="admin:project:emails">Emails</%self:tab>
+            <%self:tab id="${project.id}" route_name="admin:project:reports">Reports</%self:tab>
+            <%self:tab id="${project.id}" route_name="admin:project:ship">Ship</%self:tab>
+            <%self:tab id="${project.id}" route_name="admin:project:capture-funds">Funds</%self:tab>
+            <%self:tab id="${project.id}" route_name="admin:project:transfers">Transfers</%self:tab>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </section>
+</%def>
+
+
+<%def name="product_header(product)">
+  <section class="section-admin-product-tabs">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <h1 class="page-header">Product ${product.id} <small>${product.name}</small></h1>
+
+          <ul class="nav nav-tabs">
+            <%self:tab id="${product.id}" route_name="admin:product">Content</%self:tab>
+            <%self:tab id="${product.id}" route_name="admin:product:schedule">Schedule</%self:tab>
+            <%self:tab id="${product.id}" route_name="admin:product:options">Options</%self:tab>
+            <%self:tab id="${product.id}" route_name="admin:product:skus">SKUs</%self:tab>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</%def>
+
+
+<%def name="orders_header(page)">
+  <section class="section-admin-orders-header">
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="pull-right admin-create">
+            <a class="btn btn-default" href="${request.route_path('admin:orders:new')}"><i class="fa fa-plus"></i> New Order</a>
+          </div>
+
+          <h1 class="page-header">
+            Orders
+            % if num_open:
+              <small>${page.item_count} total, ${num_open} open</small>
+            % endif
+          </h1>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-6 col-sm-push-6 clearfix">
+          <form class="pull-right form-inline form-search" method="GET">
+            <div class="input-group">
+              <input type="text" name="q" placeholder="Search orders..." value="${request.params.get('q')}" class="form-control">
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="submit">Search</button>
+              </span>
+            </div>
+          </form>
+        </div>
+        <div class="col-sm-6 col-sm-pull-6">
+          <ul class="nav nav-tabs">
+            <%self:tab route_name="admin:orders">All Orders</%self:tab>
+            <%self:tab route_name="admin:orders:open">Open</%self:tab>
+            <%self:tab route_name="admin:orders:open-stock">Open Stock</%self:tab>
+            <%self:tab route_name="admin:orders:overdue">Overdue</%self:tab>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</%def>

@@ -1,0 +1,20 @@
+---
+- hosts: webservers
+  tasks:
+    - name: create images dir
+      local_action: file path=/var/media/crowdsupply/images/originals state=directory
+
+    - name: download images
+      synchronize: src=/var/media/crowdsupply/images/originals
+                   dest=/var/media/crowdsupply/images
+                   mode=pull
+                   perms=no
+
+    - name: dump mysql snapshot
+      shell: mysqldump -uroot zaphod > /tmp/zaphod.sql
+
+    - name: copy mysql snapshot
+      fetch: src=/tmp/zaphod.sql dest=/tmp/ flat=yes
+
+    - name: load mysql snapshot
+      local_action: shell mysql -uroot zaphod < /tmp/zaphod.sql

@@ -1,0 +1,111 @@
+<%inherit file="base.html"/>
+
+
+<%def name="item_row(item)">
+  <span class="bold">${item.product.name}</span>
+  <br />
+  ${item.product.project.name}
+  <br />
+  % if item.sku.option_values:
+    <ul>
+      % for ov in item.sku.option_values:
+        <li>${ov.option.name}: ${ov.description}</li>
+      % endfor
+    </ul>
+  % endif
+
+  <br /><br />
+</%def>
+
+
+<%def name="featured_projects(projects)">
+  % if projects:
+    <%self:container cls="featured-projects">
+      <div class="content">
+        <table>
+          <tr>
+            <td colspan="3">
+              <span class="h4">You might be interested in these similar projects, currently available at crowdsupply.com.</span>
+            </td>
+          </tr>
+
+          % for row in h.grouper(2, projects):
+            <tr>
+              % for project in row:
+                <td class="featured-project-column">
+                  <a href="${request.node_url(project)}">
+                    ${project.img(request, 'product-icon', qualified=True)}
+                    <span class="h5">${project.name}</span>
+                  </a>
+                </td>
+              % endfor
+            </tr>
+          % endfor
+        </table>
+      </div>
+    </%self:container>
+  % endif
+</%def>
+
+
+<%self:container>
+  <div class="content">
+    <table>
+      <tr>
+        <td>
+
+          % if not unshipped_items:
+            <span class="h4">Your Crowd Supply order (${order.id}) has shipped!</span>
+          % else:
+            <span class="h4">Your Crowd Supply order (${order.id}) has partially shipped.</span>
+          % endif
+
+          <br /><br />
+
+          <span class="h5">Your order is being shipped to:</span>
+          <br /><br />
+
+          ${self.address_fields(order.shipping)}
+
+          <br /><br />
+
+          % for shipment in order.shipments:
+            <span class="h5">
+              % if shipment.tracking_number:
+                Shipped with tracking number ${shipment.tracking_number}:
+              % else:
+                Shipped with no tracking number:
+              % endif
+            </span>
+            <br /><br />
+
+            % for item in shipment.items:
+              ${self.item_row(item)}
+            % endfor
+          % endfor
+
+          % if unshipped_items:
+            <span class="h4">Items not yet shipped:</span>
+            <br />
+
+            % for item in unshipped_items:
+              ${self.item_row(item)}
+            % endfor
+          % endif
+
+          Please note that it may take up to 24 hours for tracking numbers to become active.
+
+          % if order.shipping.country_code != 'us':
+            <br /><br />
+
+            Because this order is shipping internationally, it may be subject to customs tariffs or delays. You may need to check to with your customs house to receive this package. <a href="/shipping">Learn more about shipping.</a>
+          % endif
+
+        </td>
+      </tr>
+    </table>
+  </div>
+</%self:container>
+
+
+${self.featured_projects(getters.featured_projects_for_cart(order.cart, limit=2))}

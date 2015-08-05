@@ -1,0 +1,586 @@
+<%inherit file="base.html"/>
+
+<%namespace name="blocks" file="common/blocks.html"/>
+<%namespace name="tiles" file="common/tiles.html"/>
+
+<%def name="title()">${project.name}</%def>
+
+
+<%def name="breadcrumbs(project)">
+  <ol class="breadcrumb breadcrumb-project">
+    <li>Creators</li>
+    <li>
+      <a href="${request.node_path(project.creator)}">
+        ${project.creator.name}
+      </a>
+    </li>
+  </ol>
+</%def>
+
+
+<%def name="tab(suffix)">
+  % if suffix == action:
+    <li class="active">
+      <a href="#">${caller.body()}</a>
+    </li>
+  % else:
+    <li>
+      <a href="${request.node_path(project, suffix=[suffix] if suffix else None)}">${caller.body()}</a>
+    </li>
+  % endif
+</%def>
+
+
+<%def name="stats_crowdfunding(project)">
+  <p class="project-pledged">
+    <span><sup>$</sup>${h.commas(project.pledged_amount)}</span>&nbsp;raised
+  </p>
+  <p class="project-goal">
+    of&nbsp;<span><sup>$</sup>${h.commas(project.target)}</span>&nbsp;goal
+  </p>
+
+  <div class="progress">
+    <div class="progress-bar" style="width: ${project.progress_percent}%"></div>
+  </div>
+
+  <div class="factoids">
+    <div class="fact" data-countdown-to="${project.end_time.isoformat()}">
+      <%
+        val, units = project.remaining
+      %>
+      <p>${val}</p>
+      <span>${units} left</span>
+    </div>
+    <div class="fact">
+      <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
+      <span>funded</span>
+    </div>
+    <div class="fact">
+      <p>${h.commas(project.num_pledges)}</p>
+      <span>pledges</span>
+    </div>
+  </div>
+
+  <div class="social-buttons">
+    <p>Support this project on social media!</p>
+    ${blocks.social_buttons(project, 'Check out this Crowd Supply project')}
+  </div>
+</%def>
+
+
+<%def name="stats_suspended(project)">
+  <p class="project-pledged">
+    <span><sup>$</sup>${h.commas(project.pledged_amount)}</span>&nbsp;raised
+  </p>
+  <p class="project-goal">
+    of&nbsp;<span><sup>$</sup>${h.commas(project.target)}</span>&nbsp;goal
+  </p>
+  <div class="status-bar status-bar-danger">
+    <div class="status-bar-left">Campaign Suspended</div>
+  </div>
+  <div class="factoids">
+    <div class="fact">
+      <p>${h.format_datetime(request, project.suspended_time, '%b %d')}</p>
+      <span>suspended</span>
+    </div>
+    <div class="fact">
+      <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
+      <span>funded</span>
+    </div>
+    <div class="fact">
+      <p>${h.commas(project.num_pledges)}</p>
+      <span>pledges</span>
+    </div>
+  </div>
+</%def>
+
+
+<%def name="stats_funded(project)">
+  <p class="project-pledged">
+    <span><sup>$</sup>${h.commas(project.pledged_amount)}</span>&nbsp;raised
+  </p>
+  <p class="project-goal">
+    of&nbsp;<span><sup>$</sup>${h.commas(project.target)}</span>&nbsp;goal
+  </p>
+  <div class="status-bar status-bar-primary">
+    <span class="status-bar-left">Funded!</span>
+  </div>
+  <div class="factoids">
+    <div class="fact">
+      <p>${h.format_datetime(request, project.final_day, '%b %d')}</p>
+      <span>funded on</span>
+    </div>
+    <div class="fact">
+      <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
+      <span>funded</span>
+    </div>
+    <div class="fact">
+      <p>${h.commas(project.num_pledges)}</p>
+      <span>pledges</span>
+    </div>
+  </div>
+  <div class="social-buttons">
+    <p>Support this project on social media!</p>
+    ${blocks.social_buttons(project, 'Check out this Crowd Supply project')}
+  </div>
+</%def>
+
+
+<%def name="stats_available(project)">
+  <p class="project-pledged">
+    <span><sup>$</sup>${h.commas(project.pledged_amount)}</span>&nbsp;raised
+  </p>
+  <p class="project-goal">
+    of&nbsp;<span><sup>$</sup>${h.commas(project.target)}</span>&nbsp;goal
+  </p>
+  <div class="status-bar status-bar-primary">
+    <span class="status-bar-left">Funded!</span>
+    <span class="status-bar-right">Order Now</span>
+  </div>
+  <div class="factoids">
+    <div class="fact">
+      <p>${h.format_datetime(request, project.final_day, '%b %d')}</p>
+      <span>funded on</span>
+    </div>
+    <div class="fact">
+      <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
+      <span>funded</span>
+    </div>
+    <div class="fact">
+      <p>${h.commas(project.num_pledges)}</p>
+      <span>pledges</span>
+    </div>
+  </div>
+  <div class="social-buttons">
+    <p>Support this project on social media!</p>
+    ${blocks.social_buttons(project, 'Check out this Crowd Supply project')}
+  </div>
+</%def>
+
+
+<%def name="stats_failed(project)">
+  <p class="project-pledged">
+    <span><sup>$</sup>${h.commas(project.pledged_amount)}</span>&nbsp;raised
+  </p>
+  <p class="project-goal">
+    of&nbsp;<span><sup>$</sup>${h.commas(project.target)}</span>&nbsp;goal
+  </p>
+  <div class="status-bar status-bar-light">
+    <div class="status-bar-left">Funding Unsuccessful</div>
+  </div>
+  <div class="factoids">
+    <div class="fact">
+      <p>${h.format_datetime(request, project.final_day, '%b %d')}</p>
+      <span>ended</span>
+    </div>
+    <div class="fact">
+      <p>${h.format_percent(project.progress_percent)}<sup>%</sup></p>
+      <span>funded</span>
+    </div>
+    <div class="fact">
+      <p>${h.commas(project.num_pledges)}</p>
+      <span>pledges</span>
+    </div>
+  </div>
+  <div class="social-buttons">
+    <p>Support this project on social media!</p>
+    ${blocks.social_buttons(project, 'Check out this Crowd Supply project')}
+  </div>
+</%def>
+
+
+<%def name="stats_stock_only(project)">
+  <p class="text-center">Free US Shipping</p>
+  <div class="status-bar status-bar-dark">
+    <span class="status-bar-left">In Stock</span>
+    <span class="status-bar-right">Available Now</span>
+  </div>
+  <div class="factoids">
+    <div class="fact">
+      <span>options from</span>
+      <p>${blocks.price_range(project)}</p>
+    </div>
+  </div>
+  <div class="social-buttons">
+    <p>Support this project on social media!</p>
+    ${blocks.social_buttons(project, 'Check out this Crowd Supply project')}
+  </div>
+</%def>
+
+
+<%def name="stats_tile(project)">
+  <div class="project-block">
+    % if project.status == 'crowdfunding':
+      ${self.stats_crowdfunding(project)}
+    % elif project.status == 'suspended':
+      ${self.stats_suspended(project)}
+    % elif project.status == 'funded':
+      ${self.stats_funded(project)}
+    % elif project.status == 'available':
+      ${self.stats_available(project)}
+    % elif project.status == 'stock-only':
+      ${self.stats_stock_only(project)}
+    % elif project.status == 'failed':
+      ${self.stats_failed(project)}
+    % elif project.status == 'prelaunch':
+      ## This will only be shown for admin or owner previews.
+      ${self.stats_crowdfunding(project)}
+    % else:
+      <% assert False, "don't know what stats tile to use for %r" % project.status %>
+    % endif
+  </div>
+</%def>
+
+
+<%def name="product_level(project, product)">
+  <form method="post" action="${request.route_path('cart:add')}">
+    <div class="pledge-level">
+      <div class="clearfix">
+        <div class="pull-left">
+          <h3>${product.name}</h3>
+          <p class="pledge-level-delivery pledge-level-metadata">
+            % if product.non_physical:
+              Thank you!
+            % elif product.in_stock:
+              In Stock
+            % elif product.is_available:
+              Ships ${product.current_ship_time.strftime('%B %Y')}
+            % elif not product.batches:
+              Preview only: check back soon!
+            % else:
+              No longer available
+            % endif
+          </p>
+        </div>
+        <div class="pull-right text-right">
+          <p class="pledge-level-price">
+            <sup>$</sup>${h.commas(int(product.price))}
+          </p>
+          % if not product.non_physical:
+            <p class="pledge-level-shipping pledge-level-metadata">
+              Free US Shipping!
+            </p>
+          % endif
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-4">
+          ${product.img(request, 'product-icon')}
+        </div>
+
+        <div class="col-xs-8">
+          ${h.hidden('product_id', product.id)}
+          ${h.hidden('qty', 1)}
+
+          ${blocks.cart_item_options(product)}
+
+          % if project.status == 'crowdfunding':
+            % if product.is_available:
+              <button type="submit" class="btn btn-block btn-cta">Back This Project</button>
+            % else:
+              <button type="submit" class="btn btn-block btn-cta" disabled>All Gone</button>
+            % endif
+
+            <%
+              qty_claimed = product.qty_claimed
+              qty_remaining = product.qty_remaining
+            %>
+            <p class="pledge-level-supporters pledge-level-metadata text-right">
+              % if product.non_physical and qty_claimed > 0:
+                ${h.commas(qty_claimed)}
+                % if qty_claimed == 1:
+                  person loves us
+                % else:
+                  people love us
+                % endif
+              % elif qty_claimed > 0:
+                ${h.commas(qty_claimed)}
+                claimed
+              % endif
+              % if qty_claimed and (qty_remaining is not None):
+                ,
+              % endif
+              % if qty_remaining is not None:
+                ${h.commas(qty_remaining)} left
+              % endif
+            </p>
+
+          % elif project.status in ('available', 'stock-only'):
+            % if product.in_stock:
+              <button type="submit" class="btn btn-block btn-cta">Add to Cart</button>
+            % elif product.accepts_preorders and project.accepts_preorders:
+              <button type="submit" class="btn btn-block btn-cta">Pre-order</button>
+            % endif
+          % endif
+
+        </div>
+      </div>
+    </div>
+  </form>
+</%def>
+
+
+<%def name="products(project)">
+  <div class="project-block">
+    <%blocks:collapse_on_mobile target="products" title="${'Pledge Now' if project.status == 'crowdfunding' else 'Product Choices'}">
+      % for product in project.published_products:
+        ${self.product_level(project, product)}
+        % if not loop.last:
+          <hr>
+        % endif
+      % endfor
+    </%blocks:collapse_on_mobile>
+  </div>
+</%def>
+
+
+<%def name="leader(project)" cached="True" cache_region="default" cache_key="project-${str(project.id)}-leader">
+  <div class="row">
+    <div class="col-lg-12">
+      ${self.breadcrumbs(project)}
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <ul class="list-unstyled list-tags pull-right text-right">
+        % if project.creator.location:
+          <li>
+            <i class="fa fa-map-marker"></i>&nbsp;
+            ${project.creator.location}
+          </li>
+        % endif
+        % for tag in list(project.tags)[:2]:
+          % if tag.published:
+            <li>
+              <i class="fa fa-tag"></i>
+              <a href="${request.node_url(tag)}">${tag.name}</a>
+            </li>
+          % endif
+        % endfor
+      </ul>
+
+      <h1>${project.name}</h1>
+    </div>
+  </div>
+</%def>
+
+
+<%def name="sidebar(project)" cached="True" cache_region="default" cache_key="project-${str(project.id)}-sidebar">
+  ${self.stats_tile(project)}
+  ${self.products(project)}
+</%def>
+
+
+<%def name="creator_info(creator)">
+  <h4>${creator.name}</h4>
+  <p class="creator-block-teaser">${creator.teaser}</p>
+  <p class="creator-block-metadata">
+    <i class="fa fa-map-marker"></i>&nbsp;${creator.location}
+    % if creator.home_url:
+      &nbsp;&middot;&nbsp;
+      <a href="${creator.home_url}">${creator.display_url}</a>
+    % endif
+  </p>
+</%def>
+
+
+<%def name="owners(project)">
+  % if project.published_ownerships:
+    <div class="row">
+      <div class="col-lg-12">
+        <hr>
+      </div>
+    </div>
+    <div class="row">
+      % for owner in project.published_ownerships:
+        <div class="col-xs-6 col-sm-3">
+          <div class="project-owner">
+            ${h.image_or_gravatar(request, owner.user, 'project-avatar', default='mm', title=owner.user.name, class_='img-avatar')}
+            <h4>${owner.user.name}</h4>
+            <p>${owner.title}</p>
+          </div>
+        </div>
+      % endfor
+    </div>
+  % endif
+</%def>
+
+
+<%def name="creator_block(project)">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="project-block">
+        <%blocks:collapse_on_mobile target="creator" title="Creator">
+          <div class="row">
+            <div class="col-sm-3">
+              ${project.creator.img(request, 'creator-profile')}
+            </div>
+
+            <div class="col-sm-9">
+              ${self.creator_info(project.creator)}
+            </div>
+          </div>
+          ${self.owners(project)}
+        </%blocks:collapse_on_mobile>
+      </div>
+    </div>
+  </div>
+</%def>
+
+
+<%def name="remind_me_form(project)">
+  % if project.status == 'crowdfunding':
+    <div class="project-remind-me">
+      <p><strong>Funding ends</strong> on ${h.format_datetime(request, project.final_day, '%b %d, %Y')} at 11:59pm UTC</p>
+      <form id="remind-me-form" class="form-inline" action="${request.node_path(project, suffix=['remind-me'])}" method="POST">
+        <div class="input-group">
+          ${h.text('email', None, type='email', placeholder='me@example.com', class_='form-control')}
+          <span class="input-group-btn">
+            <button type="submit" class="btn btn-default">Remind Me</button>
+          </span>
+        </div>
+      </form>
+    </div>
+  % endif
+</%def>
+
+
+<%def name="ask_question_block(project)">
+  <div class="project-block">
+    <%blocks:collapse_on_mobile target="faq" title="Ask a Question">
+      <p>Have a question not answered in the description above or in the <a href="#">Updates</a>?</p>
+      <p>
+        <a class="btn btn-primary" href="${request.node_path(project, suffix=['ask-question'])}">Ask ${project.creator.name} a Question</a>
+        or
+        <a href="${request.route_path('questions')}">Browse Crowd Supply Questions &amp; Answers</a>
+      </p>
+    </%blocks:collapse_on_mobile>
+  </div>
+</%def>
+
+
+<%def name="owner_controls(project)">
+  % if project.status in ('prelaunch', 'crowdfunding'):
+    <p>
+      View page preview:
+      % if project.status == 'prelaunch':
+        <a href="${request.node_path(project, suffix=['crowdfunding'])}">Crowdfunding Page</a>
+        |
+      % endif
+      % if project.status in ('prelaunch', 'crowdfunding'):
+        <a href="${request.node_path(project, suffix=['available'])}">Pre-order / Available Page</a>
+      % endif
+    </p>
+  % endif
+</%def>
+
+
+<%blocks:admin_bar>
+  <p>
+    <a href="${request.route_path('admin:project', id=project.id)}">
+      Edit Project ${project.id} - ${project.name}
+    </a>
+  </p>
+</%blocks:admin_bar>
+
+
+% if request.user and (request.user.admin and request.user.show_admin_bars) or project.check_owner(request.user):
+  <section class="section-project-owner-controls">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <h4>You are an owner of this project</h4>
+          ${self.owner_controls(project)}
+        </div>
+      </div>
+    </div>
+  </section>
+% endif
+
+
+% if (project.status == 'prelaunch') and (not action):
+  <section class="section-project-prelaunch">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2 text-center">
+          <h1>${project.name}</h1>
+          <hr>
+
+          % if project.prelaunch_body:
+            <div class="rendered-content">
+              ${request.render_content(project, project.prelaunch_body)}
+            </div>
+          % else:
+            <p>This project is coming soon. Sign up to receive updates and be notified when this project launches:</p>
+          % endif
+
+          <form method="POST" action="${request.node_path(project, suffix=['prelaunch-signup'])}" id="project-signup-form" class="form-inline">
+            <div>
+              ${h.text('email', placeholder='email@example.com', class_='form-control input-lg', type='email')}
+              <button type="submit" class="btn btn-lg btn-primary">Subscribe</button>
+            </div>
+          </form>
+
+          <div class="project-prelaunch-media">
+            % if project.prelaunch_vimeo_id:
+              ${blocks.vimeo_embed(project.prelaunch_vimeo_id)}
+            % else:
+              ${project.img(request, 'project-main')}
+            % endif
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+% else:
+  <section class="section-project">
+    <div class="container">
+      ${self.leader(project)}
+
+      <div class="row">
+        <div class="col-lg-12">
+          <ul class="nav nav-tabs">
+            <%self:tab suffix="${None}">
+              Home
+            </%self:tab>
+            <%self:tab suffix="updates">
+              Updates
+              <span class="badge">${len(project.published_updates)}</span>
+            </%self:tab>
+            <%self:tab suffix="backers">
+              Backers
+            </%self:tab>
+            % if project.status == 'available' and project.crowdfunding_body.strip():
+              <%self:tab suffix="crowdfunding">
+                History
+              </%self:tab>
+            % endif
+          </ul>
+        </div>
+      </div>
+
+      ${next.body()}
+
+      ${self.creator_block(project)}
+    </div>
+  </section>
+% endif
+
+
+% if project.related_projects:
+  <section class="section-related-projects">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <h1 class="text-center page-header">Similar Projects</h1>
+        </div>
+      </div>
+
+      % for row in h.grouper(4, project.related_projects):
+        ${tiles.tile_row([project.id for project in row])}
+      % endfor
+    </div>
+  </section>
+% endif

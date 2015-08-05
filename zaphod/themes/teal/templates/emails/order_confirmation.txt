@@ -1,0 +1,57 @@
+<%inherit file="base.txt"/>\
+Thank you for your order!
+
+% if not order.cart.non_physical:
+You will receive a shipping confirmation email containing tracking information as soon as your order ships. In the meantime, please double-check the accuracy of the shipping information below.
+
+% endif
+If you have any questions or need to make changes to this order, please don't hesitate to contact us here:
+${request.route_url('contact')}
+
+Shipping Information
+${self.divider('=')}
+${self.address_fields(order.shipping)}
+
+% if order.any_billing:
+Billing Information
+${self.divider('=')}
+${self.address_fields(order.any_billing)}
+% endif
+
+## % if order.customer_comments.strip():
+## Comments
+## ${self.divider('=')}
+## ${order.customer_comments}
+## % endif
+
+Order ${order.id}
+${self.divider('=')}
+
+% for project, items in items_by_project.items():
+${project.name}
+${self.divider()}
+
+% if items[0].stage == items[0].CROWDFUNDING:
+This is a pledge to a crowdfunding campaign, and may not be processed immediately. Payment for this item will be collected when the project is successful. If the crowdfunding campaign is not successful, you will not be charged.
+% endif
+
+% for item in items:
+  * ${item.product.name} - qty ${item.qty_desired} - ${h.currency(item.price_each)} ea.
+
+  % for el in h.variant_list(item.sku):
+    - ${el}
+  % endfor
+
+  % if item.stage == item.STOCK:
+    This item is currently in stock.
+  % elif item.stage == item.PREORDER:
+    This item is a pre-order and will be shipped at a later date. Please note that your transaction will be processed immediately.
+  % endif
+
+% endfor
+
+% endfor
+
+Items Total             ${h.currency(order.cart.items_total)}
+Shipping Total          ${h.currency(order.cart.shipping_total)}
+Order Total             ${h.currency(order.total_amount)}

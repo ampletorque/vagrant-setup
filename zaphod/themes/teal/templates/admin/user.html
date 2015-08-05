@@ -1,0 +1,138 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="widgets" file="common/widgets.html"/>
+
+<%def name="title()">Edit User ${obj.id}</%def>
+
+
+<section class="section-admin-user">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+
+        <div class="admin-header">
+          <div class="admin-header-metadata">
+            % if obj.url_path:
+              <p><a href="${request.route_path('profile', path=obj.url_path)}">View Profile Page</a></p>
+            % else:
+              <p>No Profile Page</p>
+            % endif
+            ${widgets.updated_info(obj)}
+          </div>
+
+          <h1 class="page-header">
+            ${self.title()}
+            % if obj == request.user:
+              <small>This is you!</small>
+            % endif
+          </h1>
+        </div>
+
+        <div class="well">
+          <a class="btn btn-primary" href="${request.route_path('admin:user:send-password-reset', id=obj.id)}">Send Password Reset</a>
+          <a class="btn btn-primary" href="${request.route_path('admin:user:send-welcome-email', id=obj.id)}">Send Welcome Email</a>
+        </div>
+
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped js-ajax-validate')}
+          ${forms.ltext(renderer, 'name', obj.name)}
+          ${forms.ltext(renderer, 'email', obj.email, prefix='@')}
+
+          ${forms.lpassword(renderer, 'password')}
+          ${forms.lpassword(renderer, 'password2', label='Confirm Password', hint="To update this user's password, enter a new one here.")}
+
+          ${forms.ltext(renderer, 'url_path', obj.url_path, label='Profile URL', hint='If supplied, a profile page for this user will be published.', prefix='crowdsupply.com' + request.route_path('profile', path=''))}
+          ${forms.lselect(renderer, 'timezone', obj.timezone, h.timezones_for_select())}
+          ${forms.ltext(renderer, 'twitter_username', obj.twitter_username, prefix='@')}
+
+          ${forms.lcheckbox(renderer, 'show_in_backers', obj.show_in_backers, hint='Show this user in lists of project backers.')}
+          ${forms.ltext(renderer, 'show_name', obj.show_name, hint="Show this user's name in backers lists.")}
+          ${forms.ltext(renderer, 'show_location', obj.show_location, hint="Show this user's location in backers lists.")}
+
+          ${forms.lcheckbox(renderer, 'show_admin_bars', checked=obj.show_admin_bars, hint='Show shortcut admin toolbars on public site.')}
+          ${forms.lcheckbox(renderer, 'enabled', checked=obj.enabled, hint='If this is unchecked, the user will not be able to login, and will be logged out if they are currently logged in.')}
+          ${forms.lcheckbox(renderer, 'admin', checked=obj.admin, hint='Grant this user admin permissions.')}
+
+          ${widgets.images(renderer, obj)}
+          ${widgets.comments(renderer, obj)}
+
+          <%forms:actions>
+            <button class="btn btn-primary" type="submit">Save</button>
+            <button class="btn btn-default" type="reset">Cancel</button>
+          </%forms:actions>
+        ${renderer.end()}
+
+        <h3>Order History</h3>
+        % if obj.orders:
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Order ID</th>
+                  <th>First Item</th>
+                  <th>Total</th>
+                  <th>Placed</th>
+                  <th>Closed</th>
+                </tr>
+              </thead>
+              <tbody>
+                % for order in obj.orders:
+                  <tr>
+                    <td><a href="${request.route_path('admin:order', id=order.id)}">Edit</a></td>
+                    <td>${order.id}</td>
+                    <td>
+                      % if order.cart.items:
+                        ${order.cart.items[0].product.name}
+                      % endif
+                    </td>
+                    <td>${h.currency(order.total_amount)}</td>
+                    <td>${h.format_datetime(request, order.created_time)}</td>
+                    <td>
+                      % if order.closed:
+                        Closed
+                      % else:
+                        Open
+                      % endif
+                    </td>
+                  </tr>
+                % endfor
+              </tbody>
+            </table>
+          </div>
+        % else:
+          <p>This user has not placed any orders.</p>
+        % endif
+
+        <h3>Payment Methods</h3>
+        % if obj.payment_methods:
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Payment Method ID</th>
+                  <th>Gateway ID</th>
+                  <th>Customer ID</th>
+                  <th>Save</th>
+                </tr>
+              </thead>
+              <tbody>
+                % for method in obj.payment_methods:
+                  <tr>
+                    <td>${method.id}</td>
+                    <td>${method.payment_gateway_id}</td>
+                    <td>${method.reference['customer_id']}</td>
+                    <td>${method.save}</td>
+                  </tr>
+                % endfor
+              </tbody>
+            </table>
+          </div>
+        % else:
+          <p>This user has no payment methods.</p>
+        % endif
+
+      </div>
+    </div>
+  </div>
+</section>

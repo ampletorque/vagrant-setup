@@ -1,0 +1,63 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="blocks" file="/common/blocks.html"/>
+<%namespace name="widgets" file="/admin/common/widgets.html"/>
+<%namespace name="regions" file="/admin/common/regions.html"/>
+
+<%def name="title()">Edit Product ${obj.id}</%def>
+
+
+${regions.project_header(obj.project)}
+${regions.product_header(obj)}
+
+
+<section class="section-admin-product">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped js-ajax-validate')}
+          ${forms.ltext(renderer, 'name', obj.name)}
+
+          ${forms.ltext(renderer, 'price', obj.price, prefix='$')}
+          ${forms.lcheckbox(renderer, 'international_available', obj.international_available, label='International shipping available.')}
+          ${forms.ltext(renderer, 'international_surcharge', obj.international_surcharge, prefix='$')}
+
+          ${forms.ltext(renderer, 'gravity', obj.gravity, type='number', hint='Determines the sort order of this product on the project page.')}
+          ${forms.lcheckbox(renderer, 'non_physical', obj.non_physical, label='Non-physical item', hint='Check if this product is a non-physical thing, like a donation or a digital copy.')}
+
+          ${forms.ltext(renderer, 'hs_code', obj.hs_code, label='HS Code')}
+          ${forms.ltext(renderer, 'fulfillment_fee', obj.fulfillment_fee, label='Fulfillment Fee', prefix='$')}
+          ${forms.ltext(renderer, 'shipping_weight', obj.shipping_weight, label='Shipping Weight', hint='In kilograms.')}
+          <%forms:element names="${['box_length', 'box_width', 'box_height']}" label="Dimensions">
+            <div class="row">
+              <div class="col-xs-4">
+                ${renderer.text('box_length', obj.box_length, class_='form-control')}
+              </div>
+              <div class="col-xs-4">
+                ${renderer.text('box_width', obj.box_width, class_='form-control')}
+              </div>
+              <div class="col-xs-4">
+                ${renderer.text('box_height', obj.box_height, class_='form-control')}
+              </div>
+            </div>
+            ${forms.hint('LxWxH in centimeters.')}
+          </%forms:element>
+
+          ${forms.lcheckbox(renderer, 'accepts_preorders', obj.accepts_preorders, hint='Check if this product will be available for pre-order or stock orders after crowdfunding.')}
+
+          ${forms.lselect(renderer, 'associated_product_ids', [ap.id for ap in obj.associated_products], [(p.id, p.name) for p in obj.project.products if p != obj], multiple=True, label='Associated Products')}
+
+          ${forms.lcheckbox(renderer, 'published', obj.published)}
+
+          ${widgets.images(renderer, obj)}
+
+          <%forms:actions>
+            <button class="btn btn-primary" type="submit">Save</button>
+            <button class="btn btn-default" type="reset">Cancel</button>
+          </%forms:actions>
+        ${renderer.end()}
+      </div>
+    </div>
+  </div>
+</section>

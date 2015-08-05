@@ -1,0 +1,52 @@
+<%inherit file="base.html"/>
+
+<%def name="title()">List Tags</%def>
+
+
+<section class="section-admin-tags">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="pull-right">
+          <a class="btn btn-default" href="${request.route_path('admin:tags:new')}"><i class="fa fa-plus"></i> New Tag</a>
+        </div>
+
+        <h1 class="page-header">Tags <small>${len(objs)} total</small></h1>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Published</th>
+                <th>Listed</th>
+              </tr>
+            </thead>
+            <tbody>
+              % for tag in objs:
+                <tr>
+                  <td>
+                    <a href="${request.route_path('admin:tag', id=tag.id)}">Edit</a>
+                  </td>
+                  <td>${tag.id}</td>
+                  <td>${tag.name}</td>
+                  <td>
+                    % if tag.published:
+                      Yes
+                    % endif
+                  </td>
+                  <td>
+                    % if tag.listed:
+                      Yes
+                    % endif
+                  </td>
+                </tr>
+              % endfor
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

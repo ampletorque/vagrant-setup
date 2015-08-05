@@ -1,0 +1,25 @@
+<%inherit file="base.html"/>
+
+
+<%self:container>
+  <div class="content">
+    <table>
+      <tr>
+        <td>
+          <span class="h3">Thank you for your Crowd Supply payment.</span>
+          <br /><br />
+
+          The ${h.currency(amount)} payment for your pledge to <span class="bold">${project.name}</span> on Crowd Supply has been successfully processed. Your order ID is ${order.id}.
+          <br /><br />
+
+          You will receive an additional email confirmation when your order ships. Please reply to this email if you have any questions or comments. We appreciate your support!
+          <br /><br />
+
+          Thank you,
+          <br />
+          Crowd Supply Team
+        </td>
+      </tr>
+    </table>
+  </div>
+</%self:container>

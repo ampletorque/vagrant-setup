@@ -1,0 +1,31 @@
+<%inherit file="base.html"/>
+
+<%def name="title()">Admin Dashboard</%def>
+
+
+<%def name="metric_tile(value, label)">
+  <div class="col-xs-6 col-sm-3">
+    <div class="metric-tile">
+      <h3>${value}</h3>
+      <p>${label}</p>
+    </div>
+  </div>
+</%def>
+
+
+<section class="section-index">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        ${self.metric_tile(h.currency(sales_today_total), 'Total Today')}
+        ${self.metric_tile(h.commas(orders_today_count), 'Orders Today')}
+
+        ${self.metric_tile(h.commas(crowdfunding_project_count), 'Crowdfunding')}
+        ${self.metric_tile(h.commas(available_project_count), 'Available Projects')}
+
+        ${self.metric_tile(h.commas(order_count), 'Lifetime Orders')}
+        ${self.metric_tile(h.commas(user_count), 'Customers')}
+      </div>
+    </div>
+  </div>
+</section>

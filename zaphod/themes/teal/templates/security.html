@@ -1,0 +1,105 @@
+<%inherit file="base.html"/>
+
+<%def name="title()">Security</%def>
+
+
+<section class="section-security">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        <h1>Security</h1>
+
+        <h3>Contacting Us</h3>
+
+        <p>Crowd Supply representatives may contact you with questions or information about projects, but will never ask you for your password. If you are concerned about the authenticity of any communication, feel free to <a href="${request.route_path('contact')}">contact us back</a> to verify it.</p>
+
+        <p>Please feel free to encrypt any emails to us using the Crowd Supply PGP key, included at the bottom of this page.</p>
+
+        <h3>Vulnerability Disclosure</h3>
+
+        <p><strong>We do not award bounties for bugs or vulnerabilities.</strong></p>
+
+        <p>If you have found a vulnerability or identified any security concerns with the Crowd Supply website, please email <a href="mailto:security@crowdsupply.com">security@crowdsupply.com</a>, optionally using our PGP key below. We rapidly investigate all reported security issues, and request that you not publish any issues until we have addressed them.</p>
+
+        <h3>SSL Encryption</h3>
+
+        <p>Crowd Supply uses HTTPS for all website services. We use Strict Transport Security to ensure that browsers only use HTTPS when accessing our website. We regularly audit the details of our server configuration and certificates. You can confirm the security of our implementation by checking our score on <a href="https://www.ssllabs.com/ssltest/analyze.html?d=crowdsupply.com">Qualys SSL Labs</a>.</p>
+
+        <h3>Password Storage</h3>
+
+        <p>User passwords are not stored in plaintext, and are encrypted using <em>bcrypt</em>. Forgotten password reset emails contain a token which expires after a short time.</p>
+
+        <h3>PGP key</h3>
+
+        <pre>
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG
+
+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
+=ghb4
+-----END PGP PUBLIC KEY BLOCK-----</pre>
+
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,33 @@
+<%inherit file="base.html"/>
+
+
+<%page cached="True" cache_key="index" cache_region="default"/>
+
+
+<%namespace name="tiles" file="common/tiles.html"/>
+<%namespace name="banners" file="common/banners.html"/>
+
+
+<%def name="title()">A Store and Crowdfunding Platform for Physical Stuff</%def>
+
+
+${banners.novena()}
+
+
+% for title, rows in get_groups():
+  <section class="section-${title.lower().replace(' ', '-')}">
+    <div class="container">
+
+      <div class="row">
+        <div class="col-lg-12">
+          <h1 class="page-header">${title}</h1>
+        </div>
+      </div>
+
+      % for row in rows:
+        ${tiles.tile_row(row, cols=len(row))}
+      % endfor
+
+    </div>
+  </section>
+% endfor

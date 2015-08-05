@@ -1,0 +1,123 @@
+.list-styleguide {
+    margin-top: 20px;
+}
+
+.styleguide-searcher {
+    padding-bottom: 170px;
+    .searcher-menu {
+        display: block;
+    }
+}
+
+@media (min-width: @screen-sm-min) {
+    .list-styleguide {
+        position: fixed;
+        width: 95px;
+    }
+}
+
+@media (min-width: @screen-md-min) {
+    .list-styleguide {
+        width: 132px;
+    }
+}
+
+@media (min-width: @screen-lg-min) {
+    .list-styleguide {
+        width: 165px;
+    }
+}
+
+// Logos
+.styleguide-logo-light, .styleguide-logo-dark, .styleguide-logo-white {
+    width: @cs-logo-width + 40px;
+    height: @cs-logo-height + 40px;
+    background-position: 20px 20px;
+    background-repeat: no-repeat;
+    margin: 16px auto;
+}
+.styleguide-logo-light {
+    background-color: @cs-dark-grey;
+    border: 1px solid @cs-dark-grey;
+    .at2x('/_teal/images/crowd-supply-logo-light.png', @cs-logo-width, @cs-logo-height);
+}
+.styleguide-logo-dark {
+    background-color: @cs-white;
+    border: 1px solid #888;
+    .at2x('/_teal/images/crowd-supply-logo-dark.png', @cs-logo-width, @cs-logo-height);
+}
+.styleguide-logo-white {
+    background-color: @cs-teal;
+    border: 1px solid @cs-teal;
+    .at2x('/_teal/images/crowd-supply-logo-white.png', @cs-logo-width, @cs-logo-height);
+}
+.styleguide-logo-icon {
+    margin: 0 auto;
+    width: 120px;
+    height: 120px;
+    background-image: url(/_teal/images/crowd-supply-icon.png);
+}
+
+// Colors
+.styleguide-color {
+    .clearfix();
+    clear: both;
+    padding-bottom: 10px;
+}
+.styleguide-color-block {
+    width: 125px;
+    height: 125px;
+    border-radius: 5px;
+    border: 1px solid #888;
+    float: left;
+    margin-right: 10px;
+    margin-bottom: 20px;
+}
+.styleguide-color-teal {
+    .styleguide-color-block {
+        background-color: @cs-teal;
+    }
+    code:before {
+        content: "@cs-teal: @{cs-teal}";
+    }
+}
+.styleguide-color-dark-teal {
+    .styleguide-color-block {
+        background-color: @cs-dark-teal;
+    }
+    code:before {
+        content: "@cs-dark-teal: @{cs-dark-teal}";
+    }
+}
+.styleguide-color-dark-grey {
+    .styleguide-color-block {
+        background-color: @cs-dark-grey;
+    }
+    code:before {
+        content: "@cs-dark-grey: @{cs-dark-grey}";
+    }
+}
+.styleguide-color-yellow {
+    .styleguide-color-block {
+        background-color: @cs-yellow;
+    }
+    code:before {
+        content: "@cs-yellow: @{cs-yellow}";
+    }
+}
+.styleguide-color-offwhite {
+    .styleguide-color-block {
+        background-color: @cs-offwhite;
+    }
+    code:before {
+        content: "@cs-offwhite: @{cs-offwhite}";
+    }
+}
+.styleguide-color-border {
+    .styleguide-color-block {
+        background-color: @cs-border-color;
+    }
+    code:before {
+        content: "@cs-border-color: @{cs-border-color}";
+    }
+}

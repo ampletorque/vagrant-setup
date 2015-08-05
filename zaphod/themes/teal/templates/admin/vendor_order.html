@@ -1,0 +1,171 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="blocks" file="/common/blocks.html"/>
+<%namespace name="widgets" file="common/widgets.html"/>
+
+<%def name="title()">Edit Vendor Order ${obj.id}</%def>
+
+
+<section class="section-admin-vendor-order">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+
+        <div class="admin-header">
+          <div class="admin-header-metadata">
+            ${widgets.updated_info(obj)}
+          </div>
+          <h1 class="page-header">${self.title()}</h1>
+        </div>
+
+        <div class="well">
+          % if obj.status == 'crea':
+            <a class="btn btn-default" href="${request.route_path('admin:vendor-order:mark-sent', id=obj.id)}">Mark as Sent</a>
+          % else:
+            <a class="btn btn-default disabled" href="#" disabled>Mark as Sent</a>
+          % endif
+
+          &rarr;
+
+          % if obj.status == 'sent':
+            <a class="btn btn-primary" href="${request.route_path('admin:vendor-order:mark-confirmed', id=obj.id)}">Confirm Order</a>
+          % else:
+            <a class="btn btn-primary disabled" href="#" disabled>Confirm Order</a>
+          % endif
+
+          &rarr;
+
+          % if obj.status in ('conf', 'part', 'recd'):
+            <a class="btn btn-default" href="${request.route_path('admin:vendor-order:receive-shipment', id=obj.id)}">Receive Shipment</a>
+            <a class="btn btn-default" href="${request.route_path('admin:vendor-order:receive-invoice', id=obj.id)}">Receive Invoice</a>
+          % else:
+            <a class="btn btn-default disabled" href="#" disabled>Receive Shipment</a>
+            <a class="btn btn-default disabled" href="#" disabled>Receive Invoice</a>
+          % endif
+        </div>
+
+
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
+
+          ${forms.lvalue(obj.vendor.name, label='Vendor')}
+          % if obj.placed_time:
+            ${forms.lvalue('%s by %s' % (h.format_datetime(request, obj.placed_time), obj.placed_by.name), label='Placed')}
+          % endif
+
+          ${forms.ltext(renderer, 'reference', obj.reference, hint='The number assigned to this order by the vendor.')}
+
+          ${forms.lvalue(obj.status_description, label='Status', hint='This status gets updated automatically as the order gets confirmed and received.')}
+          ${forms.ltext(renderer, 'description', obj.description)}
+
+          ${widgets.comments(renderer, obj)}
+
+          <legend>Items</legend>
+
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Item</th>
+                  <th>SKU</th>
+                  <th>Ordered</th>
+                  <th>Received</th>
+                  <th>Invoiced</th>
+                  <th>Unit Cost</th>
+                </tr>
+              </thead>
+              <tbody>
+                % for item in obj.items:
+                  <tr>
+                    <td class="table-remove">
+                      <a href="${request.route_path('admin:vendor-order:remove-item', id=obj.id, item_id=item.id)}">
+                        <i class="fa fa-minus-circle"></i>
+                      </a>
+                    </td>
+                    <td>
+                      <a href="${request.route_path('admin:product', id=item.sku.product_id)}">
+                        ${item.sku.product.name}
+                      </a>
+                      ${blocks.option_value_list(item.sku)}
+                    </td>
+                    <td>${item.sku.id}</td>
+                    <td style="width:80px">
+                      ${renderer.hidden('items-%d.id' % loop.index, item.id)}
+                      ${renderer.text('items-%d.qty_ordered' % loop.index, item.qty_ordered, class_='form-control', type='number', min=1)}
+                    </td>
+                    <td>${item.qty_received}</td>
+                    <td>${item.qty_invoiced}</td>
+                    <td style="width:125px">
+                      <div class="input-group">
+                        <div class="input-group-addon">$</div>
+                        ${renderer.text('items-%d.cost' % loop.index, item.cost, class_='form-control')}
+                      </div>
+                    </td>
+                  </tr>
+                % endfor
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td class="table-add">
+                    <a href="${request.route_path('admin:vendor-order:add-item', id=obj.id)}">
+                      <i class="fa fa-plus-circle"></i>
+                    </a>
+                  </td>
+                  <td colspan="6">
+                    <a href="${request.route_path('admin:vendor-order:add-item', id=obj.id)}">
+                      Add Item
+                    </a>
+                  </td>
+              </tfoot>
+            </table>
+          </div>
+
+          <%forms:actions>
+            <button class="btn btn-primary" type="submit">Save</button>
+            <button class="btn btn-default" type="reset">Cancel</button>
+          </%forms:actions>
+        ${renderer.end()}
+
+        <h3>Shipments</h3>
+        % if obj.shipments:
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>ID</th>
+                  <th>Description</th>
+                  <th>Received Date</th>
+                  <th>Received By</th>
+                </tr>
+              </thead>
+              <tbody>
+                % for shipment in obj.shipments:
+                  <tr>
+                    <td><a href="${request.route_path('admin:vendor-shipment', id=shipment.id)}">Edit</a></td>
+                    <td>${shipment.id}</td>
+                    <td>${shipment.description}</td>
+                    <td>${h.format_datetime(request, shipment.created_time)}</td>
+                    <td>${shipment.created_by.name}</td>
+                  </tr>
+                % endfor
+              </tbody>
+            </table>
+          </div>
+        % else:
+          <p>No shipments have been received for this order yet.</p>
+        % endif
+
+        <h3>Invoices</h3>
+        % if obj.invoices:
+          <div class="table-responsive">
+          </div>
+        % else:
+          <p>No invoices have been received for this order yet.</p>
+        % endif
+
+      </div>
+    </div>
+  </div>
+</section>

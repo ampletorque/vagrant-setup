@@ -1,0 +1,75 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="blocks" file="/common/blocks.html"/>
+<%namespace name="widgets" file="/admin/common/widgets.html"/>
+<%namespace name="regions" file="/admin/common/regions.html"/>
+
+<%def name="title()">Product ${obj.id} Schedule</%def>
+
+
+${regions.project_header(obj.project)}
+${regions.product_header(obj)}
+
+
+<section class="section-admin-product">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped js-ajax-validate')}
+
+          <div class="table-responsive">
+            <table class="table js-schedule-widget">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Qty Claimed</th>
+                  <th>Qty Available</th>
+                  <th>Delivery Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                % for batch in obj.batches:
+                  <%
+                    qty_claimed = batch.qty_claimed
+                  %>
+                  <tr>
+                    <td class="table-remove">
+                      % if qty_claimed == 0:
+                        <a href="#" class="js-batch-remove">
+                          <i class="fa fa-minus-circle"></i>
+                        </a>
+                      % endif
+                    </td>
+                    <td>${qty_claimed}</td>
+                    <td>
+                      ${renderer.hidden('batches-%d.orig_qty_claimed' % loop.index, qty_claimed)}
+                      ${renderer.hidden('batches-%d.id' % loop.index, batch.id)}
+                      ${renderer.text('batches-%d.qty' % loop.index, batch.qty, class_='form-control', placeholder=h.literal('&infin;'))}
+                    </td>
+                    <td>${forms.datepicker('batches-%d.ship_time' % loop.index, batch.ship_time, class_='form-control js-datepicker')}
+                  </tr>
+                % endfor
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td class="table-add">
+                    <a href="#" class="js-batch-add">
+                      <i class="fa fa-plus-circle"></i>
+                    </a>
+                  </td>
+                  <td colspan="3"><a href="#" class="js-batch-add">Add New Batch</a></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <%forms:actions>
+            <button class="btn btn-primary" type="submit">Save</button>
+            <button class="btn btn-default" type="reset">Cancel</button>
+          </%forms:actions>
+        ${renderer.end()}
+      </div>
+    </div>
+  </div>
+</section>

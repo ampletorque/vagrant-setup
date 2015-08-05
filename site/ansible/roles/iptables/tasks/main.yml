@@ -1,0 +1,24 @@
+---
+- name: copy iptables file
+  sudo: yes
+  template: src=iptables.conf.j2
+            dest=/etc/iptables.rules
+            owner=root
+            group=root
+            mode=0644
+
+- name: copy ip6tables file
+  sudo: yes
+  template: src=ip6tables.conf.j2
+            dest=/etc/ip6tables.rules
+            owner=root
+            group=root
+            mode=0644
+
+- name: reload iptables
+  sudo: yes
+  shell: iptables-restore < /etc/iptables.rules
+
+- name: reload ip6tables
+  sudo: yes
+  shell: ip6tables-restore < /etc/ip6tables.rules

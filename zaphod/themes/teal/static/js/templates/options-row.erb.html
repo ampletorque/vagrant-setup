@@ -1,0 +1,48 @@
+<tr data-index="<%= idx %>">
+  <td class="js-option-drag-handle table-drag-handle"></td>
+  <td class="table-remove">
+    <a href="#" class="js-option-remove">
+      <i class="fa fa-minus-circle"></i>
+    </a>
+  </td>
+  <td style="width:250px">
+    <input type="hidden" name="options-<%= idx %>.id" value="<%= id %>">
+    <input type="hidden" name="options-<%= idx %>.gravity" value="<%= gravity %>">
+    <input type="text" name="options-<%= idx %>.name" value="" class="form-control">
+    <label for="options-<%= idx %>_published">
+      <input type="checkbox" name="options-<%= idx %>.published" id="options-<%= idx %>_published" checked="checked">
+      Published
+    </label>
+  </td>
+  <td>
+    <table class="table">
+      <thead>
+        <tr>
+          <th></th>
+          <th></th>
+          <th>Published</th>
+          <th>Default</th>
+          <th>Description</th>
+          <th style="width:130px">Price Increase</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td></td>
+          <td class="table-add">
+            <a href="#" class="js-value-add">
+              <i class="fa fa-plus-circle"></i>
+            </a>
+          </td>
+          <td colspan="4">
+            <a href="#" class="js-value-add">
+              Add New Value
+            </a>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </td>
+</tr>

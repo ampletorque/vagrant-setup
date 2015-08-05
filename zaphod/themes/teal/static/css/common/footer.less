@@ -1,0 +1,76 @@
+.section-email-signup {
+    background: @cs-teal;
+    color: @cs-white;
+    text-align: center;
+    font-size: 16px;
+
+    -webkit-font-smoothing: subpixel-antialiased;
+    padding-bottom: 20px;
+
+    h4 {
+        font-weight: normal;
+        color: @cs-white;
+        max-width: 785px;
+        margin: 20px auto;
+    }
+    h5 {
+        font-size: 16px;
+        font-weight: bold;
+        text-transform: uppercase;
+        color: @cs-white;
+        margin-top: 18px;
+    }
+    a {
+        color: @cs-white;
+        &:hover {
+            color: @cs-white;
+        }
+    }
+    .footer-col-email, .footer-col-follow {
+        text-align: center;
+    }
+}
+
+footer {
+    background-color: @cs-dark-grey;
+    text-transform: uppercase;
+    text-align: center;
+    -webkit-font-smoothing: antialiased;
+
+    ul {
+        padding: 0;
+    }
+    li {
+        display: inline-block;
+    }
+    a {
+        color: @cs-white;
+        font-weight: bold;
+        font-size: 16px;
+        line-height: 36px;
+        padding-right: 10px;
+        padding-left: 10px;
+        &:hover {
+            color: @cs-white;
+        }
+    }
+}
+
+@media (min-width: @screen-sm-min) {
+    .section-email-signup {
+        padding-bottom: 32px;
+
+        .footer-col-email {
+            text-align: right;
+        }
+        .footer-col-follow {
+            text-align: left;
+        }
+
+    }
+    footer {
+        a {
+            line-height: 88px;
+        }
+    }
+}

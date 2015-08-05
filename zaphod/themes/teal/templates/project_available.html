@@ -1,0 +1,42 @@
+<%inherit file="project_base.html"/>
+
+<%page cached="True" cache_region="default" cache_key="project-${str(project.id)}-body-available" />
+
+
+<%namespace name="tiles" file="common/tiles.html"/>
+<%namespace name="blocks" file="common/blocks.html"/>
+
+
+<%def name="title()">${project.name}</%def>
+
+
+<%def name="owner_controls(project)">
+  <p>Viewing preview of pre-order / available page. <a href="${request.node_path(project)}">Return to current project page.</a></p>
+</%def>
+
+
+<div class="row">
+  <div class="col-md-8 project-media">
+    % if project.available_vimeo_id:
+      ${blocks.vimeo_embed(project.available_vimeo_id)}
+    % else:
+      ${project.img(request, 'project-tile')}
+    % endif
+  </div>
+  <div class="col-sm-4 project-sidebar">
+    ${self.sidebar(project)}
+  </div>
+  <div class="col-sm-8">
+    <div class="project-block">
+      <%blocks:collapse_on_mobile target="details" title="Details">
+        ${self.remind_me_form(project)}
+        <div class="rendered-content">
+          ${request.render_content(project, project.available_body)}
+        </div>
+      </%blocks:collapse_on_mobile>
+    </div>
+  </div>
+</div>
+
+
+${self.ask_question_block(project)}

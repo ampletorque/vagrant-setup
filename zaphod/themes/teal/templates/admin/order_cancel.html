@@ -1,0 +1,56 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="blocks" file="/common/blocks.html"/>
+
+<%def name="title()">Cancel Order ${obj.id}</%def>
+
+
+<section class="section-admin-order">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">${self.title()}</h1>
+
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped')}
+
+          <%forms:element label="Items To Cancel" hint="Select at least one item.">
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Cancel?</th>
+                    <th>Qty</th>
+                    <th>Item</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  % for item in obj.cart.items:
+                    % if not item.status.final:
+                      <tr>
+                        <td>${renderer.checkbox('item_ids', value=item.id)}</td>
+                        <td>${item.qty_desired}</td>
+                        <td>
+                          <strong>${item.product.name}</strong><br>
+                          ${item.product.project.name}<br>
+                          ${blocks.option_value_list(item.sku)}
+                        </td>
+                      </tr>
+                    % endif
+                  % endfor
+                </tbody>
+              </table>
+            </div>
+          </%forms:element>
+
+          ${forms.ltextarea(renderer, 'reason', hint='Optional comments about why the customer is cancelling their order.')}
+
+          <%forms:actions>
+            <button class="btn btn-primary" type="submit">Save</button>
+            <a class="btn btn-default" href="${request.route_path('admin:order', id=obj.id)}">Cancel</a>
+          </%forms:actions>
+        ${renderer.end()}
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,68 @@
+<%inherit file="base.html"/>
+
+<%def name="title()">Frequently Asked Questions</%def>
+
+
+<section class="section-questions">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        <h3 class="text-tagline">
+          <strong>Frequently Asked Questions.</strong> And Answers, Too.
+        </h3>
+        <hr>
+
+        <h2>What's the difference between crowdfunding, pre-orders, and in-stock?</h2>
+
+        <ul>
+          <li><strong>Crowdfunding Campaigns</strong> are projects that need to raise a minimum amount of money before they can make their product a reality. By backing a campaign, you are helping its creators pursue their vision in exchange for one of the pledge levels offered by the campaign.</li>
+          <li><strong>Pre-orders</strong> are available for the limited time between when a campaign has successfully funded and when the product is in-stock and ready to be shipped.</li>
+          <li><strong>In-stock</strong> products have already been funded and manufactured and will be shipped to you as soon as your order has been processed.</li>
+        </ul>
+
+        <h2>What payment options are available?</h2>
+
+        <p>Crowd Supply only accepts credit card payments.</p>
+
+        <h2>When will my credit card be charged?</h2>
+
+        <p>If you pledge to a crowdfunding campaign before the campaign goal is met, your card will be charged when the funding goal is met, even if it is before the campaign end date.</p>
+        <p>If you pledge to a crowdfunding campaign after the campaign goal is met, your card will be charged when the campaign reaches its end date.</p>
+        <p>If you pre-order a product or purchase an in-stock product, your card will be charged immediately.</p>
+
+        <h2>When will my order be delivered?</h2>
+
+        <p>Every product, whether a crowdfunding campaign, pre-order, or in-stock item, lists an estimated ship date. You will receive an e-mail confirmation as soon as the item has been shipped.</p>
+        <p>In-stock items will ship immediately. For crowdfunding and pre-order items, the ship date is the best estimate given manufacturing lead times and how many people have already ordered the product ahead of you. Crowd Supply works with product creators to make these estimates as accurate as possible, but there can sometimes be variation in the actual ship dates.</p>
+        <p>When you back a crowdfunding campaign, you are assuming some risk that the product may not be delivered on time, or in some cases not at all.</p>
+
+        <h2>Where can orders be shipped?</h2>
+
+        <p>All Crowd Supply campaigns and products include free US domestic shipping. Many campaigns and products allow international shipping as well. In those cases, you will be notified of the additional international shipping fee, if any, during checkout.</p>
+
+        <h2>Who is responsible for international shipping fees?</h2>
+
+        <p>For all products that allow international orders outside the United States, you will be notified at the time of checkout of any associated shipping surcharge. Additionally, the package recipient is responsible for any and all customs fee, duties, and taxes that may be involved with receiving a package sent outside the United States.</p>
+
+        <h2>What if my address changes before my order ships?</h2>
+
+        <p>If your address changes, please e-mail <code><a href="mailto:support@crowdsupply.com">support@crowdsupply.com</a></code> and we will update your shipping address.</p>
+
+        <h2>Can I cancel my order?</h2>
+
+        <p>Pledges to crowdfunding campaigns cannot be cancelled once made, but if the campaign doesn't reach its funding goal before the campaign ends, you won't be charged and the creator of the campaign receives no funds.</p>
+        <p>Pre-orders can be canceled anytime before the product is shipped in exchange for a Crowd Supply store credit.</p>
+        <p>In-stock product purchases can be exchanged for a full refund within thirty days of purchase.</p>
+
+        <h2>What happens if a campaign does not meet its funding goal?</h2>
+
+        <p>Credit card transactions are not processed until after a campaign has met its funding goal. If a campaign does not meet its funding goal before the end of the campaign, no transactions are processed and your credit card will not be charged.</p>
+
+        <h2>How do I create my own campaign?</h2>
+
+        <p>Anyone in the world is eligible to start a crowdfunding campaign on Crowd Supply. <a href="${request.route_path('launch')}">Find out more about launching your own campaign.</a></p>
+
+      </div>
+    </div>
+  </div>
+</section>

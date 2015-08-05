@@ -1,0 +1,14 @@
+- name: create images dir
+  sudo: yes
+  file: path=/var/media/crowdsupply/images/originals
+        state=directory
+        owner=deploy
+        group=deploy
+        mode=2775
+  when: app_environment == "staging"
+
+#- name: upload images
+#  synchronize: src=/var/media/crowdsupply/images/originals
+#               dest=/var/media/crowdsupply/images
+#               perms=no
+#  when: app_environment == "staging"

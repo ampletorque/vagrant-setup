@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>${self.title()}</title>
+  ${request.asset_tag('paper-less')}
+
+  <link href="//fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic" rel="stylesheet" type="text/css">
+</head>
+<body>
+  ${next.body()}
+</body>
+</html>
+
+
+<%def name="title()"></%def>
+
+
+<%def name="page_letter(padded=True)">
+  <div class="page-letter ${'page-letter-padded' if padded else ''}">
+    ${caller.body()}
+  </div>
+</%def>
+
+
+<%def name="page_letter_width(padded=True)">
+  <div class="page-letter-width ${'page-letter-width-padded' if padded else ''}">
+    ${caller.body()}
+  </div>
+</%def>
+
+
+<%def name="print_guide()">
+  <div class="print-guide">
+    <p>Print this document with zero margins.</p>
+    <div class="scale-indicator">1"</div>
+  </div>
+</%def>

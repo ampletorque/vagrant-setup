@@ -1,0 +1,17 @@
+<%inherit file="base.html"/>
+
+<%namespace name="blocks" file="common/blocks.html"/>
+
+
+<%def name="title()">Creators</%def>
+
+
+<section class="section-creators">
+  <div class="container">
+    % for creator in creators:
+      <div class="creator-tile">
+        ${blocks.creator_tile(creator, link=True)}
+      </div>
+    % endfor
+  </div>
+</section>

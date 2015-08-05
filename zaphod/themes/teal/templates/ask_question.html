@@ -1,0 +1,30 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="common/forms.html"/>
+
+
+<%def name="title()">Ask a Question: ${project.name}</%def>
+
+
+<section class="section-ask-question">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        <h1 class="page-header">Ask a Question</h1>
+        <h3>${project.name}</h3>
+
+        <p><a href="${request.node_path(project)}">Return to project</a></p>
+
+        <p>Want to ask the creator of this project a question? Please fill out the form below, and we'll try to address your question as soon as possible.</p>
+
+        ${renderer.begin(class_='form-horizontal form-wrapped')}
+          ${forms.ltext(renderer, 'email', request.user.email if request.user else '', label='Your Email')}
+          ${forms.ltextarea(renderer, 'message', rows=10)}
+          <%forms:actions>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </%forms:actions>
+        ${renderer.end()}
+      </div>
+    </div>
+  </div>
+</section>

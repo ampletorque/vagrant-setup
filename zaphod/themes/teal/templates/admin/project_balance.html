@@ -1,0 +1,114 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="widgets" file="/admin/common/widgets.html"/>
+<%namespace name="regions" file="/admin/common/regions.html"/>
+
+<%def name="title()">Project ${obj.id} Balance Sheet</%def>
+
+
+${regions.project_header(obj)}
+
+
+<section class="section-admin-project">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">Balance Sheet</h1>
+
+        <div class="table-responsive">
+          <table class="table">
+            <tbody>
+              <tr>
+                <td>Crowdfunding Item Count</td>
+                <td>${cf_item_count}</td>
+              </tr>
+              <tr>
+                <td>Crowdfunding Order Count</td>
+                <td>${cf_order_count}</td>
+              </tr>
+              <tr>
+                <td>Crowdfunding Sales</td>
+                <td>${h.currency(cf_sales)}</td>
+              </tr>
+              <tr>
+                <td>Crowdfunding Shipping Collected</td>
+                <td>${h.currency(cf_shipping)}</td>
+              <tr>
+                <td>Crowdfunding Payment Fees</td>
+                <td>${h.currency(cf_transaction_fees)}</td>
+              </tr>
+              <tr>
+                <td>Crowdfunding Crowd Supply Fees</td>
+                <td>${h.currency(cf_crowd_supply_fees)}</td>
+              </tr>
+              <tr>
+                <td><strong>Net Crowdfunding Income</strong></td>
+                <td>${h.currency((cf_sales + cf_shipping) - (cf_transaction_fees + cf_crowd_supply_fees))}</td>
+              </tr>
+              <tr class="table-divider"><td colspan="2"></td></tr>
+              <tr>
+                <td>Pre-Order Item Count</td>
+                <td>${po_item_count}</td>
+              </tr>
+              <tr>
+                <td>Pre-Order Order Count</td>
+                <td>${po_order_count}</td>
+              </tr>
+              <tr>
+                <td>Pre-Order Commitments</td>
+                <td>${h.currency(po_sales)}</td>
+              </tr>
+              <tr>
+                <td>Pre-Order Shipping Collected</td>
+                <td>${h.currency(po_shipping)}</td>
+              </tr>
+              <tr>
+                <td>Pre-Order Payment Fees</td>
+                <td>${h.currency(po_transaction_fees)}</td>
+              </tr>
+              <tr>
+                <td>Pre-Order Crowd Supply Fees</td>
+                <td>${h.currency(po_crowd_supply_fees)}</td>
+              </tr>
+              <tr>
+                <td><strong>Net Pre-Order Income</strong></td>
+                <td>${h.currency((po_sales + po_shipping) - (po_transaction_fees + po_crowd_supply_fees))}</td>
+              </tr>
+              <tr class="table-divider"><td colspan="2"></td></tr>
+              <tr>
+                <td>Incurred Fulfillment Fees</td>
+                <td>${h.currency(incurred_fulfillment_fees)}</td>
+              </tr>
+              <tr>
+                <td>Actual Freight Fees</td>
+                <td>${h.currency(freight_cost)}</td>
+              </tr>
+              <tr>
+                <td><strong>Total Net To Project</strong></td>
+                <td>${h.currency(total_owed)}</td>
+              </tr>
+              <tr class="table-divider"><td colspan="2"></td></tr>
+              % for transfer in obj.transfers:
+                <tr>
+                  <td>${transfer.method_description} ${transfer.reference} (${h.currency(transfer.amount)} plus fee of ${h.currency(transfer.fee)})</td>
+                  <td>${h.currency(transfer.fee + transfer.amount)}</td>
+                </tr>
+              % endfor
+              <tr>
+                <td><strong>Total Paid Already</strong></td>
+                <td>${h.currency(total_paid)}</td>
+              </tr>
+              <tr class="table-divider"><td colspan="2"></td></tr>
+              <tr>
+                <td><strong>Currently Due</strong></td>
+                <td>${h.currency(current_due)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>

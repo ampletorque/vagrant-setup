@@ -1,0 +1,44 @@
+<%inherit file="base.html"/>
+
+<%namespace name="tiles" file="common/tiles.html"/>
+
+
+<%def name="title()">${user.name}</%def>
+
+
+<section class="section-profile">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-2">
+        ${h.image_or_gravatar(request, user, 'large-avatar', default='mm', class_='img-avatar')}
+      </div>
+      <div class="col-md-10">
+        <h3>${user.show_name}</h3>
+        <p>Joined ${h.format_datetime(request, user.created_time, '%b %d, %Y')}.  Backed ${h.plural(len(projects_backed), 'project')}.</p>
+        % if user.twitter_username:
+          <p>
+            <a href="https://twitter.com/${user.twitter_username}">
+              <i class="fa fa-twitter"></i>
+              ${user.twitter_username}
+            </a>
+            &nbsp;&middot;&nbsp;
+            <i class="fa fa-map-marker"></i>&nbsp;
+            ${user.show_location}
+          </p>
+        % endif
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12">
+        <hr>
+        <h2 class="text-center">Projects Backed</h2>
+        <br>
+      </div>
+    </div>
+
+    % for row in h.grouper(3, projects_backed):
+      ${tiles.tile_row(row, cols=3)}
+    % endfor
+  </div>
+</section>

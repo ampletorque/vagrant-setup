@@ -1,0 +1,55 @@
+<%inherit file="project_base.html"/>
+
+<%page cached="True" cache_region="default" cache_key="project-${str(project.id)}-body-crowdfunding" />
+
+
+<%namespace name="tiles" file="common/tiles.html"/>
+<%namespace name="blocks" file="common/blocks.html"/>
+
+
+<%def name="title()">${project.name}</%def>
+
+
+<%def name="additional_head()">
+  <meta name="robots" content="noindex">
+</%def>
+
+
+<%def name="owner_controls(project)">
+  % if project.status == 'prelaunch':
+    <p>Viewing preview of crowdfunding page. <a href="${request.node_path(project)}">Return to current project page.</a></p>
+  % endif
+</%def>
+
+
+<div class="row">
+  <div class="col-md-8 project-media">
+    % if project.status == 'available':
+      <div class="project-history-notice">
+        <h4>Crowdfunding Page History</h4>
+        <p>This page is an archive of the original crowdfunding campaign for this project. It may not be up-to-date with the latest updates and product availability. <a href="${request.node_path(project)}">Return to the current project page.</a></p>
+      </div>
+    % endif
+    % if project.crowdfunding_vimeo_id:
+      ${blocks.vimeo_embed(project.crowdfunding_vimeo_id)}
+    % else:
+      ${project.img(request, 'project-tile')}
+    % endif
+  </div>
+  <div class="col-sm-4 project-sidebar">
+    ${self.sidebar(project)}
+  </div>
+  <div class="col-sm-8">
+    <div class="project-block">
+      <%blocks:collapse_on_mobile target="details" title="Details">
+        ${self.remind_me_form(project)}
+        <div class="rendered-content">
+          ${request.render_content(project, project.crowdfunding_body)}
+        </div>
+      </%blocks:collapse_on_mobile>
+    </div>
+  </div>
+</div>
+
+
+${self.ask_question_block(project)}

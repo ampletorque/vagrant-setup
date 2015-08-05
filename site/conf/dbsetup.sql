@@ -1,0 +1,3 @@
+CREATE DATABASE IF NOT EXISTS zaphod DEFAULT CHARACTER SET utf8;
+
+GRANT ALL PRIVILEGES ON zaphod.* TO 'zaphod'@'localhost' IDENTIFIED BY 'zaphod';

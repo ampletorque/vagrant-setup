@@ -1,0 +1,50 @@
+<%inherit file="base.html"/>
+
+<%def name="title()">List Vendor Orders</%def>
+
+
+<section class="section-admin-vendor-orders">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="pull-right">
+          <a class="btn btn-default" href="${request.route_path('admin:vendor-orders:new')}"><i class="fa fa-plus"></i> New Vendor Order</a>
+        </div>
+
+        <h1 class="page-header">Vendor Orders <small>${len(objs)} total</small></h1>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>ID</th>
+                <th>Vendor</th>
+                <th>Status</th>
+                <th>Placed</th>
+              </tr>
+            </thead>
+            <tbody>
+              % for vendor_order in objs:
+                <tr>
+                  <td>
+                    <a href="${request.route_path('admin:vendor-order', id=vendor_order.id)}">Edit</a>
+                  </td>
+                  <td>${vendor_order.id}</td>
+                  <td>${vendor_order.vendor.name}</td>
+                  <td>${vendor_order.status_description}</td>
+                  <td>
+                    % if vendor_order.placed_time:
+                      ${h.format_datetime(request, vendor_order.placed_time)}
+                    % else:
+                      Not placed
+                    % endif
+                  </td>
+                </tr>
+              % endfor
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

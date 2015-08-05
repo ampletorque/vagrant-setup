@@ -1,0 +1,44 @@
+<%inherit file="base.txt"/>\
+
+<%def name="item_row(item)">
+${item.product.name}
+${item.product.project.name}
+% if item.sku.option_values:
+% for ov in item.sku.option_values:
+    ${ov.option.name}: ${ov.description}
+% endfor
+% endif
+</%def>
+
+% if not unshipped_items:
+Your Crowd Supply order (${order.id}) has shipped!
+% else:
+Your Crowd Supply order (${order.id}) has partially shipped.
+% endif
+
+Your order is being shipped to:
+${self.address_fields(order.shipping)}
+
+% for shipment in order.shipments:
+% if shipment.tracking_number:
+Shipped with tracking number ${shipment.tracking_number}:
+% else:
+Shipped with no tracking number:
+% endif
+% for item in shipment.items:
+${self.item_row(item)}
+% endfor
+% endfor
+
+% if unshipped_items:
+Items not yet shipped:
+% for item in unshipped_items:
+${self.item_row(item)}
+% endfor
+% endif
+
+Please note that it may take up to 24 hours for tracking numbers to become active.
+
+% if order.shipping.country_code != 'us':
+Because this order is shipping internationally, it may be subject to customs tariffs or delays. You may need to check to with your customs house to receive this package. <a href="/shipping">Learn more about shipping.
+% endif

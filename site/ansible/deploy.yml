@@ -1,0 +1,89 @@
+---
+- hosts: vagrant
+  tasks:
+    # install git
+    - name: install git
+      sudo: yes
+      apt: name=git state=latest
+
+- hosts: all
+  tasks:
+    - debug: msg="Deploying app environment {{ app_environment }}"
+
+    - name: setup pyramid logging dirs
+      sudo: yes
+      file: path=/var/log/pyramid
+            state=directory
+            owner=www-data
+            group=staff
+            mode=2775
+
+    - name: setup media dir
+      sudo: yes
+      file: path=/var/media/crowdsupply
+            state=directory
+            owner=www-data
+            group=staff
+            mode=2775
+
+    - name: setup media images dir
+      sudo: yes
+      file: path=/var/media/crowdsupply/images
+            state=directory
+            owner=www-data
+            group=staff
+            mode=2775
+
+    - name: checkout zaphod source
+      git: repo={{ repo }}
+           dest=/var/sw/zaphod
+           version={{ version }}
+           accept_hostkey=yes
+      register: git_status
+
+    - name: setup zaphod database
+      shell: mysql -uroot < /var/sw/zaphod/site/conf/dbsetup.sql
+
+    - name: link uwsgi config file
+      file: src=/var/sw/zaphod/site/conf/uwsgi-{{ app_environment }}.conf
+            path=/etc/uwsgi/vassals/zaphod.ini
+            owner=deploy
+            group=deploy
+            state=link
+
+    - name: link nginx config file
+      file: src=/var/sw/zaphod/site/conf/nginx-{{ app_environment }}.conf
+            path=/etc/nginx/sites-enabled/100-crowdsupply.com
+            owner=deploy
+            group=deploy
+            state=link
+
+    # XXX set up /cron handler
+
+    - name: run pip install
+      command: /var/sw/pyramid34/bin/pip install -e . chdir=/var/sw/zaphod
+
+    - name: recompile assets
+      command: /var/sw/pyramid34/bin/pcompile /var/sw/zaphod/site/conf/production.ini
+
+    - name: run alembic migrations
+      command: /var/sw/pyramid34/bin/alembic -c /var/sw/zaphod/site/conf/alembic.ini upgrade head
+
+    - name: reload uwsgi
+      sudo: yes
+      service: name=uwsgi state=reloaded
+
+    - name: restart nginx
+      # XXX It would be good if we could check the config before doing this. Or maybe we can make reloading work, instead of restarting?
+      sudo: yes
+      service: name=nginx state=restarted
+
+    - name: flush redis
+      command: redis-cli flushall
+
+    - name: build docs
+      command: /var/sw/pyramid34/bin/sphinx-build -d /var/sw/zaphod/docs/_build/doctrees -b html /var/sw/zaphod/docs /var/sw/zaphod/docs/_build/html
+
+    - name: log completion
+      sudo: yes
+      shell: echo "{{ app_environment }} update {{ git_status.before }} to {{ git_status.after }}" >> /var/log/ansible-deployments.log

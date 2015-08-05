@@ -1,0 +1,34 @@
+<%inherit file="base.html"/>
+
+<%namespace name="tiles" file="common/tiles.html"/>
+<%namespace name="blocks" file="common/blocks.html"/>
+
+
+<%def name="title()">${creator.name}</%def>
+
+
+<%blocks:admin_bar>
+  <p>
+    <a href="${request.route_path('admin:creator', id=creator.id)}">
+      Edit Creator ${creator.id} - ${creator.name}
+    </a>
+  </p>
+</%blocks:admin_bar>
+
+
+<section class="section-creator">
+  <div class="container">
+    <div class="creator-tile">
+      ${blocks.creator_tile(creator)}
+    </div>
+  </div>
+</section>
+
+
+<section class="section-creator-projects">
+  <div class="container">
+    % for row in h.grouper(4, projects):
+      ${tiles.tile_row(row)}
+    % endfor
+  </div>
+</section>

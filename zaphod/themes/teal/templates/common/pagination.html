@@ -1,0 +1,45 @@
+<%def name="pagination(page, cls=None, radius=2)">
+  <ul class="pagination ${cls}">
+    % if page.previous_url:
+      <li><a href="${page.previous_url}">Prev</a></li>
+    % else:
+      <li class="disabled"><span>Prev</span></li>
+    % endif
+
+    % for piece in page.iter_radius(radius):
+      % if piece.ellipsis:
+        <li class="disabled"><span>&hellip;</span></li>
+      % elif piece.active:
+        <li class="disabled">
+          <span><strong>${piece.number}</strong> <span class="sr-only">(current)</span></span>
+        </li>
+      % elif piece.number:
+        <li><a href="${piece.url}">${piece.number}</a></li>
+      % endif
+    % endfor
+
+    % if page.next_url:
+      <li><a href="${page.next_url}">Next</a></li>
+    % else:
+      <li class="disabled"><span>Next</span></li>
+    % endif
+  </ul>
+</%def>
+
+
+<%def name="pager(page, outside_aligned=False)">
+  <ul class="pager">
+    <li class="${'previous' if outside_aligned else ''} ${'' if page.previous_url else 'disabled'}">
+      <a href="${page.previous_url or '#'}">
+        <span class="fa-left-open"></span>
+        Previous
+      </a>
+    </li>
+    <li class="${'next' if outside_aligned else ''} ${'' if page.next_url else 'disabled'}">
+      <a href="${page.next_url or '#'}">
+        Next
+        <span class="fa-right-open"></span>
+      </a>
+    </li>
+  </ul>
+</%def>

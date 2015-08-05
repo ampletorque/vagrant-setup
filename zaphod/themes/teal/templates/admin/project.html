@@ -1,0 +1,99 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="widgets" file="/admin/common/widgets.html"/>
+<%namespace name="regions" file="/admin/common/regions.html"/>
+
+<%def name="title()">Edit Project ${obj.id}</%def>
+
+
+${regions.project_header(obj)}
+
+
+<section class="section-admin-project">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        % if obj.status == 'crowdfunding':
+          <div class="well">
+            <a class="btn btn-danger" href="${request.route_path('admin:project:suspend', id=obj.id)}">Suspend Project</a>
+          </div>
+        % endif
+
+        ${renderer.begin(id='update-form', class_='form-horizontal form-wrapped js-ajax-validate')}
+          ${forms.ltext(renderer, 'name', obj.name)}
+
+          ${widgets.aliases(renderer, obj)}
+
+          ${forms.ldaterange(renderer, 'start_time', 'end_time', obj.start_time, obj.end_time)}
+          ${forms.lvalue(obj.status, label='Status')}
+          ${forms.lcheckbox(renderer, 'successful', obj.successful, label='Successful', hint='Should be checked for projects that have successfully crowdfunded (anywhere) or are stock products only.')}
+          ${forms.ltext(renderer, 'target', obj.target, label='Funding Target', prefix='$')}
+          ${forms.ltext(renderer, 'gravity', obj.gravity, hint='Determines sort order of project in list views.', type='number')}
+          ${forms.ltext(renderer, 'homepage_url', obj.homepage_url, label='Homepage URL', hint='Enter a fully qualified URL, e.g. https://example.com/page')}
+          ${forms.ltext(renderer, 'open_source_url', obj.open_source_url, label='Open Source URL', hint='URL for open source documentation and design files.')}
+
+          ${forms.lcheckbox(renderer, 'accepts_preorders', obj.accepts_preorders, label='Accepts Pre-Orders', hint='Check if the project will continue to accept orders after the crowdfunding campaign is over.')}
+          ${forms.ltext(renderer, 'pledged_elsewhere_amount', obj.pledged_elsewhere_amount, label='Amount Pledged Elsewhere', prefix='$')}
+          ${forms.ltext(renderer, 'pledged_elsewhere_count', obj.pledged_elsewhere_count, label='Count Pledged Elsewhere')}
+
+          <%forms:element name="crowdfunding_fee_percent" label="Crowdfunding Fee">
+            <div class="row">
+              <div class="col-xs-6 col-sm-4 col-md-3">
+                <div class="input-group">
+                  ${renderer.text('crowdfunding_fee_percent', obj.crowdfunding_fee_percent, class_='form-control')}
+                  <span class="input-group-addon">%</span>
+                </div>
+              </div>
+            </div>
+          </%forms:element>
+
+          <%forms:element name="preorder_fee_percent" label="Pre-Order Fee">
+            <div class="row">
+              <div class="col-xs-6 col-sm-4 col-md-3">
+                <div class="input-group">
+                  ${renderer.text('preorder_fee_percent', obj.preorder_fee_percent, class_='form-control')}
+                  <span class="input-group-addon">%</span>
+                </div>
+              </div>
+            </div>
+          </%forms:element>
+
+          ${forms.lcheckbox(renderer, 'include_in_launch_stats', obj.include_in_launch_stats, label='Include in Launch Stats', hint='Check if this project launched or will launch as a crowdfunding campaign on Crowd Supply.')}
+
+          ${forms.ltextarea(renderer, 'keywords', obj.keywords, rows=3, hint='Included in a keywords meta tag and used for search.')}
+
+          ${widgets.tag_association(renderer, 'tags', obj.tags)}
+          ${widgets.project_association(renderer, 'related_projects', obj.related_projects)}
+
+          ${forms.lcheckbox(renderer, 'listed', obj.listed)}
+          ${forms.lcheckbox(renderer, 'published', obj.published)}
+
+          <legend>Prelaunch</legend>
+          ${forms.ltext(renderer, 'prelaunch_vimeo_id', obj.prelaunch_vimeo_id, label='Vimeo ID')}
+          ${forms.ltextarea(renderer, 'prelaunch_teaser', obj.prelaunch_teaser, rows=3, label='Teaser', hint='Optional summary.')}
+          ${widgets.lcontent(renderer, 'prelaunch_body', obj.prelaunch_body)}
+
+          <legend>Crowdfunding</legend>
+          ${forms.ltext(renderer, 'crowdfunding_vimeo_id', obj.crowdfunding_vimeo_id, label='Vimeo ID')}
+          ${forms.ltextarea(renderer, 'teaser', obj.teaser, rows=3, label='Teaser', hint='Optional summary.')}
+          ${widgets.lcontent(renderer, 'body', obj.body)}
+
+          <legend>Available</legend>
+          ${forms.ltext(renderer, 'available_vimeo_id', obj.available_vimeo_id, label='Vimeo ID')}
+          ${forms.ltextarea(renderer, 'available_teaser', obj.available_teaser, rows=3, label='Teaser', hint='Optional summary.')}
+          ${widgets.lcontent(renderer, 'available_body', obj.available_body)}
+
+          <legend>Images</legend>
+          ${widgets.images(renderer, obj)}
+          ${widgets.comments(renderer, obj)}
+
+          <%forms:actions>
+            <button class="btn btn-primary" type="submit">Save</button>
+            <button class="btn btn-default" type="reset">Cancel</button>
+          </%forms:actions>
+        ${renderer.end()}
+      </div>
+    </div>
+  </div>
+</section>

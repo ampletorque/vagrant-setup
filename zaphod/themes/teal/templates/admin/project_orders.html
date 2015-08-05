@@ -1,0 +1,69 @@
+<%inherit file="base.html"/>
+
+<%namespace name="regions" file="common/regions.html"/>
+<%namespace name="pagination" file="/common/pagination.html"/>
+
+
+<%def name="title()">Project ${obj.id} Orders</%def>
+
+
+${regions.project_header(obj)}
+
+
+<section class="section-admin-project-orders">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="clearfix">
+          <div class="pull-right">
+            ${pagination.pagination(page)}
+          </div>
+          % if filter_open:
+            <h4>Only showing orders with open line items for this project.</h4>
+          % else:
+            <h4>Listing all orders containing this project.</h4>
+          % endif
+        </div>
+
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>ID</th>
+                <th>Items</th>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Placed</th>
+              </tr>
+            </thead>
+            <tbody>
+              % for order in page:
+                <tr>
+                  <td>
+                    <a href="${request.route_path('admin:order', id=order.id)}">Edit</a>
+                  </td>
+                  <td>${order.id}</td>
+                  <td>
+                    % for item in order.cart.items:
+                      ${item.product.name}<br>
+                    % endfor
+                  </td>
+                  <td>${order.shipping.full_name}</td>
+                  <td>
+                    % if order.closed:
+                      <span class="label label-success">Closed</span>
+                    % else:
+                      <span class="label label-danger">Open</span>
+                    % endif
+                  </td>
+                  <td>${h.format_datetime(request, order.created_time)}</td>
+                </tr>
+              % endfor
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

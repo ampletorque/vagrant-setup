@@ -1,0 +1,92 @@
+.list-association {
+    .list-unstyled();
+
+    li {
+        margin-bottom: 5px;
+    }
+
+    .fa {
+        font-size: 20px;
+        margin-right: 3px;
+    }
+    .fa-plus-circle {
+        color: #8d8;
+
+    }
+    .fa-minus-circle {
+        color: #d88;
+    }
+    a:hover {
+        .fa-plus-circle {
+            color: #0f0;
+        }
+        .fa-minus-circle {
+            color: #f00;
+        }
+    }
+
+    .form-control {
+        width: 300px;
+        display: none;
+    }
+
+    .list-association-add {
+        height: 34px;
+    }
+}
+
+.image-search-results {
+    max-height: 300px;
+    overflow-y: scroll;
+
+    a {
+        .clearfix();
+        color: @cs-black;
+        display: block;
+        border: 1px solid transparent;
+
+        img {
+            float: left;
+            margin: 10px;
+        }
+        &:hover {
+            border: 1px solid #ccc;
+            text-decoration: none;
+        }
+    }
+}
+
+.admin-header {
+    .clearfix();
+    .admin-header-metadata {
+        padding-top: 10px;
+    }
+    .label {
+        margin-left: 10px;
+    }
+    p {
+        margin: 0;
+    }
+}
+
+@media (min-width: @screen-md-min) {
+    .admin-header {
+        .clearfix();
+        .admin-header-metadata {
+            padding-bottom: 10px;
+            float: right;
+            text-align: right;
+        }
+    }
+}
+
+.admin-create {
+    margin-top: 15px;
+}
+
+.section-admin-orders-header {
+    border-bottom: 1px solid @cs-border-color;
+    .form-search {
+        margin-top: 0;
+    }
+}

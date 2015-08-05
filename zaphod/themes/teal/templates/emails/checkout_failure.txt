@@ -1,0 +1,44 @@
+A payment error occurred during checkout on Crowd Supply
+
+The error was:
+${exc}
+
+<%def name="address_fields(address, pickup=False)">
+% if address:
+Name    ${address.first_name} ${address.last_name}
+% if address.company != '':
+Company ${address.company}
+% endif
+Phone   ${address.phone}
+% if not pickup:
+Address ${address.address1}
+        ${address.address2}
+        ${address.city}, ${address.state} ${address.postal_code}
+        ${address.country_name}
+% endif
+% endif
+</%def>
+
+Session
+-------
+${session_id}
+
+Email
+-----
+${customer_email}
+
+Shipping Information
+--------------------
+${self.address_fields(order.shipping)}
+
+Billing Information
+-------------------
+${self.address_fields(billing)}
+
+Order Items
+-----------
+% for item in order.cart.items:
+${item.product.project.name}
+${item.product.name}    ${item.price_each}  ${item.qty_desired}    ${item.total}
+% endfor
+Order Total             ${order.total_amount}

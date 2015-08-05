@@ -1,0 +1,42 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+
+
+<%def name="title()">User Settings</%def>
+
+
+<section class="section-settings">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        <h4 class="text-center">Settings for ${request.user.email}</h4>
+
+        <div class="block-form">
+          ${renderer.begin(class_='form-horizontal form-wrapped')}
+
+            ${forms.ltext(renderer, 'name', request.user.name)}
+            ${forms.ltext(renderer, 'email', request.user.email)}
+
+            ${forms.lpassword(renderer, 'password')}
+            ${forms.lpassword(renderer, 'password2', label='Confirm')}
+
+            ${forms.ltext(renderer, 'url_path', request.user.url_path, label='Profile URL', hint='If supplied, people will be able to view a profile page.', prefix='crowdsupply.com' + request.route_path('profile', path=''))}
+            ${forms.ltext(renderer, 'twitter_username', request.user.twitter_username, prefix='@', label='Twitter Username')}
+
+            ${forms.lcheckbox(renderer, 'show_in_backers', request.user.show_in_backers, hint='Show me in lists of project backers, using the info below.')}
+            ${forms.ltext(renderer, 'show_name', request.user.show_name, hint="Show this as my name in lists of backers.", label='Show Name')}
+            ${forms.ltext(renderer, 'show_location', request.user.show_location, hint="Show this as my location in lists of backers.", label='Show Location')}
+
+            <%forms:actions>
+              <button type="submit" class="btn btn-primary">Save</button>
+              <a class="btn btn-default" href="${request.route_path('account')}">Cancel</a>
+            </%forms:actions>
+
+          ${renderer.end()}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>

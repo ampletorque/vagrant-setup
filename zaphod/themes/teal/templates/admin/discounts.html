@@ -1,0 +1,51 @@
+<%inherit file="base.html"/>
+
+<%def name="title()">List Discounts</%def>
+
+
+<section class="section-admin-discounts">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="pull-right">
+          <a class="btn btn-default" href="${request.route_path('admin:discounts:new')}"><i class="fa fa-plus"></i> New Discount</a>
+        </div>
+
+        <h1 class="page-header">Discounts <small>${len(objs)} total</small></h1>
+
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>ID</th>
+                <th>Creator</th>
+                <th>Rate</th>
+                <th>Description</th>
+                <th>Enabled</th>
+              </tr>
+            </thead>
+            <tbody>
+              % for discount in objs:
+                <tr>
+                  <td>
+                    <a href="${request.route_path('admin:discount', id=discount.id)}">Edit</a>
+                  </td>
+                  <td>${discount.id}</td>
+                  <td>${discount.creator.name}</td>
+                  <td>${'%0.2f' % discount.rate}%</td>
+                  <td>${discount.description}</td>
+                  <td>
+                    % if discount.enabled:
+                      Yes
+                    % endif
+                  </td>
+                </tr>
+              % endfor
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,3 @@
+[fresh]
+#franz.crowdsupply.com ansible_ssh_user=root
+#drax.crowdsupply.com ansible_ssh_user=root

@@ -1,0 +1,128 @@
+<%inherit file="base.html"/>
+
+<%namespace name="blocks" file="common/blocks.html"/>
+
+
+<%def name="title()">${provider.name}</%def>
+
+
+<%def name="address(a, phone=False)">
+  % if a.first_name or a.last_name:
+    ${a.first_name} ${a.last_name}<br>
+  % endif
+  % if a.company:
+    ${a.company}<br>
+  % endif
+  % if a.address1:
+    ${a.address1}<br>
+  % endif
+  % if a.address2:
+    ${a.address2}<br>
+  % endif
+  % if a.city:
+    ${a.city},
+  % endif
+  ${a.state} ${a.postal_code}
+  % if a.country_code != 'us':
+    <br>${a.country_name}
+  % endif
+  % if phone and a.phone:
+    <br>${a.phone}
+  % endif
+</%def>
+
+
+<%blocks:admin_bar>
+  <p>
+    <a href="${request.route_path('admin:provider', id=provider.id)}">
+      Edit Provider ${provider.id} - ${provider.name}
+    </a>
+  </p>
+</%blocks:admin_bar>
+
+
+<section class="section-provider">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10">
+        <ul class="breadcrumb">
+          <li><a href="${request.route_path('providers')}">Service Provider Index</a></li>
+          % if provider.types:
+            <%
+              pt = list(provider.types)[0]
+            %>
+            <li><a href="${request.node_path(pt)}">${pt.plural_name}</a></li>
+          % endif
+          <li>${provider.name}</li>
+        </ul>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-9">
+
+        <h1>${provider.name}</h1>
+
+        <div class="rendered-content">
+          ${request.render_content(provider, provider.body)}
+        </div>
+
+        <img src="${h.google_static_map_url(provider.mailing, width=640, height=250)}" alt="${provider.mailing.inline}" title="">
+
+      </div>
+      <div class="col-md-3">
+
+        <div class="text-right">
+          <h4>See More</h4>
+          <ul class="list-unstyled list-tags">
+            % for pt in provider.types:
+              <li>
+                <i class="fa fa-tag"></i>
+                <a href="${request.node_url(pt)}">${pt.plural_name}</a>
+              </li>
+            % endfor
+          </ul>
+
+          % if provider.email:
+            <p>
+              <strong>Email</strong><br>
+              <a href="mailto:${provider.email}">${provider.email}</a>
+            </p>
+          % endif
+
+          % if provider.mailing.phone:
+            <p>
+              <strong>Phone</strong><br>
+              ${provider.mailing.phone}
+            </p>
+          % endif
+
+          % if provider.home_url:
+            <p>
+              <strong>Website</strong><br>
+              <a href="${provider.home_url}">${h.display_url(provider.home_url)}</a>
+            </p>
+          % endif
+
+          % if provider.mailing.city:
+            <p>
+              <strong>Address</strong><br>
+              ${self.address(provider.mailing)}
+            </p>
+          % endif
+        </div>
+
+      </div>
+    </div>
+
+    % if provider.image_metas:
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="text-center">
+            ${provider.img(request, 'creator-logo')}
+          </div>
+        </div>
+      </div>
+    % endif
+
+  </div>
+</section>

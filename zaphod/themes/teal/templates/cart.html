@@ -1,0 +1,151 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="common/forms.html"/>
+<%namespace name="blocks" file="common/blocks.html"/>
+<%namespace name="cart_table" file="common/cart_table.html"/>
+
+
+<%def name="title()">Shopping Cart</%def>
+
+
+<%def name="payment_block(renderer, cart, billing, shipping, masked_card)">
+
+  % if masked_card:
+    <%forms:element renderer="${renderer}" name="cc.use_saved" label=" ">
+      <label for="cc-use-saved-yes">
+        ${renderer.radio('cc.use_saved', 'yes', checked=True, id='cc-use-saved-yes')}
+        Use credit card on file ending in ${masked_card}
+      </label>
+      <br>
+      <label for="cc-use-saved-no">
+        ${renderer.radio('cc.use_saved', 'no', checked=False, id='cc-use-saved-no')}
+        Enter a new credit card
+      </label>
+    </%forms:element>
+  % endif
+
+  <div class="credit-card-fields">
+    <%forms:element renderer="${renderer}" name="cc.number" label="Card Number">
+      <div class="row">
+        <div class="col-sm-6">
+          ${renderer.text('cc.number', class_='form-control js-ccfield')}
+        </div>
+        <div class="col-sm-6">
+          ${blocks.credit_card_icons()}
+        </div>
+      </div>
+    </%forms:element>
+
+    <%forms:element renderer="${renderer}" names="${['cc.expires_month', 'cc.expires_year']}" label="Expiration">
+      <div class="row">
+        <div class="col-xs-6 col-sm-3">
+          ${h.cc_expires_month_select(renderer, 'cc.expires_month', class_='form-control')}
+        </div>
+        <div class="col-xs-6 col-sm-3">
+          ${h.cc_expires_year_select(renderer, 'cc.expires_year', class_='form-control')}
+        </div>
+      </div>
+    </%forms:element>
+    <%forms:element renderer="${renderer}" name="cc.code" label="CVV Code">
+      <div class="row">
+        <div class="col-sm-4 col-xs-9">
+          ${renderer.text('cc.code', class_='form-control')}
+        </div>
+      </div>
+    </%forms:element>
+
+    ${forms.lcheckbox(renderer, 'cc.save', True, label='Save credit card information for future use')}
+
+    % if cart.non_physical:
+      ${renderer.hidden('non_physical', True)}
+    % else:
+      ${forms.lcheckbox(renderer, 'billing_same_as_shipping', checked=True, label='Credit card billing address is the same as the shipping address')}
+    % endif
+
+    <div class="billing-fields">
+      ${forms.address_fields(renderer, 'cc.billing', billing)}
+    </div>
+  </div>
+</%def>
+
+
+<%def name="checkout_form(renderer, cart)">
+  <section class="section-checkout">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <h1 class="text-center page-header">Checkout</h1>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+          ${renderer.begin(id='checkout-form', class_='form-horizontal form-wrapped')}
+
+            ${forms.alerts(renderer)}
+
+            <div class="js-international-surcharge">
+              % if cart.international_available:
+                <p>A surcharge of ${h.currency(cart.international_surcharge_total)} applies for orders shipping outside of the United States.</p>
+              % else:
+                <p>Shipping to non-US addresses is not available on some or all of the items in your cart.</p>
+              % endif
+            </div>
+            % if not cart.non_physical:
+              <fieldset>
+                <legend>Shipping Information</legend>
+                ${forms.address_fields(renderer, 'shipping', shipping)}
+              </fieldset>
+            % endif
+
+            <fieldset>
+              <legend>Payment Information</legend>
+              ${self.payment_block(renderer, cart, billing=billing, shipping=shipping, masked_card=masked_card)}
+            </fieldset>
+
+            <fieldset>
+              <legend>Order Information</legend>
+              ${forms.ltext(renderer, 'email', request.user and request.user.email, label='Email Address')}
+              ${forms.ltextarea(renderer, 'comments', rows=4)}
+            </fieldset>
+
+            <%forms:actions>
+              <button type="submit" class="btn btn-cta">
+                <i class="fa fa-lock"></i> Place Secure Order
+              </button>
+              <span class="submit-hint">This will place your order immediately.</span>
+            </%forms:actions>
+
+          ${renderer.end()}
+        </div>
+      </div>
+    </div>
+  </section>
+</%def>
+
+
+<section class="section-cart-header">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="text-center page-header">${self.title()}</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+% if cart and cart.items:
+  ${cart_table.cart_table(cart)}
+  ${self.checkout_form(renderer, cart)}
+% else:
+  <section class="section-cart-empty">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <p class="text-center">Your cart is empty. <a href="${request.route_path('browse')}">Continue browsing</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+% endif

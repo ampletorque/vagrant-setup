@@ -1,0 +1,61 @@
+@import "main";
+
+body {
+    background-color: @cs-white;
+}
+
+.navbar-admin {
+    background-color: @cs-admin-purple;
+}
+
+.navbar-admin-logo {
+    // image path is relative to document, not this file
+    .at2x('/_teal/images/admin/admin-icon.png', 26px, 26px);
+    .image-replace;
+    background-repeat: no-repeat;
+    background-position: left center;
+    width: 26px;
+    height: 26px;
+}
+.footer-admin {
+    background-color: #eee;
+    margin-top: 30px;
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+.metric-tile {
+    margin-top: 30px;
+    text-align: center;
+    background-color: @gray-lighter;
+    padding: 5px;
+}
+
+.section-admin-report-header {
+    padding-top: 20px;
+}
+
+.table .table-divider > td {
+    background-color: #ddd;
+    padding: 0;
+    height: 5px;
+}
+
+.table-images {
+    border: 1px solid #ddd;
+
+    td {
+        vertical-align: middle;
+    }
+}
+
+.form-monospace {
+    font-family: @cs-mono-font-family;
+}
+.form-search {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+@import "admin/images";
+@import "admin/widgets";
+@import "daterange";

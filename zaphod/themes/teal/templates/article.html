@@ -1,0 +1,49 @@
+<%inherit file="base.html"/>
+
+<%namespace name="blocks" file="common/blocks.html"/>
+
+
+<%def name="title()">${article.name}</%def>
+
+
+<%blocks:admin_bar>
+  <p>
+    <a href="${request.route_path('admin:article', id=article.id)}">
+      Edit Article ${article.id} - ${article.name}
+    </a>
+  </p>
+</%blocks:admin_bar>
+
+
+<section class="article">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+
+        % if article.show_heading:
+          <h1 class="text-center page-header">${article.name}</h1>
+        % endif
+
+        <div class="rendered-content">
+          ${request.render_content(article, article.body)}
+        </div>
+      </div>
+    </div>
+
+    % if related_articles:
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+          <h1 class="text-center">Other Popular Articles</h1>
+          <ul>
+            % for other in related_articles:
+              <li>
+                <a href="${request.node_path(other)}">${other.name}</a>
+              </li>
+            % endfor
+          </ul>
+        </div>
+      </div>
+    % endif
+
+  </div>
+</section>

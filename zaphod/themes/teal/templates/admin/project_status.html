@@ -1,0 +1,57 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="widgets" file="/admin/common/widgets.html"/>
+<%namespace name="regions" file="/admin/common/regions.html"/>
+
+<%def name="title()">Project ${obj.id} Order Status Report</%def>
+
+
+${regions.project_header(obj)}
+
+
+<section class="section-admin-project">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">Order Status Report</h1>
+
+        <div class="table-responsive">
+          <table class="table">
+            <tbody>
+              <tr>
+                <td><strong>Open Orders</strong></td>
+                <td>${open_orders_count}</td>
+              </tr>
+              <tr>
+                <td><strong>Late Orders</strong></td>
+                <td>${late_orders_count}</td>
+              </tr>
+              <tr>
+                <td><strong>Earliest Open Delivery Date</strong></td>
+                <td>
+                  % if earliest_open_ship_time:
+                    ${h.format_datetime(request, earliest_open_ship_time)}
+                  % else:
+                    No open orders
+                  % endif
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Last Update Date</strong></td>
+                <td>
+                  % if last_update_time:
+                    ${h.format_datetime(request, last_update_time)}
+                  % else:
+                    No updates
+                  % endif
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>

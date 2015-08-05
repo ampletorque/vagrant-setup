@@ -1,0 +1,149 @@
+<%namespace name="blocks" file="blocks.html"/>
+
+
+<%def name="shipping_text(cart)">
+  <h4>This order qualifies for free US ground shipping!</h4>
+</%def>
+
+
+<%def name="cart_item_stage(item)">
+  % if item.stage == item.CROWDFUNDING:
+    % if item.expected_ship_time:
+      <p>Crowdfunding pledge, expected to ship ${item.expected_ship_time.strftime('%B %Y')}</p>
+    % else:
+      <p>Crowdfunding pledge</p>
+    % endif
+  % elif item.stage == item.PREORDER:
+    <p>Pre-order, expected to ship ${item.expected_ship_time.strftime('%B %Y')}</p>
+  % elif item.stage == item.STOCK:
+    <p>In Stock</p>
+  % else:
+    <% assert False %>
+  % endif
+</%def>
+
+
+<%def name="cart_table_row(cart, item, idx)">
+  <div class="row row-cart-item">
+    <div class="col-sm-6">
+      <div class="row">
+        <div class="col-xs-4">
+          ${item.product.img(request, 'product-icon')}
+        </div>
+        <div class="col-xs-8">
+          <h3><a href="${request.node_path(item.product.project)}">${item.product.name}</a></h3>
+          <h4>${item.product.project.name}</h4>
+          ${blocks.option_value_list(item.sku)}
+          <p>${self.cart_item_stage(item)}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-2">
+      <div class="row row-cart-item-field">
+        <div class="col-xs-4 visible-xs"><strong>Qty</strong></div>
+        <div class="col-xs-8">
+          ${h.hidden('items-%d.id' % idx, value=item.id)}
+          <input type="number" name="items-${idx}.qty" value="${item.qty_desired}" class="form-control" min="0" required>
+          <a href="${request.route_path('cart:remove', _query=dict(id=item.id, **h.auth_token_get_param(request)))}">Remove</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-2">
+      <div class="row row-cart-item-field">
+        <div class="col-xs-4 visible-xs"><strong>Each</strong></div>
+        <div class="col-xs-8">
+          ${h.currency(item.price_each)}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-2">
+      <div class="row row-cart-item-field">
+        <div class="col-xs-4 visible-xs"><strong>Total</strong></div>
+        <div class="col-xs-8">
+          ${h.currency(item.total)}
+        </div>
+      </div>
+    </div>
+
+  </div>
+</%def>
+
+
+<%def name="associated_products(cart, products)">
+  % if products:
+    <div class="row">
+      <div class="col-xs-12">
+        <h3>You Might Also Want...</h3>
+      </div>
+    </div>
+    <div class="row row-cart-associated">
+      % for product in products:
+        <div class="col-sm-4">
+          <form method="POST" class="form-horizontal form-wrapped" action="${request.route_path('cart:add')}">
+            <div class="cart-associated-product">
+              <h4>${product.name}</h4>
+              ${product.img(request, 'product-icon')}
+              ${h.hidden('product_id', product.id)}
+              ${h.hidden('qty', 1)}
+              ${blocks.cart_item_options(product)}
+              <button type="submit" class="btn btn-cta">Add For ${h.currency(product.price)}</button>
+            </div>
+          </form>
+        </div>
+      % endfor
+    </div>
+  % endif
+</%def>
+
+
+<%def name="cart_table(cart)">
+  <section class="section-cart-table">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <form action="${request.route_path('cart:update')}" class="form-wrapped form-cart-table" method="POST">
+            ${h.auth_token_hidden_field(request)}
+
+            <div class="row row-cart-header hidden-xs">
+              <div class="col-sm-6">
+                <h3>Description</h3>
+              </div>
+              <div class="col-sm-2">
+                <h3>Qty</h3>
+              </div>
+              <div class="col-sm-2">
+                <h3>Each</h3>
+              </div>
+              <div class="col-sm-2">
+                <h3>Total</h3>
+              </div>
+            </div>
+
+            % for item in cart.items:
+              ${self.cart_table_row(cart, item, loop.index)}
+            % endfor
+
+            <div class="row row-cart-footer">
+              <div class="col-sm-6">${self.shipping_text(cart)}</div>
+              <div class="col-sm-2">
+                <button type="submit" class="btn btn-default">Update Qty</button>
+              </div>
+              <div class="cart-total-block">
+                <div class="col-sm-2"><strong>Items Total</strong></div>
+                <div class="col-sm-2"><strong>${h.currency(cart.total)}</strong></div>
+              </div>
+            </div>
+          </form>
+
+        </div>
+
+      </div>
+
+      ${self.associated_products(cart, getters.associated_products_for_cart(cart, limit=3))}
+
+    </div>
+  </section>
+</%def>

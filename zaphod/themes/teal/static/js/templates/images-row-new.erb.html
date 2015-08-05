@@ -1,0 +1,31 @@
+<tr class="js-image-unsaved">
+  <td class="js-image-drag-handle table-drag-handle"></td>
+  <td class="table-remove">
+    <a class="js-image-remove" href="#">
+      <i class="fa fa-minus-circle"></i>
+    </a>
+  </td>
+  <td>
+    <div class="js-image-placeholder"></div>
+  </td>
+  <td>
+    <%= name %><br>
+    <strong class="js-image-status">Uploading <span class="js-image-progress">0</span>%</strong><br>
+    <label>
+      <input type="checkbox" name="images-<%= idx %>.published" checked>
+      Published
+    </label>
+  </td>
+  <td>
+    <input type="hidden" name="images-<%= idx %>.name" value="<%= name %>">
+    <input type="hidden" name="images-<%= idx %>.fresh" value="1">
+    <input type="hidden" name="images-<%= idx %>.id" value="<%= id %>">
+    <input type="hidden" name="images-<%= idx %>.gravity" class="js-image-gravity" value="<%= gravity %>">
+    <label for="images-<%= idx %>-caption">Caption</label>
+    <input type="text" id="images-<%= idx %>-caption" name="images-<%= idx %>.caption" class="form-control">
+  </td>
+  <td>
+    <input type="text" name="images-<%= idx %>.title" class="form-control" placeholder="Title">
+    <input type="text" name="images-<%= idx %>.alt" class="form-control" placeholder="Alt">
+  </td>
+</tr>

@@ -1,0 +1,127 @@
+@form-wrapped-padding: 15px;
+
+input[type=text], input[type=number], select {
+    font-size: 16px;
+}
+
+.form-wrapped {
+    background: @cs-white;
+    border: 1px solid darken(@gray-lighter, 12%);
+    // XXX There's a browser bug that breaks the rendering on the background
+    // overflow when this is enabled... look into it.
+    //border-radius: 3px;
+    margin-bottom: 20px;
+    padding: @form-wrapped-padding;
+    //overflow: hidden;
+
+    .box-shadow(0 1px 3px rgba(0, 0, 0, 0.1));
+
+    .form-actions {
+        margin-bottom: -@form-wrapped-padding;
+    }
+
+    legend {
+        line-height: 21px;
+        padding-bottom: 8px;
+    }
+}
+
+.form-actions {
+    border-top: 1px solid darken(@gray-lighter, 12%);
+    background-color: @gray-lighter;
+    padding: @form-wrapped-padding 0;
+}
+
+.error {
+    font-weight: bold;
+    list-style-type: none;
+    background-color: @state-danger-text;
+    color: #fff;
+    padding: 2px 5px;
+    border-radius: 5px;
+    z-index: 10;
+    -webkit-font-smoothing: antialiased;
+
+    position: relative;
+
+    // Shadowed like dropdowns.
+    .box-shadow(0 6px 12px rgba(0, 0, 0, .175));
+
+    &:before {
+        display: block;
+        content: "";
+        border-left: 8px solid transparent;
+        border-bottom: 8px solid @state-danger-text;
+        border-right: 8px solid transparent;
+        position: absolute;
+        top: -7px;
+        left: 15px;
+    }
+}
+
+.form-group {
+    position: relative;
+
+    .error {
+        position: absolute;
+        margin-top: 3px;
+    }
+}
+
+.form-alerts {
+    background-color: @state-danger-text;
+    color: #fff;
+    text-align: center;
+    font-weight: bold;
+    padding: 6px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+
+    p {
+        margin-bottom: 0;
+    }
+
+}
+
+.searcher {
+    position: relative;
+}
+.searcher-menu {
+    display: none;
+    position: absolute;
+    top: 40px;
+    list-style-type: none;
+    background-color: @cs-teal;
+    padding-left: 0;
+    .box-shadow(0 1px 3px rgba(0, 0, 0, 0.2));
+    z-index: @zindex-dropdown;
+
+    &:before {
+        display: inherit;
+        content: "";
+        border-left: 7px solid transparent;
+        border-bottom: 7px solid @cs-teal;
+        border-right: 7px solid transparent;
+        position: absolute;
+        top: -7px;
+        left: 15px;
+    }
+
+    a {
+        color: #ffffff;
+        font-weight: bold;
+        display: block;
+        padding: 5px 10px;
+        &:hover {
+            background-color: darken(@cs-teal, 10%);
+            text-decoration: none;
+        }
+    }
+    p {
+        color: #cccccc;
+        font-weight: bold;
+        padding: 5px 10px;
+        margin: 0;
+    }
+
+}

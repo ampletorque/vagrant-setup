@@ -1,0 +1,214 @@
+<%inherit file="base.html"/>
+
+
+<%namespace name="forms" file="common/forms.html"/>
+
+
+<%def name="title()">How It Works</%def>
+
+
+<section class="section-launch">
+  <div class="container">
+
+    <div class="row">
+      <div class="col-lg-12">
+        <h2 class="text-center">Tools &amp; services for the greater goods.</h2>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-3 text-center">
+        <h1><i class="fa fa-dollar"></i></h1>
+        <h3>Sales</h3>
+        <table class="table">
+          <tr>
+            <td><em>any of</em></td>
+          </tr>
+          <tr>
+            <td>crowdfunding (5% fee)</td>
+          </tr>
+          <tr>
+            <td>pre-orders (10% fee)</td>
+          </tr>
+          <tr>
+            <td>ongoing (wholesale)</td>
+          </tr>
+        </table>
+      </div>
+      <div class="col-md-3 text-center">
+        <h1><i class="fa fa-truck"></i></h1>
+        <h3>Fulfillment</h3>
+        <table class="table">
+          <tr>
+            <td><em>optional</em></td>
+          </tr>
+          <tr>
+            <td>$2.75/package</td>
+          </tr>
+          <tr>
+            <td>+$1 for international</td>
+          </tr>
+          <tr>
+            <td>discounted freight</td>
+          </tr>
+        </table>
+      </div>
+      <div class="col-md-3 text-center">
+        <h1><i class="fa fa-video-camera"></i></h1>
+        <h3>Marketing</h3>
+        <table class="table">
+          <tr>
+            <td><em>optional</em></td>
+          </tr>
+          <tr>
+            <td>PR outreach (2%-8% fee)</td>
+          </tr>
+          <tr>
+            <td>press kits (included)</td>
+          </tr>
+          <tr>
+            <td>photo &amp; video ($2,000+)</td>
+          </tr>
+        </table>
+      </div>
+      <div class="col-md-3 text-center">
+        <h1><i class="fa fa-lightbulb-o"></i></h1>
+        <h3>Strategy</h3>
+        <table class="table">
+          <tr>
+            <td><em>included</em></td>
+          </tr>
+          <tr>
+            <td>pricing &amp; goal</td>
+          </tr>
+          <tr>
+            <td>campaign structure</td>
+          </tr>
+          <tr>
+            <td>production planning</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12">
+        <hr>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4 col-md-offset-1">
+        <div class="row">
+          <div class="col-xs-5">
+            <img class="img-avatar" src="/_teal/images/about/bunnie-huang.jpg" alt="">
+          </div>
+          <div class="col-xs-7">
+            <h3>Bunnie Huang</h3>
+            <p>Novena Creator and Crowd Supply Advisor</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <blockquote>"Working with Crowd Supply to launch Novena surpassed my greatest expectations &mdash; they were a true partner and made the process surprisingly painless."</blockquote>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12">
+        <hr>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12">
+        <h2 class="text-center">You're in great company.</h2>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4 text-center">
+        <%
+          project = getters.get_project(962)
+          image = getters.get_image(2690)
+        %>
+        <h3>Novena Laptop</h3>
+        ${request.image_tag(image.name, image.original_ext, 'project-body-fixed', title='Novena Heirloom Laptop Model')}
+        <hr>
+        % if project:
+          <h2>$${h.commas(project.pledged_amount)} <small>raised</small></h2>
+        % endif
+        <hr>
+        <p>Open-source laptop by bunnie and xobs.<br/>
+	   Marketing and more by Crowd Supply.<br/>
+	   Featured in TechCrunch and Mashable.</p>
+        <a class="btn btn-cta" href="${request.node_path(project)}">Read Their Story</a>
+      </div>
+
+      <div class="col-md-4 text-center">
+        <%
+          project = getters.get_project(236)
+          image = getters.get_image(661)
+        %>
+        <h3>The Portland Press</h3>
+        ${request.image_tag(image.name, image.original_ext, 'project-body-fixed', title='Portland Press Kit')}
+        <hr>
+        % if project:
+          <h2>$${h.commas(project.pledged_amount)} <small>raised</small></h2>
+        % endif
+        <hr>
+        <p>Mason jar french press by Brian and Rob.<br/>
+	   Ongoing sales and more by Crowd Supply.<br/>
+	   Featured in Wired and Dwell.</p>
+        <a class="btn btn-cta" href="${request.node_path(project)}">Read Their Story</a>
+      </div>
+
+      <div class="col-md-4 text-center">
+        <%
+          project = getters.get_project(1329)
+          image = getters.get_image(4017)
+        %>
+        <h3>USB Armory</h3>
+        ${request.image_tag(image.name, image.original_ext, 'project-body-fixed', title='USB Armory')}
+        <hr>
+        % if project:
+          <h2>$${h.commas(project.pledged_amount)} <small>raised</small></h2>
+        % endif
+        <hr>
+        <p>USB stick computer by Inverse Path.<br/>
+	   Fulfillment and more by Crowd Supply.<br/>
+	   Featured in BoingBoing and PC World.</p>
+        <a class="btn btn-cta" href="${request.node_path(project)}">Read Their Story</a>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12">
+        <hr>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+
+        <a name="launch-form"></a>
+
+        <h4 class="text-center">Twice the success rate and average funding of products on Kickstarter.</h4>
+
+        <p class="text-center">Take the first step to join our roster of intrepid creators by telling us about your project. Please get in touch with us by e-mailing <a href="mailto:support@crowdsupply.com?subject=Project Inquiry">support@crowdsupply.com</a>, call us at ${request.registry.settings['address.phone']}, or fill out the form below.</p>
+
+        ${renderer.begin(class_='form-horizontal form-wrapped')}
+          ${forms.ltext(renderer, 'email', label="Your E-mail Address", maxlength=255, size='input-block-level')}
+          ${forms.ltext(renderer, 'name', label="Project Name", maxlength=255, size='input-block-level')}
+          ${forms.ltextarea(renderer, 'description', label="Project Description", hint="Consider including a project overview, estimate of how much money you hope to raise, and details of how that money would be used.", rows=10, cols=40, size='input-block-level')}
+          ${forms.ltext(renderer, 'goal', label='Funding Goal', prefix='$', size='input-block-level')}
+          ${forms.ltextarea(renderer, 'allocation', label='Use of Funds', size='input-block-level', hint='Describe how the money you raise will be used.', rows=5)}
+          ${forms.lselect(renderer, 'country', '', h.country_codes(), prompt='Select Country')}
+          <%forms:actions>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </%forms:actions>
+        ${renderer.end()}
+      </div>
+    </div>
+  </div>
+</section>

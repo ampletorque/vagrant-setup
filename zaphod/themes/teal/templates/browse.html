@@ -1,0 +1,89 @@
+<%inherit file="base.html"/>
+
+<%namespace name="tiles" file="common/tiles.html"/>
+<%namespace name="blocks" file="common/blocks.html"/>
+
+
+<%def name="title()">
+  % if page_title:
+    ${page_title}
+  % else:
+    Browse Projects
+  % endif
+</%def>
+
+
+<%def name="filter_target(path)">
+  <li class="${'selected' if request.path.startswith(path) else ''}">
+    <a href="${path}">
+      ${caller.body()}
+    </a>
+  </li>
+</%def>
+
+
+<%def name="filters(browse_tags)">
+  <div class="col-sm-4 col-md-2 browse-filters">
+    <h3>Browse By Stage</h3>
+    <ul class="list-unstyled list-sidebar">
+      <%self:filter_target path="${request.route_path('prelaunch')}">Pre-launch</%self:filter_target>
+      <%self:filter_target path="${request.route_path('crowdfunding')}">Crowdfunding</%self:filter_target>
+      <%self:filter_target path="${request.route_path('available')}">Funded &amp; Available</%self:filter_target>
+      <%self:filter_target path="${request.route_path('archive')}">Archive</%self:filter_target>
+    </ul>
+    <h3>Browse By Tag</h3>
+    <ul class="list-unstyled list-sidebar">
+      % for filter_tag in browse_tags:
+        <%self:filter_target path="${request.node_path(filter_tag)}">
+          ${filter_tag.name}
+        </%self:filter_target>
+      % endfor
+    </ul>
+  </div>
+</%def>
+
+
+% if tag:
+  <%blocks:admin_bar>
+    <p>
+      <a href="${request.route_path('admin:tag', id=tag.id)}">
+        Edit Tag ${tag.id} - ${tag.name}
+      </a>
+    </p>
+  </%blocks:admin_bar>
+% endif
+
+
+<section class="section-browse">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="text-center page-header">${page_title}</h1>
+
+      </div>
+    </div>
+    <div class="row">
+      ${self.filters(browse_tags)}
+
+      <div class="col-sm-8 col-md-10">
+        % if request.matched_route.name == 'prelaunch':
+          <p>Projects which have not launched yet may opt to appear for the sake of collecting interest. Although these projects are not yet open to pledges, you may submit your email address to be notified when they launch.</p>
+          <hr>
+        % endif
+
+        % if not projects:
+          <p>No projects found!</p>
+        % endif
+
+        % if feature_count:
+          ${tiles.tile_row(projects[:feature_count], cols=feature_count)}
+        % endif
+        % for row in h.grouper(3, projects[feature_count:]):
+          ${tiles.tile_row(row)}
+        % endfor
+
+      </div>
+
+    </div>
+  </div>
+</section>

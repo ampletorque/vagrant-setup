@@ -1,0 +1,40 @@
+<%inherit file="base.html"/>
+
+<%namespace name="forms" file="/common/forms.html"/>
+<%namespace name="widgets" file="/admin/common/widgets.html"/>
+<%namespace name="regions" file="/admin/common/regions.html"/>
+
+<%def name="title()">Capture Funds on Project ${obj.id}</%def>
+
+
+${regions.project_header(obj)}
+
+
+<section class="section-admin-project">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">Capture Funds</h1>
+
+        % if obj.successful:
+          <p>There are ${h.plural(pending_count, 'order', zero_word='no', words=False)} that have yet to be captured.</p>
+          <p>${h.plural(failed_count, 'order', zero_word='No', words=False)} currently have failed payments.</p>
+          <p>${h.plural(abandon_count, 'order', zero_word='No', words=False)} have been abandoned.</p>
+          % if pending_count:
+            <form method="POST">
+              ${h.auth_token_hidden_field(request)}
+              <button type="submit" class="btn btn-primary">Capture Some Funds</button>
+            </form>
+          % endif
+        % elif obj.pledged_amount >= obj.target:
+          <p>This project has not yet been recorded as successful, but has exceeded its funding target.</p>
+          <form method="POST" action="${request.route_path('admin:project:mark-successful', id=obj.id)}">
+            ${h.auth_token_hidden_field(request)}
+            <button type="submit" class="btn btn-primary">Mark Successful</button>
+          </form>
+        % endif
+
+      </div>
+    </div>
+  </div>
+</section>

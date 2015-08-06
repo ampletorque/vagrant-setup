@@ -24,7 +24,7 @@ Vagrant.configure(2) do |config|
 #    ansible.verbose = "vvvv"
 #  end
 
-
+#    config.ssh.username = "deploy"
 
 
   # The most common configuration options are documented and commented below.

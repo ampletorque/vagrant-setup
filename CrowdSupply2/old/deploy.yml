@@ -1,0 +1,181 @@
+#modified 8/6/15 from original by andrew
+---
+- hosts: vagrant
+  tasks:
+
+    # create deploy user and group 
+
+    - name: create deploy group
+      sudo: yes
+      group: name=deploy state=present
+
+    - name: create deploy user
+      sudo: yes
+      user: name=deploy #groups=deploy,sudo
+
+    - name: add deploy user to deploy group
+      sudo: yes
+      user: name=deploy groups=deploy,sudo append=yes
+
+    - name: add vagrant user to deploy group
+      sudo: yes
+      user: name=vagrant group=deploy append=yes
+
+    # install git
+    - name: install git
+      sudo: yes
+      apt: name=git state=latest
+    
+    # set up mysql
+    - name: install mysql
+      sudo: yes
+      apt: name=mysql-server update_cache=yes cache_valid_time=3600 state=present
+      with_items:
+      - python-mysqldb
+      - mysql-server
+
+    - name: start mysql
+      sudo: yes
+      service: 
+        name: mysql 
+        state: started
+        enabled: true
+
+    # set up zaphod source dir
+    - name: set up zaphod source dir
+      sudo: yes
+      file: path=/var/sw/zaphod
+            state=directory
+            owner=deploy
+            group=deploy
+            mode=2775
+
+    # install uwsgi dependencies
+
+    - name: install pip
+      sudo: yes
+      apt: name=python3-pip state=latest
+
+    - name: install build-essential
+      sudo: yes
+      apt: name=build-essential state=latest
+
+    - name: install python-dev
+      sudo: yes
+      apt: name=python-dev state=latest
+
+    - name: install libxml2-dev
+      sudo: yes
+      apt: name=libxml2-dev state=latest
+
+    - name: install libxslt1-dev
+      sudo: yes
+      apt: name=libxslt1-dev state=latest
+
+    - name: install libxslt1.1
+      sudo: yes
+      apt: name=libxslt1.1 state=latest
+
+    # install uwsgi
+    - name: install uwsgi
+      sudo: yes
+      command: pip install uwsgi
+    
+    # set up uwsgi vassals folder 
+    - name: set up uwsgi vassals folder
+      sudo: yes
+      file: path=/etc/uwsgi/vassals
+            state=directory
+            owner=deploy
+            group=deploy
+            mode=2775
+
+#    # install setuptools
+#    - name: install setuptools
+#      sudo: yes
+#      command: python3 ez_setup.py
+
+    # install pyramid
+
+- hosts: all
+  tasks:
+    - debug: msg="Deploying app environment {{ app_environment }}"
+
+    - name: setup pyramid logging dirs
+      sudo: yes
+      file: path=/var/log/pyramid
+            state=directory
+            owner=www-data
+            group=staff
+            mode=2775
+
+    - name: setup media dir
+      sudo: yes
+      file: path=/var/media/crowdsupply
+            state=directory
+            owner=www-data
+            group=staff
+            mode=2775
+
+    - name: setup media images dir
+      sudo: yes
+      file: path=/var/media/crowdsupply/images
+            state=directory
+            owner=www-data
+            group=staff
+            mode=2775
+
+    - name: checkout zaphod source
+      git: repo={{ repo }}
+           dest=/var/sw/zaphod
+           version={{ version }}
+           accept_hostkey=yes
+      register: git_status
+
+    - name: setup zaphod database
+      shell: mysql -uroot < /var/sw/zaphod/site/conf/dbsetup.sql
+
+    - name: link uwsgi config file
+      file: src=/var/sw/zaphod/site/conf/uwsgi-{{ app_environment }}.conf
+            path=/etc/uwsgi/vassals/zaphod.ini
+            owner=deploy
+            group=deploy
+            state=link
+
+    - name: link nginx config file
+      file: src=/var/sw/zaphod/site/conf/nginx-{{ app_environment }}.conf
+            path=/etc/nginx/sites-enabled/100-crowdsupply.com
+            owner=deploy
+            group=deploy
+            state=link
+
+    # XXX set up /cron handler
+
+    - name: run pip install
+      command: /var/sw/pyramid34/bin/pip install -e . chdir=/var/sw/zaphod
+
+#change pyramid folder to 34?
+    - name: recompile assets
+      command: /var/sw/pyramid33/bin/pcompile /var/sw/zaphod/site/conf/production.ini
+
+    - name: run alembic migrations
+      command: /var/sw/pyramid34/bin/alembic -c /var/sw/zaphod/site/conf/alembic.ini upgrade head
+
+    - name: reload uwsgi
+      sudo: yes
+      service: name=uwsgi state=reloaded
+
+    - name: restart nginx
+      # XXX It would be good if we could check the config before doing this. Or maybe we can make reloading work, instead of restarting?
+      sudo: yes
+      service: name=nginx state=restarted
+
+    - name: flush redis
+      command: redis-cli flushall
+
+    - name: build docs
+      command: /var/sw/pyramid34/bin/sphinx-build -d /var/sw/zaphod/docs/_build/doctrees -b html /var/sw/zaphod/docs /var/sw/zaphod/docs/_build/html
+
+    - name: log completion
+      sudo: yes
+      shell: echo "{{ app_environment }} update {{ git_status.before }} to {{ git_status.after }}" >> /var/log/ansible-deployments.log

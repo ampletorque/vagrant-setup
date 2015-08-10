@@ -1,0 +1,35 @@
+This logs you in as user "vagrant". Sudo to root.
+
+vagrant$ sudo su - root
+
+Initialize the ssh files under root login:
+
+vagrant$ ssh-keygen
+
+Copy your public key from your *host* machine's ~/.ssh/ folder to file .ssh/authorized_keys on the vagrant machine. One method: copy to clipboard your public key on the host system, then go to terminal and:
+
+vagrant$ echo {paste your key here!}>>.ssh/authorized_keys
+
+cp {my-public-key} .ssh/authorized_keys
+
+Change the sshd_config file to reflect these settings (add if not present):
+
+  PermitRootLogin without-password
+  RSAAuthentication yes
+  PubkeyAuthentication yes
+
+vim isn't on root's path, but vi is, so:
+
+vagrant$ vi /etc/ssh/sshd_config
+
+should work.  Then restart the ssh service:
+
+vagrant$ service ssh restart
+
+Then get out of vagrant (control-d or logout a few times). Now from your host system try it out! Log in as such:
+
+ssh root@127.0.0.1 -p 2222
+
+or if you're using my updated Vagrantfile
+
+ssh root@192.168.2.200
